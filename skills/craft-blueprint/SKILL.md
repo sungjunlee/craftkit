@@ -68,11 +68,13 @@ A short paragraph describing what is being built and why.
 - guardrails
 - non-goals
 
+For skill targets, also include a drafted `description` frontmatter line that (a) names what the skill does, (b) states when to invoke it, and (c) covers ≥ 2 distinct user phrasings or aliases. Prompts do not self-trigger; omit for prompt targets.
+
 ### Files to create or update
-A concrete file list with one-line purpose per file.
+A concrete file list with one-line purpose per file. Each purpose names a task-specific responsibility — e.g. `classification taxonomy`, `urgency rubric`, `commit-parse regex` — not generic boilerplate.
 
 ### Open questions
-Only include questions that materially affect the design.
+1–3 items, or write "none — all decisions resolvable from the above" if none remain. Each item must name a decision that would change the architecture (scope cut, target split, reference-file boundary, trigger-criteria choice). Drop implementation nits (naming, format of a subfield, wording choices) — those belong in the eventual artifact, not the blueprint.
 
 ## Guardrails
 
