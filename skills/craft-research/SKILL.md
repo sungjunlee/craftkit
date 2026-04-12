@@ -37,22 +37,22 @@ Grounded research matters because agents that invent from scratch often rediscov
 ## Output format
 
 ### Research target
-What is being improved and why.
+One or two sentences naming the specific artifact being improved and the concrete research question driving this pass. A reader seeing only this section should know what would count as a useful answer — not a generic "strengthen the artifact."
 
 ### Reference patterns
-Short list of patterns found in comparable assets.
+Short list of patterns found in comparable assets. Every pattern must cite its provenance — either inline per item, or via a section-opening source map that binds each pattern to its source file + section. A pattern with no traceable source doesn't belong on the list.
 
 ### Adopt
-Patterns worth bringing into CraftKit.
+Patterns worth bringing into CraftKit. Each item is two parts: the pattern (short handle) AND a rationale clause naming a concrete benefit — what failure it prevents, what friction it removes, what quality it raises. Bare phrases don't satisfy the section; they model without grounding.
 
 ### Avoid
-Patterns that should not be copied.
+Patterns that should not be copied. Each item is two parts: the pattern AND a rationale clause naming the specific harm — what it breaks, what coupling it introduces, what portability it costs. Bare phrases don't satisfy the section.
 
 ### Recommended edits
-Concrete file or section changes.
+Concrete file or section changes. Each item must name three things: (a) the target file (path or skill name), (b) the specific section/heading/location within that file, and (c) the edit verb (add / tighten / remove / replace / refactor). Scale the number of edits to the scope of the research ask — a narrow question deserves 1–3 edits, not a full rewrite list.
 
 ### Risks
-Any risk of overfitting to a specific source or style.
+Research-specific risks only. At least one risk must reference either the actual source set surveyed or a named constraint of the target artifact. Generic risks that could appear verbatim in any prior-art survey don't count — if the risk is portable across unrelated research passes, it hasn't engaged this research.
 
 ## Guardrails
 
