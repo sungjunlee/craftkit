@@ -18,6 +18,22 @@ Build CraftKit into a cross-agent toolkit for prompt and skill authoring, improv
 - When ambiguity exists, choose the simpler design and document the assumption.
 - Do not rename top-level concepts without updating all references.
 
+## Tooling language
+
+When tooling *is* needed (a script, a CLI, an eval helper), default to **Node.js**. Reach for Python only when it's clearly the better fit — typical cases are ML/eval pipelines that rely on established Python libraries, or notebooks for exploratory analysis.
+
+Why Node is the default:
+
+- Claude Code and Codex CLI already require Node, so every CraftKit user has it installed. Adding Python forces a second runtime and an environment-management story (venv, uv, pyenv) that kills adoption friction.
+- Node's standard library plus a small set of zero-dep modules covers most CraftKit needs (file IO, JSON, child processes, CLI parsing).
+- A single runtime keeps the repo copy-pasteable and keeps contributors unblocked.
+
+When adding a script:
+
+- use `"type": "module"` (already set in `package.json`)
+- prefer zero dependencies; if a dep is required, prefer one with no native build step
+- keep scripts self-contained and runnable via `node scripts/<name>.mjs`
+
 ## Skill file conventions
 
 Each skill lives at `skills/<skill-name>/SKILL.md` and uses Claude Code skill format:
