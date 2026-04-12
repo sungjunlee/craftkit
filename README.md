@@ -79,10 +79,6 @@ Each skill lives under `skills/<skill-name>/SKILL.md` and follows the Claude Cod
 │        ├─ eval-guide.md
 │        ├─ mutation-guide.md
 │        └─ worked-example.md
-├─ prompts/
-│  ├─ 01-bootstrap-repo.md
-│  ├─ 02-port-existing-assets.md
-│  └─ 03-quality-pass.md
 └─ package.json
 ```
 
