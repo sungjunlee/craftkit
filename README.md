@@ -8,6 +8,7 @@ Prompt assets and agent skills often become fragmented, provider-specific, and h
 
 ## What belongs in CraftKit
 
+- generating new prompts from scratch (task, research, session handoff, templates)
 - prompt design and restructuring
 - reusable skill design
 - reflective critique and quality checks
@@ -18,17 +19,19 @@ Prompt assets and agent skills often become fragmented, provider-specific, and h
 ## What does not belong in CraftKit
 
 - giant monolithic prompts with unclear intent
-- provider-specific hacks mixed into core assets
 - hidden logic that cannot be inspected in files
 - unnecessary frameworks when markdown is enough
 
 ## Core skills
 
-- `craftkit-blueprint`: turn a rough idea into a structured prompt or skill plan
-- `craftkit-reflect`: critique a prompt or skill and identify weaknesses
-- `craftkit-tune`: improve a prompt or skill with targeted edits
-- `craftkit-loop`: run a small iterative improvement cycle
-- `craftkit-autoresearch`: study comparable assets and synthesize upgrades
+All skills use the `craft-` prefix so they read naturally as "craft a prompt," "craft a blueprint," etc. The `CraftKit` brand stays on the repo; skill names are short.
+
+- `craft-prompt`: generate a new prompt from scratch for any LLM (absorbed from the mature `prompt-builder`)
+- `craft-blueprint`: turn a rough idea into a structured prompt or skill plan
+- `craft-reflect`: critique a prompt or skill and identify weaknesses
+- `craft-tune`: improve a prompt or skill with targeted edits
+- `craft-loop`: run a small iterative improvement cycle
+- `craft-autoresearch`: study comparable assets and synthesize upgrades
 
 Each skill lives under `skills/<skill-name>/SKILL.md` and follows the Claude Code skill format (YAML frontmatter + markdown body), so it can be loaded as a skill directly or copy-pasted into other agent environments.
 
@@ -37,7 +40,7 @@ Each skill lives under `skills/<skill-name>/SKILL.md` and follows the Claude Cod
 1. File-first and diff-friendly
 2. Small composable units
 3. Explicit inputs and outputs
-4. Cross-agent portability
+4. Cross-agent portability (core skill spines stay provider-neutral; platform-specific detail stays in sub-skills like `craft-prompt/guides/`)
 5. Eval-driven improvement when possible
 6. Copy-pasteable results over fancy abstractions
 
@@ -47,19 +50,30 @@ Each skill lives under `skills/<skill-name>/SKILL.md` and follows the Claude Cod
 .
 ├─ README.md
 ├─ AGENTS.md
+├─ LICENSE
 ├─ docs/
 │  ├─ product.md
-│  └─ roadmap.md
+│  ├─ roadmap.md
+│  ├─ migration.md
+│  └─ examples/
+│     └─ tune-a-prompt.md
 ├─ skills/
-│  ├─ craftkit-blueprint/
+│  ├─ craft-prompt/
+│  │  ├─ SKILL.md
+│  │  ├─ guides/       (platform-specific tips: claude, gpt, gemini, perplexity, local)
+│  │  ├─ references/   (components, patterns, quality checklist)
+│  │  └─ templates/    (session-handoff, system-prompt, image-gen, video-gen)
+│  ├─ craft-blueprint/
 │  │  └─ SKILL.md
-│  ├─ craftkit-reflect/
+│  ├─ craft-reflect/
+│  │  ├─ SKILL.md
+│  │  └─ references/
+│  │     └─ failure-modes.md
+│  ├─ craft-tune/
 │  │  └─ SKILL.md
-│  ├─ craftkit-tune/
+│  ├─ craft-loop/
 │  │  └─ SKILL.md
-│  ├─ craftkit-loop/
-│  │  └─ SKILL.md
-│  └─ craftkit-autoresearch/
+│  └─ craft-autoresearch/
 │     └─ SKILL.md
 ├─ prompts/
 │  ├─ 01-bootstrap-repo.md
@@ -67,13 +81,6 @@ Each skill lives under `skills/<skill-name>/SKILL.md` and follows the Claude Cod
 │  └─ 03-quality-pass.md
 └─ package.json
 ```
-
-## Near-term goals
-
-- unify reusable patterns from existing prompt-builder and meta-skill assets
-- define a stable skill format for cross-agent reuse
-- keep the first release markdown-first and lightweight
-- make every core skill understandable from a single `SKILL.md`
 
 ## Quickstart
 
@@ -85,15 +92,15 @@ Each skill is a standard Claude Code skill file. To make one available in a proj
    - **Repo-scoped**, so the skill only loads in this project:
      ```bash
      mkdir -p .claude/skills
-     cp -R /path/to/craftkit/skills/craftkit-tune .claude/skills/
+     cp -R /path/to/craftkit/skills/craft-prompt .claude/skills/
      ```
    - **User-scoped**, so the skill is available in every project:
      ```bash
      mkdir -p ~/.claude/skills
-     cp -R /path/to/craftkit/skills/craftkit-tune ~/.claude/skills/
+     cp -R /path/to/craftkit/skills/craft-prompt ~/.claude/skills/
      ```
 2. Restart the Claude Code session (or open a new one) so the skill is picked up.
-3. Invoke the skill by describing the task — for example, *"tune this prompt to produce a changelog"* will match `craftkit-tune` via its description.
+3. Invoke the skill by describing the task — for example, *"build me a handoff prompt for the next session"* will match `craft-prompt` via its description.
 
 ### Use a CraftKit skill in Codex or another agent
 
@@ -109,9 +116,9 @@ See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a wal
 
 ## Relationship to other tools
 
-CraftKit is a **meta-layer**: it helps you design, critique, and improve prompt and skill artifacts — including artifacts that already live in other repositories. In particular, CraftKit does not replace [`prompt-builder`](../prompt-builder/) (prompt authoring) or any specific agent framework. It operates one level above them: given an existing prompt or skill, CraftKit helps you shape it, review it, and iterate.
+CraftKit bundles both **generation** (`craft-prompt`) and **improvement** (`craft-blueprint`, `craft-reflect`, `craft-tune`, `craft-loop`, `craft-autoresearch`) into one toolkit. It does not replace any specific agent framework — it sits alongside them as a place to design, create, critique, and iterate on the prompt and skill artifacts those frameworks consume.
 
-See `docs/migration.md` for what was and wasn't carried over from prior assets.
+See `docs/migration.md` for what was carried over from prior assets and why the original `prompt-builder` repo was absorbed rather than kept separate.
 
 ## Status
 

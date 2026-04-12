@@ -1,9 +1,9 @@
 ---
-name: craftkit-loop
+name: craft-loop
 description: Run a compact iterative improvement cycle on a prompt or skill — assess baseline, apply one high-leverage change, re-evaluate, keep the winner, repeat — instead of doing one oversized rewrite. Use this whenever the user wants to iteratively improve an artifact, asks for "a few rounds" of changes, mentions comparing versions, or is stuck and needs to explore alternatives rather than commit to one big rewrite.
 ---
 
-# craftkit-loop
+# craft-loop
 
 ## Purpose
 

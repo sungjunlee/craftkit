@@ -17,7 +17,7 @@ The user reports:
 
 ## Step 1 — Reflect
 
-Invoke `craftkit-reflect` on the prompt. Expected output shape:
+Invoke `craft-reflect` on the prompt. Expected output shape:
 
 ```text
 What is working:
@@ -41,11 +41,11 @@ Failure modes:
 - output varies between Claude and Codex because structure is implicit
 ```
 
-If the review still feels fuzzy, open `skills/craftkit-reflect/references/failure-modes.md` and classify each issue as **ambiguity**, **scope**, **context**, **portability**, or **structure**. That vocabulary usually makes the next edit obvious — in this case, the prompt has clear ambiguity (what does "thorough" mean?) and scope (no "don't refactor" guard) failures.
+If the review still feels fuzzy, open `skills/craft-reflect/references/failure-modes.md` and classify each issue as **ambiguity**, **scope**, **context**, **portability**, or **structure**. That vocabulary usually makes the next edit obvious — in this case, the prompt has clear ambiguity (what does "thorough" mean?) and scope (no "don't refactor" guard) failures.
 
 ## Step 2 — Tune
 
-Invoke `craftkit-tune` with the reflection as input. Target improvement: *consistent reviews across agents, with a stable output shape.*
+Invoke `craft-tune` with the reflection as input. Target improvement: *consistent reviews across agents, with a stable output shape.*
 
 Expected revised prompt:
 
@@ -81,7 +81,7 @@ Tradeoffs:
 
 ## Step 3 — Loop
 
-Invoke `craftkit-loop` with the tuned prompt as baseline. Criteria: *consistent structure, no scope creep, works on both Claude and Codex.* Iteration limit: 2.
+Invoke `craft-loop` with the tuned prompt as baseline. Criteria: *consistent structure, no scope creep, works on both Claude and Codex.* Iteration limit: 2.
 
 Expected loop log:
 
@@ -104,7 +104,7 @@ Stop here — gains have flattened and the prompt is still short.
 
 ## Step 4 — Autoresearch (optional)
 
-If the prompt is going to be reused across a team, invoke `craftkit-autoresearch`. It's worth the effort only when a handful of comparable prompts already exist in the repo or team wiki. Otherwise skip.
+If the prompt is going to be reused across a team, invoke `craft-autoresearch`. It's worth the effort only when a handful of comparable prompts already exist in the repo or team wiki. Otherwise skip.
 
 Expected output: a short list of patterns worth adopting (e.g., severity labels, standard review checklists) and patterns to avoid (e.g., hard-coded linter rules that duplicate tooling).
 

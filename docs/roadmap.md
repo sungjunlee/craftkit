@@ -15,10 +15,11 @@ Deliverables:
 
 ## Phase 1 — Normalize core skills
 
-Goal: make the five core skills consistent in structure and tone.
+Goal: make the six core skills consistent in structure and tone.
 
 Deliverables:
 
+- prompt
 - blueprint
 - reflect
 - tune

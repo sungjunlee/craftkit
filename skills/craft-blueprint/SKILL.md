@@ -1,9 +1,9 @@
 ---
-name: craftkit-blueprint
+name: craft-blueprint
 description: Turn a rough idea into a structured prompt or skill blueprint with explicit objective, inputs, workflow, outputs, and a concrete file plan. Use this whenever the user wants to design a new prompt or skill, scaffold a skill-like workflow, mentions "blueprint," "structure," or "plan" for a prompt, or arrives with a vague request that needs to be shaped before implementation — even if they don't explicitly ask for a blueprint.
 ---
 
-# craftkit-blueprint
+# craft-blueprint
 
 ## Purpose
 
@@ -89,7 +89,7 @@ Create a cross-agent tuning skill that revises existing prompts with small, expl
 - non-goals: provider-specific hacks
 
 **Files to create or update**
-- `skills/craftkit-tune/SKILL.md`
+- `skills/craft-tune/SKILL.md`
 - `docs/product.md`
 
 **Open questions**

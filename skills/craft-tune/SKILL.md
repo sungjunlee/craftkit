@@ -1,9 +1,9 @@
 ---
-name: craftkit-tune
+name: craft-tune
 description: Improve an existing prompt or skill with targeted, minimal-diff edits that preserve its core intent, and return the revised artifact plus a short changelog and tradeoffs note. Use this whenever the user wants to refine, sharpen, tighten, or upgrade an existing prompt or skill, asks to "make it better," or wants a small high-leverage edit instead of a full rewrite — even if they don't explicitly mention tuning.
 ---
 
-# craftkit-tune
+# craft-tune
 
 ## Purpose
 

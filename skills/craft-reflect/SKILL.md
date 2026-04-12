@@ -1,9 +1,9 @@
 ---
-name: craftkit-reflect
+name: craft-reflect
 description: Critique a prompt or skill and surface ambiguity, hidden assumptions, weak structure, portability issues, and likely failure modes before any rewrite happens. Use this whenever the user asks to review, audit, critique, or improve a prompt or skill, mentions a prompt that "feels off" or behaves inconsistently, or is about to start a large rewrite and should stop to diagnose first — even if they don't explicitly say "reflect" or "review."
 ---
 
-# craftkit-reflect
+# craft-reflect
 
 ## Purpose
 

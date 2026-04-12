@@ -5,7 +5,7 @@ Bootstrap the repository as a cross-agent toolkit for prompts and coding-agent s
 
 Core context:
 - Top-level brand: CraftKit
-- Core skills: craftkit-blueprint, craftkit-reflect, craftkit-tune, craftkit-loop, craftkit-autoresearch
+- Core skills: craft-prompt, craft-blueprint, craft-reflect, craft-tune, craft-loop, craft-autoresearch
 - Scope: skill + prompt + research loop + best practices
 - Style: markdown-first, diff-friendly, reusable, copy-pasteable, cross-agent
 - Do not overengineer

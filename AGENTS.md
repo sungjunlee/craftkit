@@ -83,7 +83,7 @@ These conventions apply across every CraftKit skill and example, so they live he
 - **Worktree-relative paths.** Treat the current worktree root as the base directory. Prefer paths like `src/auth.ts:45` over `/Users/name/project/src/auth.ts:45`. Use absolute paths only when the user explicitly needs machine-specific commands.
 - **XML tags travel best.** When a prompt or skill has multiple sections, XML tags (`<context>`, `<task>`, `<rules>`) parse reliably across Claude, GPT, and Gemini. Plain markdown is fine for simple, single-section artifacts.
 - **Tag names stay in English.** If the artifact body is non-English, keep tag names and structural labels in English — all major providers parse English tags regardless of content language.
-- **No provider-specific tool names in core assets.** Describe the capability, not the tool. Provider-specific wording can live in examples, but not in the skill spine.
+- **No provider-specific tool names in the skill spine.** Describe the capability, not the tool. Provider-specific wording can live in examples or in platform-specific sub-resources (like `craft-prompt/guides/` which contains Claude/GPT/Gemini/Perplexity-specific tips), but not in the main body of a skill.
 
 ## Non-goals for the bootstrap phase
 

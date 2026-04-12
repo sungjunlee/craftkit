@@ -1,9 +1,9 @@
 ---
-name: craftkit-autoresearch
+name: craft-autoresearch
 description: Study comparable prompts, skills, or repo assets, extract recurring patterns worth adopting, flag patterns to avoid, and synthesize actionable improvements for the current artifact. Use this whenever the user wants to ground a prompt or skill in proven patterns, references older assets to learn from, asks "how do others do this," or is designing something new and wants prior art before committing — even if they don't say "research."
 ---
 
-# craftkit-autoresearch
+# craft-autoresearch
 
 ## Purpose
 
@@ -94,7 +94,7 @@ Strengthen the tuning skill so it produces more consistent and portable edits.
 - giant all-in-one instructions
 
 **Recommended edits**
-- tighten the output template in `craftkit-tune`
+- tighten the output template in `craft-tune`
 - add a short failure-mode section
 - add one compact example
 

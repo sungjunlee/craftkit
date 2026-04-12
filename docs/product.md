@@ -29,8 +29,11 @@ CraftKit should feel like a portable workshop:
 
 ## Core concepts
 
+### Prompt
+Generate a new, copy-paste-ready prompt from scratch — including task prompts, session handoffs, and reusable templates. Covered by the `craft-prompt` skill, absorbed from the mature `prompt-builder` asset.
+
 ### Blueprint
-Convert a rough request into a stable structure.
+Convert a rough request into a stable structure for a new prompt or skill.
 
 ### Reflect
 Find ambiguity, weakness, hidden assumptions, and portability issues.
@@ -43,6 +46,8 @@ Run a compact improvement cycle instead of one giant rewrite.
 
 ### Autoresearch
 Look at comparable assets, extract patterns, and bring back only what is useful.
+
+Skill prefix: every skill is named `craft-<verb>`, chosen because it reads naturally as "craft a prompt," "craft a blueprint," etc. The `CraftKit` brand name stays on the repo and documentation; skills use the shorter `craft-` prefix.
 
 ## Bootstrap scope
 

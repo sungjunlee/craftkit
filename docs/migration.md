@@ -1,52 +1,76 @@
 # Migration Notes
 
-This document records which external assets were considered during the Phase 2 migration, what was carried into CraftKit, and what was intentionally left out.
+This document records which external assets were considered during migration into CraftKit, what was carried in, and what was intentionally left out.
 
 ## Source assets surveyed
 
 | Source | Path | Relationship to CraftKit |
 |---|---|---|
-| `prompt-builder` | `harness-stack/prompt-builder/skills/prompt-builder/` | Closest overlap — a mature, prompt-focused skill with a 5-step process, 6 building blocks, sharpening checks, and a quality checklist. |
+| `prompt-builder` | `harness-stack/prompt-builder/skills/prompt-builder/` | A mature, prompt-focused skill with a 5-step process, 6 building blocks, sharpening checks, platform guides, and concrete templates. |
 | `references/autoresearch` | `harness-stack/references/autoresearch/` | An actual ML training-loop project, not a prompt-authoring asset. Philosophy only. |
 | `references/analysis/` | `harness-stack/references/analysis/` | Comparative analysis docs (get-shit-done, claude-octopus, superpowers, multi-agent patterns, etc.). Context reading, not source material. |
 
-## Adopted
+## Decisions
 
-### From `prompt-builder`
+### `prompt-builder` — absorbed as `craft-prompt`
 
-- **Failure-mode taxonomy.** The "Deep Check by failure mode" table in `quality-checklist.md` (Ambiguity / Scope / Context / Target-LLM failures) is a genuinely reusable diagnostic spine. Generalized and ported into `skills/craftkit-reflect/references/failure-modes.md`.
-- **Sharpening principles.** Four ideas carry their weight across any prompt *or* skill: *context > instruction*, *outcome over process*, *cut in this order* (verbose roles → restated context → hedging; never cut examples or success criteria), *right-sized over thorough-looking*. Folded into `skills/craftkit-tune/SKILL.md` as a "Principles" section.
-- **Worktree-relative path policy.** Core to any coding-agent artifact, not prompt-specific. Called out as a shared convention in `AGENTS.md`.
-- **"The artifact is the product" stance.** Deliver polished text, not meta-commentary. Implicit in every CraftKit skill's "Output format" section — reinforced by the copy-pasteability criterion in `AGENTS.md`.
+An earlier revision of this document kept `prompt-builder` as a separate repo and only copied selected patterns into CraftKit. Real usage showed the core use case of `prompt-builder` — especially **session handoff prompts** for carrying work into the next Claude Code or Codex session — is exactly what CraftKit users need most often. Keeping the two apart made the most-used workflow live outside CraftKit, which defeats the point of a toolkit.
 
-### From `references/autoresearch`
+The decision was reversed. `prompt-builder` is now absorbed as `skills/craft-prompt/` with its full structure intact:
 
-- **Philosophy of measured iteration.** The training-loop mindset — baseline, one change, re-evaluate, keep the winner — matches `craftkit-loop` exactly. Informed the "change one main thing at a time" guardrail; no code ported.
+- `SKILL.md` (renamed from `prompt-builder` to `craft-prompt`, description rewritten to skill-creator-style trigger wording, non-standard `version` and `triggers` frontmatter fields removed)
+- `guides/` — platform-specific tips (claude, gpt, gemini, perplexity, local-models)
+- `references/` — components guide, prompt patterns, quality checklist
+- `templates/` — session-handoff, system-prompt, image-gen, video-gen
+
+The original `harness-stack/prompt-builder/` repo can now be archived; CraftKit is the canonical home.
+
+### Provider-specific material is OK inside `craft-prompt`
+
+CraftKit's "core assets stay provider-neutral" rule applies to the five design/critique/improve skills (`craft-blueprint`, `craft-reflect`, `craft-tune`, `craft-loop`, `craft-autoresearch`). `craft-prompt`'s value *is* platform-aware prompt authoring, so its `guides/` directory containing Claude/GPT/Gemini/Perplexity-specific notes is expected and not a violation of the portability principle. The rule is "don't leak provider specifics into the core spine," not "no provider specifics anywhere."
+
+### Patterns from `prompt-builder` that also fed the improvement skills
+
+Before the full absorption, a handful of reusable spines were already extracted from `prompt-builder` into the other CraftKit skills. Those still stand:
+
+- **Failure-mode taxonomy.** The "Deep Check by failure mode" table in `prompt-builder`'s `quality-checklist.md` became `skills/craft-reflect/references/failure-modes.md`, generalized to cover both prompts and skills.
+- **Sharpening principles.** *Context > instruction*, *outcome over process*, *cut in this order*, *right-sized beats thorough-looking*. Folded into `skills/craft-tune/SKILL.md` as a "Principles" section.
+- **Worktree-relative path policy.** Promoted to a shared convention in `AGENTS.md` since it applies to every CraftKit skill, not just prompt authoring.
+
+These extractions now sit alongside the full `craft-prompt` skill. Some overlap is fine: an agent using `craft-tune` benefits from the Principles section without having to invoke `craft-prompt`, and vice versa.
+
+### `references/autoresearch`
+
+- **Philosophy of measured iteration.** The training-loop mindset — baseline, one change, re-evaluate, keep the winner — matches `craft-loop` exactly. Informed the "change one main thing at a time" guardrail. No code ported; this is an ML training project, not a prompt-authoring asset.
 
 ## Intentionally not carried over
 
-- **Platform-specific guides** (`guides/claude-guide.md`, `gpt.md`, `gemini.md`, `perplexity.md`, `local-models.md`). CraftKit's core assets must stay provider-neutral. Users who need platform-specific prompt tuning should reach for `prompt-builder` directly.
-- **Image/video generation templates.** Too narrow for a meta-layer toolkit. They belong with `prompt-builder`.
-- **Session-handoff and system-prompt templates.** Useful, but they're concrete prompt templates, not prompt *authoring* tools. Out of scope for CraftKit's five core skills.
-- **The 6 building blocks table.** Valuable for prompt authoring specifically, but CraftKit's blueprint skill is broader (prompts *and* skills). Forcing the same block list on skill design would be a cargo-cult.
-- **Korean trigger keywords in frontmatter.** `prompt-builder` uses a custom `triggers:` field. CraftKit follows standard Claude Code skill-creator conventions — triggers live inside the `description` string, which is the actual mechanism Claude uses for skill invocation.
-- **`prompt-builder` itself.** Left as a standalone repo. CraftKit sits one level above: it helps you design or improve prompts/skills, including prompt-builder if needed. Merging would dilute both.
+- **The custom `triggers:` frontmatter field from `prompt-builder`.** Claude Code's skill invocation is driven by the `description` field, not a separate triggers list. The Korean and English triggers previously listed were merged into the `craft-prompt` description so the actual invocation mechanism gets the signal.
+- **The `version:` frontmatter field.** Neither skill-creator nor Claude Code require it, and none of the other CraftKit skills use it. Removed from `craft-prompt` for consistency.
+- **`prompt-builder/refs/*` external reference repos** (claude-code-prompt-improver, claude-skill-prompt-architect, jeffallan-claude-skills, etc.). These are research inputs, not authored assets. They belong in a future `craft-autoresearch` pass rather than being copied into the skill.
 
 ## Relationship map
 
 ```
-CraftKit (meta-layer: design, critique, tune, loop, research)
-   │
-   ├── can help improve → prompt-builder (prompt authoring)
-   ├── can help improve → any skill repo
-   └── can help design  → new skills from scratch
+CraftKit (one toolkit)
+  │
+  ├── craft-prompt        → generate a new prompt from scratch
+  ├── craft-blueprint     → design a new prompt or skill structure
+  ├── craft-reflect       → critique an existing artifact
+  ├── craft-tune          → edit an existing artifact with minimal diff
+  ├── craft-loop          → iterate with small, measured changes
+  └── craft-autoresearch  → study comparable assets and synthesize
 ```
 
-## Naming and terminology
+Generation lives next to improvement, so the toolkit covers the full artifact lifecycle inside one repo.
 
-No conflicts detected. CraftKit's five-skill vocabulary (blueprint / reflect / tune / loop / autoresearch) is orthogonal to `prompt-builder`'s building-block vocabulary (Role / Context / Task / Rules / Format / Examples), so both can coexist without overloading any term.
+## Naming
+
+- Brand name: `CraftKit`.
+- Skill prefix: `craft-` (chosen so skill names read as verb-phrases: "craft a prompt," "craft a blueprint"). The prefix differs from the brand on purpose — `craft-prompt-builder` would be too long, and `craftkit-prompt` is harder to say aloud.
+- Skill names are orthogonal to any vocabulary inside `craft-prompt` (Role / Context / Task / Rules / Format / Examples), so both can coexist without term overloading.
 
 ## Remaining migration candidates
 
-- `references/analysis/21-multi-agent-patterns.md` and `22-orchestration-patterns.md` — may inform a future `craftkit-orchestrate` or expanded `craftkit-loop`, but only after the five core skills have settled.
-- `prompt-builder/refs/*` (claude-code-prompt-improver, claude-skill-prompt-architect, etc.) — worth a dedicated `craftkit-autoresearch` pass once real usage reveals gaps in the current skills.
+- `references/analysis/21-multi-agent-patterns.md` and `22-orchestration-patterns.md` — may inform a future `craft-orchestrate` or expanded `craft-loop`, but only after the six current skills have settled through real usage.
+- `prompt-builder/refs/*` — worth a dedicated `craft-autoresearch` pass once real usage reveals gaps in `craft-prompt`.
