@@ -35,6 +35,25 @@ Blueprinting matters because vague requests produce vague artifacts. Separating 
 5. Suggest files to create or update. A concrete file list converts the blueprint into work.
 6. Call out any unresolved decisions briefly. Only surface decisions that materially change the design.
 
+## When the target is a skill (vs a prompt)
+
+A prompt is a single file; a skill is a folder. That changes what the blueprint must decide:
+
+1. **Shape of the plan.**
+   - **Prompt blueprint** = a *section plan*: which of Role / Context / Task / Rules / Format / Examples to include, in what order, and what each carries.
+   - **Skill blueprint** = a *file-tree plan* + `SKILL.md` outline. Decide which files exist before any of them are written.
+2. **Files list, expanded.** For a skill, the "Files to create or update" section should enumerate concretely:
+   - `skills/<name>/SKILL.md` (always required)
+   - `skills/<name>/references/<file>.md` (only when detail would push SKILL.md past ~500 lines, or when a topic deserves progressive disclosure)
+   - `skills/<name>/scripts/<file>.mjs` (only when the skill repeats deterministic work an agent would otherwise re-derive each invocation)
+   - `skills/<name>/templates/<file>` (only when a well-crafted template adds value the agent cannot easily generate)
+   Avoid scaffolding folders "just in case" — empty folders invite bloat. Add them in a later iteration when the need is real.
+3. **Frontmatter is a first-class design artifact.** A skill's `name` and `description` are its triggering mechanism. The blueprint must draft a `description` that is trigger-oriented (what it does + *when* to invoke) and covers the non-obvious phrasings users might use. This has no analogue for prompts, which do not self-trigger.
+4. **Size budget.** Target `SKILL.md` under ~500 lines. If the skill's job plausibly exceeds that, the blueprint should plan the split into `references/` at design time — not discover it mid-write.
+5. **Progressive disclosure as a design decision.** Decide up front which content loads on every invocation (`SKILL.md` body) versus on demand (`references/`). Getting this wrong either inflates every context window or hides load-bearing detail from the agent.
+
+Prompts skip items 2-5 entirely. Items 1 and 6 (open questions) apply to both.
+
 ## Output format
 
 ### Summary

@@ -50,6 +50,18 @@ If the user provides an `evals.json`, use it directly instead of drafting evals 
 7. **Stop on condition, not on vibes.** Stop when the budget is hit, when the stop condition is met (e.g. 95%+ binary pass rate sustained for 3 consecutive kept experiments), when the user interrupts, or when the harness is no longer trustworthy. Running out of ideas is not a stop condition — change mutation level first.
 8. **Report back.** Baseline → final score, total experiments, keep rate, top helpful changes, remaining failure patterns, artifact size change, direction shifts.
 
+## When the target is a skill (vs a prompt)
+
+The loop shape is the same, but the *edit unit* differs. A prompt is a single file; a skill is a folder with `SKILL.md`, `references/`, sometimes `scripts/` and `templates/`. That changes five things:
+
+1. **Target selection.** For a prompt, the target is a single file path. For a skill, decide up front what the target covers — usually `SKILL.md` alone, but a mutation may legitimately touch `references/<file>.md` too. Write it into the experiment contract: *"mutable files: SKILL.md, references/eval-guide.md. All other files are frozen."*
+2. **Mutation locus.** Mutation levels stay the same (wording / example / structure / principle), but for skills a sixth question appears before applying them: *which file?* Prefer editing `SKILL.md` for skill-spine changes and `references/` for deep-detail changes. Adding a new reference file counts as a Level-3 (structural) mutation — it shifts the skill's shape, not just its wording.
+3. **Size metric.** For prompts, `wc -l <file>` is enough. For skills, track two numbers: `skill_lines` (SKILL.md only — the always-loaded budget) and `folder_lines` (everything including references). The primary discipline is keeping `SKILL.md` under its ~500-line target; `folder_lines` is secondary and can grow more before bloat becomes a concern.
+4. **Mutation safety.** A prompt mutation touches one file, so checkpoint and rollback are trivial. A skill mutation may touch several — record the exact file list in the experiment's checkpoint, and on DISCARD restore *only those files*. Never rollback the whole folder; unrelated files may hold accepted prior-experiment state.
+5. **Fidelity evals (multi-skill pipelines).** If the target is a skill that feeds another skill's input (e.g. `craft-blueprint` → `craft-tune`), add fidelity evals that check stage-to-stage consistency. Not applicable for single-file prompts.
+
+Everything else — experiment contract, baseline discipline, KEEP/DISCARD rules, deletion experiments, stop conditions — works identically for prompts and skills.
+
 ## KEEP vs DISCARD
 
 Record artifact size (`wc -l <target>`) for every experiment. Apply these defaults unless the user defined stricter rules:
