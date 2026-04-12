@@ -79,15 +79,28 @@ Use this rough order when choosing:
 
 For skill optimizations, the highest-yield Level-1 edit is frequently at the section of `SKILL.md` where the agent actually produces output — the `## Output format` subsection, or the `## Steps` entry that hands off to output. Agents execute the build step and re-read it each invocation; they do not reliably re-activate rules stated in distant conceptual prose.
 
-Three autoresearch sessions against CraftKit skills resolved their dominant failure modes with a single edit at this location:
+Five autoresearch sessions against CraftKit skills resolved their dominant failure modes with a single edit at this location:
 
 - `craft-reflect` — rewrote every subsection under `## Output format` to demand the specific signal it should carry (severity tags, consolidation, ordering, distinct-dimension failure modes) instead of just the shape.
 - `craft-prompt` — added a "Sizing heuristic" block to Step 3 "Build the Prompt" converting two conceptual principles (right-size structure to request, list all varying values as placeholders) into concrete structural rules.
 - `craft-blueprint` — tightened `## Output format` to require a drafted `description` frontmatter for skill targets, task-specific purpose clauses, and bounded architectural open questions — all rules previously stated in conceptual sections but unenforced at build time.
+- `craft-tune` — tightened `## Output format` §Changelog to require the three explicit `changed / why / expected effect` fields per entry, resolving a silent spec-vs-Example contradiction where the `## Example` block showed bare bullets. Flipped 5 failing evals with a single Level-1 edit.
+- `craft-research` — tightened all six `## Output format` subsections to demand per-item provenance (Reference patterns), per-item rationale (Adopt/Avoid), file-plus-section-plus-verb concreteness (Recommended edits), and non-portable research-specific risks (Risks). Flipped 13 failing evals across three inputs with a single Level-1 edit.
 
 So before mutating elsewhere, scan the build-step section(s) and ask: *does this section enforce every quality rule the conceptual sections state?* The answer is frequently no. A single tightening edit there can flip multiple failing evals at once, and the mutations tend to be small and lean.
 
 This is a prior, not a law — always let the failing evals and failing outputs lead. But when deciding *where* in `SKILL.md` to intervene, start at the build step.
+
+### Inline illustrative examples inside a build-step tightening are redundant
+
+When the exp-1 tightening is a spec rewrite at `## Output format`, the declarative prose rule is what carries the score. Inline illustrative examples bundled into the same rewrite — `"e.g., minimal-diff discipline — craft-tune/SKILL.md §Principles"`, fail/pass exemplar pairs inside the subsection paragraph, `## Example`-block alignment edits that repeat what the new spec already demands — are demonstrated redundant across two sessions:
+
+- `craft-tune` (2026-04-12) exp-2 reverted the `## Example`-block changelog-table alignment bundled into exp-1. The spec-level tightening had flipped 5 evals; the Example-block alignment was the cosmetic companion. Deletion held score at 18/18.
+- `craft-research` (2026-04-12) exp-2 stripped the inline illustrative examples (`"e.g., ..."` fragments and fail/pass exemplar pairs) from four tightened subsections while leaving the declarative prose rules intact. Deletion held score at 18/18.
+
+Practical guidance: first-cut Output-format tightenings should write only the declarative prose rule. If the rule feels like it needs an inline example to be understood, the rule is under-specified — sharpen the rule's category-level naming of what passes and what fails, rather than appending an example. This keeps the exp-1 edit lean and makes the mandatory deletion experiment cheap.
+
+Scope of claim: specific to build-step Output-format tightenings for prompt/skill-shaping skills. Does not generalize to all mutation types — Level-2 example mutations are about adding examples, and this observation is about tightenings that already state a rule, not about Example mutations themselves.
 
 ## Anti-patterns
 
