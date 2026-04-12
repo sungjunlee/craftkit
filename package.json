@@ -1,0 +1,8 @@
+{
+  "name": "craftkit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cross-agent toolkit for prompts and coding-agent skills",
+  "license": "MIT",
+  "type": "module"
+}
