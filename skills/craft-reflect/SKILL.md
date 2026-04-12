@@ -37,19 +37,19 @@ Reflecting before rewriting matters because most "make this better" requests wou
 ## Output format
 
 ### What is working
-Short list of strengths worth preserving.
+Short list of strengths worth preserving. Name the specific element, not a generic positive.
 
 ### Issues
-Prioritized list of issues with short explanations.
+Prioritized list, 1-5 items. Each item carries an explicit severity tag (`[HIGH]`, `[MED]`, `[LOW]`) OR the section begins with "Ordered highest severity first." Bare position is not enough — make the priority signal visible.
 
 ### Recommended changes
-Concrete changes, phrased so they can be applied directly.
+Imperative commands. Do not mirror Issues 1:1. Consolidate where two issues share a fix; reprioritize where the cheapest or highest-leverage fix is not the first Issue. At least one of these must be visible: fewer Rec items than Issues, a Rec item that addresses two or more Issues, or a Rec order that differs from the Issues order.
 
 ### Failure modes
-Common ways the artifact may fail in practice.
+Distinct recurrence scenarios — how the artifact fails under conditions not already named in Issues. Do not restate Issues in future tense. Each item introduces a new trigger, actor, interaction, or downstream effect (e.g. a recurrence scenario after a fix, a cross-effect with another system, a misuse pattern Issues did not surface).
 
 ### Minimal rewrite plan
-A small-step plan rather than a total rewrite.
+An ordered sequence with explicit sequencing or priority rationale — not a numbered subset of Recommended changes. State why items go in this order: dependency, reach, risk, or reversibility.
 
 ## Guardrails
 
