@@ -41,11 +41,11 @@ Find ambiguity, weakness, hidden assumptions, and portability issues.
 ### Tune
 Improve an existing asset with minimal and intentional edits.
 
-### Loop
-Run a compact improvement cycle instead of one giant rewrite.
+### Research
+Look at comparable assets, extract patterns, and bring back only what is useful. One-shot prior-art study, not an iterative loop.
 
 ### Autoresearch
-Look at comparable assets, extract patterns, and bring back only what is useful.
+Eval-driven autonomous optimization loop. Define eval criteria and a run harness, then iterate — run the artifact on test inputs, score outputs, mutate the prompt or skill, keep improvements, discard regressions. Based on Karpathy's autoresearch methodology. Distinct from Research (one-shot survey) and from generic metric loops like the sibling `autoloop` skill (which targets code metrics such as test coverage or bundle size rather than prompt/skill output quality).
 
 Skill prefix: every skill is named `craft-<verb>`, chosen because it reads naturally as "craft a prompt," "craft a blueprint," etc. The `CraftKit` brand name stays on the repo and documentation; skills use the shorter `craft-` prefix.
 

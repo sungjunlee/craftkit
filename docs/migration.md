@@ -7,7 +7,9 @@ This document records which external assets were considered during migration int
 | Source | Path | Relationship to CraftKit |
 |---|---|---|
 | `prompt-builder` | `harness-stack/prompt-builder/skills/prompt-builder/` | A mature, prompt-focused skill with a 5-step process, 6 building blocks, sharpening checks, platform guides, and concrete templates. |
-| `references/autoresearch` | `harness-stack/references/autoresearch/` | An actual ML training-loop project, not a prompt-authoring asset. Philosophy only. |
+| `jangpm-meta-skills` autoresearch | `https://github.com/byungjunjang/jangpm-meta-skills` (`.agents/skills/autoresearch/`) | A Codex-focused implementation of Karpathy's autoresearch methodology for skill optimization. Primary reference for `craft-autoresearch`. |
+| `autoloop` | `harness-stack/autoloop/skills/autoloop/` | Autonomous improve-measure-keep loop for generic code metrics (coverage, bundle size, lint). Different target than CraftKit autoresearch — sits alongside as a sibling. |
+| `references/autoresearch` | `harness-stack/references/autoresearch/` | An ML training-loop project, not a prompt-authoring asset. Philosophy only. |
 | `references/analysis/` | `harness-stack/references/analysis/` | Comparative analysis docs (get-shit-done, claude-octopus, superpowers, multi-agent patterns, etc.). Context reading, not source material. |
 
 ## Decisions
@@ -18,16 +20,44 @@ An earlier revision of this document kept `prompt-builder` as a separate repo an
 
 The decision was reversed. `prompt-builder` is now absorbed as `skills/craft-prompt/` with its full structure intact:
 
-- `SKILL.md` (renamed from `prompt-builder` to `craft-prompt`, description rewritten to skill-creator-style trigger wording, non-standard `version` and `triggers` frontmatter fields removed)
+- `SKILL.md` (renamed, description rewritten to skill-creator-style trigger wording, non-standard `version` and `triggers` frontmatter fields removed)
 - `guides/` — platform-specific tips (claude, gpt, gemini, perplexity, local-models)
 - `references/` — components guide, prompt patterns, quality checklist
 - `templates/` — session-handoff, system-prompt, image-gen, video-gen
 
 The original `harness-stack/prompt-builder/` repo can now be archived; CraftKit is the canonical home.
 
+### `craft-autoresearch` — eval-driven loop, not prior-art study
+
+The first pass accidentally created a `craft-autoresearch` skill that did "survey comparable assets and extract patterns" — which is prior-art study, not autoresearch. At the same time, a `craft-loop` skill did generic human-in-the-loop iteration. Neither matched Karpathy's autoresearch methodology, which is the eval-driven optimization loop — run the artifact on test inputs, score outputs, mutate the prompt or skill, KEEP improvements, DISCARD regressions.
+
+The two skills were swapped and one was rewritten:
+
+- **`craft-loop` was renamed to `craft-autoresearch`** and its content fully rewritten as an eval-driven loop, adapted from the jangpm `autoresearch` skill. Added `references/eval-guide.md` and `references/mutation-guide.md`.
+- **The original `craft-autoresearch` was renamed to `craft-research`** because "prior-art survey" is accurate for what it does and is distinct from the eval loop.
+
+The rewrite takes from jangpm's autoresearch:
+
+- experiment contract (target, inputs, evals, harness, budget, stop condition)
+- three eval types (binary, comparative, fidelity) and the determinism hierarchy
+- KEEP/DISCARD rules keyed on score movement *and* artifact size
+- mandatory deletion experiments every five iterations to guard against bloat
+- false-positive tracking when eval scores rise but real outputs feel worse
+
+Taken from `harness-stack/autoloop`:
+
+- safety rail on rollback — never `git reset --hard`; roll back only the files touched in the mutation
+- explicit resume model when a previous run folder exists
+
+Deliberate differences from jangpm's version:
+
+- Shorter SKILL.md (skill-creator's <500-line target). Depth pushed into two reference files instead of seven.
+- No dashboard artifact in v1 (platform-specific HTML adds maintenance cost without pulling its weight yet).
+- Clear separation from `autoloop`: CraftKit autoresearch targets prompt and skill *output quality*; `autoloop` targets generic code metrics. They coexist.
+
 ### Provider-specific material is OK inside `craft-prompt`
 
-CraftKit's "core assets stay provider-neutral" rule applies to the five design/critique/improve skills (`craft-blueprint`, `craft-reflect`, `craft-tune`, `craft-loop`, `craft-autoresearch`). `craft-prompt`'s value *is* platform-aware prompt authoring, so its `guides/` directory containing Claude/GPT/Gemini/Perplexity-specific notes is expected and not a violation of the portability principle. The rule is "don't leak provider specifics into the core spine," not "no provider specifics anywhere."
+CraftKit's "core assets stay provider-neutral" rule applies to the design/critique/improve skills (`craft-blueprint`, `craft-reflect`, `craft-tune`, `craft-research`, `craft-autoresearch`). `craft-prompt`'s value *is* platform-aware prompt authoring, so its `guides/` directory containing Claude/GPT/Gemini/Perplexity-specific notes is expected and not a violation of the portability principle. The rule is "don't leak provider specifics into the core spine," not "no provider specifics anywhere."
 
 ### Patterns from `prompt-builder` that also fed the improvement skills
 
@@ -39,15 +69,16 @@ Before the full absorption, a handful of reusable spines were already extracted 
 
 These extractions now sit alongside the full `craft-prompt` skill. Some overlap is fine: an agent using `craft-tune` benefits from the Principles section without having to invoke `craft-prompt`, and vice versa.
 
-### `references/autoresearch`
+### `references/autoresearch` (the ML training-loop project)
 
-- **Philosophy of measured iteration.** The training-loop mindset — baseline, one change, re-evaluate, keep the winner — matches `craft-loop` exactly. Informed the "change one main thing at a time" guardrail. No code ported; this is an ML training project, not a prompt-authoring asset.
+- **Philosophy of measured iteration.** The training-loop mindset — baseline, one change, re-evaluate, keep the winner — is structurally the same idea as `craft-autoresearch`. Informed the "change one main thing at a time" guardrail. No code ported; this is an ML training project, not a prompt-authoring asset.
 
 ## Intentionally not carried over
 
 - **The custom `triggers:` frontmatter field from `prompt-builder`.** Claude Code's skill invocation is driven by the `description` field, not a separate triggers list. The Korean and English triggers previously listed were merged into the `craft-prompt` description so the actual invocation mechanism gets the signal.
 - **The `version:` frontmatter field.** Neither skill-creator nor Claude Code require it, and none of the other CraftKit skills use it. Removed from `craft-prompt` for consistency.
-- **`prompt-builder/refs/*` external reference repos** (claude-code-prompt-improver, claude-skill-prompt-architect, jeffallan-claude-skills, etc.). These are research inputs, not authored assets. They belong in a future `craft-autoresearch` pass rather than being copied into the skill.
+- **`prompt-builder/refs/*` external reference repos** (claude-code-prompt-improver, claude-skill-prompt-architect, jeffallan-claude-skills, etc.). These are research inputs, not authored assets. They belong in a future `craft-research` pass rather than being copied into the skill.
+- **jangpm's dashboard and seven reference files.** The dashboard is useful but platform-specific HTML adds maintenance cost without clear early payoff. The reference files were condensed into two: `eval-guide.md` (eval types, determinism, quality check) and `mutation-guide.md` (mutation levels, deletion discipline). Execution-guide, pipeline-guide, and worked-example material was either folded into `SKILL.md` directly or deferred to real usage.
 
 ## Relationship map
 
@@ -58,19 +89,26 @@ CraftKit (one toolkit)
   ├── craft-blueprint     → design a new prompt or skill structure
   ├── craft-reflect       → critique an existing artifact
   ├── craft-tune          → edit an existing artifact with minimal diff
-  ├── craft-loop          → iterate with small, measured changes
-  └── craft-autoresearch  → study comparable assets and synthesize
+  ├── craft-research      → one-shot prior-art survey and pattern synthesis
+  └── craft-autoresearch  → eval-driven autonomous optimization loop
+
+Sibling:
+  autoloop (separate repo)   → generic code-metric optimization loop
+                               (coverage, bundle size, lint, perf)
 ```
 
-Generation lives next to improvement, so the toolkit covers the full artifact lifecycle inside one repo.
+Generation lives next to improvement, so the toolkit covers the full artifact lifecycle inside one repo. `autoloop` stays separate because its target is code metrics, not prompt/skill output quality.
 
 ## Naming
 
 - Brand name: `CraftKit`.
 - Skill prefix: `craft-` (chosen so skill names read as verb-phrases: "craft a prompt," "craft a blueprint"). The prefix differs from the brand on purpose — `craft-prompt-builder` would be too long, and `craftkit-prompt` is harder to say aloud.
+- `craft-research` vs `craft-autoresearch` — `research` is a one-shot prior-art study; `autoresearch` is the autonomous eval-driven loop. The distinction is called out in both descriptions so the right one triggers.
 - Skill names are orthogonal to any vocabulary inside `craft-prompt` (Role / Context / Task / Rules / Format / Examples), so both can coexist without term overloading.
 
 ## Remaining migration candidates
 
-- `references/analysis/21-multi-agent-patterns.md` and `22-orchestration-patterns.md` — may inform a future `craft-orchestrate` or expanded `craft-loop`, but only after the six current skills have settled through real usage.
-- `prompt-builder/refs/*` — worth a dedicated `craft-autoresearch` pass once real usage reveals gaps in `craft-prompt`.
+- `references/analysis/21-multi-agent-patterns.md` and `22-orchestration-patterns.md` — may inform a future `craft-orchestrate` skill, but only after the six current skills have settled through real usage.
+- `prompt-builder/refs/*` — worth a dedicated `craft-research` pass once real usage reveals gaps in `craft-prompt`.
+- jangpm's `blueprint`, `deep-dive`, and `reflect` skills — worth comparing against the current CraftKit versions in a future iteration. Not a blocker; current skills are coherent on their own terms.
+- Moving the autoresearch run harness from "describe in SKILL.md" to a real Node script (e.g. `scripts/run-experiment.mjs`) once real usage produces a repeatable harness pattern.

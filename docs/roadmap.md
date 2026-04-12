@@ -23,7 +23,7 @@ Deliverables:
 - blueprint
 - reflect
 - tune
-- loop
+- research
 - autoresearch
 - one example per skill
 - failure-mode notes per skill

@@ -30,8 +30,8 @@ All skills use the `craft-` prefix so they read naturally as "craft a prompt," "
 - `craft-blueprint`: turn a rough idea into a structured prompt or skill plan
 - `craft-reflect`: critique a prompt or skill and identify weaknesses
 - `craft-tune`: improve a prompt or skill with targeted edits
-- `craft-loop`: run a small iterative improvement cycle
-- `craft-autoresearch`: study comparable assets and synthesize upgrades
+- `craft-research`: one-shot prior-art study — survey comparable assets and extract patterns
+- `craft-autoresearch`: eval-driven autonomous optimization loop for a prompt or skill (Karpathy-style)
 
 Each skill lives under `skills/<skill-name>/SKILL.md` and follows the Claude Code skill format (YAML frontmatter + markdown body), so it can be loaded as a skill directly or copy-pasted into other agent environments.
 
@@ -71,10 +71,13 @@ Each skill lives under `skills/<skill-name>/SKILL.md` and follows the Claude Cod
 │  │     └─ failure-modes.md
 │  ├─ craft-tune/
 │  │  └─ SKILL.md
-│  ├─ craft-loop/
+│  ├─ craft-research/
 │  │  └─ SKILL.md
 │  └─ craft-autoresearch/
-│     └─ SKILL.md
+│     ├─ SKILL.md
+│     └─ references/
+│        ├─ eval-guide.md
+│        └─ mutation-guide.md
 ├─ prompts/
 │  ├─ 01-bootstrap-repo.md
 │  ├─ 02-port-existing-assets.md
@@ -116,7 +119,9 @@ See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a wal
 
 ## Relationship to other tools
 
-CraftKit bundles both **generation** (`craft-prompt`) and **improvement** (`craft-blueprint`, `craft-reflect`, `craft-tune`, `craft-loop`, `craft-autoresearch`) into one toolkit. It does not replace any specific agent framework — it sits alongside them as a place to design, create, critique, and iterate on the prompt and skill artifacts those frameworks consume.
+CraftKit bundles both **generation** (`craft-prompt`) and **improvement** (`craft-blueprint`, `craft-reflect`, `craft-tune`, `craft-research`, `craft-autoresearch`) into one toolkit. It does not replace any specific agent framework — it sits alongside them as a place to design, create, critique, and iterate on the prompt and skill artifacts those frameworks consume.
+
+For generic code-metric loops (test coverage, bundle size, lint errors), see the sibling [`autoloop`](../autoloop/) repo — `craft-autoresearch` is specifically for optimizing prompt and skill output quality against evals, while `autoloop` targets measurable code properties.
 
 See `docs/migration.md` for what was carried over from prior assets and why the original `prompt-builder` repo was absorbed rather than kept separate.
 

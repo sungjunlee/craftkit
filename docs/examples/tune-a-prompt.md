@@ -11,6 +11,7 @@ Review my code and tell me what to fix. Be thorough.
 ```
 
 The user reports:
+
 - sometimes it returns a wall of nits, other times only two issues
 - it occasionally adds unrelated refactors
 - different agents (Claude vs Codex) give very different outputs
@@ -71,46 +72,37 @@ Return exactly three sections:
 ```
 
 Changelog:
+
 - added explicit scope + non-goal (don't refactor)
 - replaced "thorough" with a capped, ordered output template
 - switched to XML tags for cross-agent portability
 
 Tradeoffs:
+
 - longer prompt (still under 200 tokens)
 - less freedom for the agent to surface unusual issues — mitigated by the "one question" slot
 
-## Step 3 — Loop
+## Step 3 — Autoresearch (optional)
 
-Invoke `craft-loop` with the tuned prompt as baseline. Criteria: *consistent structure, no scope creep, works on both Claude and Codex.* Iteration limit: 2.
+Tune alone usually does most of the work. Reach for `craft-autoresearch` when the prompt is about to be reused across a team and you want to eliminate the remaining "sometimes" failures systematically.
 
-Expected loop log:
+Autoresearch is an eval-driven loop, so it needs three things you did not need for tune:
 
-```text
-Baseline assessment:
-Structure is stable, but the "Top issues" section still varies in granularity.
+1. **A small set of test inputs** — three real code snippets the prompt should review.
+2. **Eval criteria** — for this prompt, e.g. *exactly 3 sections present*, *Top issues ≤ 5*, *every issue cites file:line*, plus one comparative eval: *is this review more actionable than the baseline?*
+3. **A run harness** — the exact command that runs the prompt on each input and captures outputs.
 
-Iteration 1:
-- change: added "one sentence per issue" hint in the template
-- why: agents were writing paragraph-length items, compressing detail unpredictably
-- observed: more consistent length, easier to scan
+With those in place, autoresearch establishes a baseline score, then runs mutation experiments: one bounded change per iteration, rescored, KEEP if it helped, DISCARD otherwise. It stops when the stop condition is hit (e.g. 95% binary pass rate sustained over three kept experiments) or the budget runs out. See `skills/craft-autoresearch/SKILL.md` for the full loop and `references/eval-guide.md` / `references/mutation-guide.md` for the deep detail.
 
-Iteration 2:
-- change: added "cite file:line for each top issue"
-- why: without grounding, issues drifted into generic advice
-- observed: fewer vague comments, each issue now actionable
-```
+If you cannot write evals cheaply, skip this step. Autoresearch pays off at scale; for a one-off prompt, it is overhead.
 
-Stop here — gains have flattened and the prompt is still short.
+## Aside — Research before you start (optional)
 
-## Step 4 — Autoresearch (optional)
-
-If the prompt is going to be reused across a team, invoke `craft-autoresearch`. It's worth the effort only when a handful of comparable prompts already exist in the repo or team wiki. Otherwise skip.
-
-Expected output: a short list of patterns worth adopting (e.g., severity labels, standard review checklists) and patterns to avoid (e.g., hard-coded linter rules that duplicate tooling).
+If several teams in the org already have code-review prompts, run `craft-research` *before* Step 1. It surveys those prompts, extracts patterns worth adopting (common severity labels, standard scope lists), flags patterns to avoid (hard-coded linter rules that duplicate tooling), and feeds the result into the reflect/tune pass. Skip research when there is no prior art to learn from.
 
 ## What to take from this example
 
 - **Reflect before rewriting.** One diagnostic pass usually reveals whether the fix is structural or cosmetic.
 - **Tune with minimal diffs.** The final prompt is recognizable as an evolution of the original, not a replacement.
-- **Loop stops early on purpose.** Two iterations that flatten is a success signal, not a failure to try harder.
-- **Autoresearch is opt-in.** It pays off with scale; for a one-off prompt, it's overhead.
+- **Research is opt-in prior art.** It grounds the design when comparable assets exist.
+- **Autoresearch is opt-in measurement.** It pays off when you have evals and a harness; for a one-off prompt, it is overhead.
