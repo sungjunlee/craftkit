@@ -91,16 +91,17 @@ So before mutating elsewhere, scan the build-step section(s) and ask: *does this
 
 This is a prior, not a law — always let the failing evals and failing outputs lead. But when deciding *where* in `SKILL.md` to intervene, start at the build step.
 
-### Inline illustrative examples inside a build-step tightening are redundant
+### Build-step tightenings should state only NEW demands
 
-When the exp-1 tightening is a spec rewrite at `## Output format`, the declarative prose rule is what carries the score. Inline illustrative examples bundled into the same rewrite — `"e.g., minimal-diff discipline — craft-tune/SKILL.md §Principles"`, fail/pass exemplar pairs inside the subsection paragraph, `## Example`-block alignment edits that repeat what the new spec already demands — are demonstrated redundant across two sessions:
+When the exp-1 tightening is a spec rewrite at `## Output format`, the declarative prose rule of the new demand is what carries the score. Companion material bundled into the same rewrite is demonstrated redundant across three sessions — inline illustrative examples (`"e.g., minimal-diff discipline — craft-tune/SKILL.md §Principles"`), fail/pass exemplar pairs inside the subsection paragraph, `## Example`-block alignment edits that repeat what the new spec already demands, and bullets that re-declare elements already canonicalized in sibling sections of the same skill:
 
 - `craft-tune` (2026-04-12) exp-2 reverted the `## Example`-block changelog-table alignment bundled into exp-1. The spec-level tightening had flipped 5 evals; the Example-block alignment was the cosmetic companion. Deletion held score at 18/18.
 - `craft-research` (2026-04-12) exp-2 stripped the inline illustrative examples (`"e.g., ..."` fragments and fail/pass exemplar pairs) from four tightened subsections while leaving the declarative prose rules intact. Deletion held score at 18/18.
+- `craft-autoresearch` (2026-04-12) exp-2 stripped 4 of 8 bullets in the `## Output format § Experiment contract` rewrite — the bullets that re-declared target / test inputs / budget / stop-condition, elements already canonicalized in Step 1 and § Inputs. Only the 4 NEW quality-commitment bullets (mutable files, evals 4th diagnostic, harness design, first-mutation hypothesis preview) remained. Deletion held score at 18/18.
 
-Practical guidance: first-cut Output-format tightenings should write only the declarative prose rule. If the rule feels like it needs an inline example to be understood, the rule is under-specified — sharpen the rule's category-level naming of what passes and what fails, rather than appending an example. This keeps the exp-1 edit lean and makes the mandatory deletion experiment cheap.
+Practical guidance: first-cut `## Output format` tightenings should write only the NEW declarative rule. If the rule feels like it needs an inline example, an Example-block alignment, or a bullet re-listing elements already named in Step 1 / Inputs / a sibling subsection to be understood, the rule is under-specified — sharpen its category-level naming of what passes and what fails, rather than appending supporting material. This keeps the exp-1 edit lean and makes the mandatory deletion experiment cheap.
 
-Scope of claim: specific to build-step Output-format tightenings for prompt/skill-shaping skills. Does not generalize to all mutation types — Level-2 example mutations are about adding examples, and this observation is about tightenings that already state a rule, not about Example mutations themselves.
+Scope of claim: specific to build-step `## Output format` tightenings for prompt/skill-shaping skills. Does not generalize to all mutation types — Level-2 example mutations are about adding examples, and this observation is about tightenings that already state a rule, not about Example mutations themselves.
 
 ## Anti-patterns
 
