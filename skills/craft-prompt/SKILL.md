@@ -40,6 +40,11 @@ If the user provides rough notes, a conversation dump, or scattered context — 
 
 Compose using these building blocks. **Use only what the prompt needs** — not every prompt needs all blocks.
 
+**Sizing heuristic.** Scale structural complexity to the user's request, not to "what a prompt usually has":
+
+- **Small request (under ~20 words of user specification)** → stop at **Role + Task + Rules** (3 blocks). Add Output format only if the user's request names a specific output shape; add Examples only if desired behavior is genuinely easier to show than describe.
+- **Reusable template** → list every value the user named as varying week-to-week (topic, timeframe, audience, data input, scope) and make each a `{{placeholder}}`. Baking in more than one varying value — e.g. hardcoding the topic *and* the timeframe in a weekly template — under-templates. Fixed values are fine; only varying ones need placeholders.
+
 | Block | When to include |
 |-------|----------------|
 | **Role** | When a specific expertise or perspective improves the output (keep to one sentence) |
