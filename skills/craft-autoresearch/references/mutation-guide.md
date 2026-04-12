@@ -75,6 +75,20 @@ Use this rough order when choosing:
 4. Write down the hypothesis before making the change. "Adding an imperative verb requirement will fix the 3 outputs where recommendations were phrased as questions."
 5. After running, check whether the hypothesis held. A score rise that doesn't match the hypothesis is information — log it.
 
+### Build-step enforcement prior (skill optimizations)
+
+For skill optimizations, the highest-yield Level-1 edit is frequently at the section of `SKILL.md` where the agent actually produces output — the `## Output format` subsection, or the `## Steps` entry that hands off to output. Agents execute the build step and re-read it each invocation; they do not reliably re-activate rules stated in distant conceptual prose.
+
+Three autoresearch sessions against CraftKit skills resolved their dominant failure modes with a single edit at this location:
+
+- `craft-reflect` — rewrote every subsection under `## Output format` to demand the specific signal it should carry (severity tags, consolidation, ordering, distinct-dimension failure modes) instead of just the shape.
+- `craft-prompt` — added a "Sizing heuristic" block to Step 3 "Build the Prompt" converting two conceptual principles (right-size structure to request, list all varying values as placeholders) into concrete structural rules.
+- `craft-blueprint` — tightened `## Output format` to require a drafted `description` frontmatter for skill targets, task-specific purpose clauses, and bounded architectural open questions — all rules previously stated in conceptual sections but unenforced at build time.
+
+So before mutating elsewhere, scan the build-step section(s) and ask: *does this section enforce every quality rule the conceptual sections state?* The answer is frequently no. A single tightening edit there can flip multiple failing evals at once, and the mutations tend to be small and lean.
+
+This is a prior, not a law — always let the failing evals and failing outputs lead. But when deciding *where* in `SKILL.md` to intervene, start at the build step.
+
 ## Anti-patterns
 
 - **Bundling "while I'm in there" edits.** If you see a second thing to fix, note it and run it as the next experiment.
