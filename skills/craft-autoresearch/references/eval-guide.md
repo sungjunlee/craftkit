@@ -8,6 +8,34 @@ Every eval must have a stable scoring rule. Not a 1-7 vibe scale. Not an ungroun
 
 Preferred order: binary pass/fail > comparative win/tie/loss > fidelity pass/fail between pipeline stages.
 
+## If your baseline scores near 100%, your suite is probably too loose
+
+First-time eval suites skew toward *shape* — required sections, item counts, imperative phrasing — because those are the easiest checks to write. The agent following the target skill trivially produces that shape, so the binary suite saturates on the first run. A 100% baseline feels like success; it is almost always a warning that the suite doesn't measure the quality dimensions a real reviewer cares about. Mutating against a saturated suite optimizes noise — the loop cannot learn when every signal sits at ceiling.
+
+**Quick diagnostic — before locking the suite, check:**
+
+- Does the suite have any category beyond Structure and Length?
+- Is there at least one Logic or Comparative assertion?
+- Is there any severity or priority signal anywhere (e.g. ordering, labels, ranked items)?
+
+If two or more answers are "no," assume the suite is shape-only and will saturate.
+
+**Recovery path** (also applies if baseline already came back near 100%):
+
+1. Read 3-5 real outputs from the saturated baseline side-by-side.
+2. Name the quality dimensions the binary evals missed — the things that make one output genuinely better than another even though both "pass."
+3. Add 2-3 new evals targeting those dimensions, at Tier 1-2 where possible (ordering checks, cross-section consistency, presence of severity labels, distinct-dimension checks).
+4. Rebaseline. Proceed to the mutation loop only if the new baseline leaves real room to improve.
+
+**Real example from this repo.** The `autoresearch-craft-reflect` baseline scored 9/9 (100%) on a four-assertion binary suite (five-section structure, ≤5 Issues items, imperative-lead Recommended changes, comparative actionability). Qualitative inspection of the three outputs surfaced four quality gaps the suite missed:
+
+- Recommended-changes items mapped 1:1 to Issues items — no prioritization or consolidation.
+- Minimal-rewrite-plan was a subset of Recommended-changes, not an ordered, prioritized sequence.
+- Failure-modes frequently restated Issues in future tense instead of naming a distinct dimension.
+- No severity or priority labels anywhere in Issues.
+
+See `autoresearch-craft-reflect/research-log.json` for the full direction-shift entry. The fix was to add four new assertions (E5-E8) targeting those dimensions before mutating — not to celebrate the 100%.
+
 ## Eval types
 
 ### Binary evals (pass / fail)

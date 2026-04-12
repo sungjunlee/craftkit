@@ -158,6 +158,7 @@ Exp 3 (DISCARD) is absent — `git reset --soft` + `git restore` removed it from
 - **Deletion is a real mutation level.** Exp 5 held the score while shrinking the artifact — evidence that the deleted paragraph was load-bearing only in the author's imagination.
 - **Comparative evals catch what binary misses.** E3's binary gain in exp 3 was real; E4's comparative loss was the honest signal that the change made the artifact worse on the axis users actually feel.
 - **Stop early.** Six experiments hit the stop condition out of a budget of eight. Burning the remaining two "just in case" would have risked overfitting without upside.
+- **Baseline is a signal, not a score to beat.** This example starts at 58% — leaving clear room for the loop to learn. If your baseline scores near 100%, the suite is probably too loose; see `eval-guide.md` § "If your baseline scores near 100%" before mutating.
 
 ## Simplifications from a real run
 

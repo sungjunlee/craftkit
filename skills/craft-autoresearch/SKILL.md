@@ -42,8 +42,8 @@ If the user provides an `evals.json`, use it directly instead of drafting evals 
 ## Steps
 
 1. **Capture the experiment contract.** Lock in target, inputs, evals, harness, budget, and stop condition *before* running anything. A fuzzy contract produces fuzzy gains — ambiguity at this step compounds with every experiment.
-2. **Design the eval suite.** Prefer deterministic checks (regex, section presence, parse success) over LLM-as-judge. Aim for at least half the suite at Tier 1-2 — see `references/eval-guide.md` for the full determinism hierarchy and quality checks.
-3. **Establish a baseline.** Snapshot the target artifact, run it on every test input through the harness, score every output, record the total in `results.tsv`. No mutation happens before baseline or the gains are unmeasurable.
+2. **Design the eval suite.** Prefer deterministic checks (regex, section presence, parse success) over LLM-as-judge. Aim for at least half the suite at Tier 1-2 — see `references/eval-guide.md` for the full determinism hierarchy and quality checks. First-time suites skew toward Structure/Length only and saturate on baseline; see the Guardrails rule on near-100% baselines and `references/eval-guide.md` § "If your baseline scores near 100%" before locking the suite.
+3. **Establish a baseline.** Snapshot the target artifact, run it on every test input through the harness, score every output, record the total in `results.tsv`. No mutation happens before baseline or the gains are unmeasurable. A near-saturated baseline (≥ 95% binary pass rate) is a signal, not a success — stop and strengthen the suite before mutating. See Guardrails below.
 4. **Run the mutation loop.** For each experiment: analyze failing evals → form one hypothesis → make one bounded change at one mutation level → checkpoint the touched files → run harness → score → KEEP or DISCARD by the rules below → log. See `references/mutation-guide.md` for mutation levels and when each fits.
 5. **Respect rollback safety.** Before each mutation, commit (git-assisted mode) or snapshot (file-checkpoint mode) only the files you are about to touch. DISCARD rolls back only those files — never `git reset --hard`, which would destroy unrelated work in the repo.
 6. **Try deletion every 5th experiment.** Remove recently added rules or examples. If the score holds, keep the deletion. Artifacts that only grow are a smell — bloat hides the real drivers.
@@ -122,6 +122,7 @@ autoresearch-<skill-name>/
 - Deterministic evals first; LLM-as-judge only with a rubric explicit enough that two reviewers would agree.
 - Rollback touches only the files in the mutation — never broad reverts.
 - Autonomy is batch-based. Set a budget and stop condition up front, not "loop forever."
+- **If the baseline binary pass rate is ≥ 95%, do NOT start the mutation loop.** A saturated baseline means the suite only measures output shape, not quality — mutating against it produces noise. Strengthen the evals first: read 3-5 real outputs, name the quality dimensions the suite missed, add 2-3 new Tier 1-2 assertions, rebaseline. See `references/eval-guide.md` § "If your baseline scores near 100%."
 - If eval scores rise but real outputs feel worse, treat it as a false-positive signal: review 10 real outputs and rebuild the evals before continuing.
 
 ## Failure modes
