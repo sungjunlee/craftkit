@@ -171,5 +171,6 @@ Score: 7/12 (58%). Failing: section count varies (3-6); issue count unbounded.
 
 ## References
 
-- `references/eval-guide.md` — Binary, comparative, and fidelity evals; the determinism hierarchy; eval quality check.
+- `references/eval-guide.md` — Binary, comparative, and fidelity evals; the determinism hierarchy; assertion categories; subjective-to-binary decomposition; eval quality check; a prompt template for drafting evals with an agent; `evals.json` schema; false-positive recovery.
 - `references/mutation-guide.md` — Mutation levels (wording, example, structure, principle), when each fits, and the deletion discipline.
+- `references/worked-example.md` — A full illustrative cycle against `craft-reflect` showing baseline, five experiments (including a DISCARD and a deletion), stop condition, and the simplicity judgment behind each KEEP/DISCARD.

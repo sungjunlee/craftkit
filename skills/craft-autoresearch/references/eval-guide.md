@@ -2,67 +2,108 @@
 
 An autoresearch loop is only as good as its evals. If the evals don't measure what you actually care about, the loop will optimize the wrong thing and produce a prompt that scores 100% but feels worse in real use.
 
+## The golden rule
+
+Every eval must have a stable scoring rule. Not a 1-7 vibe scale. Not an ungrounded impression. If two different agents (or reviewers) couldn't score the same output and mostly agree, the rubric is not explicit enough — tighten it before running baseline.
+
+Preferred order: binary pass/fail > comparative win/tie/loss > fidelity pass/fail between pipeline stages.
+
 ## Eval types
 
 ### Binary evals (pass / fail)
 
 Hard rules the output must satisfy. Each binary eval scores 1 for pass, 0 for fail. These are the backbone of autoresearch because they produce stable, reviewer-agnostic scores.
 
-Examples:
-- output contains exactly five H2 sections
-- output is valid JSON
-- output stays under 500 words
-- every recommendation begins with an imperative verb
+Examples: output contains exactly five H2 sections; output is valid JSON; output stays under 500 words; every recommendation begins with an imperative verb.
 
 ### Comparative evals (win / tie / loss)
 
-A/B comparisons on subjective quality dimensions. Each comparative eval scores 1 for win, 0.5 for tie, 0 for loss against a fixed reference (typically the baseline).
+A/B comparisons on subjective quality dimensions. Win = 1, tie = 0.5, loss = 0 against a fixed reference (typically the baseline). Use sparingly — two per suite is usually enough. They require an LLM judge with an explicit rubric, and the judge itself can drift.
 
-Examples:
-- is the review more actionable than the baseline?
-- is the handoff prompt easier to skim?
-- is the reasoning clearer at equal length?
+Examples: is the review more actionable than baseline? is the handoff prompt easier to skim? is the reasoning clearer at equal length?
 
-Use comparative evals sparingly — two per suite is usually enough. They require an LLM judge with an explicit rubric, and the judge itself is a moving part that can drift.
+**Only compare outputs from the same input.** Comparing mutated prompt A on input X against baseline on input Y tells you nothing.
 
-### Fidelity evals (multi-skill only)
+### Fidelity evals (multi-skill pipelines only)
 
-For pipelines of multiple skills, fidelity evals check that stage N's output is consistent with stage N-1's input. Same shape as binary evals (pass/fail), just applied across boundaries.
-
-Examples:
-- `craft-blueprint` output fully covers the user's original request
-- `craft-tune` output preserves all constraints from the reflection step
+Pipeline-stage consistency. Same pass/fail shape as binary, applied across boundaries — e.g. craft-blueprint output fully covers the user's original request; craft-tune output preserves all constraints from the reflect step.
 
 ## Scoring
 
 - Binary pass = 1, fail = 0
 - Comparative win = 1, tie = 0.5, loss = 0
 - Fidelity pass = 1, fail = 0
-- `max_score = sum(eval_weights) × runs_per_experiment`
+- `max_score = Σ(eval_weights) × runs_per_experiment × num_inputs`
 
-Record numerator and denominator, not just a percentage. `11/12` is interpretable; `91.7%` loses the sample-size signal.
+Record numerator and denominator, not just a percentage. `11/12` keeps the sample-size signal that `91.7%` loses.
 
 ## Determinism hierarchy
 
 Prefer the highest-determinism check available. More determinism means more stable scores and less optimization of noise.
 
-### Tier 1 — Deterministic checks
+- **Tier 1 — Deterministic**: regex, required-section presence, file existence, JSON/YAML parse, char/item counts with bounds.
+- **Tier 2 — Structural**: heading hierarchy, table shape, code-block formatting, schema-level structure.
+- **Tier 3 — LLM-as-judge**: tone, usefulness, completeness, quality, or any subjective criterion that cannot be checked programmatically.
 
-- regex match, required section presence, file existence
-- JSON or YAML parse success
-- character or item counts with bounds
+**Target at least half the eval suite at Tier 1 or Tier 2.** If most evals are Tier 3, scores will drift between runs and the loop will chase noise.
 
-### Tier 2 — Structural validation
+## Assertion categories
 
-- heading hierarchy
-- table shape consistency
-- code-block formatting or schema-level structure
+When drafting evals, pull from these six categories. You don't need all six — pick the ones that matter for your skill. This is orthogonal to the determinism hierarchy: "category" is *what* you're checking, "tier" is *how reliably* you can check it.
 
-### Tier 3 — LLM-as-judge
+### Structure
+- Output contains all required sections/headings?
+- Sections in the correct order?
+- Markdown/formatting valid (code blocks, lists, tables)?
 
-- tone, usefulness, completeness, quality, or any subjective criterion that cannot be checked programmatically
+### Length
+- Total length within bounds?
+- Each section within its limit?
+- Sentences/paragraphs within limits?
 
-**Target at least half of the eval suite at Tier 1 or Tier 2.** If most evals are Tier 3, scores will drift between runs and the loop will chase noise.
+### Inclusion
+- Required keywords or terms present?
+- Specific numbers, data points, or examples included?
+- Call-to-action present where required?
+- Rules from reference files reflected in the output?
+
+### Exclusion
+- Banned words/phrases absent? (e.g. synergy, leverage, game-changer)
+- Banned formats absent? (e.g. em dash, emoji)
+- AI-isms absent? ("As an AI...", "I'd be happy to...", "Here's the kicker")
+
+### Format
+- Output file type correct (JSON, Markdown, .docx)?
+- Filename follows naming convention?
+- Metadata/frontmatter complete and correct?
+
+### Logic
+- Input values accurately reflected in output?
+- Calculations correct?
+- External data references accurate?
+
+### Comparative (for any skill with subjective quality)
+- Output better than baseline on one specific dimension (layout appeal, tone consistency, code readability, information hierarchy)?
+
+**How to use**: scan each category and ask "does this apply to my skill?" Extract 3-6 binary checks from Structure/Length/Inclusion/Exclusion/Format/Logic. If your skill has subjective quality, also add 0-2 comparative checks — those push quality beyond rule compliance.
+
+## Turning subjective criteria into binary checks
+
+The hardest part of eval design: your real quality standards *feel* subjective. Here's how to decompose them.
+
+**The technique**: ask *"what would I point to if I had to prove this to someone?"*
+
+| Subjective criterion | Binary decomposition |
+|---|---|
+| "Professional tone" | No emoji + max 1 exclamation mark + no casual contractions (gonna, wanna) |
+| "Well-structured" | 3+ H2 headings + each section has 2+ paragraphs |
+| "References the source material" | Contains 5+ keywords from the reference file |
+| "Engaging opening" | First sentence contains a specific claim, story, or question (not a generic statement) |
+| "Actionable content" | Contains 3+ concrete steps the reader can do today |
+| "Appropriate length" | Total word count between 1500-3000 |
+| "Natural Korean writing" | No em dash + uses ~해요 체 + no direct English loan-phrases where Korean equivalents exist |
+
+**Warning**: you'll never capture 100% of a subjective quality through binary checks — that's OK. The human review phase catches what the evals miss. The goal is to automate the 80% that *is* checkable.
 
 ## Eval quality check
 
@@ -72,15 +113,97 @@ Before locking the suite, run this three-question test on every eval:
 2. Could the artifact game this check without actually becoming better?
 3. Does this check capture something the user actually cares about?
 
-If any answer is weak, tighten or replace the eval before running the baseline. An eval that fails this check will contaminate the rest of the loop.
+If any answer is weak, tighten or replace the eval. An eval that fails this check will contaminate the rest of the loop.
+
+## Drafting evals with an agent
+
+When you're stuck, ask an agent for a draft — but give it the category taxonomy so it doesn't hallucinate structure. Copy-paste template:
+
+```text
+Analyze the SKILL.md below and produce an evals.json file.
+
+Requirements:
+- 3-5 test prompts covering different scenarios (common case, edge case,
+  complex case, previously-failing case, reference-file-required case).
+- 4-6 binary assertions per prompt. Every assertion must be judgeable
+  as true/false.
+- Tag each assertion with a category from: structure, length, inclusion,
+  exclusion, format, logic.
+- Convert any subjective criteria into specific, observable signals using
+  the "what would I point to to prove this?" technique.
+- Optionally add 1-2 comparative assertions for subjective quality.
+- Target at least half the assertions at Tier 1-2 (deterministic or structural).
+
+SKILL.md:
+<paste SKILL.md here>
+```
+
+The agent's draft won't be perfect. Review it against the Eval quality check before running baseline. The human review phase of the main loop will also surface evals that don't work in practice.
+
+## evals.json schema
+
+Structure evals as JSON for reuse and potential automation:
+
+```json
+{
+  "skill_name": "craft-reflect",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this 50-line auth function for bugs and style issues.",
+      "inputs": ["runs/inputs/auth-fn.ts"],
+      "assertions": [
+        {
+          "text": "Output contains exactly five H2 sections: What's working, Issues, Recommended changes, Failure modes, Minimal rewrite plan.",
+          "type": "binary",
+          "category": "structure",
+          "tier": 1,
+          "pass": "All five H2 headings present in order",
+          "fail": "Missing any heading or out of order"
+        },
+        {
+          "text": "Issues section contains at most 5 items.",
+          "type": "binary",
+          "category": "length",
+          "tier": 1
+        },
+        {
+          "text": "Every Recommended change begins with an imperative verb.",
+          "type": "binary",
+          "category": "inclusion",
+          "tier": 2
+        },
+        {
+          "text": "Is the review more actionable than baseline?",
+          "type": "comparative",
+          "category": "comparative",
+          "tier": 3,
+          "rubric": "A review is 'more actionable' when a reader could act on at least 80% of its recommendations without asking clarifying questions."
+        }
+      ]
+    }
+  ]
+}
+```
+
+Design guidelines:
+
+| Field | Recommendation | Reason |
+|---|---|---|
+| Test prompts | 3-5 | Variety without excessive cost |
+| Assertions per prompt | 4-6 | Coverage without overwhelm |
+| Total assertions | 15-30 | Statistically meaningful pass rate |
+| Assertion text | Natural-language yes/no | So an agent grader can judge it |
 
 ## Anti-patterns
 
-- **All-LLM-as-judge suites.** Scores drift, the loop chases noise, and the judge itself becomes a bias.
+- **All-LLM-as-judge suites.** Scores drift, the loop chases noise, the judge becomes a bias.
 - **Evals that encode specific wording.** The skill will overfit to that wording instead of the underlying quality. Prefer principle-level checks.
-- **Hidden-weight scoring.** If some evals matter more, state the weights explicitly. Equal-weight is a valid choice — but make it a *choice*.
-- **No comparative eval at all.** If nothing in the suite captures quality beyond structure, a well-formatted but shallow output scores full marks.
-- **Letting the eval suite grow unbounded.** Every new eval adds noise surface. Six to eight evals cover most skills well.
+- **Hidden-weight scoring.** If some evals matter more, state the weights. Equal-weight is a valid choice — but make it a *choice*.
+- **No comparative eval at all.** If nothing captures quality beyond structure, a well-formatted but shallow output scores full marks.
+- **Unbounded eval count.** Every new eval adds noise surface. Six to eight evals cover most skills well; more than ten usually means you're over-specifying.
+- **Overfitting evals (teaching to the test).** If evals are too specific to the test inputs, the skill gets better at those scenarios and worse at everything else. Write evals at the principle level, not the micro-rule level.
+- **Overlapping evals.** "Is it grammatically correct?" + "Any spelling errors?" double-counts. Each eval should test something distinct.
 
 ## When the scores look fine but real use does not
 
@@ -89,7 +212,9 @@ This is the false-positive scenario. The loop has optimized for the evals, not t
 1. Collect 10+ real outputs from the accepted version.
 2. For each, note whether it feels genuinely better than baseline.
 3. Where the evals said "pass" but the output feels worse, identify the quality dimension the evals missed.
-4. Add or replace evals to cover that dimension.
+4. Add or replace evals to cover that dimension. Tag the new evals with `"source": "false-positive-correction"` so the history is readable.
 5. Re-run from a fresh baseline.
 
-False-positive tracking is part of a healthy autoresearch cycle, not a failure mode. The first eval suite is almost always incomplete.
+False-positive tracking is part of a healthy autoresearch cycle, not a failure mode. The first eval suite is almost always incomplete; that's fine as long as you keep revising it against real outputs.
+
+**When to run the check**: after 10+ real-world outputs with performance signal, or monthly — not after every experiment. Account for external factors (seasonal changes, model upgrades).
