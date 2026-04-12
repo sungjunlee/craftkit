@@ -17,8 +17,9 @@ First-time eval suites skew toward *shape* — required sections, item counts, i
 - Does the suite have any category beyond Structure and Length?
 - Is there at least one Logic or Comparative assertion?
 - Is there any severity or priority signal anywhere (e.g. ordering, labels, ranked items)?
+- For each Logic or Comparative eval you drafted, can you name a concrete output the skill-as-written would plausibly produce that *fails* this check? Not "an output could fail" in principle — an output you actually expect the agent to generate from the baseline spec.
 
-If two or more answers are "no," assume the suite is shape-only and will saturate.
+If two or more of the first three answers are "no," or the fourth question has no plausible failing output for any Logic eval you wrote, assume the suite is shape-only and will saturate. The first three catch missing categories; the fourth catches loose thresholds inside the right category. A Logic eval phrased as "≥1 dimension named" passes all category tests but still saturates if the skill always names ≥1 — the real quality bar might have been "≥2," or a different dimension entirely.
 
 **Recovery path** (also applies if baseline already came back near 100%):
 
@@ -35,6 +36,8 @@ If two or more answers are "no," assume the suite is shape-only and will saturat
 - No severity or priority labels anywhere in Issues.
 
 The fix was to add four new assertions targeting those dimensions before mutating — not to celebrate the 100%. After strengthening, the same baseline dropped to 43% on the new suite and a single Level-1 mutation (tightening the Output-format subsection descriptions) flipped it to 100%, confirmed by a deletion experiment that held score while shortening the spec.
+
+A second instance followed 2026-04-12 on `craft-prompt`: a six-assertion suite (structure + two exclusion + two logic + inclusion) saturated at 18/18 across three inputs even though the first three diagnostic questions all passed. The loose spots were two Logic evals phrased as "≥1 dimension named" and "at least one placeholder" — the skill as-written always produced ≥1 of each. The quality bars that actually mattered were proportionality (≤4 blocks for small requests, not 6) and breadth (≥2 placeholders for reusable templates, not 1). Adding E8/E9 at those stricter thresholds dropped the baseline to 22/24 (91.7%); a single Level-1+3 mutation (a new "Sizing heuristic" block in the skill's Build step) flipped both failing evals, and a deletion experiment at exp-2 confirmed the rule is lean. This second instance motivated the fourth diagnostic question above.
 
 ## Eval types
 
