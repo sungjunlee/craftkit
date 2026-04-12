@@ -102,18 +102,24 @@ What to run next if the user wants more, or which evals to sharpen.
 
 ## Artifact layout
 
+Run artifacts live in `~/.craftkit/`, not in the target repo. This keeps `git status` clean, makes runs worktree-agnostic, and avoids accumulating audit dirs in the project being tuned. Findings that justify a spec change belong in the commit message body, not in committed run artifacts.
+
 ```text
-autoresearch-<skill-name>/
-├── run-harness.md      # exact harness and contract
+~/.craftkit/autoresearch/<skill-name>/<YYYY-MM-DD-slug>/
+├── run-harness.md      # exact harness and contract for this session
+├── evals.json          # eval suite used
 ├── results.tsv         # one row per experiment
 ├── changelog.md        # mutation rationale + human insights
 ├── research-log.json   # direction shifts only, not every edit
-├── <target>.baseline   # backup of the starting artifact
+├── <target>.baseline   # backup of the starting artifact at session start
 └── runs/
+    ├── inputs/
     ├── baseline/
     ├── exp-1/
     └── ...
 ```
+
+The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prevents collisions when the same skill is tuned in multiple sessions and gives each session a human-readable anchor. See `~/.craftkit/README.md` for the full convention, including when to copy findings back into the repo (almost never — quote the finding inline in the doc or commit message instead).
 
 ## Guardrails
 

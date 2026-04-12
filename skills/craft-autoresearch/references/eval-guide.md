@@ -27,14 +27,14 @@ If two or more answers are "no," assume the suite is shape-only and will saturat
 3. Add 2-3 new evals targeting those dimensions, at Tier 1-2 where possible (ordering checks, cross-section consistency, presence of severity labels, distinct-dimension checks).
 4. Rebaseline. Proceed to the mutation loop only if the new baseline leaves real room to improve.
 
-**Real example from this repo.** The `autoresearch-craft-reflect` baseline scored 9/9 (100%) on a four-assertion binary suite (five-section structure, ≤5 Issues items, imperative-lead Recommended changes, comparative actionability). Qualitative inspection of the three outputs surfaced four quality gaps the suite missed:
+**Real example.** A first-pass autoresearch run against `craft-reflect` scored 9/9 (100%) on a four-assertion binary suite (five-section structure, ≤5 Issues items, imperative-lead Recommended changes, comparative actionability). Qualitative inspection of the three outputs surfaced four quality gaps the suite missed:
 
 - Recommended-changes items mapped 1:1 to Issues items — no prioritization or consolidation.
 - Minimal-rewrite-plan was a subset of Recommended-changes, not an ordered, prioritized sequence.
 - Failure-modes frequently restated Issues in future tense instead of naming a distinct dimension.
 - No severity or priority labels anywhere in Issues.
 
-See `autoresearch-craft-reflect/research-log.json` for the full direction-shift entry. The fix was to add four new assertions (E5-E8) targeting those dimensions before mutating — not to celebrate the 100%.
+The fix was to add four new assertions targeting those dimensions before mutating — not to celebrate the 100%. After strengthening, the same baseline dropped to 43% on the new suite and a single Level-1 mutation (tightening the Output-format subsection descriptions) flipped it to 100%, confirmed by a deletion experiment that held score while shortening the spec.
 
 ## Eval types
 

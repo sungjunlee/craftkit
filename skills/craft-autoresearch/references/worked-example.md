@@ -6,7 +6,7 @@ A walk-through of a full autoresearch cycle against a real CraftKit skill. **Thi
 
 - **Target skill**: `skills/craft-reflect/SKILL.md`
 - **Motivation**: review outputs are inconsistent between Claude Code and Codex; section counts drift, issue lists run long, some recommendations come back as questions.
-- **Test inputs** (three realistic review prompts stored in `autoresearch-craft-reflect/runs/inputs/`):
+- **Test inputs** (three realistic review prompts stored in `~/.craftkit/autoresearch/craft-reflect/<session>/runs/inputs/`):
   1. **Short**: a 15-line auth function with a subtle off-by-one bug
   2. **Medium**: a CI config file with three issues of different severity
   3. **Long**: a 150-line React component mixing concerns
@@ -163,6 +163,6 @@ Exp 3 (DISCARD) is absent — `git reset --soft` + `git restore` removed it from
 ## Simplifications from a real run
 
 - Running and judging E4 requires an explicit rubric and, ideally, a fixed judge model. See `eval-guide.md` § "Drafting evals with an agent" and `eval-guide.md` § "The golden rule."
-- A Node run harness (`scripts/run-experiment.mjs`) would take the three inputs × two runs automatically. This example assumes the runs are invoked manually and outputs saved by hand into `autoresearch-craft-reflect/runs/exp-N/<input-id>/`.
+- A Node run harness (`scripts/run-experiment.mjs`) would take the three inputs × two runs automatically. This example assumes the runs are invoked manually and outputs saved by hand into `~/.craftkit/autoresearch/craft-reflect/<session>/runs/exp-N/<input-id>/`.
 - The full artifact layout (`results.tsv`, `changelog.md`, `research-log.json`, `run-harness.md`) is referenced but not shown — see the SKILL.md § "Artifact layout" for the folder shape.
 - Real runs will see more noise in Tier 3 evals than this example shows. Plan for it — run three times instead of two if the comparative evals feel jittery.
