@@ -1,0 +1,86 @@
+{
+  "experiment": "baseline",
+  "skill_lines": 100,
+  "folder_lines": 191,
+  "reviews": [
+    {
+      "input_id": "short",
+      "evals": [
+        {
+          "id": "E1",
+          "text": "Exactly five subsections in order.",
+          "passed": true,
+          "evidence": "All five required H3 subsections present in exact order: What is working, Issues, Recommended changes, Failure modes, Minimal rewrite plan."
+        },
+        {
+          "id": "E2",
+          "text": "Issues subsection ≤ 5 items.",
+          "passed": true,
+          "evidence": "Issues has 5 numbered items."
+        },
+        {
+          "id": "E3",
+          "text": "Every Recommended change starts with imperative verb.",
+          "passed": true,
+          "evidence": "Leads: Replace, Surface, Replace, Cap, Add. All imperative."
+        }
+      ],
+      "score": "3/3"
+    },
+    {
+      "input_id": "medium",
+      "evals": [
+        {
+          "id": "E1",
+          "text": "Exactly five subsections in order.",
+          "passed": true,
+          "evidence": "All five required H3 subsections present in order."
+        },
+        {
+          "id": "E2",
+          "text": "Issues subsection ≤ 5 items.",
+          "passed": true,
+          "evidence": "Issues has 5 numbered items."
+        },
+        {
+          "id": "E3",
+          "text": "Every Recommended change starts with imperative verb.",
+          "passed": true,
+          "evidence": "Leads: Add, Reformat, Cap, Add, State. All imperative."
+        }
+      ],
+      "score": "3/3"
+    },
+    {
+      "input_id": "long",
+      "evals": [
+        {
+          "id": "E1",
+          "text": "Exactly five subsections in order.",
+          "passed": true,
+          "evidence": "All five required H3 subsections present in order."
+        },
+        {
+          "id": "E2",
+          "text": "Issues subsection ≤ 5 items.",
+          "passed": true,
+          "evidence": "Issues has 5 numbered items."
+        },
+        {
+          "id": "E3",
+          "text": "Every Recommended change starts with imperative verb.",
+          "passed": true,
+          "evidence": "Leads: Merge, Move, Gate, Promote, Reduce. All imperative."
+        }
+      ],
+      "score": "3/3"
+    }
+  ],
+  "total_score": "9/9",
+  "percentage": 100,
+  "qualitative_notes": [
+    "Baseline saturates the binary eval suite. The score does not mean craft-reflect is perfect — it means the evals only check output shape and the agent trivially produces that shape when following SKILL.md.",
+    "Reviewing the three outputs qualitatively reveals real weaknesses the evals do not catch: (a) Recommended-changes items map 1:1 to Issues items, so there is no prioritization or consolidation; (b) Minimal rewrite plan is a subset of Recommended changes rather than a prioritized sequence; (c) Failure modes frequently restate Issues in future tense rather than adding a distinct dimension; (d) no severity or priority labels anywhere.",
+    "This is the 'false positive' scenario described in references/eval-guide.md § 'When the scores look fine but real use does not.' The eval suite needs to be strengthened before a mutation loop can produce meaningful signal."
+  ]
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "iteration": 0,
+    "when": "2026-04-12",
+    "type": "scope-correction",
+    "finding": "Initial test inputs were code files (TypeScript, YAML, TSX), but craft-reflect's declared scope is 'prompt or skill' artifacts.",
+    "consequence": "A poor baseline would have been unattributable — skill weakness vs scope mismatch would be indistinguishable.",
+    "action": "Replaced inputs with scope-appropriate artifacts: a vague prompt, craft-blueprint SKILL.md, craft-prompt SKILL.md.",
+    "rationale": "An autoresearch baseline is only trustworthy when inputs match the target skill's declared scope. This kind of mismatch is the first thing to check before any metric is meaningful."
+  },
+  {
+    "iteration": 0,
+    "when": "2026-04-12",
+    "type": "eval-suite-gap",
+    "finding": "Baseline scored 9/9 (100%) on the binary eval suite. Qualitative inspection of the three outputs reveals real quality gaps the binary suite does not measure: Recommended-changes and Issues are 1:1 mapped (no prioritization); Minimal-rewrite-plan is a subset of Recommended-changes rather than an ordered sequence; Failure-modes frequently restate Issues; no severity labels.",
+    "consequence": "Mutating against a saturated eval suite would produce noise. The loop cannot learn when all signal is at ceiling.",
+    "action": "Before running any mutation, extend the eval suite with assertions that target the gaps: (E5) Recommended-changes items are at a different granularity or consolidation level from Issues; (E6) Minimal-rewrite-plan is an ordered, prioritized sequence, not a subset of Recommended-changes; (E7) Failure-modes names distinct dimensions, not future-tense rephrasings of Issues; (E8) an explicit severity or priority signal is present in Issues.",
+    "rationale": "This is the 'false positive' scenario documented in references/eval-guide.md § 'When the scores look fine but real use does not.' Validates that the false-positive guidance is correct — but also flags that the eval suite authored up-front was too shape-focused. A future refinement to eval-guide.md should warn that a near-100% baseline on the first pass usually means the suite is too loose, not that the skill is perfect."
+  }
+]
