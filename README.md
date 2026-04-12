@@ -124,4 +124,6 @@ See `docs/migration.md` for what was carried over from prior assets and why the 
 
 ## Status
 
-This repository is currently in bootstrap phase.
+All six skills have been optimized through `craft-autoresearch` passes against eval suites, including `craft-autoresearch` itself (reflexive meta-pass). Each session's baseline → kept-state scores and the mutation rationale live in the relevant commit body; run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
+
+The skill spines are stable. Further tuning will come from real usage surfacing fresh failing outputs — rerun `craft-autoresearch` against a skill whenever its outputs stop matching the quality bar.
