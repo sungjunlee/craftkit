@@ -37,18 +37,22 @@ Minimal-diff tuning matters because full rewrites lose hard-won context: the phr
 ## Output format
 
 ### Intent preserved
-One short paragraph describing the original job that remains intact.
+One short paragraph naming the original artifact's concrete job in task-specific terms — reference a detail a reader could use to guess what the input was about. "The original job remains intact" or "improves the existing prompt" fails the bar.
 
 ### Revised artifact
-The updated prompt or skill.
+The updated prompt or skill. Every substantive change must serve the stated target improvement; no "while I'm in there" additions. When cutting content, cut in the Principle 3 order (verbose role → restated context → hedging) and preserve examples, success criteria, and output-format rules.
 
 ### Changelog
-- changed
-- why it changed
-- expected effect
+One entry per distinct change. Every entry names all three fields — not just "changed":
+
+- **changed** — what was edited (added / removed / rewrote)
+- **why** — the specific failure or gap this edit fixes
+- **effect** — the behavior change a reader should expect
+
+Use a list-of-groups per entry, or a three-column table. A bare bullet naming only the change fails the spec; bundling unrelated changes into one entry fails the spec.
 
 ### Tradeoffs
-Short note on anything that improved at the expense of something else.
+Name at least one concrete cost with a direction (length ↑, flexibility ↓, specificity ↑, adaptability ↓). "No tradeoffs" is acceptable only when paired with a one-line justification of why the edit carries no cost; vague acknowledgments ("small tradeoff in clarity") fail.
 
 ## Guardrails
 
