@@ -1,7 +1,6 @@
 ---
 name: craft-handoff
-description: Wrap up the current session and produce a copy-paste-ready continuation prompt for the next session. Gathers git state inline, distills decisions and blockers from the conversation, writes the prompt to ~/.craftkit/handoff/pending.md, and copies it to the clipboard. Use this when the user wants to end a session cleanly, asks for a "handoff prompt," says "wrap up," "session handoff," "next session으로 넘겨," "핸드오프 만들어," "세션 정리해" — or anytime before running /clear.
-allowed-tools: Bash(git *) Bash(mkdir *) Bash(bash *) Bash(node *) Bash(cat *) Bash(test *) Bash(rm *) Read Write
+description: Wrap up the current session and produce a copy-paste-ready continuation prompt for the next session. Gathers git state, distills decisions and blockers from the conversation, writes the prompt to ~/.craftkit/handoff/pending.md, and copies it to the clipboard. Use this when the user wants to end a session cleanly, asks for a "handoff prompt," says "wrap up," "session handoff," "next session으로 넘겨," "핸드오프 만들어," "세션 정리해" — or anytime before running /clear.
 ---
 
 # craft-handoff
@@ -29,15 +28,25 @@ Skip when the session was a quick Q&A with no state worth carrying.
 
 ## Inputs
 
-Auto-collected (via inline shell — runs before this skill body is read):
+Auto-collected via the gather script. Run it from anywhere inside the worktree using the agent's shell:
 
-- Branch: !`git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "(not a git repo)"`
-- Status: !`git status --short 2>/dev/null | head -40`
-- Diffstat: !`git diff --stat 2>/dev/null | tail -20`
-- Recent commits: !`git log --oneline -8 2>/dev/null`
-- Worktree root: !`git rev-parse --show-toplevel 2>/dev/null || pwd`
+```bash
+node <skill-dir>/scripts/gather-state.mjs
+```
 
-Drawn from the conversation (you must extract these — the shell can't):
+`<skill-dir>` is wherever this skill is installed (your runtime knows the path). The script prints worktree root, branch, short status, diffstat, and recent commits. Read the output before composing.
+
+If Node isn't available, fall back to the equivalent commands:
+
+```bash
+git rev-parse --show-toplevel
+git rev-parse --abbrev-ref HEAD
+git status --short | head -40
+git diff --stat | tail -20
+git log --oneline -8
+```
+
+Drawn from the conversation (you must extract these — no script can):
 
 - **Done** — what was actually accomplished this session (not what was attempted)
 - **Decisions** — non-obvious choices with their rationale ("chose X because Y"). Skip if none.
@@ -50,7 +59,7 @@ Optionally ask the user (one terse question, only if genuinely ambiguous): which
 
 ### Step 1 — Gather
 
-The inline shell blocks above already populated git state. Read it. Then scan the conversation for done / decisions / blockers / next. If a section has nothing real, omit it — empty headers add noise.
+Run `node <skill-dir>/scripts/gather-state.mjs` (or the fallback commands in §Inputs). Read its output. Then scan the conversation for done / decisions / blockers / next. If a section has nothing real, omit it — empty headers add noise.
 
 ### Step 2 — Distill
 
@@ -104,17 +113,14 @@ Success criteria:
 
 ### Step 4 — Persist + copy
 
-Run these in order. Replace `<<<PROMPT>>>` with the composed XML block.
+1. Use your agent's file-write tool to write the composed XML block to `~/.craftkit/handoff/pending.md`. Create the directory first if needed (`mkdir -p ~/.craftkit/handoff`). Writing through the file tool avoids heredoc-EOF collisions when the prompt body contains shell metacharacters.
+2. Copy it to the clipboard:
 
 ```bash
-mkdir -p ~/.craftkit/handoff
-cat > ~/.craftkit/handoff/pending.md <<'HANDOFF_EOF'
-<<<PROMPT>>>
-HANDOFF_EOF
-bash "${CLAUDE_SKILL_DIR}/scripts/copy-clipboard.sh" < ~/.craftkit/handoff/pending.md
+bash <skill-dir>/scripts/copy-clipboard.sh < ~/.craftkit/handoff/pending.md
 ```
 
-The clipboard wrapper auto-detects the platform (`pbcopy` → `wl-copy` → `xclip` → `xsel` → `clip.exe`). If none are available it exits non-zero and prints to stderr — surface that to the user.
+The wrapper auto-detects the platform (`pbcopy` → `wl-copy` → `xclip` → `xsel` → `clip.exe`). If none are available it exits non-zero and prints to stderr — surface that to the user. The file write still succeeded; the user can `cat` it manually.
 
 ### Step 5 — Inform
 
@@ -149,7 +155,9 @@ Do not summarize what you put in the prompt — the user can read it. Do not add
 
 The wrapper script tries them in that order. If your system has none, the prompt is still saved to `~/.craftkit/handoff/pending.md` — you can `cat` it manually.
 
-## Auto-load on /clear (optional)
+## Auto-load on `/clear` (Claude Code only, optional)
+
+This is a Claude-Code-specific convenience — skip on Codex or other agents (the clipboard step above is the cross-agent path).
 
 `/clear` itself can't be invoked from a skill — built-in commands are not exposed to the Skill tool. But a `SessionStart` hook with `matcher: "clear"` *can* inject `additionalContext` into the post-clear session. That's the bridge.
 
