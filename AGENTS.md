@@ -62,7 +62,7 @@ description: <one line on what it does + explicit trigger contexts>
 
 ## Preferred workflow
 
-1. Read `README.md`, `docs/product.md`, and the relevant skill files.
+1. Read `README.md` and the relevant skill files.
 2. Draft or update the target skill in markdown.
 3. Normalize headings and output format.
 4. Add an example and a failure-mode note.
@@ -84,6 +84,16 @@ These conventions apply across every CraftKit skill and example, so they live he
 - **XML tags travel best.** When a prompt or skill has multiple sections, XML tags (`<context>`, `<task>`, `<rules>`) parse reliably across Claude, GPT, and Gemini. Plain markdown is fine for simple, single-section artifacts.
 - **Tag names stay in English.** If the artifact body is non-English, keep tag names and structural labels in English — all major providers parse English tags regardless of content language.
 - **No provider-specific tool names in the skill spine.** Describe the capability, not the tool. Provider-specific wording can live in examples or in platform-specific sub-resources (like `craft-prompt/guides/` which contains Claude/GPT/Gemini/Perplexity-specific tips), but not in the main body of a skill.
+
+## craft-autoresearch workflow
+
+- Run artifacts go to `~/.craftkit/autoresearch/<skill>/<YYYY-MM-DD-slug>/` — **outside the repo**. Never commit run artifacts.
+- Only kept mutations (the skill files themselves) land in git. Finding prose goes in the commit message body.
+- For `craft-autoresearch` itself, `SKILL.md` and `references/*.md` are one unit — include related reference updates in the same commit.
+
+## Commit prefixes
+
+`improve(<skill>)` for SKILL.md tuning · `docs(<skill>)` for reference updates · `refactor(<skill>)` for structural moves · `chore:` for cleanup.
 
 ## Non-goals for the bootstrap phase
 

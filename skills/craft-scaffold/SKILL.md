@@ -111,7 +111,7 @@ Create a cross-agent tuning skill that revises existing prompts with small, expl
 
 **Files to create or update**
 - `skills/craft-tune/SKILL.md`
-- `docs/product.md`
+- `README.md` (add a row to the skill table)
 
 **Open questions**
 - Should examples live inside each skill file or in a shared examples folder?
