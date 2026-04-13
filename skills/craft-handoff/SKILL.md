@@ -134,11 +134,7 @@ Tell the user:
 
 1. ✅ "Copied to clipboard. Saved to `~/.craftkit/handoff/pending.md`."
 2. Show the prompt in a fenced code block so they can verify.
-3. Next-step instructions (pick the right one):
-   - **Manual flow** (default): "Run `/clear`, then paste."
-   - **Auto-load flow** (if user has installed the SessionStart hook): "Run `/clear` — it will auto-load."
-
-Add one line: *"To enable auto-load on `/clear`, see `references/auto-load-hook.md`."* — only if user hasn't already installed it.
+3. "Run `/clear`, then paste." (You can't tell from inside the skill whether the optional SessionStart hook is installed — always give the manual instruction. Append a single pointer line: *"On Claude Code, you can skip the paste step by installing the SessionStart hook — see `references/auto-load-hook.md`."*)
 
 ## Output format
 
@@ -172,9 +168,12 @@ See `references/auto-load-hook.md` for the one-time installation (settings.json 
 ## Failure modes
 
 - **Empty handoff**: skill ran on a no-state session. Tell the user there's nothing to hand off and skip the file write.
+- **Outside a git repo**: `gather-state.mjs` reports `(not a git repo)` for branch and `(clean)` for status. Drop the State block from the composed prompt and lean on the conversation-derived sections.
+- **Multi-subtask session**: the conversation covered several unrelated threads. Don't merge them into one Next — ask the user which thread to carry forward, or pick the most recently active one and say so explicitly in the prompt body.
 - **Stale pending.md**: a previous handoff was never consumed. Overwrite without asking — the new state supersedes.
-- **Auto-load injects when not wanted**: user ran `/clear` to truly reset, but pending.md was lurking. Mitigation in the hook script: it deletes pending.md after injection (one-shot). For manual cleanup: `rm ~/.craftkit/handoff/pending.md`.
-- **Bloated prompt**: token budget blown. Cut decisions first, then state details, never the next-step block.
+- **Bloated prompt**: token budget blown. Trim *before* writing — cut decisions first, then state details, never the next-step block. If still over budget after trimming, call it out to the user instead of silently truncating.
+- **Auto-load injects when not wanted** (Claude Code only): user ran `/clear` to truly reset, but `pending.md` was lurking. The hook script deletes the file after injection (one-shot). Manual cleanup: `rm ~/.craftkit/handoff/pending.md`.
+- **Malformed `settings.json` after manual hook install** (Claude Code only): the hook silently fails to fire. Validate the JSON (`node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.claude/settings.json','utf-8'))"`) and check `~/.claude/logs/` if available.
 
 ## Example
 
