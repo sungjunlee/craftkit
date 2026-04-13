@@ -4,9 +4,17 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Added
+
+- `## Prior art` section in README crediting the three projects CraftKit grew out of: `sungjunlee/prompt-builder` (predecessor — its prompt-authoring asset was absorbed into `craft-prompt`), `karpathy/autoresearch` (ML training-loop project that introduced the autoresearch methodology), and `byungjunjang/jangpm-meta-skills` (Codex-focused autoresearch implementation that contributed patterns to `craft-autoresearch`).
+
+### Changed
+
+- `skills/craft-autoresearch/SKILL.md` § Purpose — Karpathy credit now links to the source [`karpathy/autoresearch`](https://github.com/karpathy/autoresearch) repo, not just "the methodology."
+
 ### Removed
 
-- `docs/migration.md` — internal history of how CraftKit absorbed earlier assets (`prompt-builder`, `craft-loop`, etc.) and renamed pre-v0.1.0 skills. The file served as a design diary during bootstrap; for a public reader it was noise. External attribution that previously lived here (the `jangpm-meta-skills` autoresearch implementation that informed `craft-autoresearch`'s spine) is now credited inline in `skills/craft-autoresearch/SKILL.md`.
+- `docs/migration.md` — internal history of how CraftKit absorbed earlier assets (`prompt-builder`, `craft-loop`, etc.) and renamed pre-v0.1.0 skills. The file served as a design diary during bootstrap; for a public reader it was noise. External attribution that previously lived here (the `jangpm-meta-skills` autoresearch implementation that informed `craft-autoresearch`'s spine) is now credited inline in `skills/craft-autoresearch/SKILL.md` and listed in the new README `## Prior art` section.
 
 ## [0.1.1] — 2026-04-13
 

@@ -130,6 +130,12 @@ See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a wal
 
 For generic code-metric loops (test coverage, bundle size, lint errors), see the sibling [`autoloop`](https://github.com/sungjunlee/autoloop) repo — `craft-autoresearch` is specifically for optimizing prompt and skill output quality against evals, while `autoloop` targets measurable code properties.
 
+## Prior art
+
+- [`sungjunlee/prompt-builder`](https://github.com/sungjunlee/prompt-builder) — predecessor project. Its mature prompt-authoring asset (5-step process, 6 building blocks, platform guides, templates) was absorbed wholesale into `craft-prompt`. Kept on GitHub for reference; new work happens here.
+- [`karpathy/autoresearch`](https://github.com/karpathy/autoresearch) — Andrej Karpathy's ML training-loop project that introduced the autoresearch methodology (give an agent a baseline, let it experiment overnight, keep what improves, discard what doesn't). `craft-autoresearch` adapts that loop discipline to prompt and skill artifacts instead of model training code.
+- [`byungjunjang/jangpm-meta-skills`](https://github.com/byungjunjang/jangpm-meta-skills) — Codex-focused implementation of autoresearch for skill optimization. Contributed implementation patterns (experiment contract shape, three-eval-type taxonomy, deletion discipline) that `craft-autoresearch` builds on.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
