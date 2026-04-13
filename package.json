@@ -1,6 +1,6 @@
 {
   "name": "craftkit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Cross-agent toolkit for prompts and coding-agent skills",
   "license": "MIT",
   "author": "Sungjun Lee",

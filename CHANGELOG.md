@@ -1,0 +1,35 @@
+# Changelog
+
+All notable changes to CraftKit are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); CraftKit adheres to [Semantic Versioning](https://semver.org/).
+
+## [0.1.1] — 2026-04-13
+
+### Changed
+
+- **Renamed three skills** for clearer invocation semantics and to end a root-word collision:
+  - `craft-reflect` → **`craft-critique`** — matches what users actually type ("critique this," "review this") instead of the softer, more ambiguous "reflect."
+  - `craft-research` → **`craft-survey`** — ends the root-word collision with `craft-autoresearch`, which does eval-driven optimization (not prior-art research). Distinct verbs now signal distinct skills.
+  - `craft-blueprint` → **`craft-scaffold`** — matches the established programming "scaffolding" metaphor used by frameworks like Rails and Yeoman.
+- In-body terminology in the three renamed skills was updated to match (e.g. `### Blueprint` → `### Scaffold`, `Reflecting before rewriting` → `Critiquing before rewriting`, `Research target` → `Survey target`). Output-format rules and eval-driven scoring behavior are unchanged.
+- Cross-references updated throughout `craft-autoresearch` (SKILL.md and its `eval-guide.md` / `mutation-guide.md` / `worked-example.md`), README, AGENTS.md, `docs/product.md`, `docs/roadmap.md`, `docs/examples/tune-a-prompt.md`, `docs/migration.md`, and the plugin marketplace manifest.
+
+### Migration
+
+If you referenced the old skill names in your own setup, update to the new names. There is no compat shim — the directories and frontmatter `name:` fields are the authoritative trigger mechanism, and the `description:` fields still include the old trigger words (e.g. "blueprint," "reflect," "research") as aliases so natural-language invocation keeps working.
+
+## [0.1.0] — 2026-04-13
+
+Initial public-ready release.
+
+### Added
+
+- Six `craft-*` skills for prompt and skill authoring: `craft-prompt` (generate), `craft-blueprint` (design), `craft-reflect` (critique), `craft-tune` (edit), `craft-research` (prior-art survey), `craft-autoresearch` (eval-driven optimization loop).
+- All six skills optimized through `craft-autoresearch` eval-driven passes against scored rubrics. Baseline → kept-state scores and mutation rationale live in the commit history.
+- Claude Code plugin manifest at `.claude-plugin/marketplace.json` — installable via `/plugin marketplace add` and `/plugin install craftkit@craftkit`.
+- `npx skills` compatibility — installable via `npx skills add sungjunlee/craftkit`.
+- `AGENTS.md` with shared conventions (Node-first tooling, XML-tag structure, English tag names, no provider-specific tool names in skill spines).
+- `docs/product.md`, `docs/roadmap.md`, `docs/migration.md`, `docs/examples/tune-a-prompt.md`.
+- MIT license.
+
+[0.1.1]: https://github.com/sungjunlee/craftkit/releases/tag/v0.1.1
+[0.1.0]: https://github.com/sungjunlee/craftkit/releases/tag/v0.1.0
