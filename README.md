@@ -10,7 +10,7 @@ Prompt assets and agent skills often become fragmented, provider-specific, and h
 
 ## Install
 
-All six skills install as [Claude Code custom slash commands](https://docs.anthropic.com/en/docs/claude-code/skills).
+All seven skills install as [Claude Code custom slash commands](https://docs.anthropic.com/en/docs/claude-code/skills).
 
 ### Via npx skills
 
@@ -43,7 +43,7 @@ npx skills add . -g -y
 
 For Codex or any other agent, see [Use in other agents](#use-in-other-agents) below.
 
-## The six skills
+## The seven skills
 
 | Skill | Use when |
 |---|---|
@@ -53,12 +53,13 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | `craft-tune` | an existing prompt is close but needs targeted, minimal-diff sharpening |
 | `craft-survey` | a new skill should be grounded in prior art, extracting only patterns that carry their weight |
 | `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration (Karpathy-style) |
+| `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt (clipboard + optional auto-load on `/clear`) |
 
 Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML frontmatter, loadable as a Claude Code skill or copy-pasteable into any other agent.
 
 ## Status
 
-All six skills have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
+Six of the seven skills (`craft-prompt`, `craft-scaffold`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-handoff` is new and has not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
 
 ## What belongs in CraftKit
 
