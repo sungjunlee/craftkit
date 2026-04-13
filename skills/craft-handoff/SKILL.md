@@ -1,6 +1,6 @@
 ---
 name: craft-handoff
-description: Wrap up the current session and produce a copy-paste-ready continuation prompt for the next session. Gathers git state, distills decisions and blockers from the conversation, writes the prompt to ~/.craftkit/handoff/pending.md, and copies it to the clipboard. Use this when the user wants to end a session cleanly, asks for a "handoff prompt," says "wrap up," "session handoff," "next session으로 넘겨," "핸드오프 만들어," "세션 정리해" — or anytime before running /clear.
+description: Produce a copy-paste-ready continuation prompt that bootstraps the next session. Use proactively whenever a session is wrapping up — triggers: "wrap up," "마무리," "세션 정리," "핸드오프," "next session으로 넘겨," or before /clear.
 ---
 
 # craft-handoff
@@ -13,7 +13,7 @@ This is *not* a session-summary doc for humans. It is an LLM-targeted prompt des
 
 ## Use this when
 
-- the user says "wrap up", "마무리", "세션 정리", "핸드오프", "다음 세션으로 넘겨"
+- the user says "wrap up", "마무리", "세션 정리", "핸드오프", or "next session으로 넘겨"
 - the user is about to run `/clear` and wants continuity
 - a long session is ending and the next session should pick up cleanly
 - a task is paused mid-flight and needs a clean resume point
