@@ -57,6 +57,12 @@ Optionally ask the user (one terse question, only if genuinely ambiguous): which
 
 ## Steps
 
+### Step 0 — Confirm intent before side effects
+
+This skill mutates the clipboard and writes a file. Both are visible side effects. If the trigger was ambiguous (e.g. the user said "let's wrap up this thread" while still mid-task, not "wrap up the session"), ask a one-line confirmation first: *"Generate a session-handoff prompt and copy it to the clipboard?"*
+
+Skip the confirmation when the user explicitly invoked `/craft-handoff` or used a clear trigger phrase. The cost of one extra question is much lower than overwriting the user's clipboard during normal work.
+
 ### Step 1 — Gather
 
 Run `node <skill-dir>/scripts/gather-state.mjs` (or the fallback commands in §Inputs). Read its output. Then scan the conversation for done / decisions / blockers / next. If a section has nothing real, omit it — empty headers add noise.
