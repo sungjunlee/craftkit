@@ -34,7 +34,7 @@ The first pass accidentally created a `craft-autoresearch` skill that did "surve
 The two skills were swapped and one was rewritten:
 
 - **`craft-loop` was renamed to `craft-autoresearch`** and its content fully rewritten as an eval-driven loop, adapted from the jangpm `autoresearch` skill. Added `references/eval-guide.md` and `references/mutation-guide.md`.
-- **The original `craft-autoresearch` was renamed to `craft-research`** because "prior-art survey" is accurate for what it does and is distinct from the eval loop.
+- **The original `craft-autoresearch` was renamed to `craft-survey`** (initially `craft-research`, later renamed again on 2026-04-13 to avoid a root-word collision with `craft-autoresearch`) because "prior-art survey" is accurate for what it does and is distinct from the eval loop.
 
 The rewrite takes from jangpm's autoresearch:
 
@@ -57,13 +57,13 @@ Deliberate differences from jangpm's version:
 
 ### Provider-specific material is OK inside `craft-prompt`
 
-CraftKit's "core assets stay provider-neutral" rule applies to the design/critique/improve skills (`craft-blueprint`, `craft-reflect`, `craft-tune`, `craft-research`, `craft-autoresearch`). `craft-prompt`'s value *is* platform-aware prompt authoring, so its `guides/` directory containing Claude/GPT/Gemini/Perplexity-specific notes is expected and not a violation of the portability principle. The rule is "don't leak provider specifics into the core spine," not "no provider specifics anywhere."
+CraftKit's "core assets stay provider-neutral" rule applies to the design/critique/improve skills (`craft-scaffold`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`). `craft-prompt`'s value *is* platform-aware prompt authoring, so its `guides/` directory containing Claude/GPT/Gemini/Perplexity-specific notes is expected and not a violation of the portability principle. The rule is "don't leak provider specifics into the core spine," not "no provider specifics anywhere."
 
 ### Patterns from `prompt-builder` that also fed the improvement skills
 
 Before the full absorption, a handful of reusable spines were already extracted from `prompt-builder` into the other CraftKit skills. Those still stand:
 
-- **Failure-mode taxonomy.** The "Deep Check by failure mode" table in `prompt-builder`'s `quality-checklist.md` became `skills/craft-reflect/references/failure-modes.md`, generalized to cover both prompts and skills.
+- **Failure-mode taxonomy.** The "Deep Check by failure mode" table in `prompt-builder`'s `quality-checklist.md` became `skills/craft-critique/references/failure-modes.md`, generalized to cover both prompts and skills.
 - **Sharpening principles.** *Context > instruction*, *outcome over process*, *cut in this order*, *right-sized beats thorough-looking*. Folded into `skills/craft-tune/SKILL.md` as a "Principles" section.
 - **Worktree-relative path policy.** Promoted to a shared convention in `AGENTS.md` since it applies to every CraftKit skill, not just prompt authoring.
 
@@ -77,7 +77,7 @@ These extractions now sit alongside the full `craft-prompt` skill. Some overlap 
 
 - **The custom `triggers:` frontmatter field from `prompt-builder`.** Claude Code's skill invocation is driven by the `description` field, not a separate triggers list. The Korean and English triggers previously listed were merged into the `craft-prompt` description so the actual invocation mechanism gets the signal.
 - **The `version:` frontmatter field.** Neither skill-creator nor Claude Code require it, and none of the other CraftKit skills use it. Removed from `craft-prompt` for consistency.
-- **`prompt-builder/refs/*` external reference repos** (claude-code-prompt-improver, claude-skill-prompt-architect, jeffallan-claude-skills, etc.). These are research inputs, not authored assets. They belong in a future `craft-research` pass rather than being copied into the skill.
+- **`prompt-builder/refs/*` external reference repos** (claude-code-prompt-improver, claude-skill-prompt-architect, jeffallan-claude-skills, etc.). These are research inputs, not authored assets. They belong in a future `craft-survey` pass rather than being copied into the skill.
 - **jangpm's dashboard and seven reference files.** The dashboard is useful but platform-specific HTML adds maintenance cost without clear early payoff. The reference files were condensed into two: `eval-guide.md` (eval types, determinism, quality check) and `mutation-guide.md` (mutation levels, deletion discipline). Execution-guide, pipeline-guide, and worked-example material was either folded into `SKILL.md` directly or deferred to real usage.
 
 ## Relationship map
@@ -86,10 +86,10 @@ These extractions now sit alongside the full `craft-prompt` skill. Some overlap 
 CraftKit (one toolkit)
   │
   ├── craft-prompt        → generate a new prompt from scratch
-  ├── craft-blueprint     → design a new prompt or skill structure
-  ├── craft-reflect       → critique an existing artifact
+  ├── craft-scaffold      → design a new prompt or skill structure
+  ├── craft-critique      → critique an existing artifact
   ├── craft-tune          → edit an existing artifact with minimal diff
-  ├── craft-research      → one-shot prior-art survey and pattern synthesis
+  ├── craft-survey        → one-shot prior-art survey and pattern synthesis
   └── craft-autoresearch  → eval-driven autonomous optimization loop
 
 Sibling:
@@ -102,13 +102,13 @@ Generation lives next to improvement, so the toolkit covers the full artifact li
 ## Naming
 
 - Brand name: `CraftKit`.
-- Skill prefix: `craft-` (chosen so skill names read as verb-phrases: "craft a prompt," "craft a blueprint"). The prefix differs from the brand on purpose — `craft-prompt-builder` would be too long, and `craftkit-prompt` is harder to say aloud.
-- `craft-research` vs `craft-autoresearch` — `research` is a one-shot prior-art study; `autoresearch` is the autonomous eval-driven loop. The distinction is called out in both descriptions so the right one triggers.
+- Skill prefix: `craft-` (chosen so skill names read as verb-phrases: "craft a prompt," "craft a scaffold"). The prefix differs from the brand on purpose — `craft-prompt-builder` would be too long, and `craftkit-prompt` is harder to say aloud.
+- `craft-survey` vs `craft-autoresearch` — `survey` is a one-shot prior-art study; `autoresearch` is the autonomous eval-driven loop. The two names were given distinct roots on purpose so neither reads like a variant of the other (earlier names `craft-research` / `craft-autoresearch` shared a root and kept confusing readers — renamed 2026-04-13). The distinction is also called out in both descriptions so the right one triggers.
 - Skill names are orthogonal to any vocabulary inside `craft-prompt` (Role / Context / Task / Rules / Format / Examples), so both can coexist without term overloading.
 
 ## Remaining migration candidates
 
 - `references/analysis/21-multi-agent-patterns.md` and `22-orchestration-patterns.md` — may inform a future `craft-orchestrate` skill, but only after the six current skills have settled through real usage.
-- `prompt-builder/refs/*` — worth a dedicated `craft-research` pass once real usage reveals gaps in `craft-prompt`.
-- jangpm's `blueprint`, `deep-dive`, and `reflect` skills — worth comparing against the current CraftKit versions in a future iteration. Not a blocker; current skills are coherent on their own terms.
+- `prompt-builder/refs/*` — worth a dedicated `craft-survey` pass once real usage reveals gaps in `craft-prompt`.
+- jangpm's `blueprint`, `deep-dive`, and `reflect` skills — worth comparing against the current CraftKit versions (`craft-scaffold`, `craft-critique`, etc.) in a future iteration. Not a blocker; current skills are coherent on their own terms.
 - Moving the autoresearch run harness from "describe in SKILL.md" to a real Node script (e.g. `scripts/run-experiment.mjs`) once real usage produces a repeatable harness pattern.

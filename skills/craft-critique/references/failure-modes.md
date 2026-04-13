@@ -1,6 +1,6 @@
 # Failure Modes Reference
 
-A diagnostic spine for reviewing prompts and skills. Use this after the main `craft-reflect` pass when the top-level issues list isn't specific enough, or when a review keeps surfacing the same vague complaint and you need a sharper vocabulary.
+A diagnostic spine for reviewing prompts and skills. Use this after the main `craft-critique` pass when the top-level issues list isn't specific enough, or when a review keeps surfacing the same vague complaint and you need a sharper vocabulary.
 
 Organize findings by category. A single artifact can fail in multiple categories at once.
 

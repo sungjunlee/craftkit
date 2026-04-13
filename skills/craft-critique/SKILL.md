@@ -1,15 +1,15 @@
 ---
-name: craft-reflect
-description: Critique a prompt or skill and surface ambiguity, hidden assumptions, weak structure, portability issues, and likely failure modes before any rewrite happens. Use this whenever the user asks to review, audit, critique, or improve a prompt or skill, mentions a prompt that "feels off" or behaves inconsistently, or is about to start a large rewrite and should stop to diagnose first — even if they don't explicitly say "reflect" or "review."
+name: craft-critique
+description: Critique a prompt or skill and surface ambiguity, hidden assumptions, weak structure, portability issues, and likely failure modes before any rewrite happens. Use this whenever the user asks to review, audit, critique, or diagnose a prompt or skill, mentions a prompt that "feels off" or behaves inconsistently, or is about to start a large rewrite and should stop to diagnose first — even if they don't explicitly say "critique" or "review."
 ---
 
-# craft-reflect
+# craft-critique
 
 ## Purpose
 
 Critique a prompt or skill and surface ambiguity, hidden assumptions, weak structure, portability issues, and likely failure modes.
 
-Reflecting before rewriting matters because most "make this better" requests would be better served by structural fixes than by new wording. A short diagnostic pass exposes what's actually broken so the next edit can be surgical.
+Critiquing before rewriting matters because most "make this better" requests would be better served by structural fixes than by new wording. A short diagnostic pass exposes what's actually broken so the next edit can be surgical.
 
 ## Use this when
 

@@ -48,10 +48,10 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | Skill | Use when |
 |---|---|
 | `craft-prompt` | a new prompt is needed from scratch for any LLM (Claude, GPT, Gemini, Perplexity, etc.) |
-| `craft-blueprint` | a rough idea needs structure — goals, inputs, workflow, outputs — before implementation |
-| `craft-reflect` | a prompt or skill "feels off" and a diagnostic pass should come before any rewrite |
+| `craft-scaffold` | a rough idea needs structure — goals, inputs, workflow, outputs — before implementation |
+| `craft-critique` | a prompt or skill "feels off" and a diagnostic pass should come before any rewrite |
 | `craft-tune` | an existing prompt is close but needs targeted, minimal-diff sharpening |
-| `craft-research` | a new skill should be grounded in prior art, extracting only patterns that carry their weight |
+| `craft-survey` | a new skill should be grounded in prior art, extracting only patterns that carry their weight |
 | `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration (Karpathy-style) |
 
 Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML frontmatter, loadable as a Claude Code skill or copy-pasteable into any other agent.
@@ -65,9 +65,9 @@ All six skills have been optimized through `craft-autoresearch` passes against e
 - generating new prompts from scratch (task, research, session handoff, templates)
 - prompt design and restructuring
 - reusable skill design
-- reflective critique and quality checks
+- diagnostic critique and quality checks
 - iterative improvement loops
-- research-backed best practices
+- survey-backed best practices
 - copy-pasteable outputs for agent workflows
 
 ## Design principles
@@ -98,15 +98,15 @@ All six skills have been optimized through `craft-autoresearch` passes against e
 │  │  ├─ guides/       (platform-specific tips: claude, gpt, gemini, perplexity, local)
 │  │  ├─ references/   (components, patterns, quality checklist)
 │  │  └─ templates/    (session-handoff, system-prompt, image-gen, video-gen)
-│  ├─ craft-blueprint/
+│  ├─ craft-scaffold/
 │  │  └─ SKILL.md
-│  ├─ craft-reflect/
+│  ├─ craft-critique/
 │  │  ├─ SKILL.md
 │  │  └─ references/
 │  │     └─ failure-modes.md
 │  ├─ craft-tune/
 │  │  └─ SKILL.md
-│  ├─ craft-research/
+│  ├─ craft-survey/
 │  │  └─ SKILL.md
 │  └─ craft-autoresearch/
 │     ├─ SKILL.md
@@ -125,7 +125,7 @@ CraftKit skills are plain markdown with YAML frontmatter, so they port easily:
 2. Paste the body (everything after the frontmatter) into the target agent's system prompt or instructions.
 3. Keep the frontmatter `description` line as context so the agent knows when to apply the skill.
 
-See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a walk-through of reflecting on an existing prompt, tuning it, and running a short improvement loop.
+See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a walk-through of critiquing an existing prompt, tuning it, and running a short improvement loop.
 
 ## Related tools
 

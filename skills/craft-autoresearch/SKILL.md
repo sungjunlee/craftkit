@@ -11,7 +11,7 @@ Run an eval-driven autonomous optimization loop on a prompt or skill. Adapted fr
 
 Karpathy's core insight is that most prompts and skills work about 70% of the time — the remaining 30% is where vague instructions, brittle rules, and weak examples hide. You cannot find those gaps by re-reading; you find them by running the artifact many times, scoring outputs against a rubric, mutating the artifact, and keeping only the changes that measurably move the score.
 
-Unlike `craft-tune` (single human-driven edit) or `craft-reflect` (diagnostic read), autoresearch *measures*. Gains come from the loop, not from one clever rewrite.
+Unlike `craft-tune` (single human-driven edit) or `craft-critique` (diagnostic read), autoresearch *measures*. Gains come from the loop, not from one clever rewrite.
 
 ## Use this when
 
@@ -22,7 +22,7 @@ Unlike `craft-tune` (single human-driven edit) or `craft-reflect` (diagnostic re
 
 Do not use this when:
 
-- quality is entirely subjective with no rubric even sketchable — prefer `craft-reflect` + `craft-tune`
+- quality is entirely subjective with no rubric even sketchable — prefer `craft-critique` + `craft-tune`
 - the run harness cannot be automated at reasonable cost
 - the artifact is too new and has no rough baseline yet
 
@@ -58,7 +58,7 @@ The loop shape is the same, but the *edit unit* differs. A prompt is a single fi
 2. **Mutation locus.** Mutation levels stay the same (wording / example / structure / principle), but for skills a sixth question appears before applying them: *which file?* Prefer editing `SKILL.md` for skill-spine changes and `references/` for deep-detail changes. Adding a new reference file counts as a Level-3 (structural) mutation — it shifts the skill's shape, not just its wording.
 3. **Size metric.** For prompts, `wc -l <file>` is enough. For skills, track two numbers: `skill_lines` (SKILL.md only — the always-loaded budget) and `folder_lines` (everything including references). The primary discipline is keeping `SKILL.md` under its ~500-line target; `folder_lines` is secondary and can grow more before bloat becomes a concern.
 4. **Mutation safety.** A prompt mutation touches one file, so checkpoint and rollback are trivial. A skill mutation may touch several — record the exact file list in the experiment's checkpoint, and on DISCARD restore *only those files*. Never rollback the whole folder; unrelated files may hold accepted prior-experiment state.
-5. **Fidelity evals (multi-skill pipelines).** If the target is a skill that feeds another skill's input (e.g. `craft-blueprint` → `craft-tune`), add fidelity evals that check stage-to-stage consistency. Not applicable for single-file prompts.
+5. **Fidelity evals (multi-skill pipelines).** If the target is a skill that feeds another skill's input (e.g. `craft-scaffold` → `craft-tune`), add fidelity evals that check stage-to-stage consistency. Not applicable for single-file prompts.
 
 Everything else — experiment contract, baseline discipline, KEEP/DISCARD rules, deletion experiments, stop conditions — works identically for prompts and skills.
 
@@ -151,7 +151,7 @@ The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prev
 
 ### Input
 
-Optimize `skills/craft-reflect/SKILL.md` so reviews are structurally consistent across Claude Code and Codex.
+Optimize `skills/craft-critique/SKILL.md` so reviews are structurally consistent across Claude Code and Codex.
 
 Test inputs: three real review prompts from last week.
 
@@ -167,10 +167,10 @@ Budget: 8 experiments. Stop condition: 95% binary pass rate sustained for 3 cons
 ### Output
 
 **Experiment contract**
-- target: `skills/craft-reflect/SKILL.md`
+- target: `skills/craft-critique/SKILL.md`
 - inputs: 3 prompts
 - evals: 3 binary + 1 comparative
-- harness: `node scripts/run-skill.mjs craft-reflect <input.txt>`
+- harness: `node scripts/run-skill.mjs craft-critique <input.txt>`
 - budget: 8; stop: 95% × 3 consecutive
 
 **Baseline**
@@ -198,4 +198,4 @@ Score: 7/12 (58%). Failing: section count varies (3-6); issue count unbounded.
 
 - `references/eval-guide.md` — Binary, comparative, and fidelity evals; the determinism hierarchy; assertion categories; subjective-to-binary decomposition; eval quality check; a prompt template for drafting evals with an agent; `evals.json` schema; false-positive recovery.
 - `references/mutation-guide.md` — Mutation levels (wording, example, structure, principle), when each fits, and the deletion discipline.
-- `references/worked-example.md` — A full illustrative cycle against `craft-reflect` showing baseline, five experiments (including a DISCARD and a deletion), stop condition, and the simplicity judgment behind each KEEP/DISCARD.
+- `references/worked-example.md` — A full illustrative cycle against `craft-critique` showing baseline, five experiments (including a DISCARD and a deletion), stop condition, and the simplicity judgment behind each KEEP/DISCARD.

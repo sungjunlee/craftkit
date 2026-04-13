@@ -21,33 +21,33 @@ CraftKit is a docs-first toolkit for creating, refining, and reusing prompts and
 
 CraftKit should feel like a portable workshop:
 
-- blueprint something new
-- reflect on quality
+- scaffold something new
+- critique quality
 - tune with targeted edits
 - loop through small iterations
-- research strong patterns before changing core assets
+- survey strong patterns before changing core assets
 
 ## Core concepts
 
 ### Prompt
 Generate a new, copy-paste-ready prompt from scratch — including task prompts, session handoffs, and reusable templates. Covered by the `craft-prompt` skill, absorbed from the mature `prompt-builder` asset.
 
-### Blueprint
+### Scaffold
 Convert a rough request into a stable structure for a new prompt or skill.
 
-### Reflect
+### Critique
 Find ambiguity, weakness, hidden assumptions, and portability issues.
 
 ### Tune
 Improve an existing asset with minimal and intentional edits.
 
-### Research
+### Survey
 Look at comparable assets, extract patterns, and bring back only what is useful. One-shot prior-art study, not an iterative loop.
 
 ### Autoresearch
-Eval-driven autonomous optimization loop. Define eval criteria and a run harness, then iterate — run the artifact on test inputs, score outputs, mutate the prompt or skill, keep improvements, discard regressions. Based on Karpathy's autoresearch methodology. Distinct from Research (one-shot survey) and from generic metric loops like the sibling `autoloop` skill (which targets code metrics such as test coverage or bundle size rather than prompt/skill output quality).
+Eval-driven autonomous optimization loop. Define eval criteria and a run harness, then iterate — run the artifact on test inputs, score outputs, mutate the prompt or skill, keep improvements, discard regressions. Based on Karpathy's autoresearch methodology. Distinct from Survey (one-shot prior-art pass) and from generic metric loops like the sibling `autoloop` skill (which targets code metrics such as test coverage or bundle size rather than prompt/skill output quality).
 
-Skill prefix: every skill is named `craft-<verb>`, chosen because it reads naturally as "craft a prompt," "craft a blueprint," etc. The `CraftKit` brand name stays on the repo and documentation; skills use the shorter `craft-` prefix.
+Skill prefix: every skill is named `craft-<verb>`, chosen because it reads naturally as "craft a prompt," "craft a scaffold," etc. The `CraftKit` brand name stays on the repo and documentation; skills use the shorter `craft-` prefix.
 
 ## Bootstrap scope
 

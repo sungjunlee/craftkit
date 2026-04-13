@@ -16,9 +16,9 @@ The user reports:
 - it occasionally adds unrelated refactors
 - different agents (Claude vs Codex) give very different outputs
 
-## Step 1 — Reflect
+## Step 1 — Critique
 
-Invoke `craft-reflect` on the prompt. Expected output shape:
+Invoke `craft-critique` on the prompt. Expected output shape:
 
 ```text
 What is working:
@@ -42,11 +42,11 @@ Failure modes:
 - output varies between Claude and Codex because structure is implicit
 ```
 
-If the review still feels fuzzy, open `skills/craft-reflect/references/failure-modes.md` and classify each issue as **ambiguity**, **scope**, **context**, **portability**, or **structure**. That vocabulary usually makes the next edit obvious — in this case, the prompt has clear ambiguity (what does "thorough" mean?) and scope (no "don't refactor" guard) failures.
+If the review still feels fuzzy, open `skills/craft-critique/references/failure-modes.md` and classify each issue as **ambiguity**, **scope**, **context**, **portability**, or **structure**. That vocabulary usually makes the next edit obvious — in this case, the prompt has clear ambiguity (what does "thorough" mean?) and scope (no "don't refactor" guard) failures.
 
 ## Step 2 — Tune
 
-Invoke `craft-tune` with the reflection as input. Target improvement: *consistent reviews across agents, with a stable output shape.*
+Invoke `craft-tune` with the critique as input. Target improvement: *consistent reviews across agents, with a stable output shape.*
 
 Expected revised prompt:
 
@@ -96,13 +96,13 @@ With those in place, autoresearch establishes a baseline score, then runs mutati
 
 If you cannot write evals cheaply, skip this step. Autoresearch pays off at scale; for a one-off prompt, it is overhead.
 
-## Aside — Research before you start (optional)
+## Aside — Survey before you start (optional)
 
-If several teams in the org already have code-review prompts, run `craft-research` *before* Step 1. It surveys those prompts, extracts patterns worth adopting (common severity labels, standard scope lists), flags patterns to avoid (hard-coded linter rules that duplicate tooling), and feeds the result into the reflect/tune pass. Skip research when there is no prior art to learn from.
+If several teams in the org already have code-review prompts, run `craft-survey` *before* Step 1. It studies those prompts, extracts patterns worth adopting (common severity labels, standard scope lists), flags patterns to avoid (hard-coded linter rules that duplicate tooling), and feeds the result into the critique/tune pass. Skip the survey when there is no prior art to learn from.
 
 ## What to take from this example
 
-- **Reflect before rewriting.** One diagnostic pass usually reveals whether the fix is structural or cosmetic.
+- **Critique before rewriting.** One diagnostic pass usually reveals whether the fix is structural or cosmetic.
 - **Tune with minimal diffs.** The final prompt is recognizable as an evolution of the original, not a replacement.
-- **Research is opt-in prior art.** It grounds the design when comparable assets exist.
+- **Survey is opt-in prior art.** It grounds the design when comparable assets exist.
 - **Autoresearch is opt-in measurement.** It pays off when you have evals and a harness; for a one-off prompt, it is overhead.

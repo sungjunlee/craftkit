@@ -20,10 +20,10 @@ Goal: make the six core skills consistent in structure and tone.
 Deliverables:
 
 - prompt
-- blueprint
-- reflect
+- scaffold
+- critique
 - tune
-- research
+- survey
 - autoresearch
 - one example per skill
 - failure-mode notes per skill

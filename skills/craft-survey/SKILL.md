@@ -1,15 +1,15 @@
 ---
-name: craft-research
-description: One-shot prior-art study — survey comparable prompts, skills, or repo assets, extract recurring patterns worth adopting, flag patterns to avoid, and synthesize actionable improvements for the current artifact. Use this whenever the user wants to ground a prompt or skill in proven patterns, references older assets to learn from, asks "how do others do this," mentions "research," "survey," or "prior art," or is designing something new and wants a literature-review pass before committing — even if they don't say "research." Distinct from craft-autoresearch (which is the Karpathy-style eval-driven optimization loop, not a prior-art survey).
+name: craft-survey
+description: One-shot prior-art survey — study comparable prompts, skills, or repo assets, extract recurring patterns worth adopting, flag patterns to avoid, and synthesize actionable improvements for the current artifact. Use this whenever the user wants to ground a prompt or skill in proven patterns, references older assets to learn from, asks "how do others do this," mentions "survey," "prior art," or "research," or is designing something new and wants a literature-review pass before committing — even if they don't say "survey." Distinct from craft-autoresearch (which is the Karpathy-style eval-driven optimization loop, not a prior-art survey).
 ---
 
-# craft-research
+# craft-survey
 
 ## Purpose
 
 Study comparable prompts, skills, or repo assets, extract the best patterns, and turn them into actionable improvements.
 
-Grounded research matters because agents that invent from scratch often rediscover bad shapes the community has already outgrown. A focused pass through prior art surfaces the handful of patterns that genuinely carry their weight — and, just as importantly, identifies the ones that shouldn't be copied.
+A grounded survey matters because agents that invent from scratch often rediscover bad shapes the community has already outgrown. A focused pass through prior art surfaces the handful of patterns that genuinely carry their weight — and, just as importantly, identifies the ones that shouldn't be copied.
 
 ## Use this when
 
@@ -36,8 +36,8 @@ Grounded research matters because agents that invent from scratch often rediscov
 
 ## Output format
 
-### Research target
-One or two sentences naming the specific artifact being improved and the concrete research question driving this pass. A reader seeing only this section should know what would count as a useful answer — not a generic "strengthen the artifact."
+### Survey target
+One or two sentences naming the specific artifact being improved and the concrete survey question driving this pass. A reader seeing only this section should know what would count as a useful answer — not a generic "strengthen the artifact."
 
 ### Reference patterns
 Short list of patterns found in comparable assets. Every pattern must cite its provenance — either inline per item, or via a section-opening source map that binds each pattern to its source file + section. A pattern with no traceable source doesn't belong on the list.
@@ -52,7 +52,7 @@ Patterns that should not be copied. Each item is two parts: the pattern AND a ra
 Concrete file or section changes. Each item must name three things: (a) the target file (path or skill name), (b) the specific section/heading/location within that file, and (c) the edit verb (add / tighten / remove / replace / refactor). Scale the number of edits to the scope of the research ask — a narrow question deserves 1–3 edits, not a full rewrite list.
 
 ### Risks
-Research-specific risks only. At least one risk must reference either the actual source set surveyed or a named constraint of the target artifact. Generic risks that could appear verbatim in any prior-art survey don't count — if the risk is portable across unrelated research passes, it hasn't engaged this research.
+Survey-specific risks only. At least one risk must reference either the actual source set surveyed or a named constraint of the target artifact. Generic risks that could appear verbatim in any prior-art survey don't count — if the risk is portable across unrelated survey passes, it hasn't engaged this survey.
 
 ## Guardrails
 
@@ -75,13 +75,13 @@ Improve a tuning skill using older prompt-builder assets and meta-skills as refe
 
 ### Output
 
-**Research target**
+**Survey target**
 Strengthen the tuning skill so it produces more consistent and portable edits.
 
 **Reference patterns**
 - explicit inputs and outputs
 - minimal-diff editing
-- reflection before revision
+- critique before revision
 - examples embedded in docs
 
 **Adopt**

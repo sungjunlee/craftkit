@@ -1,12 +1,12 @@
-# Worked Example: tightening craft-reflect
+# Worked Example: tightening craft-critique
 
 A walk-through of a full autoresearch cycle against a real CraftKit skill. **This is an illustrative example, not a record of an actual run** — numbers and outputs are plausible, but the loop has not been executed end-to-end. Use it as a concrete reference for the shape of a session and how KEEP/DISCARD judgments play out in practice.
 
 ## Setup
 
-- **Target skill**: `skills/craft-reflect/SKILL.md`
+- **Target skill**: `skills/craft-critique/SKILL.md`
 - **Motivation**: review outputs are inconsistent between Claude Code and Codex; section counts drift, issue lists run long, some recommendations come back as questions.
-- **Test inputs** (three realistic review prompts stored in `~/.craftkit/autoresearch/craft-reflect/<session>/runs/inputs/`):
+- **Test inputs** (three realistic review prompts stored in `~/.craftkit/autoresearch/craft-critique/<session>/runs/inputs/`):
   1. **Short**: a 15-line auth function with a subtle off-by-one bug
   2. **Medium**: a CI config file with three issues of different severity
   3. **Long**: a 150-line React component mixing concerns
@@ -26,15 +26,15 @@ A walk-through of a full autoresearch cycle against a real CraftKit skill. **Thi
 `git-assisted`:
 
 ```bash
-git checkout -b autoresearch/craft-reflect
-git add skills/craft-reflect/SKILL.md && git commit -m "autoresearch: baseline snapshot"
+git checkout -b autoresearch/craft-critique
+git add skills/craft-critique/SKILL.md && git commit -m "autoresearch: baseline snapshot"
 ```
 
 Every KEEP stays on the branch. Every DISCARD rolls back *only* the touched file:
 
 ```bash
 git reset --soft HEAD~1
-git restore --source=HEAD --staged --worktree -- skills/craft-reflect/SKILL.md
+git restore --source=HEAD --staged --worktree -- skills/craft-critique/SKILL.md
 ```
 
 Never `git reset --hard` — that would destroy unrelated user work.
@@ -96,7 +96,7 @@ git commit -m "autoresearch: require exactly five output sections"
 
 ```bash
 git reset --soft HEAD~1
-git restore --source=HEAD --staged --worktree -- skills/craft-reflect/SKILL.md
+git restore --source=HEAD --staged --worktree -- skills/craft-critique/SKILL.md
 ```
 
 ### Exp 4 — KEEP · 22/24 · skill_lines 105 → 107 (+2)
@@ -163,6 +163,6 @@ Exp 3 (DISCARD) is absent — `git reset --soft` + `git restore` removed it from
 ## Simplifications from a real run
 
 - Running and judging E4 requires an explicit rubric and, ideally, a fixed judge model. See `eval-guide.md` § "Drafting evals with an agent" and `eval-guide.md` § "The golden rule."
-- A Node run harness (`scripts/run-experiment.mjs`) would take the three inputs × two runs automatically. This example assumes the runs are invoked manually and outputs saved by hand into `~/.craftkit/autoresearch/craft-reflect/<session>/runs/exp-N/<input-id>/`.
+- A Node run harness (`scripts/run-experiment.mjs`) would take the three inputs × two runs automatically. This example assumes the runs are invoked manually and outputs saved by hand into `~/.craftkit/autoresearch/craft-critique/<session>/runs/exp-N/<input-id>/`.
 - The full artifact layout (`results.tsv`, `changelog.md`, `research-log.json`, `run-harness.md`) is referenced but not shown — see the SKILL.md § "Artifact layout" for the folder shape.
 - Real runs will see more noise in Tier 3 evals than this example shows. Plan for it — run three times instead of two if the comparative evals feel jittery.

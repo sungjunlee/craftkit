@@ -66,7 +66,7 @@ description: <one line on what it does + explicit trigger contexts>
 2. Draft or update the target skill in markdown.
 3. Normalize headings and output format.
 4. Add an example and a failure-mode note.
-5. Run a self-review using the reflect mindset.
+5. Run a self-review using the critique mindset.
 6. Keep the final diff small and coherent.
 
 ## Output style

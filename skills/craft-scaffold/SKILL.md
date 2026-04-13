@@ -1,15 +1,15 @@
 ---
-name: craft-blueprint
-description: Turn a rough idea into a structured prompt or skill blueprint with explicit objective, inputs, workflow, outputs, and a concrete file plan. Use this whenever the user wants to design a new prompt or skill, scaffold a skill-like workflow, mentions "blueprint," "structure," or "plan" for a prompt, or arrives with a vague request that needs to be shaped before implementation — even if they don't explicitly ask for a blueprint.
+name: craft-scaffold
+description: Turn a rough idea into a structured prompt or skill scaffold with explicit objective, inputs, workflow, outputs, and a concrete file plan. Use this whenever the user wants to design a new prompt or skill, scaffold a skill-like workflow, mentions "scaffold," "blueprint," "structure," or "plan" for a prompt, or arrives with a vague request that needs to be shaped before implementation — even if they don't explicitly ask to scaffold.
 ---
 
-# craft-blueprint
+# craft-scaffold
 
 ## Purpose
 
-Turn a rough idea into a structured prompt or skill blueprint that is easy to implement, review, and reuse.
+Turn a rough idea into a structured prompt or skill scaffold that is easy to implement, review, and reuse.
 
-Blueprinting matters because vague requests produce vague artifacts. Separating goals, inputs, workflow, and outputs *before* writing the artifact makes the resulting prompt or skill far more reusable and far less brittle.
+Scaffolding matters because vague requests produce vague artifacts. Separating goals, inputs, workflow, and outputs *before* writing the artifact makes the resulting prompt or skill far more reusable and far less brittle.
 
 ## Use this when
 
@@ -32,24 +32,24 @@ Blueprinting matters because vague requests produce vague artifacts. Separating 
 2. Separate goals, constraints, assumptions, and non-goals. Mixing these is the most common source of prompt drift.
 3. Propose a clean structure for the target prompt or skill. Favor the simplest shape that can survive reuse.
 4. Define the expected inputs, steps, and outputs. Be explicit enough that another agent could implement the artifact without guessing.
-5. Suggest files to create or update. A concrete file list converts the blueprint into work.
+5. Suggest files to create or update. A concrete file list converts the scaffold into work.
 6. Call out any unresolved decisions briefly. Only surface decisions that materially change the design.
 
 ## When the target is a skill (vs a prompt)
 
-A prompt is a single file; a skill is a folder. That changes what the blueprint must decide:
+A prompt is a single file; a skill is a folder. That changes what the scaffold must decide:
 
 1. **Shape of the plan.**
-   - **Prompt blueprint** = a *section plan*: which of Role / Context / Task / Rules / Format / Examples to include, in what order, and what each carries.
-   - **Skill blueprint** = a *file-tree plan* + `SKILL.md` outline. Decide which files exist before any of them are written.
+   - **Prompt scaffold** = a *section plan*: which of Role / Context / Task / Rules / Format / Examples to include, in what order, and what each carries.
+   - **Skill scaffold** = a *file-tree plan* + `SKILL.md` outline. Decide which files exist before any of them are written.
 2. **Files list, expanded.** For a skill, the "Files to create or update" section should enumerate concretely:
    - `skills/<name>/SKILL.md` (always required)
    - `skills/<name>/references/<file>.md` (only when detail would push SKILL.md past ~500 lines, or when a topic deserves progressive disclosure)
    - `skills/<name>/scripts/<file>.mjs` (only when the skill repeats deterministic work an agent would otherwise re-derive each invocation)
    - `skills/<name>/templates/<file>` (only when a well-crafted template adds value the agent cannot easily generate)
-   Avoid scaffolding folders "just in case" — empty folders invite bloat. Add them in a later iteration when the need is real.
-3. **Frontmatter is a first-class design artifact.** A skill's `name` and `description` are its triggering mechanism. The blueprint must draft a `description` that is trigger-oriented (what it does + *when* to invoke) and covers the non-obvious phrasings users might use. This has no analogue for prompts, which do not self-trigger.
-4. **Size budget.** Target `SKILL.md` under ~500 lines. If the skill's job plausibly exceeds that, the blueprint should plan the split into `references/` at design time — not discover it mid-write.
+   Avoid pre-creating folders "just in case" — empty folders invite bloat. Add them in a later iteration when the need is real.
+3. **Frontmatter is a first-class design artifact.** A skill's `name` and `description` are its triggering mechanism. The scaffold must draft a `description` that is trigger-oriented (what it does + *when* to invoke) and covers the non-obvious phrasings users might use. This has no analogue for prompts, which do not self-trigger.
+4. **Size budget.** Target `SKILL.md` under ~500 lines. If the skill's job plausibly exceeds that, the scaffold should plan the split into `references/` at design time — not discover it mid-write.
 5. **Progressive disclosure as a design decision.** Decide up front which content loads on every invocation (`SKILL.md` body) versus on demand (`references/`). Getting this wrong either inflates every context window or hides load-bearing detail from the agent.
 
 Prompts skip items 2-5 entirely. Items 1 and 6 (open questions) apply to both.
@@ -59,7 +59,7 @@ Prompts skip items 2-5 entirely. Items 1 and 6 (open questions) apply to both.
 ### Summary
 A short paragraph describing what is being built and why.
 
-### Blueprint
+### Scaffold
 - objective
 - target users or agents
 - inputs
@@ -74,18 +74,18 @@ For skill targets, also include a drafted `description` frontmatter line that (a
 A concrete file list with one-line purpose per file. Each purpose names a task-specific responsibility — e.g. `classification taxonomy`, `urgency rubric`, `commit-parse regex` — not generic boilerplate.
 
 ### Open questions
-1–3 items, or write "none — all decisions resolvable from the above" if none remain. Each item must name a decision that would change the architecture (scope cut, target split, reference-file boundary, trigger-criteria choice). Drop implementation nits (naming, format of a subfield, wording choices) — those belong in the eventual artifact, not the blueprint.
+1–3 items, or write "none — all decisions resolvable from the above" if none remain. Each item must name a decision that would change the architecture (scope cut, target split, reference-file boundary, trigger-criteria choice). Drop implementation nits (naming, format of a subfield, wording choices) — those belong in the eventual artifact, not the scaffold.
 
 ## Guardrails
 
 - prefer the simplest structure that can survive reuse
 - do not create too many top-level concepts
-- keep the blueprint implementation-oriented
+- keep the scaffold implementation-oriented
 - avoid provider lock-in in the core structure
 
 ## Failure modes
 
-- writing a blueprint so abstract that nobody knows how to start
+- writing a scaffold so abstract that nobody knows how to start
 - inventing a plugin system or framework before the asset itself works
 - drowning the user in open questions instead of making reasonable assumptions
 - copying another repo's structure instead of shaping one for the actual task
@@ -100,7 +100,7 @@ Create a reusable skill that helps improve prompts for Claude Code and Codex.
 **Summary**
 Create a cross-agent tuning skill that revises existing prompts with small, explicit edits.
 
-**Blueprint**
+**Scaffold**
 - objective: improve prompts without rewriting them from scratch
 - target agents: Claude Code, Codex
 - inputs: current prompt, target improvement, constraints
