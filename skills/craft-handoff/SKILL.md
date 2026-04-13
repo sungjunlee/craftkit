@@ -1,6 +1,6 @@
 ---
 name: craft-handoff
-description: Produce a copy-paste-ready continuation prompt that bootstraps the next session. Use proactively whenever a session is wrapping up — triggers: "wrap up," "마무리," "세션 정리," "핸드오프," "next session으로 넘겨," or before /clear.
+description: Produce a copy-paste-ready continuation prompt that bootstraps the next session. Use proactively whenever a session is wrapping up — triggers: "wrap up," "마무리," "세션 정리," "핸드오프," "다음 세션으로 넘겨" or "next session으로 넘겨," or before /clear.
 ---
 
 # craft-handoff
@@ -13,7 +13,7 @@ This is *not* a session-summary doc for humans. It is an LLM-targeted prompt des
 
 ## Use this when
 
-- the user says "wrap up", "마무리", "세션 정리", "핸드오프", or "next session으로 넘겨"
+- the user says "wrap up", "마무리", "세션 정리", "핸드오프", "다음 세션으로 넘겨", or "next session으로 넘겨"
 - the user is about to run `/clear` and wants continuity
 - a long session is ending and the next session should pick up cleanly
 - a task is paused mid-flight and needs a clean resume point
@@ -132,11 +132,14 @@ The wrapper auto-detects the platform (`pbcopy` → `wl-copy` → `xclip` → `x
 
 ### Step 5 — Inform
 
-Tell the user:
+Show the prompt before the confirmation — the user wants to verify the artifact first. You can't detect from inside the skill whether the optional SessionStart hook is installed, so always give the manual `/clear`-and-paste instruction and append the auto-load pointer.
 
-1. "Copied to clipboard. Saved to `~/.craftkit/handoff/pending.md`."
-2. Show the prompt in a fenced code block so they can verify.
-3. "Run `/clear`, then paste." (You can't tell from inside the skill whether the optional SessionStart hook is installed — always give the manual instruction. Append a single pointer line: *"On Claude Code, you can skip the paste step by installing the SessionStart hook — see `references/auto-load-hook.md`."*)
+Deliver, in this order:
+
+1. The composed prompt in a fenced code block so the user can verify.
+2. "Copied to clipboard. Saved to `~/.craftkit/handoff/pending.md`."
+3. "Run `/clear`, then paste."
+4. *"On Claude Code, you can skip the paste step by installing the SessionStart hook — see `references/auto-load-hook.md`."*
 
 ## Output format
 
