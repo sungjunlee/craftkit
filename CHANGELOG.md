@@ -6,7 +6,7 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ### Added
 
-- `## Prior art` section in README crediting the three projects CraftKit grew out of: `sungjunlee/prompt-builder` (predecessor — its prompt-authoring asset was absorbed into `craft-prompt`), `karpathy/autoresearch` (ML training-loop project that introduced the autoresearch methodology), and `byungjunjang/jangpm-meta-skills` (Codex-focused autoresearch implementation that contributed patterns to `craft-autoresearch`).
+- `## Prior art` section in README crediting the three projects CraftKit grew out of: `sungjunlee/prompt-builder` (predecessor — its prompt-authoring asset was absorbed into `craft-prompt`), `karpathy/autoresearch` (ML training-loop project that introduced the autoresearch methodology), and `byungjunjang/jangpm-meta-skills` (four-skill meta toolkit for Claude Code and Codex whose `autoresearch` skill contributed implementation patterns to `craft-autoresearch`).
 
 ### Changed
 
