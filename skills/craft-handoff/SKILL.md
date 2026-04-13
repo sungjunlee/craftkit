@@ -117,7 +117,11 @@ Success criteria:
 
 **Size budget**: target ≤ 800 tokens. A bloated handoff defeats the purpose.
 
-**Don't copy literal values from the §Example below.** The example uses `npm test` because it's a Node project — substitute the target project's actual test/verify command (`pytest`, `cargo test`, `go test ./...`, `make check`, …). Same for paths, branch names, and project descriptions.
+**Required signals per block**:
+
+- `<context>` — `## Done` items name outcomes not narration. Every `## Decisions` item carries a rationale clause (`because <reason>` or `— <reason>`); without it, the line is noise. Omit `## Decisions` and `## Blockers` entirely if there is nothing real.
+- `<task>` — every prompt has a `Success criteria:` (or `성공 기준:`) sub-list with at least one measurable item.
+- `<rules>` — paths are worktree-relative throughout. Strip `/Users/…`, `/home/…`, `C:\…` from every path that lands in the prompt body. The verify command matches the input project's actual stack. If no test runs happened this session and the stack is unclear, omit the verify command rather than guessing.
 
 ### Step 4 — Persist + copy
 
