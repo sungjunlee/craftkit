@@ -53,7 +53,7 @@ Drawn from the conversation (you must extract these — no script can):
 - **Blockers** — anything that stopped progress and needs resolution. Skip if none.
 - **Next** — concrete next steps the new session should take
 
-Optionally ask the user (one terse question, only if genuinely ambiguous): which next step to prioritize, or which kind of handoff (continuation / debug / fresh-start).
+Optionally ask the user (one terse question, only if genuinely ambiguous): which next step to prioritize.
 
 ## Steps
 
@@ -117,6 +117,8 @@ Success criteria:
 
 **Size budget**: target ≤ 800 tokens. A bloated handoff defeats the purpose.
 
+**Don't copy literal values from the §Example below.** The example uses `npm test` because it's a Node project — substitute the target project's actual test/verify command (`pytest`, `cargo test`, `go test ./...`, `make check`, …). Same for paths, branch names, and project descriptions.
+
 ### Step 4 — Persist + copy
 
 1. Use your agent's file-write tool to write the composed XML block to `~/.craftkit/handoff/pending.md`. Create the directory first if needed (`mkdir -p ~/.craftkit/handoff`). Writing through the file tool avoids heredoc-EOF collisions when the prompt body contains shell metacharacters.
@@ -132,7 +134,7 @@ The wrapper auto-detects the platform (`pbcopy` → `wl-copy` → `xclip` → `x
 
 Tell the user:
 
-1. ✅ "Copied to clipboard. Saved to `~/.craftkit/handoff/pending.md`."
+1. "Copied to clipboard. Saved to `~/.craftkit/handoff/pending.md`."
 2. Show the prompt in a fenced code block so they can verify.
 3. "Run `/clear`, then paste." (You can't tell from inside the skill whether the optional SessionStart hook is installed — always give the manual instruction. Append a single pointer line: *"On Claude Code, you can skip the paste step by installing the SessionStart hook — see `references/auto-load-hook.md`."*)
 
@@ -216,7 +218,7 @@ Success criteria:
 </rules>
 ```
 
-✅ Copied to clipboard. Saved to `~/.craftkit/handoff/pending.md`.
+Copied to clipboard. Saved to `~/.craftkit/handoff/pending.md`.
 Run `/clear`, then paste.
 
 ## References (load on demand)
