@@ -7,7 +7,7 @@ description: Eval-driven autonomous optimization loop for a prompt or skill, bas
 
 ## Purpose
 
-Run an eval-driven autonomous optimization loop on a prompt or skill. Adapted from Andrej Karpathy's autoresearch methodology for CraftKit artifacts.
+Run an eval-driven autonomous optimization loop on a prompt or skill. Adapted from Andrej Karpathy's autoresearch methodology for CraftKit artifacts, with implementation patterns drawn from the [jangpm-meta-skills](https://github.com/byungjunjang/jangpm-meta-skills) autoresearch skill.
 
 Karpathy's core insight is that most prompts and skills work about 70% of the time — the remaining 30% is where vague instructions, brittle rules, and weak examples hide. You cannot find those gaps by re-reading; you find them by running the artifact many times, scoring outputs against a rubric, mutating the artifact, and keeping only the changes that measurably move the score.
 

@@ -89,7 +89,6 @@ All six skills have been optimized through `craft-autoresearch` passes against e
 ├─ docs/
 │  ├─ product.md
 │  ├─ roadmap.md
-│  ├─ migration.md
 │  └─ examples/
 │     └─ tune-a-prompt.md
 ├─ skills/
@@ -130,8 +129,6 @@ See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a wal
 ## Related tools
 
 For generic code-metric loops (test coverage, bundle size, lint errors), see the sibling [`autoloop`](https://github.com/sungjunlee/autoloop) repo — `craft-autoresearch` is specifically for optimizing prompt and skill output quality against evals, while `autoloop` targets measurable code properties.
-
-See `docs/migration.md` for what was carried over from prior assets and why the original `prompt-builder` repo was absorbed rather than kept separate.
 
 ## License
 
