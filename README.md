@@ -79,43 +79,6 @@ All six skills have been optimized through `craft-autoresearch` passes against e
 5. Eval-driven improvement when possible
 6. Copy-pasteable results over fancy abstractions
 
-## Repository layout
-
-```text
-.
-├─ README.md
-├─ AGENTS.md
-├─ LICENSE
-├─ docs/
-│  ├─ product.md
-│  ├─ roadmap.md
-│  └─ examples/
-│     └─ tune-a-prompt.md
-├─ skills/
-│  ├─ craft-prompt/
-│  │  ├─ SKILL.md
-│  │  ├─ guides/       (platform-specific tips: claude, gpt, gemini, perplexity, local)
-│  │  ├─ references/   (components, patterns, quality checklist)
-│  │  └─ templates/    (session-handoff, system-prompt, image-gen, video-gen)
-│  ├─ craft-scaffold/
-│  │  └─ SKILL.md
-│  ├─ craft-critique/
-│  │  ├─ SKILL.md
-│  │  └─ references/
-│  │     └─ failure-modes.md
-│  ├─ craft-tune/
-│  │  └─ SKILL.md
-│  ├─ craft-survey/
-│  │  └─ SKILL.md
-│  └─ craft-autoresearch/
-│     ├─ SKILL.md
-│     └─ references/
-│        ├─ eval-guide.md
-│        ├─ mutation-guide.md
-│        └─ worked-example.md
-└─ package.json
-```
-
 ## Use in other agents
 
 CraftKit skills are plain markdown with YAML frontmatter, so they port easily:

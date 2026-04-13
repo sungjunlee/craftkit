@@ -18,6 +18,7 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 - `docs/migration.md` — internal history of how CraftKit absorbed earlier assets (`prompt-builder`, `craft-loop`, etc.) and renamed pre-v0.1.0 skills. The file served as a design diary during bootstrap; for a public reader it was noise. External attribution that previously lived here (the `jangpm-meta-skills` autoresearch implementation that informed `craft-autoresearch`'s spine) is now credited inline in `skills/craft-autoresearch/SKILL.md` and listed in the new README `## Prior art` section.
 - `docs/product.md` and `docs/roadmap.md` — bootstrap-era artifacts. Product notes mostly duplicated README + per-skill `description:` fields; roadmap phases 0–3 were complete and phase 4 was speculative. The genuinely useful piece (the worked walkthrough at `docs/examples/tune-a-prompt.md`) is kept.
+- README `## Repository layout` tree — for a docs-first toolkit the standard `skills/<name>/SKILL.md` convention is documented in AGENTS.md and adds no surprise; the tree was a maintenance burden every reorganization.
 - References to the `autoloop` sibling project (README `## Related tools` section, `craft-autoresearch/SKILL.md` scope paragraph, `docs/product.md` Autoresearch entry). The project isn't public yet; pointing readers at an inaccessible repo is worse than omitting it. The conceptual distinction — autoresearch targets prompt/skill output quality, not code metrics — is preserved inline where it still helps the reader.
 
 ## [0.1.1] — 2026-04-13
