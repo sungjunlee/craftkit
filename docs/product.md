@@ -45,7 +45,7 @@ Improve an existing asset with minimal and intentional edits.
 Look at comparable assets, extract patterns, and bring back only what is useful. One-shot prior-art study, not an iterative loop.
 
 ### Autoresearch
-Eval-driven autonomous optimization loop. Define eval criteria and a run harness, then iterate — run the artifact on test inputs, score outputs, mutate the prompt or skill, keep improvements, discard regressions. Based on Karpathy's autoresearch methodology. Distinct from Survey (one-shot prior-art pass) and from generic metric loops like the sibling `autoloop` skill (which targets code metrics such as test coverage or bundle size rather than prompt/skill output quality).
+Eval-driven autonomous optimization loop. Define eval criteria and a run harness, then iterate — run the artifact on test inputs, score outputs, mutate the prompt or skill, keep improvements, discard regressions. Based on Karpathy's autoresearch methodology. Distinct from Survey (one-shot prior-art pass); targets prompt/skill output quality, not generic code metrics like test coverage or bundle size.
 
 Skill prefix: every skill is named `craft-<verb>`, chosen because it reads naturally as "craft a prompt," "craft a scaffold," etc. The `CraftKit` brand name stays on the repo and documentation; skills use the shorter `craft-` prefix.
 

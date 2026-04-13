@@ -126,10 +126,6 @@ CraftKit skills are plain markdown with YAML frontmatter, so they port easily:
 
 See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a walk-through of critiquing an existing prompt, tuning it, and running a short improvement loop.
 
-## Related tools
-
-For generic code-metric loops (test coverage, bundle size, lint errors), see the sibling [`autoloop`](https://github.com/sungjunlee/autoloop) repo — `craft-autoresearch` is specifically for optimizing prompt and skill output quality against evals, while `autoloop` targets measurable code properties.
-
 ## Prior art
 
 - [`sungjunlee/prompt-builder`](https://github.com/sungjunlee/prompt-builder) — predecessor project. Its mature prompt-authoring asset (5-step process, 6 building blocks, platform guides, templates) was absorbed wholesale into `craft-prompt`. Kept on GitHub for reference; new work happens here.

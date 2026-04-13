@@ -26,7 +26,7 @@ Do not use this when:
 - the run harness cannot be automated at reasonable cost
 - the artifact is too new and has no rough baseline yet
 
-For generic code-quality loops (test coverage, bundle size, lint errors), use the sibling `autoloop` skill instead — autoresearch is specifically for optimizing prompt and skill artifacts against output-quality evals.
+Autoresearch is specifically for optimizing prompt and skill artifacts against output-quality evals, not for generic code-metric loops (test coverage, bundle size, lint errors).
 
 ## Inputs
 
