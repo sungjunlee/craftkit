@@ -1,6 +1,10 @@
 ---
 name: craft-handoff
-description: Produce a copy-paste-ready continuation prompt that bootstraps the next session. Use proactively whenever a session is wrapping up — triggers: "wrap up," "마무리," "세션 정리," "핸드오프," "다음 세션으로 넘겨" or "next session으로 넘겨," or before /clear.
+description: >-
+  Produce a copy-paste-ready continuation prompt that bootstraps the next
+  session. Use proactively whenever a session is wrapping up. Triggers: "wrap
+  up", "마무리", "세션 정리", "핸드오프", "다음 세션으로 넘겨",
+  "next session으로 넘겨", or before /clear.
 ---
 
 # craft-handoff
