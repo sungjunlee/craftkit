@@ -69,6 +69,7 @@ Six of the seven skills (`craft-prompt`, `craft-scaffold`, `craft-critique`, `cr
 - diagnostic critique and quality checks
 - iterative improvement loops
 - survey-backed best practices
+- time-aware curation of evolving skill-authoring patterns
 - copy-pasteable outputs for agent workflows
 
 ## Design principles
@@ -79,6 +80,8 @@ Six of the seven skills (`craft-prompt`, `craft-scaffold`, `craft-critique`, `cr
 4. Cross-agent portability (core skill spines stay provider-neutral; platform-specific detail stays in sub-skills like `craft-prompt/guides/`)
 5. Eval-driven improvement when possible
 6. Copy-pasteable results over fancy abstractions
+
+For evolving skill-authoring guidance, start with `docs/skill-radar/current.md` and consult the dated snapshots only when a `watch` item needs deeper context.
 
 ## Use in other agents
 
