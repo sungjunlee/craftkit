@@ -1,0 +1,183 @@
+---
+name: craft-skill-spec
+description: Design a new skill spec using CraftKit's current skill-radar guidance. Use this whenever a user wants to create, architect, or spec a new skill and needs help deciding what the skill should adopt, avoid, and keep under watch before writing `SKILL.md` — including requests like "design a skill", "spec this skill", "make a meta-skill", or "what patterns should this skill use?"
+---
+
+# craft-skill-spec
+
+## Purpose
+
+Design a new skill spec using CraftKit's current canonical view of good skill-authoring patterns.
+
+This is not a generic skill-creation walkthrough. It is the decision layer that turns a rough skill idea into a concrete, reviewable spec: what the skill should do, what patterns it should adopt or avoid, how much freedom it should allow, what files it needs, and how it should be evaluated.
+
+Use it when the question is not just "how do I write a skill?" but "what kind of skill should this become right now?"
+
+## How it differs from related skills
+
+- `craft-scaffold` structures vague requests into a plan. `craft-skill-spec` is narrower: it produces a **skill-specific design spec** informed by the current radar.
+- `craft-survey` studies prior art. `craft-skill-spec` starts from the already-curated `docs/skill-radar/current.md` and only dips into snapshots when a watched area matters.
+- `craft-tune` improves an existing skill. `craft-skill-spec` is for designing a new one or reshaping a skill before the draft exists.
+- generic `skill-creator` guidance explains how skills work broadly. `craft-skill-spec` makes a concrete CraftKit judgment for *this* proposed skill.
+
+## Inputs
+
+- the rough skill idea
+- target users or agents
+- expected outcome
+- any hard constraints
+- optional related assets or prior art
+
+If the user does not state all of these, infer what is safe to infer and keep moving.
+
+## Required reads
+
+Before producing the spec:
+
+1. Read `docs/skill-radar/current.md`.
+2. If the target touches a `Watch` area from that file, read the newest relevant snapshot in `docs/skill-radar/`.
+3. Read an existing CraftKit skill only when it is directly adjacent to the proposed job.
+
+Do not start with open-ended web research unless the user explicitly asks for it. The point of this skill is to use the curated internal layer first.
+
+## Steps
+
+1. Restate the proposed skill's real job in one sentence. If you cannot state the job cleanly, the spec will drift.
+2. Define the wedge. Name what the skill should do and what it should explicitly not try to do.
+3. Apply the current radar. Pick the relevant `Adopt`, `Avoid`, and `Watch` items from `docs/skill-radar/current.md`.
+4. Decide the degree of freedom. Choose whether the skill should be high-freedom guidance, medium-freedom templates/pseudocode, or low-freedom exact commands/scripts.
+5. Decide the file shape. Start with `SKILL.md`; add `references/`, `scripts/`, or `templates/` only when the proposed job clearly earns them.
+6. Draft the trigger surface. Write a frontmatter `description` that says what the skill does and when it should be used.
+7. Draft the first eval plan. Name 3-5 realistic prompts and the key checks that would tell you whether the design is working.
+8. Surface only the open questions that would materially change the architecture. Drop wording nits.
+
+## Decision rules
+
+### Adopt
+
+Treat radar `Adopt` items as defaults, not suggestions. If you reject one, say why.
+
+### Avoid
+
+Treat radar `Avoid` items as hard warnings. If you knowingly violate one, mark it as an explicit tradeoff.
+
+### Watch
+
+Use `Watch` items to decide whether to:
+
+- keep a pattern out of the core spine
+- isolate it in a guide, example, or optional reference
+- postpone the decision until later
+
+Do not silently convert a `Watch` item into a default.
+
+## Output format
+
+### Summary
+One short paragraph: what skill is being proposed, for whom, and why this shape is better than a generic skill-creation pass.
+
+### Skill thesis
+- job
+- non-goals
+- target users or agents
+- success condition
+
+### Radar judgment
+- **Adopt** — 3-5 patterns from `docs/skill-radar/current.md` that should shape this skill, each with a one-line why
+- **Avoid** — 2-4 patterns that would hurt this skill, each with a one-line why
+- **Watch** — only the watched patterns that actually matter here, with a one-line handling rule
+
+Every item must be specific to the proposed skill. Do not repeat the radar file mechanically.
+
+### Design spec
+- freedom level
+- workflow shape
+- output shape
+- progressive disclosure plan
+- file plan
+
+For the file plan, name concrete paths and one-line purposes. Start with the smallest viable set.
+
+### Trigger draft
+Provide:
+
+- `name`
+- frontmatter `description`
+- one sentence on why the trigger wording should discover well
+
+### Eval plan
+- 3-5 realistic user prompts
+- 3-6 checks the outputs should satisfy
+- one likely failure pattern to watch in the first draft
+
+### Open questions
+0-3 items only. If none remain, write `none - current constraints are sufficient`.
+
+## Guardrails
+
+- keep the spec narrower than the user's first instinct if that produces a stronger skill
+- do not turn the output into a survey report
+- do not import provider-specific quirks into the core skill unless the skill is explicitly platform-bound
+- prefer one default path over many equal-weight branches
+- if a script, template, or reference file is proposed, name the repeated pain it removes
+
+## Failure modes
+
+- producing a generic "good skill" checklist instead of a real spec for this skill
+- repeating every radar item instead of selecting the ones that matter
+- proposing too many files before the core `SKILL.md` shape is earned
+- treating `Watch` items as fashionable defaults
+- skipping the eval plan and leaving the design untestable
+
+## Example
+
+### Input
+
+Design a meta-skill that helps create good new skills without re-researching the web every time.
+
+### Output
+
+**Summary**
+Propose a skill-design spec that turns CraftKit's current radar into a stable decision layer for new skill creation.
+
+**Skill thesis**
+- job: design a new skill spec from a rough idea
+- non-goals: writing the full skill body, broad web research on every run
+- target users or agents: CraftKit maintainers designing new skills
+- success condition: output is specific enough that another agent can draft `SKILL.md` without guessing the architecture
+
+**Radar judgment**
+- Adopt: concise spine plus progressive disclosure — because the skill will accumulate design logic quickly
+- Adopt: trigger-oriented descriptions — because discovery quality is central for new skills
+- Adopt: eval-first tightening — because the first draft should already be testable
+- Avoid: monolithic all-in-one files — because design rationale and deep examples should not bloat the spine
+- Watch: script-heavy packaging — only add scripts if the design process repeats a deterministic transform
+
+**Design spec**
+- freedom level: medium
+- workflow shape: read radar -> define wedge -> choose patterns -> draft trigger -> draft evals
+- output shape: summary, radar judgment, file plan, trigger draft, eval plan
+- progressive disclosure plan: keep the spine short; put deeper decision rubrics in `references/`
+- file plan:
+  - `skills/craft-skill-spec/SKILL.md` — operating workflow and output contract
+  - `skills/craft-skill-spec/references/spec-checklist.md` — optional deeper review checklist
+
+**Trigger draft**
+- name: `craft-skill-spec`
+- description: Design a new skill spec using CraftKit's current skill-radar guidance...
+- why it should discover well: it names both the task and the user phrasings around designing or specing a skill
+
+**Eval plan**
+- prompts: "design a release-note skill", "spec a jira-triage skill", "make a meta-skill for design review"
+- checks: output includes adopt/avoid/watch; file plan is concrete; trigger description is specific; eval plan is present
+- likely failure pattern: drifting into generic skill advice instead of task-specific design judgment
+
+**Open questions**
+- none - current constraints are sufficient
+
+## References (load on demand)
+
+- `docs/skill-radar/current.md` — current canonical judgment for skill-authoring patterns
+- `docs/skill-radar/decision-log.md` — why a pattern moved between adopt / avoid / watch
+- `docs/skill-radar/TEMPLATE.md` — if a new snapshot or event-based addendum is needed
+- `references/spec-checklist.md` — structured review pass for checking whether the spec is specific, narrow, and ready to turn into `SKILL.md`
