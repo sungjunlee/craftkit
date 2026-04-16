@@ -19,7 +19,7 @@ A walk-through of a full autoresearch cycle against a real CraftKit skill. **Thi
 - **Max score per experiment**: (E1 + E2 + E3) × 3 inputs × 2 runs = **18 binary points** + E4 × 3 × 2 = **6 comparative points** = **24 total**
 - **Tier 1-2 share**: 3/4 (75%) — above the 50% floor
 - **Budget**: 8 experiments
-- **Stop condition**: ≥ 95% for 3 consecutive kept experiments
+- **Stop condition**: ≥ 95% (23/24 or better) for 3 consecutive kept experiments
 
 ## Versioning mode
 
@@ -41,9 +41,9 @@ Never `git reset --hard` — that would destroy unrelated user work.
 
 ## Experiment log
 
-Recording `skill_lines` every experiment is what catches bloat before it becomes invisible.
+Recording both `skill_lines` and `folder_lines` every experiment is what catches bloat before it becomes invisible. In this run only `SKILL.md` changes, so `folder_lines` moves in lockstep with `skill_lines`.
 
-### Baseline (exp 0) · 14/24 (58%) · skill_lines 101
+### Baseline (exp 0) · 14/24 (58%) · skill_lines 101 · folder_lines 192
 
 Failure patterns:
 - 2 of 6 runs returned 3 sections instead of 5 (E1 fail)
@@ -51,7 +51,7 @@ Failure patterns:
 - 2 of 6 runs phrased recommendations as questions (E3 fail)
 - E4 tied baseline by definition (6/6 tie → 3 points)
 
-### Exp 1 — KEEP · 18/24 · skill_lines 101 → 104 (+3)
+### Exp 1 — KEEP · 18/24 · skill_lines 101 → 104 (+3) · folder_lines 192 → 195 (+3)
 
 **Hypothesis**: section count drifts because the Output format section lists five sections informally rather than requiring exactly five.
 
@@ -69,7 +69,7 @@ Failure patterns:
 git commit -m "autoresearch: require exactly five output sections"
 ```
 
-### Exp 2 — KEEP · 21/24 · skill_lines 104 → 105 (+1)
+### Exp 2 — KEEP · 21/24 · skill_lines 104 → 105 (+1) · folder_lines 195 → 196 (+1)
 
 **Hypothesis**: the *Issues* list is unbounded because the SKILL.md says "prioritized list" without a cap.
 
@@ -81,7 +81,7 @@ git commit -m "autoresearch: require exactly five output sections"
 
 **Decision**: +3 points, +1 line. KEEP.
 
-### Exp 3 — DISCARD · 20/24 · skill_lines 105 → 119 (+14)
+### Exp 3 — DISCARD · 20/24 · skill_lines 105 → 119 (+14) · folder_lines 196 → 210 (+14)
 
 **Hypothesis**: recommendations drift into questions because the SKILL.md doesn't model the right shape.
 
@@ -99,7 +99,7 @@ git reset --soft HEAD~1
 git restore --source=HEAD --staged --worktree -- skills/craft-critique/SKILL.md
 ```
 
-### Exp 4 — KEEP · 22/24 · skill_lines 105 → 107 (+2)
+### Exp 4 — KEEP · 23/24 · skill_lines 105 → 107 (+2) · folder_lines 196 → 198 (+2)
 
 **Hypothesis**: same target as exp 3, but a lighter intervention — one-line rule instead of a 15-line example block.
 
@@ -107,12 +107,12 @@ git restore --source=HEAD --staged --worktree -- skills/craft-critique/SKILL.md
 
 **Result**:
 - E3: 4/6 → 6/6
-- E4: 3/6 ties (no regression)
+- E4: 4/6 wins + 2/6 ties (5/6 points, no regression)
 - Others unchanged.
 
-**Decision**: +1 net, +2 lines. KEEP. Demonstrates that a principle statement can outperform a bigger example when the target audience is an agent that already understands the concept.
+**Decision**: +2 points, +2 lines. KEEP. Demonstrates that a principle statement can outperform a bigger example when the target audience is an agent that already understands the concept.
 
-### Exp 5 — KEEP (deletion experiment) · 22/24 · skill_lines 107 → 103 (−4)
+### Exp 5 — KEEP (deletion experiment) · 23/24 · skill_lines 107 → 103 (−4) · folder_lines 198 → 194 (−4)
 
 Running the scheduled deletion experiment early because the artifact has already grown.
 
@@ -124,18 +124,19 @@ Running the scheduled deletion experiment early because the artifact has already
 
 **Decision**: 0 net, −4 lines. KEEP (same score, shorter artifact — the paragraph was dead weight).
 
-### Exp 6 — KEEP (stability check) · 22/24 · skill_lines 103 (unchanged)
+### Exp 6 — KEEP (stability check) · 23/24 · skill_lines 103 (unchanged) · folder_lines 194 (unchanged)
 
 **Change**: none — re-ran the same inputs to confirm the score is stable, not a lucky single run.
 
-**Result**: 22/24 again. Three consecutive kept experiments at ≥ 90% (exp 4, 5, 6). Stop condition triggered.
+**Result**: 23/24 again. Three consecutive kept experiments at ≥ 95% (exp 4, 5, 6). Stop condition triggered.
 
 ## Final
 
 ```
-Score:         58% → 92%  (+34 points)
+Score:         14/24 (58%) → 23/24 (96%)  (+9 raw, +38 percentage points)
 Experiments:   6 (5 keep, 1 discard)
 skill_lines:   101 → 103  (+2%, essentially zero bloat)
+folder_lines:  192 → 194  (+1%, essentially zero bloat)
 Budget used:   6/8
 ```
 
@@ -153,7 +154,7 @@ Exp 3 (DISCARD) is absent — `git reset --soft` + `git restore` removed it from
 
 ## What this example illustrates
 
-- **One mutation per experiment makes deltas attributable.** When exp 3's total score moved, the +14 lines and the E4 regression were both visible and traceable to a single change. Bundled changes would have hidden that.
+- **One hypothesis per experiment keeps deltas attributable.** When exp 3's total score moved, the +14 lines and the E4 regression were both visible and traceable to a single change. Bundled changes would have hidden that.
 - **Simplicity judgment prevents bloat.** The +1 point on E3 in exp 3 was *tempting*; the 14-line cost and the E4 loss made it the wrong call. Defending that DISCARD is a core skill.
 - **Deletion is a real mutation level.** Exp 5 held the score while shrinking the artifact — evidence that the deleted paragraph was load-bearing only in the author's imagination.
 - **Comparative evals catch what binary misses.** E3's binary gain in exp 3 was real; E4's comparative loss was the honest signal that the change made the artifact worse on the axis users actually feel.
