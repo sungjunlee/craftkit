@@ -52,7 +52,7 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | `craft-critique` | a prompt or skill "feels off" and a diagnostic pass should come before any rewrite |
 | `craft-tune` | an existing prompt is close but needs targeted, minimal-diff sharpening |
 | `craft-survey` | a new skill should be grounded in prior art, extracting only patterns that carry their weight |
-| `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration (Karpathy-style) |
+| `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration |
 | `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt (clipboard + optional auto-load on `/clear`) |
 
 Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML frontmatter, loadable as a Claude Code skill or copy-pasteable into any other agent.

@@ -1,15 +1,15 @@
 ---
 name: craft-autoresearch
-description: Eval-driven autonomous optimization loop for a prompt or skill, based on Karpathy's autoresearch methodology. Define eval criteria and a run harness, then iterate — run the artifact on test inputs, score outputs, mutate the prompt or skill, keep improvements, discard regressions, repeat until the stop condition. Use this whenever the user wants to automatically improve a prompt or skill, mentions autoresearch, eval-driven optimization, benchmarking a skill, running evals, self-improving a prompt, or any iterative test-and-refine request — including 스킬 개선, 스킬 최적화, 스킬 벤치마크, 스킬 평가 — even if they don't say "autoresearch."
+description: Eval-driven autonomous optimization loop for a prompt or skill. Define eval criteria and a run harness, then iterate — run the artifact on test inputs, score outputs, mutate the prompt or skill, keep improvements, discard regressions, and stop on a written condition. Use this whenever the user wants to automatically improve a prompt or skill, mentions autoresearch, eval-driven optimization, benchmarking a skill, running evals, self-improving a prompt, or any iterative test-and-refine request — including 스킬 개선, 스킬 최적화, 스킬 벤치마크, 스킬 평가 — even if they don't say "autoresearch."
 ---
 
 # craft-autoresearch
 
 ## Purpose
 
-Run an eval-driven autonomous optimization loop on a prompt or skill. Adapted for CraftKit artifacts from Andrej Karpathy's [autoresearch](https://github.com/karpathy/autoresearch) (the ML training-loop project that introduced the methodology), with implementation patterns drawn from the `autoresearch` skill in [jangpm-meta-skills](https://github.com/byungjunjang/jangpm-meta-skills) (a four-skill meta toolkit for Claude Code and Codex).
+Run an eval-driven autonomous optimization loop on a prompt or skill.
 
-Karpathy's core insight is that most prompts and skills work about 70% of the time — the remaining 30% is where vague instructions, brittle rules, and weak examples hide. You cannot find those gaps by re-reading; you find them by running the artifact many times, scoring outputs against a rubric, mutating the artifact, and keeping only the changes that measurably move the score.
+Many prompts and skills feel "mostly fine" until the last 20-30% of failures show up. Re-reading rarely finds those gaps. You find them by running the artifact many times, scoring outputs against a rubric, mutating one thing at a time, and keeping only the changes that measurably move the score.
 
 Unlike `craft-tune` (single human-driven edit) or `craft-critique` (diagnostic read), autoresearch *measures*. Gains come from the loop, not from one clever rewrite.
 
@@ -26,7 +26,7 @@ Do not use this when:
 - the run harness cannot be automated at reasonable cost
 - the artifact is too new and has no rough baseline yet
 
-Autoresearch is specifically for optimizing prompt and skill artifacts against output-quality evals, not for generic code-metric loops (test coverage, bundle size, lint errors).
+This skill is for optimizing prompt and skill artifacts against output-quality evals, not for generic code-metric loops (test coverage, bundle size, lint errors).
 
 ## Inputs
 
@@ -44,7 +44,7 @@ If the user provides an `evals.json`, use it directly instead of drafting evals 
 1. **Capture the experiment contract.** Lock in target, inputs, evals, harness, budget, and stop condition *before* running anything. A fuzzy contract produces fuzzy gains — ambiguity at this step compounds with every experiment.
 2. **Design the eval suite.** Prefer deterministic checks (regex, section presence, parse success) over LLM-as-judge. Aim for at least half the suite at Tier 1-2 — see `references/eval-guide.md` for the full determinism hierarchy and quality checks. First-time suites skew toward Structure/Length only and saturate on baseline; see the Guardrails rule on near-100% baselines and `references/eval-guide.md` § "If your baseline scores near 100%" before locking the suite.
 3. **Establish a baseline.** Snapshot the target artifact, run it on every test input through the harness, score every output, record the total in `results.tsv`. No mutation happens before baseline or the gains are unmeasurable. A near-saturated baseline (≥ 95% binary pass rate) is a signal, not a success — stop and strengthen the suite before mutating. See Guardrails below.
-4. **Run the mutation loop.** For each experiment: analyze failing evals → form one hypothesis → make one bounded change at one mutation level → checkpoint the touched files → run harness → score → KEEP or DISCARD by the rules below → log. See `references/mutation-guide.md` for mutation levels and when each fits.
+4. **Run the mutation loop.** For each experiment: analyze failing evals → form one hypothesis → make one bounded change at one mutation level → checkpoint the touched files → run harness → score → KEEP or DISCARD by the rules below → log. The change may span multiple files only when those files together implement the same hypothesis. See `references/mutation-guide.md` for mutation levels and when each fits.
 5. **Respect rollback safety.** Before each mutation, commit (git-assisted mode) or snapshot (file-checkpoint mode) only the files you are about to touch. DISCARD rolls back only those files — never `git reset --hard`, which would destroy unrelated work in the repo.
 6. **Try deletion every 5th experiment.** Remove recently added rules or examples. If the score holds, keep the deletion. Artifacts that only grow are a smell — bloat hides the real drivers.
 7. **Stop on condition, not on vibes.** Stop when the budget is hit, when the stop condition is met (e.g. 95%+ binary pass rate sustained for 3 consecutive kept experiments), when the user interrupts, or when the harness is no longer trustworthy. Running out of ideas is not a stop condition — change mutation level first.
@@ -64,7 +64,7 @@ Everything else — experiment contract, baseline discipline, KEEP/DISCARD rules
 
 ## KEEP vs DISCARD
 
-Record artifact size (`wc -l <target>`) for every experiment. Apply these defaults unless the user defined stricter rules:
+Record artifact size for every experiment. For prompts, `wc -l <file>` is enough. For skills, record both `skill_lines` (`SKILL.md` only) and `folder_lines` (the whole skill folder). Apply these defaults unless the user defined stricter rules:
 
 | Score change | Artifact size change | Default decision |
 |---|---|---|
@@ -125,11 +125,11 @@ Run artifacts live in `~/.craftkit/`, not in the target repo. This keeps `git st
     └── ...
 ```
 
-The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prevents collisions when the same skill is tuned in multiple sessions and gives each session a human-readable anchor. See `~/.craftkit/README.md` for the full convention, including when to copy findings back into the repo (almost never — quote the finding inline in the doc or commit message instead).
+The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prevents collisions when the same skill is tuned in multiple sessions and gives each session a human-readable anchor. Treat the folder shape above as the convention, and copy findings back into the repo only when they justify a spec change, usually as an inline quote or a commit-message note rather than committed run artifacts.
 
 ## Guardrails
 
-- One mutation per experiment — multi-file changes become unattributable.
+- One hypothesis per experiment. The accepted change may touch more than one file only when those files implement the same mutation and are checkpointed as a unit.
 - Always run the harness and record the score; never KEEP on "this feels better."
 - Deterministic evals first; LLM-as-judge only with a rubric explicit enough that two reviewers would agree.
 - Rollback touches only the files in the mutation — never broad reverts.
@@ -141,7 +141,7 @@ The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prev
 
 - Starting without a baseline — "improvement" becomes meaningless.
 - An eval suite that's entirely LLM-as-judge — scores drift and you optimize noise.
-- Mutating many files per experiment — outcomes can't be attributed to specific changes.
+- Mutating several unrelated things in one experiment — outcomes can't be attributed to specific changes.
 - Using `git reset --hard` for rollback — destroys the user's unrelated work.
 - Running until "looks good" without a written stop condition — produces prompts that overfit the eval set.
 - Declaring victory when score rises but real outputs feel worse — the evals are the problem, not the artifact.
