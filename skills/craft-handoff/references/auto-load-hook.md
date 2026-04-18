@@ -10,8 +10,12 @@ What *can* run in the post-clear session is a hook. `SessionStart` fires at the 
 
 1. `craft-handoff` writes the prompt to `~/.craftkit/handoff/pending.md` (already does this).
 2. User runs `/clear`.
-3. `SessionStart` hook with `matcher: "clear"` fires, reads `pending.md`, returns it as `additionalContext`, and deletes the file.
+3. `SessionStart` hook with `matcher: "clear"` fires, reads `pending.md`, returns it as `additionalContext`, and archives the file to `~/.craftkit/handoff/archive/<timestamp>.md`.
 4. New session boots with the handoff already in context.
+
+### Staleness guard
+
+If `pending.md` is older than **12 hours** when `/clear` fires, the hook archives it with a `stale-` prefix **without** injecting. This prevents a forgotten handoff from polluting an unrelated later `/clear`. The threshold is the `STALE_AFTER_MS` constant in `load-pending-hook.mjs` — adjust if your workflow differs.
 
 ## Install
 
@@ -61,11 +65,14 @@ Open a Claude Code session, then:
 echo "<context>test handoff</context>" > ~/.craftkit/handoff/pending.md
 ```
 
-Run `/clear`. The new session should report it received additional context. Confirm `pending.md` was deleted:
+Run `/clear`. The new session should report it received additional context. Confirm `pending.md` moved to the archive:
 
 ```bash
 ls ~/.craftkit/handoff/pending.md
 # expected: No such file or directory
+
+ls ~/.craftkit/handoff/archive/
+# expected: a new <timestamp>.md entry
 ```
 
 ## How `matcher: "clear"` works
@@ -83,7 +90,7 @@ Using `clear` keeps the hook scoped — it won't inject the handoff when you jus
 
 ## Gotchas
 
-- **Stale pending file.** If you ran `craft-handoff` and never `/clear`-ed, then later `/clear` for an unrelated reason, the old handoff still injects. Mitigation: the hook deletes `pending.md` after one use. Manual cleanup if needed: `rm ~/.craftkit/handoff/pending.md`.
+- **Stale pending file.** If you ran `craft-handoff` and never `/clear`-ed, then `/clear` much later for an unrelated reason, you don't want the old handoff. The hook has two guards: (a) after injection, it *archives* rather than deletes (so past handoffs stay recoverable under `~/.craftkit/handoff/archive/`), and (b) handoffs older than 12h are archived with a `stale-` prefix and never injected. Manual cleanup if needed: `rm ~/.craftkit/handoff/pending.md`.
 - **Hook errors are silent by default.** If the script fails (bad path, no Node), Claude Code shows nothing in the chat. Check `~/.claude/logs/` or run the hook manually: `node <path>/load-pending-hook.mjs`.
 - **Multiple hooks on the same matcher.** If you already have a `SessionStart` + `clear` hook (e.g. for environment setup), merge — don't replace. Their `additionalContext` outputs concatenate.
 - **Path portability.** `command` requires an absolute path. If you move the install, update settings.json.
