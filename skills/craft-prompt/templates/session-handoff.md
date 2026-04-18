@@ -68,32 +68,6 @@ Success criteria:
 </task>
 ```
 
-## Fresh Start with Project Context
-
-```xml
-<context>
-## Project
-{{project}} — {{description}}
-Stack: {{tech_stack}}
-
-## Key code
-- {{path_relative_to_worktree}} — {{purpose}}
-- {{path_relative_to_worktree}} — {{purpose}}
-
-## Conventions
-- {{convention_1}}
-- {{convention_2}}
-</context>
-
-<task>
-{{new_task}}
-
-Success criteria:
-- {{criterion_1}}
-- {{criterion_2}}
-</task>
-```
-
 ---
 
 ## Tips
