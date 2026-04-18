@@ -84,13 +84,15 @@ Use **worktree-relative paths** (`src/auth.ts:45`, not absolute paths). All path
 
 ### Step 3 — Compose (delegate to craft-prompt)
 
-craft-prompt owns prompt composition — don't re-specify templates here. Load and apply.
+craft-prompt owns prompt composition — don't re-specify templates here. Read and apply.
 
-1. Open craft-prompt's `templates/session-handoff.md` (sibling skill). Pick the variant:
+**Prerequisite**: craft-prompt must be co-installed. The two skills ship together in craftkit; if craft-handoff was copied standalone, see the fallback in `## Failure modes` below.
+
+1. Read the sibling skill file `craft-prompt/templates/session-handoff.md` (in the same `skills/` directory, or the same commands/agents layout where craft-handoff itself was loaded from). Pick the variant:
    - **Continuation** — normal wrap-up (most common)
    - **Debug Handoff** — mid-investigation session
    - **Fresh Start** — new thread with repo context but no in-flight task
-2. Open craft-prompt's `SKILL.md` §Step 3 (sizing + building blocks) and §Step 4 (cut order). Apply both to decide which blocks to include and what to trim.
+2. Read `craft-prompt/SKILL.md` §Step 3 (sizing + building blocks) and §Step 4 (Sharpen — cut order). Apply both to decide which blocks to include and what to trim.
 3. Fill the chosen template with the distilled material from Step 2. Omit blocks with no content.
 
 **Required signals** (enforce after fill):
@@ -98,6 +100,7 @@ craft-prompt owns prompt composition — don't re-specify templates here. Load a
 - `## Done` items name outcomes, not narration.
 - Every `## Decisions` item carries a rationale clause (`because <reason>` or `— <reason>`); drop lines without one.
 - `<task>` has a `Success criteria:` (or `성공 기준:`) list with at least one measurable item.
+- `<rules>` names at least one key file for the next session to read first (e.g., `Read src/auth.ts first`). If there is genuinely nothing worth pointing at, omit the line rather than invent one.
 - All paths are worktree-relative — strip `/Users/…`, `/home/…`, `C:\…` before writing.
 - Verify command matches the input project's actual stack. If no tests ran this session and the stack is unclear, omit the command rather than guess.
 
@@ -163,6 +166,7 @@ See `references/auto-load-hook.md` for the one-time installation (settings.json 
 - **Bloated prompt**: token budget blown. Trim *before* writing — cut decisions first, then state details, never the next-step block. If still over budget after trimming, call it out to the user instead of silently truncating.
 - **Auto-load injects when not wanted** (Claude Code only): user ran `/clear` to truly reset, but `pending.md` was lurking. The hook script deletes the file after injection (one-shot). Manual cleanup: `rm ~/.craftkit/handoff/pending.md`.
 - **Malformed `settings.json` after manual hook install** (Claude Code only): the hook silently fails to fire. Validate the JSON (`node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.claude/settings.json','utf-8'))"`) and check `~/.claude/logs/` if available.
+- **craft-prompt not installed**: Step 3 delegates to craft-prompt's template and sizing guidance. If craft-prompt is absent (craft-handoff was copied standalone), fall back to composing the prompt directly using the Required signals in Step 3 and this `<context>/<task>/<rules>` shape from the Example section below. Tell the user they should install craft-prompt for ongoing use — the two skills ship together in craftkit.
 
 ## Example
 
