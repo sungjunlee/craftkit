@@ -136,7 +136,7 @@ Ask if the user wants adjustments. Refine based on feedback — tweak tone, add/
 
 ## Templates (special cases where a well-crafted template adds real value)
 
-- `templates/session-handoff.md` — AI session handoff (continuation, debug, bootstrap)
+- `templates/session-handoff.md` — AI session handoff (continuation, debug)
 - `templates/image-gen.md` — Image generation (photo, illustration, icon, per-platform notes)
 - `templates/video-gen.md` — Video generation (text-to-video, image-to-video, camera keywords, per-platform notes)
 - `templates/system-prompt.md` — Chatbot/agent system prompts (6-layer architecture)
