@@ -27,7 +27,7 @@ Skip when the session was a quick Q&A with no state worth carrying.
 ## How it differs from related skills
 
 - `/session-handoff` (sungjunlee-claude-config) — writes a verbose `docs/handoff/HANDOFF-*.md` into the project. Use that for multi-day continuity with team-readable docs.
-- `craft-prompt` with `templates/session-handoff.md` — a *template* the user fills in manually. `craft-handoff` is the *operator*: it gathers state, drafts, and delivers automatically.
+- `craft-prompt` — the composition engine. `craft-handoff` gathers session state, distills it, then delegates composition to craft-prompt's `templates/session-handoff.md` and `SKILL.md` §Step 3. Use craft-prompt directly when you want to author a prompt without session-state gathering.
 - `reflect` (jangpm-meta-skills) — focuses on docs/automation/learnings post-session. `craft-handoff` focuses on the next-session bootstrap prompt.
 
 ## Inputs
@@ -82,50 +82,29 @@ For each section, write the *minimum* a future agent needs:
 
 Use **worktree-relative paths** (`src/auth.ts:45`, not absolute paths). All paths are relative to the worktree root reported above.
 
-### Step 3 — Compose
+### Step 3 — Compose (delegate to craft-prompt)
 
-Use this XML template (Claude/GPT/Gemini all parse it). Skip blocks with no content.
+craft-prompt owns prompt composition — don't re-specify templates here. Read and apply.
 
-```xml
-<context>
-## Project
-{{project}} — {{one_liner}}
+**Prerequisite**: craft-prompt must be co-installed. The two skills ship together in craftkit; if craft-handoff was copied standalone, see the fallback in `## Failure modes` below.
 
-## Done
-- {{done_1}}
-- {{done_2}}
+1. Read the sibling skill file `craft-prompt/templates/session-handoff.md` (in the same `skills/` directory, or the same commands/agents layout where craft-handoff itself was loaded from). Pick the variant:
+   - **Continuation** — normal wrap-up (most common)
+   - **Debug Handoff** — mid-investigation session
+   - **Fresh Start** — new thread with repo context but no in-flight task
+2. Read `craft-prompt/SKILL.md` §Step 3 (sizing + building blocks), §Step 4 (Sharpen checklist), and §Principles §4 (generic cut order). Apply them to decide which blocks to include and what to trim.
+3. Fill the chosen template with the distilled material from Step 2. Omit blocks with no content.
 
-## State
-- Branch: {{branch}} ({{ahead_behind}})
-- Tests: {{status}}
-- Blockers: {{blockers_or_none}}
+**Required signals** (enforce after fill):
 
-## Decisions
-- {{decision}} — because {{reason}}
-</context>
+- `## Done` items name outcomes, not narration.
+- Every `## Decisions` item carries a rationale clause (`because <reason>` or `— <reason>`); drop lines without one.
+- `<task>` has a `Success criteria:` (or `성공 기준:`) list with at least one measurable item.
+- `<rules>` names at least one key file for the next session to read first (e.g., `Read src/auth.ts first`). If there is genuinely nothing worth pointing at, omit the line rather than invent one.
+- All paths are worktree-relative — strip `/Users/…`, `/home/…`, `C:\…` before writing.
+- Verify command matches the input project's actual stack. If no tests ran this session and the stack is unclear, omit the command rather than guess.
 
-<task>
-{{next_steps}}
-
-Success criteria:
-- {{criterion_1}}
-- {{criterion_2}}
-</task>
-
-<rules>
-- All paths below are relative to the current worktree root
-- Read {{key_files}} first
-- {{test_or_verify_command}}
-</rules>
-```
-
-**Size budget**: target ≤ 800 tokens. A bloated handoff defeats the purpose.
-
-**Required signals per block**:
-
-- `<context>` — `## Done` items name outcomes not narration. Every `## Decisions` item carries a rationale clause (`because <reason>` or `— <reason>`); without it, the line is noise. Omit `## Decisions` and `## Blockers` entirely if there is nothing real.
-- `<task>` — every prompt has a `Success criteria:` (or `성공 기준:`) sub-list with at least one measurable item.
-- `<rules>` — paths are worktree-relative throughout. Strip `/Users/…`, `/home/…`, `C:\…` from every path that lands in the prompt body. The verify command matches the input project's actual stack. If no test runs happened this session and the stack is unclear, omit the verify command rather than guessing.
+**Size budget**: ≤ 800 tokens (inherited from the template). If over budget after craft-prompt's cut order, call it out to the user rather than silently truncating.
 
 ### Step 4 — Persist + copy
 
@@ -184,9 +163,10 @@ See `references/auto-load-hook.md` for the one-time installation (settings.json 
 - **Outside a git repo**: `gather-state.mjs` reports `(not a git repo)` for branch and `(clean)` for status. Drop the State block from the composed prompt and lean on the conversation-derived sections.
 - **Multi-subtask session**: the conversation covered several unrelated threads. Don't merge them into one Next — ask the user which thread to carry forward, or pick the most recently active one and say so explicitly in the prompt body.
 - **Stale pending.md**: a previous handoff was never consumed. Overwrite without asking — the new state supersedes.
-- **Bloated prompt**: token budget blown. Trim *before* writing — cut decisions first, then state details, never the next-step block. If still over budget after trimming, call it out to the user instead of silently truncating.
+- **Bloated prompt**: token budget blown. Trim *before* writing. Handoff-specific cut order (supersedes craft-prompt's generic role/context/hedging sequence for this case): cut decisions first, then state details, never the next-step block. If still over budget after trimming, call it out to the user instead of silently truncating.
 - **Auto-load injects when not wanted** (Claude Code only): user ran `/clear` to truly reset, but `pending.md` was lurking. The hook script deletes the file after injection (one-shot). Manual cleanup: `rm ~/.craftkit/handoff/pending.md`.
 - **Malformed `settings.json` after manual hook install** (Claude Code only): the hook silently fails to fire. Validate the JSON (`node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.claude/settings.json','utf-8'))"`) and check `~/.claude/logs/` if available.
+- **craft-prompt not installed**: Step 3 delegates to craft-prompt's template and sizing guidance. If craft-prompt is absent (craft-handoff was copied standalone), fall back to composing the prompt directly using the Required signals in Step 3 and this `<context>/<task>/<rules>` shape from the Example section below. Tell the user they should install craft-prompt for ongoing use — the two skills ship together in craftkit.
 
 ## Example
 
