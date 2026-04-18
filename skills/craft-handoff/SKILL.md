@@ -92,7 +92,7 @@ craft-prompt owns prompt composition — don't re-specify templates here. Read a
    - **Continuation** — normal wrap-up (most common)
    - **Debug Handoff** — mid-investigation session
    - **Fresh Start** — new thread with repo context but no in-flight task
-2. Read `craft-prompt/SKILL.md` §Step 3 (sizing + building blocks) and §Step 4 (Sharpen — cut order). Apply both to decide which blocks to include and what to trim.
+2. Read `craft-prompt/SKILL.md` §Step 3 (sizing + building blocks), §Step 4 (Sharpen checklist), and §Principles §4 (generic cut order). Apply them to decide which blocks to include and what to trim.
 3. Fill the chosen template with the distilled material from Step 2. Omit blocks with no content.
 
 **Required signals** (enforce after fill):
@@ -163,7 +163,7 @@ See `references/auto-load-hook.md` for the one-time installation (settings.json 
 - **Outside a git repo**: `gather-state.mjs` reports `(not a git repo)` for branch and `(clean)` for status. Drop the State block from the composed prompt and lean on the conversation-derived sections.
 - **Multi-subtask session**: the conversation covered several unrelated threads. Don't merge them into one Next — ask the user which thread to carry forward, or pick the most recently active one and say so explicitly in the prompt body.
 - **Stale pending.md**: a previous handoff was never consumed. Overwrite without asking — the new state supersedes.
-- **Bloated prompt**: token budget blown. Trim *before* writing — cut decisions first, then state details, never the next-step block. If still over budget after trimming, call it out to the user instead of silently truncating.
+- **Bloated prompt**: token budget blown. Trim *before* writing. Handoff-specific cut order (supersedes craft-prompt's generic role/context/hedging sequence for this case): cut decisions first, then state details, never the next-step block. If still over budget after trimming, call it out to the user instead of silently truncating.
 - **Auto-load injects when not wanted** (Claude Code only): user ran `/clear` to truly reset, but `pending.md` was lurking. The hook script deletes the file after injection (one-shot). Manual cleanup: `rm ~/.craftkit/handoff/pending.md`.
 - **Malformed `settings.json` after manual hook install** (Claude Code only): the hook silently fails to fire. Validate the JSON (`node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.claude/settings.json','utf-8'))"`) and check `~/.claude/logs/` if available.
 - **craft-prompt not installed**: Step 3 delegates to craft-prompt's template and sizing guidance. If craft-prompt is absent (craft-handoff was copied standalone), fall back to composing the prompt directly using the Required signals in Step 3 and this `<context>/<task>/<rules>` shape from the Example section below. Tell the user they should install craft-prompt for ongoing use — the two skills ship together in craftkit.
