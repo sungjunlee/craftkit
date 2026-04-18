@@ -29,15 +29,22 @@ const archiveDir = join(HANDOFF_DIR, "archive");
 // Override via env:
 //   CRAFTKIT_HANDOFF_TTL_HOURS=<N>  — any positive number
 //   CRAFTKIT_HANDOFF_TTL_HOURS=0    — disable the guard entirely
-//   Non-numeric values fall back to the default and log to stderr.
+//   Anything else (empty, negative, non-numeric) falls back to the
+//   default and logs to stderr. We *don't* accept empty/negative as
+//   "disable" because the docs reserve that meaning for literal 0.
 const DEFAULT_TTL_HOURS = 72;
 const _rawTtl = process.env.CRAFTKIT_HANDOFF_TTL_HOURS;
-const _parsedTtl = _rawTtl === undefined ? DEFAULT_TTL_HOURS : Number(_rawTtl);
-const _ttlHours = Number.isFinite(_parsedTtl) ? _parsedTtl : DEFAULT_TTL_HOURS;
-if (_rawTtl !== undefined && !Number.isFinite(_parsedTtl)) {
-  console.error(
-    `craft-handoff hook: CRAFTKIT_HANDOFF_TTL_HOURS=${JSON.stringify(_rawTtl)} is not a number; using default ${DEFAULT_TTL_HOURS}h.`,
-  );
+let _ttlHours = DEFAULT_TTL_HOURS;
+if (_rawTtl !== undefined) {
+  const _trimmed = _rawTtl.trim();
+  const _parsed = Number(_trimmed);
+  if (_trimmed === "" || !Number.isFinite(_parsed) || _parsed < 0) {
+    console.error(
+      `craft-handoff hook: CRAFTKIT_HANDOFF_TTL_HOURS=${JSON.stringify(_rawTtl)} is invalid; using default ${DEFAULT_TTL_HOURS}h.`,
+    );
+  } else {
+    _ttlHours = _parsed;
+  }
 }
 const STALE_AFTER_MS =
   _ttlHours > 0 ? _ttlHours * 60 * 60 * 1000 : Number.POSITIVE_INFINITY;
