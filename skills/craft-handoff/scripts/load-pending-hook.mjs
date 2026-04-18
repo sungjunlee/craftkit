@@ -22,9 +22,25 @@ const pending = join(HANDOFF_DIR, "pending.md");
 const archiveDir = join(HANDOFF_DIR, "archive");
 
 // Handoffs older than this are archived without injection. Rationale:
-// craft-handoff is paired with an imminent /clear. If pending.md has been
-// sitting for half a day, the /clear is likely unrelated to that handoff.
-const STALE_AFTER_MS = 12 * 60 * 60 * 1000;
+// craft-handoff is paired with a near-term /clear. 72h (default) accommodates
+// "end-of-Friday handoff, Monday /clear" while still catching week-plus-old
+// pending files that predate an unrelated /clear.
+//
+// Override via env:
+//   CRAFTKIT_HANDOFF_TTL_HOURS=<N>  — any positive number
+//   CRAFTKIT_HANDOFF_TTL_HOURS=0    — disable the guard entirely
+//   Non-numeric values fall back to the default and log to stderr.
+const DEFAULT_TTL_HOURS = 72;
+const _rawTtl = process.env.CRAFTKIT_HANDOFF_TTL_HOURS;
+const _parsedTtl = _rawTtl === undefined ? DEFAULT_TTL_HOURS : Number(_rawTtl);
+const _ttlHours = Number.isFinite(_parsedTtl) ? _parsedTtl : DEFAULT_TTL_HOURS;
+if (_rawTtl !== undefined && !Number.isFinite(_parsedTtl)) {
+  console.error(
+    `craft-handoff hook: CRAFTKIT_HANDOFF_TTL_HOURS=${JSON.stringify(_rawTtl)} is not a number; using default ${DEFAULT_TTL_HOURS}h.`,
+  );
+}
+const STALE_AFTER_MS =
+  _ttlHours > 0 ? _ttlHours * 60 * 60 * 1000 : Number.POSITIVE_INFINITY;
 
 if (!existsSync(pending)) {
   process.exit(0);
