@@ -171,7 +171,7 @@ Text:
 
 Hand off context from one AI coding session to another. The key is compressing what was done, what's next, and what state the code is in — all in under 800 tokens.
 
-Three variants: **Continuation** (pick up where you left off), **Debug** (hand off a problem), **Fresh Start** (new task with project context).
+Two variants: **Continuation** (pick up where you left off) and **Debug** (hand off a problem).
 
 See `templates/session-handoff.md` for ready-to-use templates and tips.
 
