@@ -9,13 +9,13 @@ description: Design a new skill spec using CraftKit's current skill-radar guidan
 
 Design a new skill spec using CraftKit's current canonical view of good skill-authoring patterns.
 
-This is not a generic skill-creation walkthrough. It is the decision layer that turns a rough skill idea into a concrete, reviewable spec: what the skill should do, what patterns it should adopt or avoid, how much freedom it should allow, what files it needs, and how it should be evaluated.
+This is not a generic skill-creation walkthrough. It is the decision layer that turns a rough skill idea into a concrete, reviewable spec: what the artifact should do, what patterns it should adopt or avoid, how much freedom it should allow, what files it needs, and how it should be evaluated.
 
-Use it when the question is not just "how do I write a skill?" but "what kind of skill should this become right now?"
+Use it when the question is not just "how do I write a skill?" but "what kind of artifact should this become right now?"
 
 ## How it differs from related skills
 
-- `craft-scaffold` structures vague requests into a plan. `craft-skill-spec` is narrower: it produces a **skill-specific design spec** informed by the current radar.
+- `craft-scaffold` structures vague requests into a plan. `craft-skill-spec` is narrower: it produces an **artifact-specific design spec** informed by the current radar.
 - `craft-survey` studies prior art. `craft-skill-spec` starts from the already-curated `docs/skill-radar/current.md` and only dips into snapshots when a watched area matters.
 - `craft-tune` improves an existing skill. `craft-skill-spec` is for designing a new one or reshaping a skill before the draft exists.
 - generic `skill-creator` guidance explains how skills work broadly. `craft-skill-spec` makes a concrete CraftKit judgment for *this* proposed skill.
@@ -34,22 +34,25 @@ If the user does not state all of these, infer what is safe to infer and keep mo
 
 Before producing the spec:
 
-1. Read `docs/skill-radar/current.md`.
-2. If the target touches a `Watch` area from that file, read the newest relevant snapshot in `docs/skill-radar/`.
-3. Read an existing CraftKit skill only when it is directly adjacent to the proposed job.
+1. Read `docs/skill-radar/taxonomy.md` and classify the artifact: `single skill`, `skill suite`, `subagent`, or `plugin`.
+2. Read `docs/skill-radar/current.md`.
+3. If the target touches a `Watch` area, or if the artifact class is `subagent` or `plugin`, consult `docs/skill-radar/policy.md` and the relevant entries in `docs/skill-radar/sources.md`.
+4. Read the newest relevant snapshot in `docs/skill-radar/` only when the policy requires fresh context.
+5. Read an existing CraftKit skill only when it is directly adjacent to the proposed job.
 
 Do not start with open-ended web research unless the user explicitly asks for it. The point of this skill is to use the curated internal layer first.
 
 ## Steps
 
-1. Restate the proposed skill's real job in one sentence. If you cannot state the job cleanly, the spec will drift.
-2. Define the wedge. Name what the skill should do and what it should explicitly not try to do.
-3. Apply the current radar. Pick the relevant `Adopt`, `Avoid`, and `Watch` items from `docs/skill-radar/current.md`.
-4. Decide the degree of freedom. Choose whether the skill should be high-freedom guidance, medium-freedom templates/pseudocode, or low-freedom exact commands/scripts.
-5. Decide the file shape. Start with `SKILL.md`; add `references/`, `scripts/`, or `templates/` only when the proposed job clearly earns them.
-6. Draft the trigger surface. Write a frontmatter `description` that says what the skill does and when it should be used.
-7. Draft the first eval plan. Name 3-5 realistic prompts and the key checks that would tell you whether the design is working.
-8. Surface only the open questions that would materially change the architecture. Drop wording nits.
+1. Classify the artifact first. If it should really be a `subagent` or `plugin`, say so before drafting a skill-shaped answer.
+2. Restate the proposed artifact's real job in one sentence. If you cannot state the job cleanly, the spec will drift.
+3. Define the wedge. Name what the artifact should do and what it should explicitly not try to do.
+4. Apply the current radar. Pick the relevant `Adopt`, `Avoid`, and `Watch` items from `docs/skill-radar/current.md`.
+5. Decide the degree of freedom. Choose whether the core should be high-freedom guidance, medium-freedom templates/pseudocode, or low-freedom exact commands/scripts.
+6. Decide the file or package shape. Start from the smallest viable artifact class and add `references/`, `scripts/`, `templates/`, agents, or plugin surfaces only when the proposed job clearly earns them.
+7. Draft the trigger surface if the artifact includes one or more skills. Write frontmatter `description` lines that say what each skill does and when it should be used.
+8. Draft the first eval plan. Name 3-5 realistic prompts and the key checks that would tell you whether the design is working.
+9. Surface only the open questions that would materially change the architecture. Drop wording nits.
 
 ## Decision rules
 
@@ -74,9 +77,14 @@ Do not silently convert a `Watch` item into a default.
 ## Output format
 
 ### Summary
-One short paragraph: what skill is being proposed, for whom, and why this shape is better than a generic skill-creation pass.
+One short paragraph: what artifact is being proposed, for whom, and why this shape is better than a generic skill-creation pass.
 
-### Skill thesis
+### Artifact class
+- class
+- why this class fits better than the next smaller one
+- escalation note if the boundary is close
+
+### Artifact thesis
 - job
 - non-goals
 - target users or agents
@@ -94,11 +102,13 @@ Every item must be specific to the proposed skill. Do not repeat the radar file 
 - workflow shape
 - output shape
 - progressive disclosure plan
-- file plan
+- file or package plan
 
-For the file plan, name concrete paths and one-line purposes. Start with the smallest viable set.
+For the file or package plan, name concrete paths and one-line purposes. Start with the smallest viable set.
 
 ### Trigger draft
+Provide this section only when the artifact includes one or more skills.
+
 Provide:
 
 - `name`
@@ -119,13 +129,14 @@ Provide:
 - do not turn the output into a survey report
 - do not import provider-specific quirks into the core skill unless the skill is explicitly platform-bound
 - prefer one default path over many equal-weight branches
-- if a script, template, or reference file is proposed, name the repeated pain it removes
+- if a script, template, reference file, subagent, or plugin surface is proposed, name the repeated pain it removes
 
 ## Failure modes
 
 - producing a generic "good skill" checklist instead of a real spec for this skill
 - repeating every radar item instead of selecting the ones that matter
 - proposing too many files before the core `SKILL.md` shape is earned
+- forcing a plugin or subagent when a single skill would do
 - treating `Watch` items as fashionable defaults
 - skipping the eval plan and leaving the design untestable
 
@@ -140,7 +151,12 @@ Design a meta-skill that helps create good new skills without re-researching the
 **Summary**
 Propose a skill-design spec that turns CraftKit's current radar into a stable decision layer for new skill creation.
 
-**Skill thesis**
+**Artifact class**
+- class: single skill
+- why this class fits better than the next smaller one: there is no smaller reusable artifact than a single skill for this job
+- escalation note: escalate to a plugin only if the solution later needs bundled agents, hooks, or MCP servers
+
+**Artifact thesis**
 - job: design a new skill spec from a rough idea
 - non-goals: writing the full skill body, broad web research on every run
 - target users or agents: CraftKit maintainers designing new skills
@@ -177,7 +193,10 @@ Propose a skill-design spec that turns CraftKit's current radar into a stable de
 
 ## References (load on demand)
 
+- `docs/skill-radar/taxonomy.md` — artifact classes and escalation path
 - `docs/skill-radar/current.md` — current canonical judgment for skill-authoring patterns
+- `docs/skill-radar/sources.md` — live reference registry for skills, subagents, plugins, and cross-platform guidance
+- `docs/skill-radar/policy.md` — when canon is enough and when fresh live-source review is required
 - `docs/skill-radar/decision-log.md` — why a pattern moved between adopt / avoid / watch
 - `docs/skill-radar/TEMPLATE.md` — if a new snapshot or event-based addendum is needed
 - `references/spec-checklist.md` — structured review pass for checking whether the spec is specific, narrow, and ready to turn into `SKILL.md`

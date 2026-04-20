@@ -4,6 +4,8 @@ Use this after drafting a `craft-skill-spec` output when the design feels plausi
 
 ## 1. Job clarity
 
+- Is the artifact class explicitly named?
+- Does the chosen class fit better than the next smaller one?
 - Can the skill's job be stated in one sentence?
 - Is the wedge narrow enough that another nearby skill would not do the same job?
 - Are the non-goals explicit?
@@ -58,7 +60,15 @@ If the spec cannot name how the first draft would fail, it is probably not ready
 
 If portability is lost, the spec should say so explicitly as a tradeoff.
 
-## 8. Output usefulness
+## 8. Freshness discipline
+
+- Did the spec stay on the curated internal layer unless freshness actually mattered?
+- If the artifact is a `subagent` or `plugin`, did the workflow consult `docs/skill-radar/policy.md` and `docs/skill-radar/sources.md`?
+- If live-source review was needed, is that dependency visible in the reasoning?
+
+If not, the spec may look current while actually relying on stale assumptions.
+
+## 9. Output usefulness
 
 - Could another agent draft `SKILL.md` from this spec without inventing architecture?
 - Are open questions limited to the ones that would change the design materially?
