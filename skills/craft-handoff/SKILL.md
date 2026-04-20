@@ -107,12 +107,17 @@ craft-prompt owns prompt composition — don't re-specify templates here. Read a
 
 ### Step 4 — Persist + copy
 
-1. Use your agent's file-write tool to write the composed XML block to `~/.craftkit/handoff/pending.md`. Create the directory first if needed (`mkdir -p ~/.craftkit/handoff`). Writing through the file tool avoids heredoc-EOF collisions when the prompt body contains shell metacharacters.
-2. Copy it to the clipboard:
+Handoffs use a **per-session, timestamped file** layout — two sessions wrapping up in parallel never overwrite each other, and the SessionStart hook picks the handoff that matches the current worktree.
+
+1. Read the `--- Handoff target ---` block from Step 1's gather output. Use the printed `PENDING_PATH` and the `Frontmatter` block verbatim.
+2. Use your agent's file-write tool to write `<frontmatter>\n\n<composed XML>` to that `PENDING_PATH`. Create the parent directory first if needed (`mkdir -p ~/.craftkit/handoff/pending`). Writing through the file tool avoids heredoc-EOF collisions when the prompt body contains shell metacharacters.
+3. Copy the composed XML (without the frontmatter) to the clipboard:
 
 ```bash
-bash <skill-dir>/scripts/copy-clipboard.sh < ~/.craftkit/handoff/pending.md
+bash <skill-dir>/scripts/copy-clipboard.sh < "$PENDING_PATH"
 ```
+
+It's fine that the clipboard payload includes the frontmatter lines — the receiving session ignores them. If you want a clipboard-only view, pipe through `sed '1,/^---$/d;1,/^---$/d'` first.
 
 The wrapper auto-detects the platform (`pbcopy` → `wl-copy` → `xclip` → `xsel` → `clip.exe`). If none are available it exits non-zero and prints to stderr — surface that to the user. The file write still succeeded; the user can `cat` it manually.
 
@@ -123,7 +128,7 @@ Show the prompt before the confirmation — the user wants to verify the artifac
 Deliver, in this order:
 
 1. The composed prompt in a fenced code block so the user can verify.
-2. "Copied to clipboard. Saved to `~/.craftkit/handoff/pending.md`."
+2. `Copied to clipboard. Saved to <PENDING_PATH>.` (use the actual path you wrote).
 3. "Run `/clear`, then paste."
 4. *"On Claude Code, you can skip the paste step by installing the SessionStart hook — see `references/auto-load-hook.md`."*
 
@@ -146,7 +151,7 @@ Do not summarize what you put in the prompt — the user can read it. Do not add
 | Linux X11 | `xclip` or `xsel` | Most distros, may need install |
 | Windows / WSL | `clip.exe` | Bundled with Windows |
 
-The wrapper script tries them in that order. If your system has none, the prompt is still saved to `~/.craftkit/handoff/pending.md` — you can `cat` it manually.
+The wrapper script tries them in that order. If your system has none, the prompt is still saved to the `PENDING_PATH` gather-state reported in Step 1 — you can `cat` it manually.
 
 ## Auto-load on `/clear` (Claude Code only, optional)
 
@@ -161,9 +166,10 @@ See `references/auto-load-hook.md` for the one-time installation (settings.json 
 - **Empty handoff**: skill ran on a no-state session. Tell the user there's nothing to hand off and skip the file write.
 - **Outside a git repo**: `gather-state.mjs` reports `(not a git repo)` for branch and `(clean)` for status. Drop the State block from the composed prompt and lean on the conversation-derived sections.
 - **Multi-subtask session**: the conversation covered several unrelated threads. Don't merge them into one Next — ask the user which thread to carry forward, or pick the most recently active one and say so explicitly in the prompt body.
-- **Stale pending.md**: a previous handoff was never consumed. Overwrite without asking — the new state supersedes. On the auto-load side, the hook treats pending.md older than 72h (configurable via `CRAFTKIT_HANDOFF_TTL_HOURS`; set to `0` to disable) as stale and archives it without injection. See `references/auto-load-hook.md`.
+- **Stale pending handoffs**: each run writes a new timestamped file under `~/.craftkit/handoff/pending/`, so nothing is overwritten. The auto-load hook archives entries older than 72h (configurable via `CRAFTKIT_HANDOFF_TTL_HOURS`; set to `0` to disable) as `stale-*` without injection, and moves older same-worktree entries aside as `superseded-*` when a newer one is injected. See `references/auto-load-hook.md`.
+- **Concurrent wrap-ups in the same worktree**: rare but possible (two Claude Code windows, same repo). Each run still writes its own timestamped file; the hook picks the newest match and supersedes the rest. If both threads are genuinely independent and you want to recover the older one, grab it from `~/.craftkit/handoff/archive/superseded-*.md`.
 - **Bloated prompt**: token budget blown. Trim *before* writing. Handoff-specific cut order (supersedes craft-prompt's generic role/context/hedging sequence for this case): cut decisions first, then state details, never the next-step block. If still over budget after trimming, call it out to the user instead of silently truncating.
-- **Auto-load injects when not wanted** (Claude Code only): user ran `/clear` to truly reset, but `pending.md` was lurking. The hook archives after injection (one-shot) and skips injection for handoffs older than 72h (TTL configurable via `CRAFTKIT_HANDOFF_TTL_HOURS`). Manual cleanup: `rm ~/.craftkit/handoff/pending.md`. Past handoffs live in `~/.craftkit/handoff/archive/`.
+- **Auto-load injects when not wanted** (Claude Code only): user ran `/clear` to truly reset, but a pending handoff for the same worktree was lurking. The hook archives after injection (one-shot) and skips injection for handoffs older than 72h (TTL configurable via `CRAFTKIT_HANDOFF_TTL_HOURS`). Manual cleanup: `rm -rf ~/.craftkit/handoff/pending/`. Past handoffs live in `~/.craftkit/handoff/archive/`.
 - **Malformed `settings.json` after manual hook install** (Claude Code only): the hook silently fails to fire. Validate the JSON (`node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.claude/settings.json','utf-8'))"`) and check `~/.claude/logs/` if available.
 - **craft-prompt not installed**: Step 3 delegates to craft-prompt's template and sizing guidance. If craft-prompt is absent (craft-handoff was copied standalone), fall back to composing the prompt directly using the Required signals in Step 3 and this `<context>/<task>/<rules>` shape from the Example section below. Tell the user they should install craft-prompt for ongoing use — the two skills ship together in craftkit.
 
@@ -208,7 +214,7 @@ Success criteria:
 </rules>
 ```
 
-Copied to clipboard. Saved to `~/.craftkit/handoff/pending.md`.
+Copied to clipboard. Saved to `~/.craftkit/handoff/pending/2026-04-20T03-08-23-347Z-acme-api-a3b2c1.md`.
 Run `/clear`, then paste.
 
 ## References (load on demand)
