@@ -15,11 +15,17 @@ Search is noisy. Older styles often outrank newer guidance, provider-specific qu
 - **monthly or event snapshots** — what changed, what looked promising, what still felt unstable
 - **current canonical view** — the default judgment a skill-design workflow should use today
 - **decision log** — why a pattern moved from `watch` to `adopt`, or from `adopt` to `avoid`
+- **taxonomy** — whether the design target is a skill, skill suite, subagent, or plugin
+- **live source registry** — the primary references worth revisiting as the ecosystem moves
+- **policy** — when to trust canon, when to reopen live sources, and when to mint a new snapshot
 
 ## Folder map
 
 - `current.md` — current canonical judgment. Treat this as the default source of truth.
 - `decision-log.md` — durable decisions and reclassifications.
+- `taxonomy.md` — artifact classes and escalation path.
+- `sources.md` — live reference registry.
+- `policy.md` — freshness and update rules.
 - `TEMPLATE.md` — template for a new monthly or event snapshot.
 - `2026-04.md` — initial baseline snapshot.
 
@@ -30,11 +36,13 @@ Future snapshots may use either:
 
 ## Operating model
 
-1. Collect primary-source guidance and strong local signals.
-2. Write a bounded snapshot for that month or event.
-3. Classify every notable pattern as `adopt`, `avoid`, or `watch`.
-4. Update `current.md` only after a deliberate judgment call.
-5. Record reclassification rationale in `decision-log.md`.
+1. Classify the target with `taxonomy.md`.
+2. Consult `current.md` for the relevant default stance.
+3. Reopen live sources from `sources.md` only when `policy.md` says freshness matters.
+4. Write a bounded snapshot for that month or event when the live evidence changes guidance.
+5. Classify every notable pattern as `adopt`, `avoid`, or `watch`.
+6. Update `current.md` only after a deliberate judgment call.
+7. Record reclassification rationale in `decision-log.md`.
 
 The important constraint is this:
 
@@ -42,6 +50,8 @@ The important constraint is this:
 - **`current.md` is for runtime judgment.**
 
 Do not make downstream skills or prompts read the full history by default. They should read `current.md` first and consult a snapshot only when a `watch` item or a low-confidence call needs deeper context.
+
+Also do not assume every target artifact is a single skill. `taxonomy.md` exists to prevent that category error.
 
 ## Classification rules
 
@@ -101,9 +111,10 @@ When adding a new snapshot:
 
 Any future meta-skill that designs new skills should follow this lookup order:
 
-1. Read `docs/skill-radar/current.md`.
-2. Apply `adopt` and `avoid` items by default.
-3. If the target skill touches a `watch` area, open the most recent relevant snapshot.
-4. If a classification changed recently, read the matching entry in `decision-log.md`.
+1. Classify the artifact with `docs/skill-radar/taxonomy.md`.
+2. Read `docs/skill-radar/current.md`.
+3. Apply `adopt` and `avoid` items by default when the target is a single skill.
+4. If the target touches a `watch` area, or if the artifact is a `subagent` or `plugin`, consult `docs/skill-radar/policy.md` and the relevant source entries in `docs/skill-radar/sources.md`.
+5. If a classification changed recently, read the matching entry in `decision-log.md`.
 
 That keeps recommendations stable while still letting the system absorb change over time.
