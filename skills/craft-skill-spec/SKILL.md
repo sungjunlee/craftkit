@@ -1,6 +1,6 @@
 ---
 name: craft-skill-spec
-description: Design a new skill spec using CraftKit's current skill-radar guidance. Use this whenever a user wants to create, architect, or spec a new skill and needs help deciding what the skill should adopt, avoid, and keep under watch before writing `SKILL.md` — including requests like "design a skill", "spec this skill", "make a meta-skill", or "what patterns should this skill use?"
+description: Design a new skill (or skill suite, subagent, or plugin) using CraftKit's current radar guidance. Use this whenever a user wants to create, architect, or spec a new skill-like artifact and needs help deciding the artifact class, what patterns to adopt/avoid, and the file or package shape before writing `SKILL.md` — including requests like "design a skill", "spec this skill", "make a meta-skill", "design a subagent", "spec a plugin", or "what should this be — skill or subagent?"
 ---
 
 # craft-skill-spec
@@ -180,7 +180,7 @@ Propose a skill-design spec that turns CraftKit's current radar into a stable de
 
 **Trigger draft**
 - name: `craft-skill-spec`
-- description: Design a new skill spec using CraftKit's current skill-radar guidance...
+- description: Design a new skill (or skill suite, subagent, or plugin) using CraftKit's current radar guidance...
 - why it should discover well: it names both the task and the user phrasings around designing or specing a skill
 
 **Eval plan**
