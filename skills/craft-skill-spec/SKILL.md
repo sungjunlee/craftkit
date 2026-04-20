@@ -184,9 +184,9 @@ Propose a skill-design spec that turns CraftKit's current radar into a stable de
 - why it should discover well: it names both the task and the user phrasings around designing or specing a skill
 
 **Eval plan**
-- prompts: "design a release-note skill", "spec a jira-triage skill", "make a meta-skill for design review"
-- checks: output includes adopt/avoid/watch; file plan is concrete; trigger description is specific; eval plan is present
-- likely failure pattern: drifting into generic skill advice instead of task-specific design judgment
+- prompts: "design a release-note skill", "spec a jira-triage skill", "design a subagent for code review", "should this be a skill or a plugin?"
+- checks: output names the artifact class explicitly; adopt/avoid/watch are present; file or package plan is concrete; trigger draft appears only when the artifact includes skills; eval plan is present
+- likely failure pattern: drifting into generic skill advice or forcing a skill-shape onto a subagent/plugin request
 
 **Open questions**
 - none - current constraints are sufficient

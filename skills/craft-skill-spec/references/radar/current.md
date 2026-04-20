@@ -106,11 +106,4 @@ When drafting a new skill, assume the following unless there is a strong task-sp
 
 ## Default lookup rule
 
-For a future skill-design meta-skill:
-
-1. Classify the artifact with `references/radar/taxonomy.md`.
-2. Read this file first for single-skill defaults.
-3. Apply `Adopt` and `Avoid` by default only when the target is actually a single skill.
-4. If the target touches a `Watch` item, read the newest relevant snapshot.
-5. If the target is a `subagent` or `plugin`, consult `references/radar/policy.md` and `references/radar/sources.md`.
-6. If a classification changed recently, read `references/radar/decision-log.md`.
+For the full runtime protocol (when to open which radar file, and in what order), see the consuming skill's operating instructions — in CraftKit today that is `skills/craft-skill-spec/SKILL.md` §Required reads. `policy.md` defines when freshness actually matters and when to stay on this file alone.
