@@ -123,6 +123,10 @@ Using `clear` keeps the hook scoped — it won't inject the handoff when you jus
 - **Multiple hooks on the same matcher.** If you already have a `SessionStart` + `clear` hook (e.g. for environment setup), merge — don't replace. Their `additionalContext` outputs concatenate.
 - **Path portability.** `command` requires an absolute path. If you move the install, update settings.json.
 
+## Trust model
+
+The hook resolves which handoff to inject by reading the `worktree:` frontmatter from each file under `~/.craftkit/handoff/pending/`. Any process running as the current OS user can drop a file into that directory with a `worktree:` matching one of your projects and have its content auto-injected into the next `/clear`. This is the same trust boundary as `~/.claude/settings.json` itself (anything writing there can rewrite the hook command, drop shell scripts, etc.), so it does not introduce new privilege — but if your threat model includes "another user-level process on this machine", treat `~/.craftkit/handoff/pending/` as trusted user input and audit its contents before `/clear`.
+
 ## Uninstall
 
 Delete the entry from `hooks.SessionStart` in `~/.claude/settings.json`. The skill itself keeps working — it just falls back to clipboard-only.
