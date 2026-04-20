@@ -8,14 +8,18 @@ Claude Code's docs are explicit: *"Built-in commands like `/compact` and `/init`
 
 What *can* run in the post-clear session is a hook. `SessionStart` fires at the boundary of every new session, including those started by `/clear`, and supports a `matcher` field that filters by source. So the recipe is:
 
-1. `craft-handoff` writes the prompt to `~/.craftkit/handoff/pending.md` (already does this).
+1. `craft-handoff` writes the prompt to `~/.craftkit/handoff/pending/<timestamp>-<worktree-slug>.md` with a small `worktree:` frontmatter (already does this).
 2. User runs `/clear`.
-3. `SessionStart` hook with `matcher: "clear"` fires, reads `pending.md`, returns it as `additionalContext`, and archives the file to `~/.craftkit/handoff/archive/<timestamp>.md`.
+3. `SessionStart` hook with `matcher: "clear"` fires, scans `pending/`, picks the newest entry whose `worktree:` matches the current cwd's git toplevel, returns it as `additionalContext`, and archives the consumed file to `~/.craftkit/handoff/archive/<original-name>.md`. Older same-worktree entries are moved aside as `superseded-*`.
 4. New session boots with the handoff already in context.
+
+### Concurrency model
+
+Each craft-handoff run writes its own timestamped file — nothing is ever overwritten. Two sessions wrapping up in parallel (different worktrees *or* the same one) both get a dedicated pending entry; the hook disambiguates by reading each file's `worktree:` frontmatter against the current cwd. Same-worktree collisions keep the newest and archive the rest under `superseded-*` so they're recoverable.
 
 ### Staleness guard
 
-If `pending.md` is older than **72 hours** (3 days) when `/clear` fires, the hook archives it with a `stale-` prefix **without** injecting. This prevents a forgotten handoff from polluting an unrelated later `/clear`, while still accommodating common patterns like "end-of-Friday handoff, resume Monday morning".
+If a pending entry is older than **72 hours** (3 days) when `/clear` fires, the hook archives it with a `stale-` prefix **without** injecting. This prevents a forgotten handoff from polluting an unrelated later `/clear`, while still accommodating common patterns like "end-of-Friday handoff, resume Monday morning".
 
 Override via env var:
 
@@ -72,20 +76,29 @@ Replace `/ABSOLUTE/PATH/TO/` with your actual install path. Common locations:
 
 ### 3. Verify
 
-Open a Claude Code session, then:
+Open a Claude Code session, then (substitute your actual worktree path):
 
 ```bash
-echo "<context>test handoff</context>" > ~/.craftkit/handoff/pending.md
+mkdir -p ~/.craftkit/handoff/pending
+WORKTREE=$(git rev-parse --show-toplevel)
+cat > ~/.craftkit/handoff/pending/$(date -u +%Y-%m-%dT%H-%M-%S-000Z)-test.md <<EOF
+---
+worktree: $WORKTREE
+branch: $(git rev-parse --abbrev-ref HEAD)
+created: $(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+---
+<context>test handoff</context>
+EOF
 ```
 
-Run `/clear`. The new session should report it received additional context. Confirm `pending.md` moved to the archive:
+Run `/clear`. The new session should report it received additional context. Confirm the file moved to archive:
 
 ```bash
-ls ~/.craftkit/handoff/pending.md
-# expected: No such file or directory
+ls ~/.craftkit/handoff/pending/
+# expected: empty (or only entries from other worktrees)
 
 ls ~/.craftkit/handoff/archive/
-# expected: a new <timestamp>.md entry
+# expected: a new <timestamp>-test.md entry
 ```
 
 ## How `matcher: "clear"` works
@@ -103,7 +116,9 @@ Using `clear` keeps the hook scoped — it won't inject the handoff when you jus
 
 ## Gotchas
 
-- **Stale pending file.** If you ran `craft-handoff` and never `/clear`-ed, then `/clear` much later for an unrelated reason, you don't want the old handoff. The hook has two guards: (a) after injection, it *archives* rather than deletes (so past handoffs stay recoverable under `~/.craftkit/handoff/archive/`), and (b) handoffs older than 72h (configurable via `CRAFTKIT_HANDOFF_TTL_HOURS`) are archived with a `stale-` prefix and never injected. Manual cleanup if needed: `rm ~/.craftkit/handoff/pending.md`.
+- **Stale pending file.** If you ran `craft-handoff` and never `/clear`-ed, then `/clear` much later for an unrelated reason, you don't want the old handoff. The hook has two guards: (a) after injection, it *archives* rather than deletes (so past handoffs stay recoverable under `~/.craftkit/handoff/archive/`), and (b) handoffs older than 72h (configurable via `CRAFTKIT_HANDOFF_TTL_HOURS`) are archived with a `stale-` prefix and never injected. Manual cleanup if needed: `rm -rf ~/.craftkit/handoff/pending/`.
+- **Wrong-worktree injection.** The hook only injects a handoff whose `worktree:` frontmatter matches the current cwd's git toplevel. Handoffs from other checkouts stay in `pending/` until that project's next `/clear`.
+- **Legacy `pending.md`.** Upgrading from the pre-directory layout? A leftover `~/.craftkit/handoff/pending.md` is treated as a match for the current worktree on first `/clear` and then archived. One-shot migration, no action needed.
 - **Hook errors are silent by default.** If the script fails (bad path, no Node), Claude Code shows nothing in the chat. Check `~/.claude/logs/` or run the hook manually: `node <path>/load-pending-hook.mjs`.
 - **Multiple hooks on the same matcher.** If you already have a `SessionStart` + `clear` hook (e.g. for environment setup), merge — don't replace. Their `additionalContext` outputs concatenate.
 - **Path portability.** `command` requires an absolute path. If you move the install, update settings.json.
