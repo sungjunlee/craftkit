@@ -27,3 +27,9 @@ Record only durable judgment changes here. Do not duplicate full snapshot conten
 - status: `accepted`
 - rationale: This prevents CraftKit from overfitting to a single documentation wave or product moment.
 - consequence: Promotion from `watch` to `adopt` should usually require either repeated support or one strong primary-source shift plus a clear CraftKit fit call.
+
+### Decision: artifact classification happens before canonical guidance
+
+- status: `accepted`
+- rationale: Not every design target is a single skill. Treating subagents and plugins as if they were plain skills produces bad architecture.
+- consequence: `taxonomy.md` is now a required first read for future meta-skills and design workflows.
