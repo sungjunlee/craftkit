@@ -82,7 +82,7 @@ Six of the eight skills (`craft-prompt`, `craft-scaffold`, `craft-critique`, `cr
 5. Eval-driven improvement when possible
 6. Copy-pasteable results over fancy abstractions
 
-For evolving skill-authoring guidance, start with `docs/skill-radar/current.md` and consult the dated snapshots only when a `watch` item needs deeper context.
+For evolving skill-authoring guidance, the `craft-skill-spec` skill carries its own radar layer at `skills/craft-skill-spec/references/radar/` — start with `current.md` there and consult the dated snapshots only when a `watch` item needs deeper context.
 
 ## Use in other agents
 

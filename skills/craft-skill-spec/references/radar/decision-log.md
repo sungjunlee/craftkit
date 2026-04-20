@@ -33,3 +33,11 @@ Record only durable judgment changes here. Do not duplicate full snapshot conten
 - status: `accepted`
 - rationale: Not every design target is a single skill. Treating subagents and plugins as if they were plain skills produces bad architecture.
 - consequence: `taxonomy.md` is now a required first read for future meta-skills and design workflows.
+
+## 2026-04-20
+
+### Decision: skill-radar lives under its consuming skill, not in `docs/`
+
+- status: `accepted`
+- rationale: The radar is skill-ingested reference material, not human documentation. Keeping it at `docs/skill-radar/` broke CraftKit's copy-paste portability rule: `skills/craft-skill-spec/` with bare `docs/` references could not be lifted into another repo without drag-along fixups. Today `craft-skill-spec` is the only consumer, so colocating radar with its owner is the honest shape.
+- consequence: radar moved to `skills/craft-skill-spec/references/radar/`. All references in SKILL.md, spec-checklist.md, and the radar files themselves now resolve from the skill root. If a second consumer appears later, promote the radar to a shared location at that point (YAGNI until then).

@@ -1,13 +1,13 @@
 # Skill Radar: Current Canonical View
 
 - last reviewed: `2026-04-16`
-- primary basis: `docs/skill-radar/2026-04.md`
+- primary basis: `references/radar/2026-04.md`
 - status: `initial baseline`
 - scope: `single-skill default guidance`
 
 Use this file as the default source of truth when designing or revising a CraftKit skill. Open a snapshot file only when a `watch` item is relevant or a recent classification change needs context.
 
-Before using this file, classify the artifact with `docs/skill-radar/taxonomy.md`. If the target is a `subagent` or `plugin`, do not treat this file as sufficient by itself.
+Before using this file, classify the artifact with `references/radar/taxonomy.md`. If the target is a `subagent` or `plugin`, do not treat this file as sufficient by itself.
 
 ## Default design stance
 
@@ -108,9 +108,9 @@ When drafting a new skill, assume the following unless there is a strong task-sp
 
 For a future skill-design meta-skill:
 
-1. Classify the artifact with `docs/skill-radar/taxonomy.md`.
+1. Classify the artifact with `references/radar/taxonomy.md`.
 2. Read this file first for single-skill defaults.
 3. Apply `Adopt` and `Avoid` by default only when the target is actually a single skill.
 4. If the target touches a `Watch` item, read the newest relevant snapshot.
-5. If the target is a `subagent` or `plugin`, consult `docs/skill-radar/policy.md` and `docs/skill-radar/sources.md`.
-6. If a classification changed recently, read `docs/skill-radar/decision-log.md`.
+5. If the target is a `subagent` or `plugin`, consult `references/radar/policy.md` and `references/radar/sources.md`.
+6. If a classification changed recently, read `references/radar/decision-log.md`.
