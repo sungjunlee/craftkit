@@ -111,10 +111,10 @@ When adding a new snapshot:
 
 Any future meta-skill that designs new skills should follow this lookup order:
 
-1. Classify the artifact with `docs/skill-radar/taxonomy.md`.
-2. Read `docs/skill-radar/current.md`.
+1. Classify the artifact with `references/radar/taxonomy.md`.
+2. Read `references/radar/current.md`.
 3. Apply `adopt` and `avoid` items by default when the target is a single skill.
-4. If the target touches a `watch` area, or if the artifact is a `subagent` or `plugin`, consult `docs/skill-radar/policy.md` and the relevant source entries in `docs/skill-radar/sources.md`.
+4. If the target touches a `watch` area, or if the artifact is a `subagent` or `plugin`, consult `references/radar/policy.md` and the relevant source entries in `references/radar/sources.md`.
 5. If a classification changed recently, read the matching entry in `decision-log.md`.
 
 That keeps recommendations stable while still letting the system absorb change over time.

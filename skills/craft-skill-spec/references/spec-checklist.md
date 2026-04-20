@@ -18,7 +18,7 @@ If these answers feel fuzzy, the spec is still too broad.
 - Did it identify concrete `Avoid` items instead of generic bad practices?
 - Did it keep `Watch` items as conditional or isolated decisions instead of default behavior?
 
-If the output reads like a restatement of `docs/skill-radar/current.md`, it is not specific enough.
+If the output reads like a restatement of `references/radar/current.md`, it is not specific enough.
 
 ## 3. Freedom level
 
@@ -63,7 +63,7 @@ If portability is lost, the spec should say so explicitly as a tradeoff.
 ## 8. Freshness discipline
 
 - Did the spec stay on the curated internal layer unless freshness actually mattered?
-- If the artifact is a `subagent` or `plugin`, did the workflow consult `docs/skill-radar/policy.md` and `docs/skill-radar/sources.md`?
+- If the artifact is a `subagent` or `plugin`, did the workflow consult `references/radar/policy.md` and `references/radar/sources.md`?
 - If live-source review was needed, is that dependency visible in the reasoning?
 
 If not, the spec may look current while actually relying on stale assumptions.
