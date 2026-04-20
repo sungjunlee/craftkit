@@ -7,9 +7,13 @@
 //
 // Usage: node scripts/gather-state.mjs
 // Output: human-readable sections (Branch, Status, Diffstat, Recent commits,
-//         Worktree root) for the agent to read and distill into the handoff.
+//         Worktree root) plus a Handoff target block with PENDING_PATH,
+//         ARCHIVE_DIR, and a ready-to-prepend frontmatter block.
 
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { homedir } from "node:os";
+import { basename, join } from "node:path";
 import { cwd } from "node:process";
 
 function git(...args) {
@@ -37,6 +41,27 @@ const status = git("status", "--short");
 const diffstat = git("diff", "--stat");
 const log = git("log", "--oneline", "-8");
 
+// Worktree slug: <basename>-<6 char hash of absolute path>. The hash
+// disambiguates same-named checkouts in different locations; the basename
+// keeps filenames grep-able.
+const slugHash = createHash("sha1").update(root).digest("hex").slice(0, 6);
+const slug = `${basename(root).replace(/[^a-zA-Z0-9._-]/g, "_")}-${slugHash}`;
+
+// Filename-safe ISO timestamp: 2026-04-20T03-06-40-000Z.
+const now = new Date();
+const fileTs = now.toISOString().replace(/[:.]/g, "-");
+const handoffDir = join(homedir(), ".craftkit", "handoff");
+const pendingPath = join(handoffDir, "pending", `${fileTs}-${slug}.md`);
+const archiveDir = join(handoffDir, "archive");
+
+const frontmatter = [
+  "---",
+  `worktree: ${root}`,
+  `branch: ${branch}`,
+  `created: ${now.toISOString()}`,
+  "---",
+].join("\n");
+
 process.stdout.write(
   [
     `Worktree root: ${root}`,
@@ -50,6 +75,14 @@ process.stdout.write(
     "",
     "Recent commits:",
     log || "(no commits)",
+    "",
+    "--- Handoff target ---",
+    `PENDING_PATH=${pendingPath}`,
+    `ARCHIVE_DIR=${archiveDir}`,
+    `WORKTREE_SLUG=${slug}`,
+    "",
+    "Frontmatter (prepend to composed prompt before writing, blank line after):",
+    frontmatter,
     "",
   ].join("\n"),
 );
