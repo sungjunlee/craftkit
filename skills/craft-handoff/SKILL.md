@@ -111,13 +111,13 @@ Handoffs use a **per-session, timestamped file** layout — two sessions wrappin
 
 1. Read the `--- Handoff target ---` block from Step 1's gather output. Use the printed `PENDING_PATH` and the `Frontmatter` block verbatim.
 2. Use your agent's file-write tool to write `<frontmatter>\n\n<composed XML>` to that `PENDING_PATH`. Create the parent directory first if needed (`mkdir -p ~/.craftkit/handoff/pending`). Writing through the file tool avoids heredoc-EOF collisions when the prompt body contains shell metacharacters.
-3. Copy the composed XML (without the frontmatter) to the clipboard:
+3. Copy the composed XML (without the frontmatter) to the clipboard. The `sed` strip is required — on the manual-paste path the receiving LLM would otherwise see the `worktree:` / `branch:` / `created:` lines as part of the prompt context:
 
 ```bash
-bash <skill-dir>/scripts/copy-clipboard.sh < "$PENDING_PATH"
+sed '1,/^---$/d;1,/^---$/d' "$PENDING_PATH" | bash <skill-dir>/scripts/copy-clipboard.sh
 ```
 
-It's fine that the clipboard payload includes the frontmatter lines — the receiving session ignores them. If you want a clipboard-only view, pipe through `sed '1,/^---$/d;1,/^---$/d'` first.
+The auto-load hook path doesn't need this — the hook strips the frontmatter before injection. The `sed` form just keeps both paths consistent.
 
 The wrapper auto-detects the platform (`pbcopy` → `wl-copy` → `xclip` → `xsel` → `clip.exe`). If none are available it exits non-zero and prints to stderr — surface that to the user. The file write still succeeded; the user can `cat` it manually.
 
