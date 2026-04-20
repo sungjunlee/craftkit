@@ -105,6 +105,6 @@ When adding a new snapshot:
 
 ## Default consumer behavior
 
-A meta-skill that designs new skills should start with `taxonomy.md`, use `current.md` as the default stance, and escalate to `policy.md` + `sources.md` only when the policy says freshness matters or the artifact class is `subagent` / `plugin`. `decision-log.md` is consulted when a recent classification change is relevant.
+A meta-skill that designs new skill-like artifacts should start with `taxonomy.md`, use `current.md` as the default stance, and escalate to `policy.md` + `sources.md` only when the policy says freshness matters or the artifact class is `subagent` / `plugin`. `decision-log.md` is consulted when a recent classification change is relevant.
 
 The runtime ordering lives in the consuming skill's operating instructions — today that is `skills/craft-skill-spec/SKILL.md` §Required reads. This keeps the protocol in one authoritative place and prevents drift between the radar's README and its consumers.
