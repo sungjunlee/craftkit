@@ -89,11 +89,7 @@ Typical reasons:
 
 ## Promotion and demotion rules
 
-- `watch` -> `adopt` usually requires either:
-  - confirmation across two snapshots, or
-  - one strong primary-source shift plus a clear CraftKit fit judgment
-- `adopt` -> `avoid` requires an explicit note in `decision-log.md`
-- `adopt` -> `watch` is valid when a pattern still seems useful but no longer feels stable enough for the default path
+See `policy.md` §Promotion rule and §Demotion rule for the canonical criteria (when `watch` → `adopt`, when `adopt` → `watch` or `avoid`, and what must land in `decision-log.md`).
 
 ## Update checklist
 
@@ -109,12 +105,6 @@ When adding a new snapshot:
 
 ## Default consumer behavior
 
-Any future meta-skill that designs new skills should follow this lookup order:
+A meta-skill that designs new skills should start with `taxonomy.md`, use `current.md` as the default stance, and escalate to `policy.md` + `sources.md` only when the policy says freshness matters or the artifact class is `subagent` / `plugin`. `decision-log.md` is consulted when a recent classification change is relevant.
 
-1. Classify the artifact with `references/radar/taxonomy.md`.
-2. Read `references/radar/current.md`.
-3. Apply `adopt` and `avoid` items by default when the target is a single skill.
-4. If the target touches a `watch` area, or if the artifact is a `subagent` or `plugin`, consult `references/radar/policy.md` and the relevant source entries in `references/radar/sources.md`.
-5. If a classification changed recently, read the matching entry in `decision-log.md`.
-
-That keeps recommendations stable while still letting the system absorb change over time.
+The runtime ordering lives in the consuming skill's operating instructions — today that is `skills/craft-skill-spec/SKILL.md` §Required reads. This keeps the protocol in one authoritative place and prevents drift between the radar's README and its consumers.
