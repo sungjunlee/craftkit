@@ -81,7 +81,7 @@ For skill optimizations, the highest-yield Level-1 edit is frequently at the sec
 
 Five autoresearch sessions against CraftKit skills resolved their dominant failure modes with a single edit at this location:
 
-- `craft-critique` — rewrote every subsection under `## Output format` to demand the specific signal it should carry (severity tags, consolidation, ordering, distinct-dimension failure modes) instead of just the shape.
+- `craft-critique` (since folded into `craft-tune`) — rewrote every subsection under `## Output format` to demand the specific signal it should carry (severity tags, consolidation, ordering, distinct-dimension failure modes) instead of just the shape.
 - `craft-prompt` — added a "Sizing heuristic" block to Step 3 "Build the Prompt" converting two conceptual principles (right-size structure to request, list all varying values as placeholders) into concrete structural rules.
 - `craft-scaffold` — tightened `## Output format` to require a drafted `description` frontmatter for skill targets, task-specific purpose clauses, and bounded architectural open questions — all rules previously stated in conceptual sections but unenforced at build time.
 - `craft-tune` — tightened `## Output format` §Changelog to require the three explicit `changed / why / expected effect` fields per entry, resolving a silent spec-vs-Example contradiction where the `## Example` block showed bare bullets. Flipped 5 failing evals with a single Level-1 edit.

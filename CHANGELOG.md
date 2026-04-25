@@ -4,6 +4,11 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Changed (BREAKING)
+
+- **Merged `craft-critique` into `craft-tune`.** The two skills overlapped in trigger language ("this prompt feels off / make it better") because they operated on the same unit (a single prompt) — users couldn't tell which to call. Industry survey confirmed the split is structurally unusual: Anthropic Prompt Improver, OpenAI Optimize, Vertex AI Prompt Optimizer, and PromptPerfect all fuse diagnose-and-edit; the few standalone diagnose tools (audit-prompt, prompt-coach) carve a different unit (configs, session logs) entirely. CraftKit now follows the dominant pattern. `craft-tune` returns a Diagnostics section followed by the revised artifact; trigger phrasing like "review only" / "diagnose only" / "don't edit yet" switches it to **diagnose-only mode**, which returns Diagnostics + Recommended changes + Failure modes and stops before editing. The `references/failure-modes.md` taxonomy moved into `craft-tune/references/`.
+- **Migration.** Anywhere you invoked `craft-critique`, invoke `craft-tune` instead — the default mode now produces both the diagnosis and the revised artifact in one pass. To preserve the prior diagnose-only workflow, add a phrase like *"diagnose only — don't edit yet"* to the request. There is no compat shim; the `craft-critique` directory was deleted in this release.
+
 ### Added
 
 - **New skill `craft-skill-spec`** — designs a new skill spec from a rough idea using CraftKit's internal `skill-radar` layer instead of starting from fresh web research every time. Produces a concrete skill thesis, radar-based adopt/avoid/watch judgment, file plan, trigger draft, and first eval plan. Positioned as the decision layer between a vague skill idea and drafting the actual `SKILL.md`.

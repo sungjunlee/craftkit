@@ -10,7 +10,7 @@ Prompt assets and agent skills often become fragmented, provider-specific, and h
 
 ## Install
 
-All eight skills install as [Claude Code custom slash commands](https://docs.anthropic.com/en/docs/claude-code/skills).
+All seven skills install as [Claude Code custom slash commands](https://docs.anthropic.com/en/docs/claude-code/skills).
 
 ### Via npx skills
 
@@ -43,15 +43,14 @@ npx skills add . -g -y
 
 For Codex or any other agent, see [Use in other agents](#use-in-other-agents) below.
 
-## The eight skills
+## The seven skills
 
 | Skill | Use when |
 |---|---|
 | `craft-prompt` | a new prompt is needed from scratch for any LLM (Claude, GPT, Gemini, Perplexity, etc.) |
 | `craft-skill-spec` | a new skill needs a concrete spec based on current CraftKit skill-radar judgments before writing `SKILL.md` |
 | `craft-scaffold` | a rough idea needs structure — goals, inputs, workflow, outputs — before implementation |
-| `craft-critique` | a prompt or skill "feels off" and a diagnostic pass should come before any rewrite |
-| `craft-tune` | an existing prompt is close but needs targeted, minimal-diff sharpening |
+| `craft-tune` | an existing prompt or skill needs diagnosis and targeted, minimal-diff sharpening (also handles diagnose-only "review before edit" requests) |
 | `craft-survey` | a new skill should be grounded in prior art, extracting only patterns that carry their weight |
 | `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration |
 | `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt (clipboard + optional auto-load on `/clear`) |
@@ -60,14 +59,14 @@ Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML 
 
 ## Status
 
-Six of the eight skills (`craft-prompt`, `craft-scaffold`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-handoff` and `craft-skill-spec` are new and have not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
+Five of the seven skills (`craft-prompt`, `craft-scaffold`, `craft-tune`, `craft-survey`, `craft-autoresearch`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-tune` was further reshaped to absorb the diagnose-only role previously carried by a separate `craft-critique` skill; the next autoresearch pass will run against this fused shape. `craft-handoff` and `craft-skill-spec` are new and have not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
 
 ## What belongs in CraftKit
 
 - generating new prompts from scratch (task, research, session handoff, templates)
 - prompt design and restructuring
 - reusable skill design
-- diagnostic critique and quality checks
+- diagnostic review and minimal-diff editing
 - iterative improvement loops
 - survey-backed best practices
 - time-aware curation of evolving skill-authoring patterns
@@ -92,7 +91,7 @@ CraftKit skills are plain markdown with YAML frontmatter, so they port easily:
 2. Paste the body (everything after the frontmatter) into the target agent's system prompt or instructions.
 3. Keep the frontmatter `description` line as context so the agent knows when to apply the skill.
 
-See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a walk-through of critiquing an existing prompt, tuning it, and running a short improvement loop.
+See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a walk-through of diagnosing and tuning an existing prompt, then optionally running a short improvement loop.
 
 ## Prior art
 

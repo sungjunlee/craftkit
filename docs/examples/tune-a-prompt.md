@@ -16,45 +16,26 @@ The user reports:
 - it occasionally adds unrelated refactors
 - different agents (Claude vs Codex) give very different outputs
 
-## Step 1 — Critique
+## Step 1 — Tune
 
-Invoke `craft-critique` on the prompt. Expected output shape:
+Invoke `craft-tune` with the prompt and a target improvement: *consistent reviews across agents, with a stable output shape.*
+
+`craft-tune` returns the diagnosis and the revised artifact in the same pass:
 
 ```text
-What is working:
-- intent to review is clear
-- short and easy to edit
+Intent preserved
+The original job is to get a code review back from an agent — a list of things
+to fix in code the user already wrote. The "thorough" qualifier signals more
+than surface comments, but does not bound what counts as in-scope.
 
-Issues:
-1. "Thorough" is undefined — no scope, no rubric, no length cap
-2. No success criteria → agent doesn't know when to stop
-3. No output template → format varies between runs
-4. No "only review, don't refactor" constraint → scope creep
-5. No context about the code (language, conventions, style guide)
+Diagnostics
+1. [HIGH] "Thorough" is undefined — no scope, no rubric, no length cap.
+2. [HIGH] No output template — different agents return different shapes.
+3. [MED]  No "review only, don't refactor" guard — agent occasionally rewrites.
+4. [LOW]  No context about the code's language or style guide.
 
-Recommended changes:
-- define what "review" covers and what it does not
-- add an output template
-- add an explicit non-goal: do not refactor
-
-Failure modes:
-- agent rewrites code instead of reviewing it
-- output varies between Claude and Codex because structure is implicit
-```
-
-If the review still feels fuzzy, open `skills/craft-critique/references/failure-modes.md` and classify each issue as **ambiguity**, **scope**, **context**, **portability**, or **structure**. That vocabulary usually makes the next edit obvious — in this case, the prompt has clear ambiguity (what does "thorough" mean?) and scope (no "don't refactor" guard) failures.
-
-## Step 2 — Tune
-
-Invoke `craft-tune` with the critique as input. Target improvement: *consistent reviews across agents, with a stable output shape.*
-
-Expected revised prompt:
-
-```xml
-<task>
-Review the code below. Do not refactor or rewrite.
-</task>
-
+Revised artifact
+<task>Review the code below. Do not refactor or rewrite.</task>
 <scope>
 - Correctness and likely bugs
 - Security and input validation
@@ -62,27 +43,30 @@ Review the code below. Do not refactor or rewrite.
 - Readability and naming
 Do NOT comment on style preferences already enforced by the linter.
 </scope>
-
 <output>
 Return exactly three sections:
 1. Top issues (max 5, ordered by severity)
 2. Minor notes (max 5, one line each)
 3. One question you would ask the author before merging
 </output>
+
+Changelog
+- added scope + non-goal       | Diagnostics #3 | review stays a review
+- replaced "thorough" w/ template | Diagnostics #1, #2 | bounded volume, stable shape
+- switched to XML tags          | Diagnostics #2 | parses identically across agents
+
+Tradeoffs
+- length ↑ (still under 200 tokens)
+- flexibility ↓ — mitigated by the "one question" slot
 ```
 
-Changelog:
+If the diagnosis still feels fuzzy, open `skills/craft-tune/references/failure-modes.md` and classify each issue as **ambiguity**, **scope**, **context**, **portability**, or **structure**. That vocabulary usually makes the next edit obvious — in this case the prompt has clear ambiguity (what does "thorough" mean?) and scope (no "don't refactor" guard) failures.
 
-- added explicit scope + non-goal (don't refactor)
-- replaced "thorough" with a capped, ordered output template
-- switched to XML tags for cross-agent portability
+### Diagnose-only variant
 
-Tradeoffs:
+When you want the findings before any rewrite — for example, to decide whether to rewrite at all, or to share with a collaborator first — invoke `craft-tune` in **diagnose-only mode**. Trigger it with phrasing like *"review only,"* *"diagnose only,"* or *"don't edit yet."* Output drops the Revised artifact / Changelog / Tradeoffs sections and replaces them with `Recommended changes` and `Failure modes` plus a pointer back to default mode when you're ready to apply the edits.
 
-- longer prompt (still under 200 tokens)
-- less freedom for the agent to surface unusual issues — mitigated by the "one question" slot
-
-## Step 3 — Autoresearch (optional)
+## Step 2 — Autoresearch (optional)
 
 Tune alone usually does most of the work. Reach for `craft-autoresearch` when the prompt is about to be reused across a team and you want to eliminate the remaining "sometimes" failures systematically.
 
@@ -98,11 +82,11 @@ If you cannot write evals cheaply, skip this step. Autoresearch pays off at scal
 
 ## Aside — Survey before you start (optional)
 
-If several teams in the org already have code-review prompts, run `craft-survey` *before* Step 1. It studies those prompts, extracts patterns worth adopting (common severity labels, standard scope lists), flags patterns to avoid (hard-coded linter rules that duplicate tooling), and feeds the result into the critique/tune pass. Skip the survey when there is no prior art to learn from.
+If several teams in the org already have code-review prompts, run `craft-survey` *before* Step 1. It studies those prompts, extracts patterns worth adopting (common severity labels, standard scope lists), flags patterns to avoid (hard-coded linter rules that duplicate tooling), and feeds the result into the tune pass. Skip the survey when there is no prior art to learn from.
 
 ## What to take from this example
 
-- **Critique before rewriting.** One diagnostic pass usually reveals whether the fix is structural or cosmetic.
-- **Tune with minimal diffs.** The final prompt is recognizable as an evolution of the original, not a replacement.
+- **Diagnose and tune in one pass.** `craft-tune` returns the issues and the revised artifact together; switch to diagnose-only mode when you want findings before edits.
+- **Tune with minimal diffs.** The final prompt is recognizable as an evolution of the original, not a replacement. Every Changelog entry traces back to a Diagnostics item.
 - **Survey is opt-in prior art.** It grounds the design when comparable assets exist.
 - **Autoresearch is opt-in measurement.** It pays off when you have evals and a harness; for a one-off prompt, it is overhead.

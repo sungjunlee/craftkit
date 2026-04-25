@@ -28,7 +28,7 @@ If two or more of the first three answers are "no," or the fourth question has n
 3. Add 2-3 new evals targeting those dimensions, at Tier 1-2 where possible (ordering checks, cross-section consistency, presence of severity labels, distinct-dimension checks).
 4. Rebaseline. Proceed to the mutation loop only if the new baseline leaves real room to improve.
 
-**Real example.** A first-pass autoresearch run against `craft-critique` scored 9/9 (100%) on a four-assertion binary suite (five-section structure, ≤5 Issues items, imperative-lead Recommended changes, comparative actionability). Qualitative inspection of the three outputs surfaced four quality gaps the suite missed:
+**Real example.** A first-pass autoresearch run against `craft-critique` (since folded into `craft-tune`) scored 9/9 (100%) on a four-assertion binary suite (five-section structure, ≤5 Issues items, imperative-lead Recommended changes, comparative actionability). Qualitative inspection of the three outputs surfaced four quality gaps the suite missed:
 
 - Recommended-changes items mapped 1:1 to Issues items — no prioritization or consolidation.
 - Minimal-rewrite-plan was a subset of Recommended-changes, not an ordered, prioritized sequence.
@@ -57,7 +57,7 @@ Examples: is the review more actionable than baseline? is the handoff prompt eas
 
 ### Fidelity evals (multi-skill pipelines only)
 
-Pipeline-stage consistency. Same pass/fail shape as binary, applied across boundaries — e.g. craft-scaffold output fully covers the user's original request; craft-tune output preserves all constraints from the critique step.
+Pipeline-stage consistency. Same pass/fail shape as binary, applied across boundaries — e.g. craft-scaffold output fully covers the user's original request; craft-tune's Changelog entries each trace to a Diagnostics item from the same pass.
 
 ## Scoring
 
@@ -177,15 +177,15 @@ Structure evals as JSON for reuse and potential automation:
 
 ```json
 {
-  "skill_name": "craft-critique",
+  "skill_name": "craft-tune",
   "evals": [
     {
       "id": 1,
-      "prompt": "Review this 50-line auth function for bugs and style issues.",
-      "inputs": ["runs/inputs/auth-fn.ts"],
+      "prompt": "Improve this 50-line auth function review prompt so outputs are consistent across agents.",
+      "inputs": ["runs/inputs/auth-fn-prompt.txt"],
       "assertions": [
         {
-          "text": "Output contains exactly five H2 sections: What's working, Issues, Recommended changes, Failure modes, Minimal rewrite plan.",
+          "text": "Output contains exactly five H2 sections: Intent preserved, Diagnostics, Revised artifact, Changelog, Tradeoffs.",
           "type": "binary",
           "category": "structure",
           "tier": 1,
@@ -193,23 +193,23 @@ Structure evals as JSON for reuse and potential automation:
           "fail": "Missing any heading or out of order"
         },
         {
-          "text": "Issues section contains at most 5 items.",
+          "text": "Diagnostics section contains 1-5 items, each with a severity tag (HIGH/MED/LOW).",
           "type": "binary",
           "category": "length",
           "tier": 1
         },
         {
-          "text": "Every Recommended change begins with an imperative verb.",
+          "text": "Every Changelog entry names all three fields (changed / why / effect).",
           "type": "binary",
           "category": "inclusion",
           "tier": 2
         },
         {
-          "text": "Is the review more actionable than baseline?",
+          "text": "Is the revision more reviewable than baseline?",
           "type": "comparative",
           "category": "comparative",
           "tier": 3,
-          "rubric": "A review is 'more actionable' when a reader could act on at least 80% of its recommendations without asking clarifying questions."
+          "rubric": "A revision is 'more reviewable' when a reader can trace each Changelog entry to a specific Diagnostics item without asking clarifying questions."
         }
       ]
     }

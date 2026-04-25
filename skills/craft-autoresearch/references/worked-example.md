@@ -2,6 +2,8 @@
 
 A walk-through of a full autoresearch cycle against a real CraftKit skill. **This is an illustrative example, not a record of an actual run** — numbers and outputs are plausible, but the loop has not been executed end-to-end. Use it as a concrete reference for the shape of a session and how KEEP/DISCARD judgments play out in practice.
 
+> **Historical note.** The target skill `craft-critique` was later folded into `craft-tune` (which now carries both the diagnose-only role and the edit role) and no longer exists as a standalone skill. The example is preserved because the loop discipline it teaches — one hypothesis per experiment, simplicity judgment on DISCARD, deletion as a real mutation level, comparative evals catching what binary misses — is what matters, not which skill happens to be the target. Read `craft-critique` here as "any skill whose default-mode output has a fixed five-section shape."
+
 ## Setup
 
 - **Target skill**: `skills/craft-critique/SKILL.md`
