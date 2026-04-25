@@ -23,6 +23,9 @@ Unless machine-specific details matter, treat every path in these templates as r
 
 ## Decisions
 - {{decision}} — because {{reason}}
+
+## What didn't work
+- {{approach_tried}} → {{why_abandoned}}
 </context>
 
 <task>
@@ -74,6 +77,9 @@ Success criteria:
 
 - Include `git diff --stat` for quick orientation
 - State decisions, not deliberations — "chose JWT because X" not "we discussed JWT vs sessions"
+- The **What didn't work** section is empirically the highest-value part of a handoff — name every approach tried that did not pan out, one line each
 - Name specific files using worktree-relative paths — `src/auth.ts` not "see the auth module" or `/abs/path/src/auth.ts`
 - Include the test command — saves the new session from guessing
-- Keep under 800 tokens — a bloated handoff defeats the purpose
+- **Sizing depends on artifact role**:
+  - **Paste-and-resume prompt** (one artifact pasted into the next session) → keep tight; cut anything that doesn't change the next session's behavior.
+  - **Durable handoff doc** (read on disk by the next session, often paired with a prompt — e.g. `craft-handoff`) → depth scales with what actually happened; no hard cap, no padding, every line earns its place via inclusion tests.
