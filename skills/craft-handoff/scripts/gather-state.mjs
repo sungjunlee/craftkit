@@ -7,8 +7,9 @@
 //
 // Usage: node scripts/gather-state.mjs
 // Output: human-readable sections (Branch, Status, Diffstat, Recent commits,
-//         Worktree root) plus a Handoff target block with PENDING_PATH,
-//         ARCHIVE_DIR, and a ready-to-prepend frontmatter block.
+//         Worktree root) plus a Handoff target block with PENDING_PATH
+//         (per-session prompt), DOC_PATH (per-project rich doc), ARCHIVE_DIR,
+//         WORKTREE_SLUG, and a ready-to-prepend frontmatter block.
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -52,6 +53,10 @@ const now = new Date();
 const fileTs = now.toISOString().replace(/[:.]/g, "-");
 const handoffDir = join(homedir(), ".craftkit", "handoff");
 const pendingPath = join(handoffDir, "pending", `${fileTs}-${slug}.md`);
+// Rich handoff doc: stable per-project path, overwritten on next handoff
+// for the same project (previous version archived). Companion to the
+// per-session prompt at pendingPath.
+const docPath = join(handoffDir, "docs", `${slug}.md`);
 const archiveDir = join(handoffDir, "archive");
 
 const frontmatter = [
@@ -78,6 +83,7 @@ process.stdout.write(
     "",
     "--- Handoff target ---",
     `PENDING_PATH=${pendingPath}`,
+    `DOC_PATH=${docPath}`,
     `ARCHIVE_DIR=${archiveDir}`,
     `WORKTREE_SLUG=${slug}`,
     "",
