@@ -8,14 +8,16 @@ Claude Code's docs are explicit: *"Built-in commands like `/compact` and `/init`
 
 What *can* run in the post-clear session is a hook. `SessionStart` fires at the boundary of every new session, including those started by `/clear`, and supports a `matcher` field that filters by source. So the recipe is:
 
-1. `craft-handoff` writes the prompt to `~/.craftkit/handoff/pending/<timestamp>-<worktree-slug>.md` with a small `worktree:` frontmatter (already does this).
+1. `craft-handoff` writes **two paired artifacts**: the prompt to `~/.craftkit/handoff/pending/<timestamp>-<worktree-slug>.md` (per-session, never overwritten) and a rich narrative doc to `~/.craftkit/handoff/docs/<worktree-slug>.md` (per-project, overwritten on the next handoff for the same project, previous version archived). Both have a small frontmatter (`worktree:`, `branch:`, `created:`); the doc additionally has `next:`.
 2. User runs `/clear`.
-3. `SessionStart` hook with `matcher: "clear"` fires, scans `pending/`, picks the newest entry whose `worktree:` matches the current cwd's git toplevel, returns it as `additionalContext`, and archives the consumed file to `~/.craftkit/handoff/archive/<original-name>.md`. Older same-worktree entries are moved aside as `superseded-*`.
-4. New session boots with the handoff already in context.
+3. `SessionStart` hook with `matcher: "clear"` fires, scans `pending/`, picks the newest entry whose `worktree:` matches the current cwd's git toplevel, returns it as `additionalContext`, and archives the consumed file to `~/.craftkit/handoff/archive/<original-name>.md`. Older same-worktree entries are moved aside as `superseded-*`. **The hook does not read or touch `~/.craftkit/handoff/docs/`** — that's intentional. The doc is read by the next agent on the prompt's `<rules>` instruction (a conditional read-doc line in the prompt body), not eagerly by the hook.
+4. New session boots with the prompt already in context. The prompt instructs the agent to read the rich doc as its first action.
 
 ### Concurrency model
 
-Each craft-handoff run writes its own timestamped file — nothing is ever overwritten. Two sessions wrapping up in parallel (different worktrees *or* the same one) both get a dedicated pending entry; the hook disambiguates by reading each file's `worktree:` frontmatter against the current cwd. Same-worktree collisions keep the newest and archive the rest under `superseded-*` so they're recoverable.
+Each craft-handoff run writes its own timestamped **prompt** file under `pending/` — nothing in `pending/` is ever overwritten. Two sessions wrapping up in parallel (different worktrees *or* the same one) both get a dedicated pending entry; the hook disambiguates by reading each file's `worktree:` frontmatter against the current cwd. Same-worktree collisions keep the newest and archive the rest under `superseded-*` so they're recoverable.
+
+The **doc** at `docs/<worktree-slug>.md` follows last-writer-wins: two parallel wrap-ups in the same worktree both target the same path, so the second one archives the first to `archive/<ts>-doc-<slug>.md`. Both narratives are recoverable from `archive/`; the live `docs/<slug>.md` reflects the latest session.
 
 ### Staleness guard
 
@@ -118,6 +120,7 @@ Using `clear` keeps the hook scoped — it won't inject the handoff when you jus
 
 - **Stale pending file.** If you ran `craft-handoff` and never `/clear`-ed, then `/clear` much later for an unrelated reason, you don't want the old handoff. The hook has two guards: (a) after injection, it *archives* rather than deletes (so past handoffs stay recoverable under `~/.craftkit/handoff/archive/`), and (b) handoffs older than 72h (configurable via `CRAFTKIT_HANDOFF_TTL_HOURS`) are archived with a `stale-` prefix and never injected. Manual cleanup if needed: `rm -rf ~/.craftkit/handoff/pending/`.
 - **Wrong-worktree injection.** The hook only injects a handoff whose `worktree:` frontmatter matches the current cwd's git toplevel. Handoffs from other checkouts stay in `pending/` until that project's next `/clear`.
+- **`docs/` directory in your handoff tree.** Sibling to `pending/` and `archive/`, holding per-project rich narrative docs (`docs/<worktree-slug>.md`). The hook does not scan or touch this directory — it's read by the next agent on the prompt's instruction. Inspect with `ls ~/.craftkit/handoff/docs/`; manage cleanup separately from `pending/`.
 - **Legacy `pending.md`.** Upgrading from the pre-directory layout? A leftover `~/.craftkit/handoff/pending.md` is treated as a match for the current worktree on first `/clear` and then archived. One-shot migration, no action needed.
 - **Hook errors are silent by default.** If the script fails (bad path, no Node), Claude Code shows nothing in the chat. Check `~/.claude/logs/` or run the hook manually: `node <path>/load-pending-hook.mjs`.
 - **Multiple hooks on the same matcher.** If you already have a `SessionStart` + `clear` hook (e.g. for environment setup), merge — don't replace. Their `additionalContext` outputs concatenate.
@@ -126,6 +129,8 @@ Using `clear` keeps the hook scoped — it won't inject the handoff when you jus
 ## Trust model
 
 The hook resolves which handoff to inject by reading the `worktree:` frontmatter from each file under `~/.craftkit/handoff/pending/`. Any process running as the current OS user can drop a file into that directory with a `worktree:` matching one of your projects and have its content auto-injected into the next `/clear`. This is the same trust boundary as `~/.claude/settings.json` itself (anything writing there can rewrite the hook command, drop shell scripts, etc.), so it does not introduce new privilege — but if your threat model includes "another user-level process on this machine", treat `~/.craftkit/handoff/pending/` as trusted user input and audit its contents before `/clear`.
+
+The same boundary applies to `~/.craftkit/handoff/docs/`: the next agent reads `docs/<worktree-slug>.md` on the prompt's instruction (via the Read tool, not direct injection), so a malicious doc planted by a same-user-level process would be consumed indirectly. The exposure is one indirection further than the prompt path (the agent must follow the `<rules>` line to reach the doc), but the trust requirement is identical — treat `docs/` as trusted user input.
 
 ## Uninstall
 

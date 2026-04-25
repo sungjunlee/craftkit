@@ -116,12 +116,14 @@ The durable narrative. Depth scales with what actually happened in the session �
 1. Read `craft-prompt/templates/session-handoff.md` and pick the variant:
    - **Continuation** — normal wrap-up (most common)
    - **Debug Handoff** — mid-investigation session
-2. Fill it with the **narrative form** of the §Step 2 output (paragraph rationale, time order, alternatives, what didn't work). Omit blocks with no content. Prepend the frontmatter from gather-state to the doc as well — same shape as the prompt's, with `worktree`, `branch`, `created`, plus an extra `next:` field summarizing the very next task in ≤120 chars.
+2. **Fill only the `<context>` block** of the template with the **narrative form** of the §Step 2 output (paragraph rationale, time order, alternatives, what didn't work). **Drop the `<task>` and `<rules>` blocks entirely from the doc** — those belong to the prompt (§Step 3b). The doc's role is durable narrative; orchestration (next task + rules) is the prompt's job. Two `<task>` blocks would create a "which is operative" ambiguity for the next agent.
+3. Prepend a YAML frontmatter to the doc. Take the `Frontmatter` block from gather-state's output (`worktree` / `branch` / `created` lines), and **insert one extra line** `next: <one-liner action-first summary, ≤120 chars>` after `created:`, before the closing `---`. The doc's frontmatter has 4 fields (worktree, branch, created, next); the prompt's has 3 (no next).
 
 **Required signals** (enforce after fill):
 
-- Every `## Decisions` item carries a `because <reason>` (or `— <reason>`) clause **and** at least one sentence of context (when the alternatives are non-trivial). Drop lines that have neither.
+- Every `## Decisions` item carries a `because <reason>` (or `— <reason>`) clause; drop lines without one. When the alternatives are non-trivial, add at least one sentence of context — strongly preferred but not blocking.
 - `## What didn't work` (if present) names approach + outcome on each line. Detail freely — this section earns its weight in the next session.
+- The doc body is wrapped in `<context>...</context>` only (no `<task>` or `<rules>`).
 - All paths are worktree-relative — strip `/Users/…`, `/home/…`, `C:\…` before writing.
 - Verify any test command matches the project's actual stack. If unsure, omit rather than guess.
 
@@ -174,7 +176,7 @@ Success criteria:
 
 **Required signals** (enforce after fill):
 
-- The `<rules>` block contains the conditional read-doc line referencing the doc path with the explicit fallback (`if reachable; ... proceed with the snapshot and surface the discrepancy`). This is the orchestration link, not optional.
+- The `<rules>` block contains a conditional read-doc line that (a) references the doc path, (b) makes the read conditional on reachability, and (c) tells the agent what to do if the doc is missing or inconsistent with the snapshot. Wording flexibility allowed; the three components are required. This is the orchestration link, not optional.
 - Every `## Decisions` one-liner is one sentence with a `because` clause; if you have more than ~5 worth carrying as snapshots, the rest live only in the doc.
 - Every `## Done` bullet is one line; outcomes only.
 - `<task>` has a `Success criteria:` (or `성공 기준:`) list with at least one **observable** item.
@@ -190,7 +192,7 @@ The slug `<slug>` and paths come from gather-state's `--- Handoff target ---` bl
 #### 4a. Rich doc
 
 1. Create directories: `mkdir -p ~/.craftkit/handoff/docs ~/.craftkit/handoff/archive`.
-2. **If a previous doc exists** at `DOC_PATH`, archive it first by moving to `~/.craftkit/handoff/archive/<ISO-timestamp>-doc-<slug>.md`. Past docs stay recoverable in archive; the live `DOC_PATH` always reflects the latest session.
+2. **If a previous doc exists** at `DOC_PATH`, archive it first by moving to `~/.craftkit/handoff/archive/<ISO-timestamp>-doc-<slug>.md`, where `<ISO-timestamp>` is the current run's `created:` value from gather-state's frontmatter (filename-safe form: `:` and `.` replaced by `-`, matching the `PENDING_PATH` filename format). Past docs stay recoverable in archive; the live `DOC_PATH` always reflects the latest session.
 3. Write `<frontmatter>\n\n<doc body>` to `DOC_PATH` via the agent's file-write tool.
 
 #### 4b. Prompt
@@ -263,6 +265,7 @@ See `references/auto-load-hook.md` for the one-time installation (settings.json 
 - **Bloated prompt**: the prompt has paragraphs where one-liners belong, or repeats the doc's narrative. Decisions in the prompt are one-sentence one-liners with a because-clause; long-form rationale belongs in the doc. Done in the prompt is outcome-bullets; the path that got there belongs in the doc.
 - **Bloated rich doc**: the doc narrates every conversational turn rather than capturing decisions and outcomes that resulted. Apply §Step 2's inclusion tests harder.
 - **Doc unreachable on resume**: the next agent tries to read `~/.craftkit/handoff/docs/<slug>.md` and gets ENOENT (archived during cleanup, deleted manually, slug mismatch from a moved worktree). The conditional read-doc rule in §Step 3b's `<rules>` template handles this — the snapshot in the prompt remains usable on its own, and the agent flags the missing doc to the user rather than failing silently.
+- **Pair-write atomicity (§4a succeeds, §4b fails)**: doc was written and previous archived, but prompt-write failed (file-write error, disk full, agent interrupted). The doc on disk reflects this session, but no prompt is queued — the next `/clear` won't auto-load anything for this worktree. Recovery: re-run §Step 3b/§4b only (the doc is intact and still current); or accept that the next session starts cold and the user must paste manually. Do not re-run §4a or you'll archive the just-written doc.
 - **Auto-load injects when not wanted** (Claude Code only): user ran `/clear` to truly reset, but a pending handoff for the same worktree was lurking. The hook archives after injection (one-shot) and skips injection for handoffs older than 72h. Manual cleanup: `rm -rf ~/.craftkit/handoff/pending/`. Past handoffs live in `~/.craftkit/handoff/archive/`.
 - **Double injection after crash** (Claude Code only): the hook writes `additionalContext` to stdout *before* archiving the consumed file. If the process is killed between the write and the archive, the next `/clear` re-injects the same handoff. Recovery: `rm ~/.craftkit/handoff/pending/<file>` by hand, or wait for the 72h TTL to kick in.
 - **Malformed `settings.json` after manual hook install** (Claude Code only): the hook silently fails to fire. Validate the JSON (`node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.claude/settings.json','utf-8'))"`) and check `~/.claude/logs/` if available.
@@ -274,7 +277,7 @@ The pair (prompt at `pending/<ts>-<slug>.md` + doc at `docs/<slug>.md`) is the u
 
 - **Remove one project's handoff completely**: use the slug from `gather-state.mjs`, then `rm ~/.craftkit/handoff/docs/<slug>.md && find ~/.craftkit/handoff/pending -name "*-<slug>.md" -delete`.
 - **Inspect before purging stale rich docs**: `find ~/.craftkit/handoff/docs -maxdepth 1 -mtime +30 -print`. Delete with `-delete` once you've confirmed.
-- **Find a doc by project name**: `ls ~/.craftkit/handoff/docs/ | grep <project-name>`. The `<sha>` suffix disambiguates worktree-clones of the same repo.
+- **Find a doc by project name**: `ls ~/.craftkit/handoff/docs/ | grep <project-name>`. The 6-char hash suffix (sha1 of the absolute worktree path) disambiguates worktree-clones of the same repo.
 
 ## Example
 
@@ -288,7 +291,7 @@ Session spent 90 minutes adding JWT auth middleware. Two files modified. One pri
 ---
 worktree: /Users/dev/work/acme-api
 branch: feat/jwt-auth
-created: 2026-04-25T00:14:08.000Z
+created: 2026-04-25T00:14:09.000Z
 next: Wire auth middleware into the protected route group in src/routes/index.ts
 ---
 
@@ -319,24 +322,9 @@ acme-api — Node/Express REST backend. Internal-only API in alpha; deploy targe
 - Token introspection endpoint deferred — only useful once external clients exist.
 - Considered logging signed JWTs to a separate auth-audit channel; deferred until we have the audit infrastructure.
 </context>
-
-<task>
-Wire the auth middleware into the protected route group in `src/routes/index.ts`.
-Add an integration test that hits `/api/me` with and without a valid token.
-
-Success criteria:
-- `/api/me` returns 401 without token, 200 with valid token
-- `npm test` stays green (47 → 49 specs after adding the new integration test)
-- No new dependencies added — auth is complete and self-contained
-</task>
-
-<rules>
-- All paths are relative to the worktree root
-- Read `src/middleware/auth.ts` first to confirm the export shape (`authMiddleware`, `signToken`)
-- Run `npm test` before declaring done
-- Do not introduce a refresh-token endpoint or a session store; those decisions were made and recorded above
-</rules>
 ```
+
+The doc body stops at `</context>`. The next session's `<task>` and `<rules>` come from the **prompt** below — not from the doc. (Doc has no `<task>` / `<rules>` blocks, by design.)
 
 ### Output — prompt at `~/.craftkit/handoff/pending/2026-04-25T00-14-09-000Z-acme-api-7c3a92.md` (also clipboard, frontmatter-stripped)
 
