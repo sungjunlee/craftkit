@@ -19,15 +19,18 @@ For each, provide:
 - Current consensus
 - Key trade-offs
 - Sources (with URLs if available)
+- Confidence level and what would change the answer
 
 Prioritize {{source_preference}} (e.g., recent, production-focused, academic).
 Ignore results older than {{cutoff_year}}.
+Verify important claims across more than one source when possible.
 ```
 
 **Tips**:
 - Always specify recency — LLMs default to training data
 - "Compare in a table" works great for multi-option research
 - For Perplexity: add "cite sources with URLs"
+- For complex research: define success criteria and ask for source verification, not just citations
 
 ---
 
@@ -50,6 +53,7 @@ Write {{what}} that {{does_what}}.
 - Match the existing code style in {{reference_file}}
 - Handle errors: {{error_handling_approach}}
 - Include tests
+- Before finalizing, verify requirements, error paths, and formatting
 
 # Output
 {{language}} code. No explanations unless the logic is non-obvious.
@@ -60,6 +64,7 @@ Write {{what}} that {{does_what}}.
 - "No explanations" saves tokens if you just want code
 - For Claude Code: reference file paths, it can read them
 - For worktree-based coding prompts: use paths relative to the current worktree root, not absolute machine paths
+- Add tool-use or delegation rules only when the task genuinely needs them; broad persistence instructions can create overwork on newer models
 
 ---
 
@@ -131,7 +136,7 @@ Write a {{content_type}} about {{topic}}.
 
 **When**: "create a chatbot system prompt", "create a custom GPT instruction", "build a persona..."
 
-System prompts have a well-established layered architecture. See `templates/system-prompt.md` for the full template (Identity → Capabilities → Behavior → Boundaries → Escalation → Output format) with both full and minimal versions.
+System prompts have a well-established layered architecture. See `templates/system-prompt.md` for the full template (Identity → Capabilities → Behavior → Boundaries → Verification → Escalation → Output format) with both full and minimal versions.
 
 **Key insight**: "You cannot" is as important as "You can" — without explicit limits, LLMs scope-creep. For chatbots with human fallback, the Escalation layer is critical.
 

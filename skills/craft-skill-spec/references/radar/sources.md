@@ -4,7 +4,7 @@ This file is the live reference registry for `skill-radar`.
 
 Its goal is not to summarize every source. Its goal is to keep a maintained list of the sources that are important enough to revisit as the ecosystem shifts.
 
-- last reviewed: `2026-04-16`
+- last reviewed: `2026-05-01`
 - owner: `CraftKit maintainers`
 
 ## Tiers
@@ -61,6 +61,28 @@ Examples:
 - change sensitivity: `high`
 - revisit when: best-practice sections or anti-pattern guidance changes
 - last reviewed: `2026-04-16`
+
+### Anthropic Claude prompting best practices
+
+- tier: `A`
+- surface: `prompt`
+- authority: `official docs`
+- URL: `https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices`
+- why it matters: Current high-signal source for XML structure, examples, success criteria, source verification, autonomy/safety boundaries, and subagent overuse guidance.
+- change sensitivity: `high`
+- revisit when: model migration guidance, agentic research guidance, or subagent/tool-use guidance changes
+- last reviewed: `2026-05-01`
+
+### OpenAI GPT-5.5 prompt guidance
+
+- tier: `A`
+- surface: `prompt`
+- authority: `official docs`
+- URL: `https://developers.openai.com/api/docs/guides/prompt-guidance?model=gpt-5.5`
+- why it matters: Current high-signal source for structured prompts, tool persistence, verification loops, missing-context gating, verbosity controls, and instruction-conflict avoidance.
+- change sensitivity: `high`
+- revisit when: prompt guidance for the current flagship model changes
+- last reviewed: `2026-05-01`
 
 ### Anthropic engineering blog: Equipping agents for the real world with Agent Skills
 

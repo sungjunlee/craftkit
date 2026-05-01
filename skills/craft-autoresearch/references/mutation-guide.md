@@ -14,6 +14,7 @@ Examples:
 - swap a vague adjective for a specific constraint ("briefly" → "under 100 words")
 - replace a question with an imperative
 - tighten a rule's phrasing so it's unambiguous
+- replace broad persistence language ("be thorough", "use tools aggressively") with criteria for when extra work is warranted
 
 When to use: the artifact is structurally sound but scores are flat because instructions are fuzzy.
 
@@ -38,6 +39,7 @@ Adding, removing, or reordering sections or steps.
 Examples:
 - split a Steps section that mixes planning and execution
 - add a new Guardrails section when repeated failures share a cause
+- add a verification or missing-context checkpoint when repeated failures share grounding or premature-finalization causes
 - remove a section that never earns its keep (see deletion experiments)
 
 When to use: outputs are consistent but the artifact's shape is fighting its job.

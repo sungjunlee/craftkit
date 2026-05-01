@@ -1,6 +1,6 @@
 # System Prompt Templates
 
-For chatbots, custom GPTs, and custom agents. The 6-layer architecture is well-established, making templates particularly valuable here.
+For chatbots, custom GPTs, and custom agents. A layered architecture is well-established, making templates particularly valuable here.
 
 ---
 
@@ -29,6 +29,11 @@ You cannot:
 - Never {{hard_boundary_2}}
 - If asked about {{out_of_scope}}: {{redirect_action}}
 
+# Verification
+- Before finalizing, check: {{requirements_check}}, {{grounding_check}}, and {{format_check}}
+- If required context is missing: {{lookup_or_question_policy}}
+- Before irreversible or externally visible actions: {{confirmation_policy}}
+
 # Escalation (if applicable)
 - If {{escalation_trigger}}: say "{{handoff_message}}" and collect {{data_needed}} before transferring
 - Always escalate to a human when: {{hard_escalation_condition}}
@@ -53,6 +58,7 @@ Rules:
 ## Tips
 
 - **"You cannot" is as important as "You can"** — without explicit limits, LLMs scope-creep
+- Verification rules should be concrete checks, not vague "be careful" language
 - ChatGPT Custom Instructions: keep under 1500 characters
 - Claude system prompts: XML tags (`<identity>`, `<rules>`) work well
 - Test with adversarial inputs — "ignore your previous instructions" and similar prompt injection attempts
