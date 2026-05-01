@@ -1,8 +1,8 @@
 # Skill Radar: Current Canonical View
 
-- last reviewed: `2026-04-16`
-- primary basis: `references/radar/2026-04.md`
-- status: `initial baseline`
+- last reviewed: `2026-05-01`
+- primary basis: `references/radar/2026-04.md` plus `references/radar/2026-05.md`
+- status: `prompt guidance refresh applied`
 - scope: `single-skill default guidance`
 
 Use this file as the default source of truth when designing or revising a CraftKit skill. Open a snapshot file only when a `watch` item is relevant or a recent classification change needs context.
@@ -19,6 +19,9 @@ When drafting a new skill, assume the following unless there is a strong task-sp
 4. Use explicit steps or a checklist for complex workflows.
 5. Add examples when acceptable vs unacceptable output needs to be pinned down.
 6. Prefer eval-backed refinement over intuition-only polishing.
+7. Add explicit verification gates for complex, research, or agentic workflows.
+8. Define missing-context behavior when facts may be absent.
+9. Review instruction hierarchy and examples for contradictions before adding more rules.
 
 ## Adopt
 
@@ -58,6 +61,30 @@ When drafting a new skill, assume the following unless there is a strong task-sp
 - why: Recent guidance reinforces that instruction quality and concrete tests usually pay off before adding more tools or complexity.
 - default implication: Before adding scripts, templates, or advanced branches, define realistic test prompts and the failure modes they should catch.
 
+### Explicit verification gates
+
+- confidence: `high`
+- why: Recent provider guidance converges on checking requirements, grounding, output format, and side effects before finalizing high-impact agent work.
+- default implication: For complex skills, research prompts, coding-agent prompts, and externally visible actions, include a lightweight final check. Keep tiny one-shot prompts short.
+
+### Missing-context behavior
+
+- confidence: `high`
+- why: Current prompt guidance treats missing context as a decision point: retrieve if available, ask if necessary, or proceed with labeled assumptions.
+- default implication: When a skill can encounter absent facts, name the expected behavior instead of letting the agent guess.
+
+### Instruction hierarchy review
+
+- confidence: `high`
+- why: Tightly instruction-following models are more sensitive to contradictory rules, examples, and exceptions.
+- default implication: During skill or prompt review, check conflicts before adding new instructions. Prefer deleting or reprioritizing contradictions over adding clarifying prose.
+
+### Calibrated autonomy
+
+- confidence: `medium`
+- why: Newer agentic models are more proactive with tools and subagents, making old anti-laziness prompts prone to overuse.
+- default implication: Use criteria-driven persistence, tool-use, and delegation rules. Avoid blanket "use tools aggressively" language unless a fragile workflow truly needs it.
+
 ## Avoid
 
 ### Monolithic all-in-one skill files
@@ -83,6 +110,12 @@ When drafting a new skill, assume the following unless there is a strong task-sp
 - confidence: `high`
 - why: Core CraftKit assets should travel across agents. Provider-specific advice belongs in isolated guides or examples.
 - default implication: Keep platform quirks out of the main skill spine unless the skill is explicitly platform-scoped.
+
+### Volatile model catalogs in reusable guidance
+
+- confidence: `high`
+- why: Model names, prices, context windows, and benchmark claims change faster than durable prompting principles.
+- default implication: Keep provider guides focused on reusable behavior and link to current docs for model selection. Do not put model catalogs in core skill spines.
 
 ## Watch
 

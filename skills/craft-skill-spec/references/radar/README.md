@@ -28,6 +28,7 @@ Search is noisy. Older styles often outrank newer guidance, provider-specific qu
 - `policy.md` — freshness and update rules.
 - `TEMPLATE.md` — template for a new monthly or event snapshot.
 - `2026-04.md` — initial baseline snapshot.
+- `2026-05.md` — event-driven prompt guidance refresh for GPT-5.5 and current Claude prompting guidance.
 
 Future snapshots may use either:
 
