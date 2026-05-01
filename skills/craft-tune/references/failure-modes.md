@@ -14,6 +14,7 @@ The artifact leaves room for the agent to guess.
 | Output format varies run-to-run | Add an explicit output template with a worked example. |
 | Agent makes a wrong default assumption | Surface the assumption as explicit context. |
 | Different agents interpret the same prompt differently | Remove idioms; use explicit structure (sections, tags, templates). |
+| Rules, examples, or exception cases contradict each other | Make the instruction hierarchy explicit; delete or rewrite the lower-priority instruction. |
 
 ## Scope failures
 
@@ -25,6 +26,7 @@ The artifact invites the agent to do too much, too little, or the wrong thing.
 | Agent stops early or declares success prematurely | Enumerate all deliverables in the success criteria. |
 | Output is too verbose | Add a length cap (words, sections, bullets). |
 | Output is too terse or skeletal | Require reasoning or add a richer example. |
+| Agent uses tools, files, or subagents when a direct answer would do | Add criteria for when external action is warranted; remove stale "keep going" or "use tools aggressively" language. |
 
 ## Context failures
 
@@ -37,6 +39,7 @@ The artifact omits background the agent needs to act correctly.
 | Agent uses the wrong library or version | Name the version and any conventions up front. |
 | Agent ignores project conventions | Reference the convention source (style guide, lint config, neighbors). |
 | Handoff-style prompt starts reasoning from scratch | Include a concise "what was done / current state / next" block. |
+| Agent proceeds despite missing required facts | Add a missing-context rule: look up if available, ask a minimal question if not, or proceed with labeled assumptions. |
 
 ## Portability failures
 
@@ -48,6 +51,17 @@ The artifact works for one agent or provider and breaks elsewhere.
 | Uses only one format (e.g., markdown or XML) in a mixed-agent workflow | Prefer XML tags for multi-section structure — they travel across Claude, GPT, and Gemini. |
 | Assumes a specific file-system layout | Either make the layout explicit, or parameterize the relevant paths. |
 | Embeds tool-call syntax inline | Describe the intent and let each agent translate into its own tool surface. |
+
+## Verification failures
+
+The artifact produces plausible outputs but does not force the right final checks.
+
+| Symptom | Likely fix |
+|---|---|
+| Output matches the requested format but misses a stated requirement | Add a final requirements check or success-criteria checklist. |
+| Research or analysis includes unsupported claims | Require grounding against provided context, named sources, or retrieved evidence. |
+| Agent finalizes after a partial edit | Add a completion check that distinguishes "partially fulfilled" from "done." |
+| Agent takes destructive or externally visible actions without confirmation | Add an action-safety rule for irreversible, shared-system, or published changes. |
 
 ## Structure failures
 

@@ -54,6 +54,8 @@ Compose using these building blocks. **Use only what the prompt needs** — not 
 | **Output format** | When the default output structure won't work |
 | **Examples** | When the desired behavior is hard to describe but easy to show |
 
+For research, coding-agent, or other high-impact prompts, add a small verification contract instead of adding more generic "be careful" prose. The contract should say what must be checked before finalizing: requirements, grounding, requested format, and irreversible side effects.
+
 **Formatting by target LLM** — see `guides/{target}.md` for details:
 
 XML tags work well across all major LLMs. Claude is trained for XML; GPT-4.1+ and Gemini 3 both handle XML effectively (GPT also works well with Markdown). Use XML for complex/multi-section prompts. Plain text or markdown is fine for simple ones.
@@ -83,7 +85,9 @@ Before presenting, apply these checks:
 2. **Be specific** — "Summarize in 3 bullet points" beats "summarize briefly". Numbers beat adjectives.
 3. **Self-contained** — The prompt must work without "this conversation" context. No dangling references.
 4. **Outcome over process** — Tell the LLM what success looks like, not every step to get there.
-5. **Right-sized** — A 50-token prompt for a simple task is fine. Don't inflate for the sake of looking thorough.
+5. **No hidden conflicts** — Check that rules, examples, and edge-case instructions do not contradict each other.
+6. **Missing context handled** — If the prompt may lack facts, say whether the agent should look them up, ask a short question, or proceed with labeled assumptions.
+7. **Right-sized** — A 50-token prompt for a simple task is fine. Don't inflate for the sake of looking thorough.
 
 For complex prompts, run through `references/quality-checklist.md` for deeper failure mode analysis.
 
@@ -116,7 +120,9 @@ Ask if the user wants adjustments. Refine based on feedback — tweak tone, add/
 
 5. **Reusability when asked.** If the user wants a template, use `{{placeholder}}` syntax with clear labels. If it's a one-shot, bake in the specifics.
 
-6. **Know when to skip.** Only skip prompt-building when the user did not ask for a prompt and direct execution is clearly better. If they explicitly asked for a prompt, deliver the prompt even if the underlying task is simple.
+6. **Verification beats vague caution.** For complex or high-impact prompts, tell the agent what to verify before finalizing instead of piling on broad "be thorough" instructions.
+
+7. **Know when to skip.** Only skip prompt-building when the user did not ask for a prompt and direct execution is clearly better. If they explicitly asked for a prompt, deliver the prompt even if the underlying task is simple.
 
 ---
 
@@ -139,4 +145,4 @@ Ask if the user wants adjustments. Refine based on feedback — tweak tone, add/
 - `templates/session-handoff.md` — AI session handoff (continuation, debug)
 - `templates/image-gen.md` — Image generation (photo, illustration, icon, per-platform notes)
 - `templates/video-gen.md` — Video generation (text-to-video, image-to-video, camera keywords, per-platform notes)
-- `templates/system-prompt.md` — Chatbot/agent system prompts (6-layer architecture)
+- `templates/system-prompt.md` — Chatbot/agent system prompts (layered architecture)
