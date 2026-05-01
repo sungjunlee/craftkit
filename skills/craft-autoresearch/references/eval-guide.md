@@ -14,7 +14,7 @@ First-time eval suites skew toward *shape* — required sections, item counts, i
 
 **Quick diagnostic — before locking the suite, check:**
 
-- Does the suite have any category beyond Structure and Length?
+- Does the suite have any category beyond Structure and Length, such as Logic, Grounding, Consistency, or Action safety?
 - Is there at least one Logic or Comparative assertion?
 - Is there any severity or priority signal anywhere (e.g. ordering, labels, ranked items)?
 - For each Logic or Comparative eval you drafted, can you name a concrete output the skill-as-written would plausibly produce that *fails* this check? Not "an output could fail" in principle — an output you actually expect the agent to generate from the baseline spec.
@@ -80,7 +80,7 @@ Prefer the highest-determinism check available. More determinism means more stab
 
 ## Assertion categories
 
-When drafting evals, pull from these six categories. You don't need all six — pick the ones that matter for your skill. This is orthogonal to the determinism hierarchy: "category" is *what* you're checking, "tier" is *how reliably* you can check it.
+When drafting evals, pull from these categories. You don't need all of them — pick the ones that matter for your skill. This is orthogonal to the determinism hierarchy: "category" is *what* you're checking, "tier" is *how reliably* you can check it.
 
 ### Structure
 - Output contains all required sections/headings?
@@ -113,10 +113,30 @@ When drafting evals, pull from these six categories. You don't need all six — 
 - Calculations correct?
 - External data references accurate?
 
+### Grounding
+- Factual claims trace to provided context, retrieved sources, or named evidence?
+- Citations or URLs support the claims they are attached to?
+- Recency requirements are satisfied for time-sensitive claims?
+
+### Consistency
+- Rules, examples, and exceptions agree with each other?
+- Output follows the stated instruction hierarchy?
+- Changelog or recommendation entries trace to diagnosed issues?
+
+### Missing context
+- Output asks a minimal clarifying question when required facts are unavailable?
+- Output labels assumptions when proceeding without required facts?
+- Output uses the expected lookup or source-check step before guessing?
+
+### Action safety
+- Destructive, published, or shared-system actions require confirmation?
+- Tool or subagent use follows stated criteria instead of blanket persistence?
+- The output distinguishes partially complete work from fully verified completion?
+
 ### Comparative (for any skill with subjective quality)
 - Output better than baseline on one specific dimension (layout appeal, tone consistency, code readability, information hierarchy)?
 
-**How to use**: scan each category and ask "does this apply to my skill?" Extract 3-6 binary checks from Structure/Length/Inclusion/Exclusion/Format/Logic. If your skill has subjective quality, also add 0-2 comparative checks — those push quality beyond rule compliance.
+**How to use**: scan each category and ask "does this apply to my skill?" Extract 3-6 binary checks from the relevant categories. For research and agentic prompts, usually include at least one Grounding, Missing context, or Action safety check. If your skill has subjective quality, also add 0-2 comparative checks — those push quality beyond rule compliance.
 
 ## Turning subjective criteria into binary checks
 
@@ -129,6 +149,9 @@ The hardest part of eval design: your real quality standards *feel* subjective. 
 | "Professional tone" | No emoji + max 1 exclamation mark + no casual contractions (gonna, wanna) |
 | "Well-structured" | 3+ H2 headings + each section has 2+ paragraphs |
 | "References the source material" | Contains 5+ keywords from the reference file |
+| "Grounded research" | Every factual claim in the recommendation paragraph has either a cited source URL or a "not verified" label |
+| "Safe agentic behavior" | Any destructive, published, or shared-system action is preceded by an explicit confirmation request |
+| "No instruction conflicts" | No example contradicts a rule; every exception names the rule it overrides |
 | "Engaging opening" | First sentence contains a specific claim, story, or question (not a generic statement) |
 | "Actionable content" | Contains 3+ concrete steps the reader can do today |
 | "Appropriate length" | Total word count between 1500-3000 |
@@ -159,9 +182,12 @@ Requirements:
 - 4-6 binary assertions per prompt. Every assertion must be judgeable
   as true/false.
 - Tag each assertion with a category from: structure, length, inclusion,
-  exclusion, format, logic.
+  exclusion, format, logic, grounding, consistency, missing_context,
+  action_safety.
 - Convert any subjective criteria into specific, observable signals using
   the "what would I point to to prove this?" technique.
+- For research, agentic, or high-impact prompts, include at least one
+  assertion covering grounding, missing context, or action safety when relevant.
 - Optionally add 1-2 comparative assertions for subjective quality.
 - Target at least half the assertions at Tier 1-2 (deterministic or structural).
 
@@ -232,6 +258,7 @@ Design guidelines:
 - **Evals that encode specific wording.** The skill will overfit to that wording instead of the underlying quality. Prefer principle-level checks.
 - **Hidden-weight scoring.** If some evals matter more, state the weights. Equal-weight is a valid choice — but make it a *choice*.
 - **No comparative eval at all.** If nothing captures quality beyond structure, a well-formatted but shallow output scores full marks.
+- **No grounding or safety evals for research/agentic prompts.** The loop may optimize format while preserving unsupported claims, premature finalization, or risky action behavior.
 - **Unbounded eval count.** Every new eval adds noise surface. Six to eight evals cover most skills well; more than ten usually means you're over-specifying.
 - **Overfitting evals (teaching to the test).** If evals are too specific to the test inputs, the skill gets better at those scenarios and worse at everything else. Write evals at the principle level, not the micro-rule level.
 - **Overlapping evals.** "Is it grammatically correct?" + "Any spelling errors?" double-counts. Each eval should test something distinct.
