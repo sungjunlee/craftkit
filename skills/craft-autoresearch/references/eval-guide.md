@@ -15,11 +15,11 @@ First-time eval suites skew toward *shape* — required sections, item counts, i
 **Quick diagnostic — before locking the suite, check:**
 
 - Does the suite have any category beyond Structure and Length, such as Logic, Grounding, Consistency, or Action safety?
-- Is there at least one Logic or Comparative assertion?
+- Is there at least one non-shape assertion (Logic, Grounding, Consistency, Missing context, Action safety, or Comparative)?
 - Is there any severity or priority signal anywhere (e.g. ordering, labels, ranked items)?
-- For each Logic or Comparative eval you drafted, can you name a concrete output the skill-as-written would plausibly produce that *fails* this check? Not "an output could fail" in principle — an output you actually expect the agent to generate from the baseline spec.
+- For each non-shape eval you drafted, can you name a concrete output the skill-as-written would plausibly produce that *fails* this check? Not "an output could fail" in principle — an output you actually expect the agent to generate from the baseline spec.
 
-If two or more of the first three answers are "no," or the fourth question has no plausible failing output for any Logic eval you wrote, assume the suite is shape-only and will saturate. The first three catch missing categories; the fourth catches loose thresholds inside the right category. A Logic eval phrased as "≥1 dimension named" passes all category tests but still saturates if the skill always names ≥1 — the real quality bar might have been "≥2," or a different dimension entirely.
+If two or more of the first three answers are "no," or the fourth question has no plausible failing output for any non-shape eval you wrote, assume the suite is shape-only and will saturate. The first three catch missing categories; the fourth catches loose thresholds inside the right category. A Logic or Grounding eval phrased as "≥1 dimension named" passes all category tests but still saturates if the skill always names ≥1 — the real quality bar might have been "≥2," or a different dimension entirely.
 
 **Recovery path** (also applies if baseline already came back near 100%):
 

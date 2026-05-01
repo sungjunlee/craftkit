@@ -87,7 +87,7 @@ Additional guardrails:
 A compact record of target, inputs, evals, harness, budget, stop condition. In addition, state these quality commitments explicitly, not just as labels:
 
 - **mutable files** — explicit list of the files the session may modify. All other files are frozen. Mandatory for skill targets; every skill has more than one file even when references are not planned to change.
-- **evals 4th diagnostic** — for every Logic or Comparative eval, name a concrete output the target-skill-as-written would plausibly produce that fails the check (the 4th diagnostic question from `references/eval-guide.md`). A Logic eval without a named plausible-failing-output is a loose eval and usually saturates.
+- **evals 4th diagnostic** — for every non-shape eval (Logic, Grounding, Consistency, Missing context, Action safety, or Comparative), name a concrete output the target-skill-as-written would plausibly produce that fails the check (the 4th diagnostic question from `references/eval-guide.md`). A non-shape eval without a named plausible-failing-output is a loose eval and usually saturates.
 - **harness design** — the named design category plus its trade-off against alternatives. A bare command string is not a harness design.
 - **first-mutation hypothesis preview** — the predicted mutation locus in the target (a specific `## Output format` subsection, a specific `## Steps` entry, or a specific reference-file section) plus a justification that either invokes the Build-step enforcement prior from `references/mutation-guide.md` by name, or explicitly argues why a non-build-step locus is warranted from the failing outputs.
 
