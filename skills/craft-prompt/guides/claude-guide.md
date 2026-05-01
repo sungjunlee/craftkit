@@ -1,10 +1,29 @@
 # Claude (Code / Web / API)
 
-- **XML tags** for structure — `<context>`, `<task>`, `<rules>`, etc. Claude is trained on XML and parses it semantically. Up to 39% quality improvement reported with structured XML
-- **Reference file paths, don't paste** — Claude Code reads files directly. Prefer worktree-relative paths like `src/auth.ts:45`; avoid absolute paths unless the prompt is intentionally machine-specific
-- **Outcome-focused** — "Produce X that meets Y criteria" beats step-by-step instructions. Let Claude choose its approach
-- No need for "think step by step" — Claude has built-in extended thinking. For complex tasks, "Take time to understand X before acting" is enough
-- **Prefill removed** on Opus 4.6 / Sonnet 4.6 — assistant message prefilling returns 400 error. Use `output_config.format` with JSON schema for structured output instead (old `output_format` param deprecated)
-- **Opus 4.6** (Feb 5, 2026): 1M context (beta), 128K max output, $5/$25 per 1M tokens. Agent teams for parallel task splitting. 80.8% SWE-bench
-- **Sonnet 4.6** (Feb 17, 2026): Default on claude.ai. Same pricing as Sonnet 4.5 ($3/$15). Near-Opus performance on real-world tasks
-- When delivering: use `thinking.type: "adaptive"` with `effort` parameter (`low`/`medium`/`high`/`max`). Adaptive Thinking dynamically adjusts reasoning depth per request complexity
+- last reviewed: `2026-05-01`
+- source: Anthropic Claude prompting best practices
+
+## Structure
+
+- **XML tags** are the default for complex Claude prompts. Use descriptive tags such as `<context>`, `<task>`, `<rules>`, `<examples>`, and `<output>`.
+- **Examples are high leverage** when format, tone, or boundary behavior matters. Keep them relevant, diverse enough to avoid accidental patterns, and wrapped in `<example>` or `<examples>`.
+- **Reference file paths, don't paste** for Claude Code. Prefer worktree-relative paths like `src/auth.ts:45`; avoid absolute paths unless the prompt is intentionally machine-specific.
+- **Outcome-focused** prompts work best: "Produce X that meets Y criteria" beats a long procedure for how to think.
+
+## Agentic prompts
+
+- Add clear success criteria for research and information gathering.
+- Ask for source verification when factual accuracy matters, especially for recent or high-stakes claims.
+- Give tool and subagent criteria, not blanket tool-use pressure. Latest Claude models can be proactive; stale anti-laziness prompts may cause overuse.
+- For risky actions, state the confirmation boundary: destructive operations, hard-to-reverse git history changes, public comments, shared infrastructure, or other externally visible effects.
+
+## Settings and delivery
+
+- No need to prompt "think step by step." If the host exposes effort or adaptive thinking settings, recommend the level separately from the prompt body.
+- Use structured output controls or schemas when the API supports them. Do not rely on assistant prefill patterns for portable prompts.
+- For complex pipelines, chain prompts only when intermediate outputs need inspection, logging, branching, or evals. Otherwise let the model handle the steps inside one clear task.
+
+## Watch-outs
+
+- Avoid making subagents the default for simple code exploration, single-file edits, or tightly coupled context.
+- Avoid embedding time-sensitive model names, prices, or benchmark claims in reusable prompts. Keep those in dated deployment notes if needed.
