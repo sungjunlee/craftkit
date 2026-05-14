@@ -1,6 +1,6 @@
 ---
 name: craft-prompt
-description: Craft well-structured, copy-paste-ready prompts for any LLM — Claude, GPT, Gemini, Perplexity, or any other. Use this whenever the user wants a prompt built from scratch, asks to "write/make/build a prompt," needs a session handoff prompt to carry work into a new Claude Code or Codex session, shares scattered notes that need to be shaped into a usable prompt, or requests a reusable prompt template — even if they don't explicitly say "prompt." Also triggers on Korean equivalents like "프롬프트 만들어," "프롬프트 작성," "프롬프트 빌드."
+description: Craft well-structured, copy-paste-ready prompts for any LLM — Claude, GPT, Gemini, Perplexity, or any other. Use this whenever the user wants a prompt built from scratch, asks to "write/make/build a prompt," needs a session handoff prompt to carry work into a new Claude Code or Codex session, wants to write a `/goal` completion condition for Claude Code or Codex autonomous loops, shares scattered notes that need to be shaped into a usable prompt, or requests a reusable prompt template — even if they don't explicitly say "prompt." Also triggers on Korean equivalents like "프롬프트 만들어," "프롬프트 작성," "프롬프트 빌드," "goal 조건," "completion condition."
 ---
 
 # craft-prompt
@@ -131,6 +131,7 @@ Ask if the user wants adjustments. Refine based on feedback — tweak tone, add/
 - `references/components-guide.md` — Deep dive on each building block with examples and anti-patterns
 - `references/prompt-patterns.md` — 8 common patterns: research, code gen, review, writing, extraction, analysis, handoff, decision
 - `references/quality-checklist.md` — Quality checks with failure modes and fixes
+- `references/goal-conditions.md` — Writing `/goal` completion conditions for Claude Code and Codex autonomous loops (single-string directive read by a no-tools evaluator; cross-platform differences and caveats)
 
 ## Guides (platform-specific tips)
 
