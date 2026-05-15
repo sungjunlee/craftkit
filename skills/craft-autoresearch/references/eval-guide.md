@@ -57,7 +57,7 @@ Examples: is the review more actionable than baseline? is the handoff prompt eas
 
 ### Fidelity evals (multi-skill pipelines only)
 
-Pipeline-stage consistency. Same pass/fail shape as binary, applied across boundaries — e.g. craft-scaffold output fully covers the user's original request; craft-tune's Changelog entries each trace to a Diagnostics item from the same pass.
+Pipeline-stage consistency. Same pass/fail shape as binary, applied across boundaries — e.g. craft-skill-spec output covers each required spec section before craft-tune touches it; craft-tune's Changelog entries each trace to a Diagnostics item from the same pass.
 
 ## Scoring
 

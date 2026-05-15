@@ -4,6 +4,10 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Removed (BREAKING)
+
+- **Removed `craft-scaffold`.** Real-world usage showed the skill's niche had collapsed: for skill targets, `craft-skill-spec` produced a more concrete radar-informed spec, and external `skill-creator` carried the work end-to-end through interview → draft → eval; for prompt targets, users went straight to `craft-prompt` or iterated in chat. The "structured plan before implementation" wedge was rarely worth its own invocation. `skills/craft-scaffold/` deleted; mentions stripped from `README.md`, `skills/craft-skill-spec/SKILL.md`, `skills/craft-autoresearch/SKILL.md`, and `skills/craft-autoresearch/references/eval-guide.md`. Historical record kept inline in `skills/craft-autoresearch/references/mutation-guide.md` (annotated as `since removed`).
+
 ### Changed (BREAKING)
 
 - **Merged `craft-critique` into `craft-tune`.** The two skills overlapped in trigger language ("this prompt feels off / make it better") because they operated on the same unit (a single prompt) — users couldn't tell which to call. Industry survey confirmed the split is structurally unusual: Anthropic Prompt Improver, OpenAI Optimize, Vertex AI Prompt Optimizer, and PromptPerfect all fuse diagnose-and-edit; the few standalone diagnose tools (audit-prompt, prompt-coach) carve a different unit (configs, session logs) entirely. CraftKit now follows the dominant pattern. `craft-tune` returns a Diagnostics section followed by the revised artifact; trigger phrasing like "review only" / "diagnose only" / "don't edit yet" switches it to **diagnose-only mode**, which returns Diagnostics + Recommended changes + Failure modes and stops before editing. The `references/failure-modes.md` taxonomy moved into `craft-tune/references/`.

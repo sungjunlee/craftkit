@@ -15,7 +15,6 @@ Use it when the question is not just "how do I write a skill?" but "what kind of
 
 ## How it differs from related skills
 
-- `craft-scaffold` structures vague requests into a plan. `craft-skill-spec` is narrower: it produces an **artifact-specific design spec** informed by the current radar.
 - `craft-survey` studies prior art. `craft-skill-spec` starts from the already-curated `references/radar/current.md` and only dips into snapshots when a watched area matters.
 - `craft-tune` improves an existing skill. `craft-skill-spec` is for designing a new one or reshaping a skill before the draft exists.
 - generic `skill-creator` guidance explains how skills work broadly. `craft-skill-spec` makes a concrete CraftKit judgment for *this* proposed skill.
