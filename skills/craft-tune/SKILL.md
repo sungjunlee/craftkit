@@ -1,6 +1,6 @@
 ---
 name: craft-tune
-description: Autonomously sharpen an existing prompt or skill by running a self-converging critique loop — each round re-diagnoses the current artifact, applies minimal-diff edits, and continues without user intervention until the critique itself surfaces no meaningful improvements left (self-LGTM). Use this whenever the user wants to refine, sharpen, tighten, review, audit, or upgrade an existing prompt or skill, says it "feels off" or "behaves inconsistently," asks "what's wrong with this," or wants to make it better. Switch to diagnose-only mode for a one-shot critique with no edits when the user asks to "review only," "diagnose only," or "don't edit yet."
+description: Autonomously sharpen an existing prompt or skill — re-diagnose, minimal-diff edit, repeat until Self-LGTM (no [HIGH]/[MED] findings remain). Use whenever the user wants to refine, sharpen, tighten, review, audit, or upgrade an existing prompt or skill, or says it "feels off" or "behaves inconsistently." Switches to one-shot diagnose-only mode on "review only" / "diagnose only" / "audit" / "don't edit yet."
 ---
 
 # craft-tune
@@ -47,10 +47,10 @@ The loop is the default behavior. There is no user-keyword stop signal — the s
 
 Exit the loop as soon as any of these fire:
 
-1. **Self-LGTM (the primary condition).** The current round's Diagnostics contains **no `[HIGH]` or `[MED]` items**. Remaining `[LOW]` items, or an empty list, mean the artifact is good enough by its own critique standard. State the rationale in the final output: *"Converged at Round N — no [HIGH]/[MED] findings remain."*
-2. **Persistent fixpoint.** The same `[HIGH]` or `[MED]` item appears with `[CARRIED]` tag across **two consecutive rounds**, meaning the current edit strategy isn't resolving it. Stop and surface this in the final output as *"Unresolvable in this loop's vocabulary"* — the user may need to provide additional context, an example, or a different framing.
+1. **Self-LGTM (the primary condition).** The current round's Diagnostics contains **no `[HIGH]` or `[MED]` items** (including any `[CARRIED]` items at those severities — `[CARRIED]` does not lower a finding's severity). Remaining `[LOW]` items, or an empty list, mean the artifact is good enough by its own critique standard. State the rationale in the final output: *"Converged at Round N — no [HIGH]/[MED] findings remain."*
+2. **Persistent fixpoint.** The same `[HIGH]` or `[MED]` item appears with `[CARRIED]` tag across **two consecutive rounds**, meaning the current edit strategy isn't resolving it. Treat two Diagnostics items as the *same* when they name the same underlying defect — even if the wording shifts between rounds — and would be resolved by the same kind of edit. Stop and surface this in the final output as *"Unresolvable in this loop's vocabulary"* — the user may need to provide additional context, an example, or a different framing.
 3. **No-op round.** A round produces an empty Changelog (the Diagnostics found items but no edits were warranted, or all proposed edits would violate hard constraints). Treat as soft convergence — stop and explain.
-4. **Hard cap reached.** Default 8 rounds; honor the user's override if supplied. State the cap was hit and list any remaining `[HIGH]`/`[MED]` Diagnostics that weren't resolved.
+4. **Hard cap reached.** Default 8 rounds — enough for two compounding edit passes plus margin on a typical-size artifact; raise it for large or unusually resistant artifacts, lower it when running on a tight budget. Honor the user's override if supplied. State the cap was hit and list any remaining `[HIGH]`/`[MED]` Diagnostics that weren't resolved.
 
 The first three are the healthy exits; the fourth is the safety net.
 
@@ -72,7 +72,7 @@ Prioritized list, 1-5 items, against the *current state* of the artifact. Each i
 
 ### Edits applied
 
-Compact changelog — one line per change in the form *`changed → why (Diagnostics #N) → effect`*. No full three-column table per round; that depth lives in the final output's cumulative changelog. If a round applies no edits (no-op stop condition), write *"No edits — see stop condition."*
+Compact changelog — one line per change in the form *`changed → why (Diagnostics #N) → effect`*. No full three-column table per round; that depth lives in the final output's cumulative changelog. **Never omit this section.** If a round applies no edits (no-op stop, or Self-LGTM with only `[LOW]` items below the action threshold), write *"No edits — <one-line reason>."* This keeps the per-round trail uniform and auditable.
 
 ## Final output (after convergence)
 
@@ -202,6 +202,9 @@ The original job is to get a code review back from an agent — a list of things
 **Diagnostics**
 1. `[LOW]` The `<scope>` list could be alphabetized for skim-readability.
 2. `[LOW]` "Top issues (max 5, ordered by severity)" — "by severity" is redundant with "Top issues".
+
+**Edits applied**
+No edits — both items are `[LOW]` and below the action threshold; Self-LGTM fires.
 
 ### Convergence
 
