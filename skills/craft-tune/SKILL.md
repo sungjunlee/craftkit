@@ -41,7 +41,7 @@ Each round is autonomous. Do not pause for user input between rounds — run the
 3. **Check stop conditions after each round.** See § Stop conditions. If any fires, exit the loop and produce the final output (§ Final output).
 4. **Hard cap.** Stop unconditionally at the max-rounds limit even if convergence wasn't reached. Report the unconverged state truthfully so the user can decide.
 
-The loop is the default behavior. There is no user-keyword stop signal — the skill self-judges. If the user wants to pause mid-loop they can interrupt via chat; that's a chat mechanic, not part of the contract.
+The loop is how craft-tune always runs — there is no separate mode and no user-keyword stop signal; the skill self-judges. If the user wants to pause mid-loop they can interrupt via chat; that's a chat mechanic, not part of the contract.
 
 ## Stop conditions (in priority order)
 
@@ -138,7 +138,7 @@ If a round's Diagnostics keeps surfacing the same fuzzy complaint ("this just fe
 - editing past the diagnosis — changelog entries that no Diagnostics item justifies
 - looping past the hard cap by reframing what "converged" means
 
-## Example (default mode — full run, abbreviated)
+## Example (full run, abbreviated)
 
 ### Input
 
