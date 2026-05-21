@@ -54,7 +54,7 @@ Imperative commands. Do not mirror Diagnostics 1:1. Consolidate where two issues
 Distinct recurrence scenarios — how the artifact fails under conditions not already named in Diagnostics. Do not restate Diagnostics in future tense. Each item introduces a new trigger, actor, interaction, or downstream effect (e.g. a recurrence scenario after a fix, a cross-effect with another system, a misuse pattern Diagnostics did not surface).
 
 ### Minimal rewrite plan
-An ordered sequence with explicit sequencing or priority rationale — not a numbered subset of Recommended changes. State why items go in this order: dependency, reach, risk, or reversibility. Close by noting that running `craft-tune` will execute this kind of plan autonomously if the user wants the edits applied.
+An ordered sequence with explicit sequencing or priority rationale — not a numbered subset of Recommended changes. State why items go in this order: dependency, reach, risk, or reversibility.
 
 ## Guardrails
 
@@ -68,7 +68,7 @@ An ordered sequence with explicit sequencing or priority rationale — not a num
 
 If the top-level pass keeps surfacing the same fuzzy complaint ("this just feels off"), switch to the categorized diagnostic in `references/failure-modes.md`. It splits issues into ambiguity, scope, context, portability, verification, and structure — which usually makes the real problem easier to name.
 
-## Failure modes
+## Common mistakes
 
 - turning the critique into a rewrite — produce findings, not a revised artifact (that's `craft-tune`'s job)
 - surfacing only negatives and losing the parts that already work
@@ -103,5 +103,3 @@ A prompt that asks the agent to "make this better" without saying what better me
 1. add the goal — everything else depends on a defined target
 2. add intent-preservation constraint — cheap, prevents scope drift during the next two edits
 3. add the output template — highest reach, but only meaningful once the goal exists
-
-Run `craft-tune` to apply a plan like this autonomously.
