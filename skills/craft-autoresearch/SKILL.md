@@ -22,7 +22,7 @@ Unlike `craft-tune` (single human-driven diagnose-and-edit), autoresearch *measu
 
 Do not use this when:
 
-- quality is entirely subjective with no rubric even sketchable — prefer `craft-tune` (in diagnose-only mode if you want findings before edits)
+- quality is entirely subjective with no rubric even sketchable — prefer `craft-critique` (read-only findings) or `craft-tune` (the review-and-fix loop)
 - the run harness cannot be automated at reasonable cost
 - the artifact is too new and has no rough baseline yet
 
@@ -198,4 +198,4 @@ Score: 7/12 (58%). Failing: section count varies (3-6); Diagnostics item count u
 
 - `references/eval-guide.md` — Binary, comparative, and fidelity evals; the determinism hierarchy; assertion categories; subjective-to-binary decomposition; eval quality check; a prompt template for drafting evals with an agent; `evals.json` schema; false-positive recovery.
 - `references/mutation-guide.md` — Mutation levels (wording, example, structure, principle), when each fits, and the deletion discipline.
-- `references/worked-example.md` — A full illustrative cycle showing baseline, five experiments (including a DISCARD and a deletion), stop condition, and the simplicity judgment behind each KEEP/DISCARD. The original target was `craft-critique`, since absorbed into `craft-tune`; the loop discipline the example teaches is identical.
+- `references/worked-example.md` — A full illustrative cycle showing baseline, five experiments (including a DISCARD and a deletion), stop condition, and the simplicity judgment behind each KEEP/DISCARD. The original target was `craft-critique`; the loop discipline the example teaches is identical.

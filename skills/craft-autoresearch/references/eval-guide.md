@@ -28,7 +28,7 @@ If two or more of the first three answers are "no," or the fourth question has n
 3. Add 2-3 new evals targeting those dimensions, at Tier 1-2 where possible (ordering checks, cross-section consistency, presence of severity labels, distinct-dimension checks).
 4. Rebaseline. Proceed to the mutation loop only if the new baseline leaves real room to improve.
 
-**Real example.** A first-pass autoresearch run against `craft-critique` (since folded into `craft-tune`) scored 9/9 (100%) on a four-assertion binary suite (five-section structure, ≤5 Issues items, imperative-lead Recommended changes, comparative actionability). Qualitative inspection of the three outputs surfaced four quality gaps the suite missed:
+**Real example.** A first-pass autoresearch run against `craft-critique` scored 9/9 (100%) on a four-assertion binary suite (five-section structure, ≤5 Issues items, imperative-lead Recommended changes, comparative actionability). Qualitative inspection of the three outputs surfaced four quality gaps the suite missed:
 
 - Recommended-changes items mapped 1:1 to Issues items — no prioritization or consolidation.
 - Minimal-rewrite-plan was a subset of Recommended-changes, not an ordered, prioritized sequence.

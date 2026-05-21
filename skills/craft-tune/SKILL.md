@@ -1,6 +1,6 @@
 ---
 name: craft-tune
-description: Autonomously sharpen an existing prompt or skill — re-diagnose, minimal-diff edit, repeat until Self-LGTM (no [HIGH]/[MED] findings remain). Use whenever the user wants to refine, sharpen, tighten, review, audit, or upgrade an existing prompt or skill, or says it "feels off" or "behaves inconsistently." Switches to one-shot diagnose-only mode on "review only" / "diagnose only" / "audit" / "don't edit yet."
+description: Autonomously sharpen an existing prompt or skill — re-diagnose, minimal-diff edit, repeat until Self-LGTM (no [HIGH]/[MED] findings remain). This is the review-and-fix loop: it edits the artifact in place. Use whenever the user wants to refine, sharpen, tighten, fix, improve, or upgrade an existing prompt or skill, or says it "feels off" or "behaves inconsistently." For a read-only diagnosis with no edits, use craft-critique instead.
 ---
 
 # craft-tune
@@ -22,7 +22,7 @@ This is *not* eval-driven (no scored rubric, no run harness — that's `craft-au
 - minimal-diff improvement across multiple rounds is better than rewriting from scratch
 - setting up scored evals (the `craft-autoresearch` overhead) isn't worth it for this artifact
 
-Switch to **diagnose-only mode** when the user wants a one-shot critique without edits or iteration — typical signals: "review only," "diagnose only," "what's wrong with this but don't change it yet," "audit before I touch it." See § Diagnose-only mode.
+craft-tune always edits. When the user wants a one-shot critique *without* edits — "review only," "diagnose only," "what's wrong with this but don't change it yet," "audit before I touch it" — use `craft-critique` instead, which is read-only and stops at findings.
 
 ## Inputs
 
@@ -104,29 +104,6 @@ Name at least one concrete cost with a direction (length ↑, flexibility ↓, s
 
 If the loop exited on Persistent fixpoint, No-op round, or Hard cap, list the `[HIGH]`/`[MED]` Diagnostics that remain unresolved, one per line, each with a one-line note on why the loop couldn't resolve it. Omit this section entirely on a clean Self-LGTM exit.
 
-## Diagnose-only mode
-
-When the user explicitly wants diagnosis without edits — *and* without entering the loop — return one round of findings and exit. Triggers: "review only," "diagnose only," "audit," "don't edit yet."
-
-### Output (single block, no loop)
-
-#### Intent preserved
-Same bar as default mode.
-
-#### Diagnostics
-Same bar as default mode.
-
-#### Recommended changes
-Imperative commands. Do not mirror Diagnostics 1:1. Consolidate where two issues share a fix; reprioritize where the cheapest or highest-leverage fix is not the first Diagnostics item. At least one of these must be visible: fewer Rec items than Diagnostics items, a Rec item that addresses two or more, or a Rec order that differs from the Diagnostics order.
-
-#### Failure modes
-Distinct recurrence scenarios — how the artifact fails under conditions not already named in Diagnostics. Do not restate Diagnostics in future tense. Each item introduces a new trigger, actor, interaction, or downstream effect.
-
-#### Pointer
-Close with: *"Run craft-tune in default mode to enter the autonomous edit loop, optionally pointing at these recommendations as the starting target improvement."*
-
-Do **not** produce a Revised artifact, Changelog, Tradeoffs, or Open items section in this mode.
-
 ## Guardrails
 
 - diagnose before editing — every changelog entry must trace to a specific Diagnostics item from the round that introduced it
@@ -160,7 +137,6 @@ If a round's Diagnostics keeps surfacing the same fuzzy complaint ("this just fe
 - producing a diff so large any single round is effectively a rewrite without admitting it
 - editing past the diagnosis — changelog entries that no Diagnostics item justifies
 - looping past the hard cap by reframing what "converged" means
-- producing only negatives in diagnose-only mode and losing the parts that already work
 
 ## Example (default mode — full run, abbreviated)
 
