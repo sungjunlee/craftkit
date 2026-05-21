@@ -43,13 +43,14 @@ npx skills add . -g -y
 
 For Codex or any other agent, see [Use in other agents](#use-in-other-agents) below.
 
-## The six skills
+## The seven skills
 
 | Skill | Use when |
 |---|---|
 | `craft-prompt` | a new prompt is needed from scratch for any LLM (Claude, GPT, Gemini, Perplexity, etc.) |
 | `craft-skill-spec` | a new skill needs a concrete spec based on current CraftKit skill-radar judgments before writing `SKILL.md` |
-| `craft-tune` | an existing prompt or skill needs diagnostic sharpening — runs an autonomous self-converging critique loop (re-critique → minimal-diff edits → repeat) until the critique itself surfaces no `[HIGH]`/`[MED]` findings left (self-LGTM), then returns the final artifact plus the round-by-round trail. Also handles diagnose-only "review before edit" requests as a one-shot mode. |
+| `craft-critique` | an existing prompt or skill needs a read-only review — surfaces strengths, prioritized `[HIGH]`/`[MED]`/`[LOW]` findings, recommendations, and a rewrite plan, but never edits the artifact |
+| `craft-tune` | an existing prompt or skill needs sharpening *applied* — runs an autonomous self-converging review-and-fix loop (re-critique → minimal-diff edits → repeat) until the critique itself surfaces no `[HIGH]`/`[MED]` findings left (self-LGTM), then returns the final artifact plus the round-by-round trail |
 | `craft-survey` | a new skill should be grounded in prior art, extracting only patterns that carry their weight |
 | `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration |
 | `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt (clipboard + optional auto-load on `/clear`) |
@@ -58,7 +59,7 @@ Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML 
 
 ## Status
 
-Four of the six skills (`craft-prompt`, `craft-tune`, `craft-survey`, `craft-autoresearch`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-tune` was further reshaped twice: first to absorb the diagnose-only role previously carried by a separate `craft-critique` skill, then again to run an autonomous self-converging critique loop in default mode. The next autoresearch pass will run against this shape. `craft-handoff` and `craft-skill-spec` are new and have not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
+Five of the seven skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-tune` was reshaped to run an autonomous self-converging review-and-fix loop; the read-only diagnose role stays with the separate `craft-critique` skill. The next autoresearch pass will run against this shape. `craft-handoff` and `craft-skill-spec` are new and have not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
 
 ## What belongs in CraftKit
 

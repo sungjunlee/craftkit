@@ -62,9 +62,9 @@ Tradeoffs
 
 If the diagnosis still feels fuzzy, open `skills/craft-tune/references/failure-modes.md` and classify each issue as **ambiguity**, **scope**, **context**, **portability**, or **structure**. That vocabulary usually makes the next edit obvious — in this case the prompt has clear ambiguity (what does "thorough" mean?) and scope (no "don't refactor" guard) failures.
 
-### Diagnose-only variant
+### Read-only variant — craft-critique
 
-When you want the findings before any rewrite — for example, to decide whether to rewrite at all, or to share with a collaborator first — invoke `craft-tune` in **diagnose-only mode**. Trigger it with phrasing like *"review only,"* *"diagnose only,"* or *"don't edit yet."* Output drops the Revised artifact / Changelog / Tradeoffs sections and replaces them with `Recommended changes` and `Failure modes` plus a pointer back to default mode when you're ready to apply the edits.
+When you want the findings before any rewrite — to decide whether to rewrite at all, or to share with a collaborator first — use `craft-critique` instead of `craft-tune`. It is the read-only half of the pair: it surfaces strengths, prioritized Diagnostics, recommended changes, and a rewrite plan, but never edits the artifact. Run `craft-tune` afterward when you want that plan applied autonomously.
 
 ## Step 2 — Autoresearch (optional)
 
@@ -86,7 +86,7 @@ If several teams in the org already have code-review prompts, run `craft-survey`
 
 ## What to take from this example
 
-- **Diagnose and tune in one pass.** `craft-tune` returns the issues and the revised artifact together; switch to diagnose-only mode when you want findings before edits.
+- **Critique to see, tune to fix.** `craft-critique` is read-only — it returns findings and a plan; `craft-tune` runs the autonomous review-and-fix loop and returns the revised artifact. Pick by whether you want the file edited.
 - **Tune with minimal diffs.** The final prompt is recognizable as an evolution of the original, not a replacement. Every Changelog entry traces back to a Diagnostics item.
 - **Survey is opt-in prior art.** It grounds the design when comparable assets exist.
 - **Autoresearch is opt-in measurement.** It pays off when you have evals and a harness; for a one-off prompt, it is overhead.
