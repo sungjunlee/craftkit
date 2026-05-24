@@ -41,12 +41,14 @@ Before producing the spec:
 
 Do not start with open-ended web research unless the user explicitly asks for it. The point of this skill is to use the curated internal layer first.
 
+If the radar references are unavailable in a standalone copy, say that the spec is running in fallback mode. Use the default design stance embedded in this `SKILL.md`: classify the artifact, define its wedge, choose the smallest viable file shape, draft trigger wording, and include an eval plan. Ask for the missing radar files only when the artifact class is `subagent` or `plugin`, or when a decision would depend on current `Watch` guidance.
+
 ## Steps
 
 1. Classify the artifact first. If it should really be a `subagent` or `plugin`, say so before drafting a skill-shaped answer.
 2. Restate the proposed artifact's real job in one sentence. If you cannot state the job cleanly, the spec will drift.
 3. Define the wedge. Name what the artifact should do and what it should explicitly not try to do.
-4. Apply the current radar. Pick the relevant `Adopt`, `Avoid`, and `Watch` items from `references/radar/current.md`.
+4. Apply the current radar. Pick the relevant `Adopt`, `Avoid`, and `Watch` items from `references/radar/current.md`. In standalone fallback mode, label this section `Fallback radar judgment` and use the default design stance above instead of pretending the missing radar file was read.
 5. Decide the degree of freedom. Choose whether the core should be high-freedom guidance, medium-freedom templates/pseudocode, or low-freedom exact commands/scripts.
 6. Decide the file or package shape. Start from the smallest viable artifact class and add `references/`, `scripts/`, `templates/`, agents, or plugin surfaces only when the proposed job clearly earns them.
 7. Draft the trigger surface if the artifact includes one or more skills. Write frontmatter `description` lines that say what each skill does and when it should be used.
@@ -95,6 +97,8 @@ One short paragraph: what artifact is being proposed, for whom, and why this sha
 - **Watch** — only the watched patterns that actually matter here, with a one-line handling rule
 
 Every item must be specific to the proposed skill. Do not repeat the radar file mechanically.
+
+If running in standalone fallback mode, keep the same three bullets but label each item as inferred from this `SKILL.md` rather than sourced from `references/radar/current.md`. Do not cite missing radar files.
 
 ### Design spec
 - freedom level

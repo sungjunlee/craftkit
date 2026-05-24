@@ -58,14 +58,14 @@ For research, coding-agent, or other high-impact prompts, add a small verificati
 
 **Formatting by target LLM** — see `guides/{target}.md` for details:
 
-XML tags work well across all major LLMs. Claude is trained for XML; GPT-4.1+ and Gemini 3 both handle XML effectively (GPT also works well with Markdown). Use XML for complex/multi-section prompts. Plain text or markdown is fine for simple ones.
+XML tags work well across major LLMs. Use XML for complex or multi-section prompts; plain text or markdown is fine for simple ones. Keep model-version-specific behavior in the relevant guide rather than the portable core.
 
 | Target | Structure | Key tip |
 |--------|-----------|---------|
 | **Claude (Code / web)** | XML tags (`<context>`, `<task>`, `<rules>`) | Best XML parsing; reference worktree-relative file paths, don't paste content |
-| **GPT / ChatGPT** | XML tags or Markdown | XML officially recommended from GPT-4.1+; add "Be concise" |
-| **Perplexity** | Research-oriented queries | Request source URLs; set recency filters; choose focus mode (Web/Academic/Writing/Math/Video/Social) |
-| **Gemini** | XML tags or Markdown (pick one, stay consistent) | Strong at multimodal and math/reasoning |
+| **GPT / ChatGPT** | XML tags or Markdown | Add concise output constraints when the default answer gets too broad |
+| **Perplexity** | Research-oriented queries | Request source URLs and recency/source preferences |
+| **Gemini** | XML tags or Markdown (pick one, stay consistent) | Keep structure consistent, especially for multimodal or reasoning-heavy prompts |
 | **Image gen** | Flat natural language description | Subject first; negative prompt; see `templates/image-gen.md` |
 | **Video gen** | Flat natural language, 3-6 sentences | Style first; cinematic verbs; params via platform settings; see `templates/video-gen.md` |
 | **Generic** | XML tags | Supported by all 3 major providers — most portable |
@@ -112,7 +112,7 @@ Ask if the user wants adjustments. Refine based on feedback — tweak tone, add/
 
 1. **The prompt is the product.** Deliver polished text the user copies as-is. Not a meta-discussion about prompting.
 
-2. **Respect the target LLM.** XML tags work across all major LLMs now, but each has nuances. Claude parses XML best. GPT-4.1+ officially supports XML. Perplexity is search-first. Read the target's guide when available.
+2. **Respect the target LLM.** XML tags work across major LLMs, but each interface has nuances. Read the target's guide when available, especially for search-first, multimodal, or local-model workflows.
 
 3. **Context > instruction.** When you have 500 tokens to spend, put 400 into context and 100 into the task. A simple instruction with rich background always outperforms elaborate instructions with no context.
 
@@ -138,7 +138,7 @@ Ask if the user wants adjustments. Refine based on feedback — tweak tone, add/
 - `guides/claude-guide.md` — Claude Code / Claude web / API
 - `guides/gpt.md` — GPT Pro / ChatGPT / API
 - `guides/perplexity.md` — Perplexity
-- `guides/gemini.md` — Gemini 3 / Imagen 4
+- `guides/gemini.md` — Gemini / Imagen
 - `guides/local-models.md` — Local/open-source models (Llama, Qwen, Mistral, DeepSeek, Ollama, etc.)
 
 ## Templates (special cases where a well-crafted template adds real value)

@@ -11,7 +11,7 @@ Run an eval-driven autonomous optimization loop on a prompt or skill.
 
 Many prompts and skills feel "mostly fine" until the last 20-30% of failures show up. Re-reading rarely finds those gaps. You find them by running the artifact many times, scoring outputs against a rubric, mutating one thing at a time, and keeping only the changes that measurably move the score.
 
-Unlike `craft-tune` (single human-driven diagnose-and-edit), autoresearch *measures*. Gains come from the loop, not from one clever rewrite.
+Unlike `craft-tune` (judgment-driven autonomous diagnose-and-edit), autoresearch *measures*. Gains come from the loop, not from one clever rewrite.
 
 ## Use this when
 
@@ -151,15 +151,15 @@ The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prev
 
 ### Input
 
-Optimize `skills/craft-tune/SKILL.md` so default-mode outputs are structurally consistent across Claude Code and Codex.
+Optimize `skills/craft-tune/SKILL.md` so review-and-fix loop outputs are structurally consistent across Claude Code and Codex.
 
 Test inputs: three real "improve this prompt" requests from last week.
 
 Eval criteria:
 
-- Binary: output has exactly five sections (Intent preserved, Diagnostics, Revised artifact, Changelog, Tradeoffs).
-- Binary: Diagnostics section contains at most 5 prioritized items with severity tags.
-- Binary: every Changelog entry names all three fields (changed / why / effect).
+- Binary: output includes at least one `Round N` trail and a final `Convergence` block.
+- Binary: each per-round Diagnostics section contains at most 5 prioritized items with severity tags.
+- Binary: every Cumulative changelog entry names all three fields (changed / why / effect).
 - Comparative: is the revision more reviewable than baseline? (blind A/B judge)
 
 Budget: 8 experiments. Stop condition: 95% binary pass rate sustained for 3 consecutive kept experiments.
@@ -170,22 +170,33 @@ Budget: 8 experiments. Stop condition: 95% binary pass rate sustained for 3 cons
 - target: `skills/craft-tune/SKILL.md`
 - inputs: 3 prompts
 - evals: 3 binary + 1 comparative
-- harness: `node scripts/run-skill.mjs craft-tune <input.txt>`
+- harness: manual replay procedure — for each input, start a fresh agent session, load `skills/craft-tune/SKILL.md` as the operating instruction, paste the input, and save the response under `runs/<input-name>/output.md`
+- mutable files: `skills/craft-tune/SKILL.md`; all other files frozen
+- evals 4th diagnostic: baseline plausibly returns Changelog rows without `effect`, so the traceability eval has a concrete failing output; baseline also plausibly returns a longer revision that satisfies section shape but is no easier to audit, so the comparative reviewability eval has a concrete failing output
+- harness design: manual replay harness; slower than a command runner, but exact and valid before this repo ships a runner script
+- first-mutation hypothesis preview: `## Final output` / Convergence subsection, invoking the Build-step enforcement prior because the first failing output lacks the final-state signal that the current `craft-tune` contract requires
 - budget: 8; stop: 95% × 3 consecutive
 
 **Baseline**
-Score: 7/12 (58%). Failing: section count varies (3-6); Diagnostics item count unbounded; Changelog entries often omit `effect`.
+Score: 7/12 (58%). Failing: final `Convergence` block is often missing; Diagnostics item count is unbounded; Cumulative changelog entries often omit `effect`.
+
+Representative outputs:
+- run 1 ends after `Round 2` edits with no final `Convergence` block
+- run 2 includes a changelog row with `changed` and `why`, but no `effect`
 
 **Experiment log**
 
-| # | Hypothesis | Change | Score | Decision |
-|---|---|---|---|---|
-| 1 | Tighten section spec | Added "exactly these 5 sections" line | 9/12 | KEEP |
-| 2 | Cap Diagnostics list | Added "1-5 items, severity-tagged" | 11/12 | KEEP |
-| 3 | Enforce three-field Changelog | Added table example + "all three fields per entry" rule | 12/12 | KEEP |
-| 4 | Deletion check | Removed the added Changelog example | 10/12 | DISCARD (example carries weight) |
-| 5 | Restore + sharpen example | Restored Changelog table with three rows | 12/12 | KEEP |
-| 6 | Stability check | Re-ran to confirm | 12/12 | KEEP — 3 consecutive hit, STOP |
+| # | Hypothesis | Change | Score | Decision | Rationale |
+|---|---|---|---|---|---|
+| 1 | Tighten final-output spec | Added explicit `Convergence` block requirement | 9/12 | KEEP | fixes missing final-state signal without changing loop scope |
+| 2 | Cap Diagnostics list | Added "1-5 items, severity-tagged" | 11/12 | KEEP | removes unbounded review output while preserving priority |
+| 3 | Enforce three-field changelog | Added table example + "all three fields per entry" rule | 12/12 | KEEP | makes every accepted change auditable |
+| 4 | Deletion check | Removed the added changelog example | 10/12 | DISCARD | score regressed; example carries the changelog behavior |
+| 5 | Restore + sharpen example | Restored changelog table with three rows | 12/12 | KEEP | restores the behavior with less wording |
+| 6 | Stability check | Re-ran to confirm | 12/12 | KEEP — 3 consecutive hit, STOP | stop condition satisfied |
+
+**Final artifact**
+Accepted version: `skills/craft-tune/SKILL.md`. Size note: `skill_lines` held under the 500-line target; folder size unchanged because no references were touched.
 
 **Direction shifts**
 - Flipped from "softer wording" to "explicit constraints" after baseline showed agents needed more structure, not less.

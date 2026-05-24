@@ -32,7 +32,7 @@ A grounded survey matters because agents that invent from scratch often rediscov
 3. Extract repeated patterns that seem genuinely useful. Prefer patterns that show up across multiple sources.
 4. Separate core patterns from optional stylistic choices. Confusing the two is how cargo-culting starts.
 5. Synthesize a small set of recommended changes. Synthesis beats quotation — don't just paste from sources.
-6. Apply only the changes that improve clarity, reuse, or quality. Novelty alone isn't a reason to adopt a pattern.
+6. Recommend only the changes that improve clarity, reuse, or quality. Novelty alone isn't a reason to adopt a pattern.
 
 ## Output format
 
@@ -79,24 +79,24 @@ Improve a tuning skill using older prompt-builder assets and meta-skills as refe
 Strengthen the tuning skill so it produces more consistent and portable edits.
 
 **Reference patterns**
-- explicit inputs and outputs
-- minimal-diff editing
-- critique before revision
-- examples embedded in docs
+- explicit inputs and outputs — source: `skills/craft-tune/SKILL.md` § Inputs / Final output
+- minimal-diff editing — source: `skills/craft-tune/SKILL.md` § Guardrails
+- critique before revision — source: `skills/craft-critique/SKILL.md` § Steps and `skills/craft-tune/SKILL.md` § How the loop runs
+- examples embedded in docs — source: `skills/craft-prompt/references/prompt-patterns.md` § Review prompts
 
 **Adopt**
-- revised artifact plus changelog structure
-- failure-mode note
-- preservation of original intent
+- revised artifact plus changelog structure — prevents users from receiving edits they cannot audit
+- failure-mode note — exposes the conditions where the tuned prompt will still drift
+- preservation of original intent — prevents a cleanup pass from silently changing the prompt's job
 
 **Avoid**
-- overly vendor-specific phrases
-- giant all-in-one instructions
+- overly vendor-specific phrases — couples the skill to one runtime and weakens cross-agent reuse
+- giant all-in-one instructions — makes the always-loaded `SKILL.md` harder to inspect and maintain
 
 **Recommended edits**
-- tighten the output template in `craft-tune`
-- add a short failure-mode section
-- add one compact example
+- `skills/craft-tune/SKILL.md` § Final output — tighten the changelog fields so each entry names changed / why / effect
+- `skills/craft-tune/SKILL.md` § Failure modes — add a short note about scope drift during repeated edits
+- `skills/craft-tune/SKILL.md` § Example — replace the generic example with one compact full-loop run
 
 **Risks**
-- overfitting to one repo's naming conventions
+- the surveyed sources are all CraftKit-adjacent, so the recommendations may overfit to this repo's naming conventions
