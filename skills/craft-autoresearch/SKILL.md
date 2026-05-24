@@ -195,6 +195,9 @@ Representative outputs:
 | 5 | Restore + sharpen example | Restored changelog table with three rows | 12/12 | KEEP | restores the behavior with less wording |
 | 6 | Stability check | Re-ran to confirm | 12/12 | KEEP — 3 consecutive hit, STOP | stop condition satisfied |
 
+**Final artifact**
+Accepted version: `skills/craft-tune/SKILL.md`. Size note: `skill_lines` held under the 500-line target; folder size unchanged because no references were touched.
+
 **Direction shifts**
 - Flipped from "softer wording" to "explicit constraints" after baseline showed agents needed more structure, not less.
 

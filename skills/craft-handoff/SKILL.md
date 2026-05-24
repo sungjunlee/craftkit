@@ -231,6 +231,7 @@ Always deliver in this order:
 1. The **prompt** (fenced XML code block) — what the user pastes.
 2. A 1-line confirmation: prompt path, doc path, clipboard status.
 3. The next-step instruction (one line).
+4. The Claude Code auto-load pointer when applicable.
 
 Do not paste the rich doc into the chat in the normal file-write path — it lives on disk by design. In portable fallback where the doc cannot be written, paste the rich doc body after the prompt and clearly mark that the file write was skipped. Do not summarize what you put in the doc separately — the user can `cat` it when the file exists. Do not add a "session retrospective" — that's a different skill.
 
@@ -374,6 +375,7 @@ Success criteria:
 
 Prompt copied to clipboard. Saved to `~/.craftkit/handoff/pending/2026-04-25T00-14-09-000Z-acme-api-7c3a92.md`. Rich doc at `~/.craftkit/handoff/docs/acme-api-7c3a92.md` — the prompt instructs the next agent to read it first.
 Start a fresh or reset session in the target agent, then paste. For Claude Code, run `/clear` first.
+On Claude Code, you can skip the paste step by installing the SessionStart hook — see `references/auto-load-hook.md`.
 
 ## References (load on demand)
 
