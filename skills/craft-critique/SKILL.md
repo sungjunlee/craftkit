@@ -45,10 +45,10 @@ If the user wants the artifact actually edited — "fix it," "sharpen it," "make
 Short list of strengths worth preserving. Name the specific element, not a generic positive.
 
 ### Diagnostics
-Prioritized list, 1-5 items. Each item carries an explicit severity tag (`[HIGH]`, `[MED]`, `[LOW]`). When failure outputs were supplied as input, each `[HIGH]` item must name the specific failure it explains. Bare position is not enough — make the priority signal visible.
+Prioritized list, 1-5 items. Each item carries an explicit severity tag (`[HIGH]`, `[MED]`, `[LOW]`). When reviewing repo assets, prompts in files, or skills, cite concrete evidence for every `[HIGH]` and `[MED]` item — file path plus section or line when available. When failure outputs were supplied as input, each `[HIGH]` item must name the specific failure it explains. Bare position is not enough — make the priority signal visible.
 
 ### Recommended changes
-Imperative commands. Do not mirror Diagnostics 1:1. Consolidate where two issues share a fix; reprioritize where the cheapest or highest-leverage fix is not the first Diagnostics item. At least one of these must be visible: fewer Rec items than Diagnostics items, a Rec item that addresses two or more, or a Rec order that differs from the Diagnostics order.
+Imperative commands. Prefer useful consolidation and reprioritization over mechanically mirroring Diagnostics 1:1. Consolidate where two issues share a fix; reprioritize where the cheapest or highest-leverage fix is not the first Diagnostics item. A direct 1:1 mapping is fine when that is clearest, but do not force one finding to become one recommendation just to preserve shape.
 
 ### Failure modes
 Distinct recurrence scenarios — how the artifact fails under conditions not already named in Diagnostics. Do not restate Diagnostics in future tense. Each item introduces a new trigger, actor, interaction, or downstream effect (e.g. a recurrence scenario after a fix, a cross-effect with another system, a misuse pattern Diagnostics did not surface).
@@ -62,6 +62,7 @@ An ordered sequence with explicit sequencing or priority rationale — not a num
 - do not nitpick style before fixing structure
 - preserve strengths, not just list problems
 - focus on issues that affect actual reuse and execution
+- back significant repo/file findings with concrete evidence
 - keep the review actionable
 
 ## When the review feels vague

@@ -45,29 +45,17 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 
 ## The seven skills
 
-### Which skill should I use?
-
-| Need | Use | Side effect |
+| Skill | Use when | Side effect |
 |---|---|---|
-| Build a new prompt from scratch | `craft-prompt` | returns copy-pasteable text |
-| Decide the shape of a new skill-like artifact | `craft-skill-spec` | returns a spec; reads radar references |
-| Review a prompt or skill before editing | `craft-critique` | read-only |
-| Apply improvements to an existing prompt or skill | `craft-tune` | edits the artifact |
-| Learn from comparable assets first | `craft-survey` | read-only recommendations |
-| Improve reliability with measured runs | `craft-autoresearch` | runs evals and may edit mutable files |
-| Preserve session context for a later agent | `craft-handoff` | writes handoff files and may copy to clipboard |
+| `craft-prompt` | a new prompt is needed from scratch for any LLM (Claude, GPT, Gemini, Perplexity, etc.) | returns copy-pasteable text |
+| `craft-skill-spec` | a new skill needs a concrete spec based on current CraftKit skill-radar judgments before writing `SKILL.md` | returns a spec; reads radar references |
+| `craft-critique` | an existing prompt or skill needs a read-only review before editing or shipping | surfaces strengths, prioritized findings, recommendations, and a rewrite plan without editing |
+| `craft-tune` | an existing prompt or skill needs sharpening applied | runs an autonomous review-and-fix loop and edits the artifact |
+| `craft-survey` | a new skill should be grounded in prior art before drafting | returns read-only recommendations |
+| `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration | runs evals and may edit mutable files |
+| `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt | writes handoff files and may copy to clipboard |
 
 When two skills could trigger, choose the least invasive one that answers the request: review-only wording goes to `craft-critique`; apply/fix/improve wording goes to `craft-tune`; repeated measurable failures go to `craft-autoresearch`; prior-art questions go to `craft-survey`.
-
-| Skill | Use when |
-|---|---|
-| `craft-prompt` | a new prompt is needed from scratch for any LLM (Claude, GPT, Gemini, Perplexity, etc.) |
-| `craft-skill-spec` | a new skill needs a concrete spec based on current CraftKit skill-radar judgments before writing `SKILL.md` |
-| `craft-critique` | an existing prompt or skill needs a read-only review — surfaces strengths, prioritized `[HIGH]`/`[MED]`/`[LOW]` findings, recommendations, and a rewrite plan, but never edits the artifact |
-| `craft-tune` | an existing prompt or skill needs sharpening *applied* — runs an autonomous self-converging review-and-fix loop (re-critique → minimal-diff edits → repeat) until the critique itself surfaces no `[HIGH]`/`[MED]` findings left (self-LGTM), then returns the final artifact plus the round-by-round trail |
-| `craft-survey` | a new skill should be grounded in prior art, extracting only patterns that carry their weight |
-| `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration |
-| `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt (clipboard + optional auto-load on `/clear`) |
 
 Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML frontmatter, loadable as a Claude Code skill or copy-pasteable into any other agent.
 
