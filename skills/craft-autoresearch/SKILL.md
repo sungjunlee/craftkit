@@ -151,7 +151,7 @@ The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prev
 
 ### Input
 
-Optimize `skills/craft-tune/SKILL.md` so default-mode outputs are structurally consistent across Claude Code and Codex.
+Optimize `skills/craft-tune/SKILL.md` so review-and-fix loop outputs are structurally consistent across Claude Code and Codex.
 
 Test inputs: three real "improve this prompt" requests from last week.
 

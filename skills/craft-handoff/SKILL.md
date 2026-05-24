@@ -6,7 +6,7 @@ description: >-
   that commands the next agent to read the doc first. Use proactively
   whenever a session is wrapping up. Triggers: "wrap up", "마무리",
   "세션 정리", "핸드오프", "다음 세션으로 넘겨", "next session으로 넘겨",
-  or before clearing/resetting context (for Claude Code, /clear).
+  or before clearing/resetting session context.
 ---
 
 # craft-handoff
