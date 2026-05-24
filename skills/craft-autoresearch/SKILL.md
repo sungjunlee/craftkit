@@ -174,7 +174,7 @@ Budget: 8 experiments. Stop condition: 95% binary pass rate sustained for 3 cons
 - mutable files: `skills/craft-tune/SKILL.md`; all other files frozen
 - evals 4th diagnostic: baseline plausibly returns Changelog rows without `effect`, so the traceability eval has a concrete failing output; baseline also plausibly returns a longer revision that satisfies section shape but is no easier to audit, so the comparative reviewability eval has a concrete failing output
 - harness design: manual replay harness; slower than a command runner, but exact and valid before this repo ships a runner script
-- first-mutation hypothesis preview: `## Final output` / Changelog subsection, because the failing outputs point to missing build-step enforcement of the three changelog fields
+- first-mutation hypothesis preview: `## Final output` / Convergence subsection, because the first failing output lacks the final-state signal that the current `craft-tune` contract requires
 - budget: 8; stop: 95% × 3 consecutive
 
 **Baseline**
