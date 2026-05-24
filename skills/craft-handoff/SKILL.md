@@ -61,7 +61,7 @@ git diff --stat | tail -20
 git log --oneline -8
 ```
 
-**Portable fallback.** If scripts, clipboard access, or hook support are unavailable, still produce the same two-artifact content shape in chat: a rich doc body and a paste-ready prompt that points to where the doc should live. Tell the user which side effect was skipped (file write, clipboard copy, or auto-load hook). This loses automatic resume, but preserves the cross-agent handoff content.
+**Portable fallback.** If scripts, file writing, or clipboard access are unavailable, still produce the same two-artifact content shape in chat: a rich doc body and a paste-ready prompt that points to where the doc should live. Tell the user which side effect was skipped (script gather, file write, or clipboard copy). This loses automatic resume, but preserves the cross-agent handoff content. Missing hook support alone is not a fallback trigger; hooks are optional and Claude-Code-specific.
 
 Drawn from the conversation (you must extract these — no script can):
 
@@ -232,7 +232,7 @@ Always deliver in this order:
 2. A 1-line confirmation: prompt path, doc path, clipboard status.
 3. The next-step instruction (one line).
 
-Do not paste the rich doc into the chat — it lives on disk by design. Do not summarize what you put in the doc separately — the user can `cat` it. Do not add a "session retrospective" — that's a different skill.
+Do not paste the rich doc into the chat in the normal file-write path — it lives on disk by design. In portable fallback where the doc cannot be written, paste the rich doc body after the prompt and clearly mark that the file write was skipped. Do not summarize what you put in the doc separately — the user can `cat` it when the file exists. Do not add a "session retrospective" — that's a different skill.
 
 ## Cross-platform notes
 
