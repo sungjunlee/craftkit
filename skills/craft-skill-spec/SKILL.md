@@ -41,6 +41,8 @@ Before producing the spec:
 
 Do not start with open-ended web research unless the user explicitly asks for it. The point of this skill is to use the curated internal layer first.
 
+If the radar references are unavailable in a standalone copy, say that the spec is running in fallback mode. Use the default design stance embedded in this `SKILL.md`: classify the artifact, define its wedge, choose the smallest viable file shape, draft trigger wording, and include an eval plan. Ask for the missing radar files only when the artifact class is `subagent` or `plugin`, or when a decision would depend on current `Watch` guidance.
+
 ## Steps
 
 1. Classify the artifact first. If it should really be a `subagent` or `plugin`, say so before drafting a skill-shaped answer.

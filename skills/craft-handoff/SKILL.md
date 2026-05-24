@@ -61,6 +61,8 @@ git diff --stat | tail -20
 git log --oneline -8
 ```
 
+**Portable fallback.** If scripts, clipboard access, or hook support are unavailable, still produce the same two-artifact content shape in chat: a rich doc body and a paste-ready prompt that points to where the doc should live. Tell the user which side effect was skipped (file write, clipboard copy, or auto-load hook). This loses automatic resume, but preserves the cross-agent handoff content.
+
 Drawn from the conversation (you must extract these — no script can):
 
 - **Done** — what was actually accomplished this session (not what was attempted)
@@ -213,7 +215,7 @@ The wrapper auto-detects the platform (`pbcopy` → `wl-copy` → `xclip` → `x
 
 ### Step 5 — Inform
 
-Show the **prompt** before the confirmation — that's what the user pastes, so it's what they need to verify. The rich doc is on disk for inspection separately (and the prompt commands the next agent to read it). You can't detect from inside the skill whether the optional SessionStart hook is installed, so always give the manual `/clear`-and-paste instruction and append the auto-load pointer.
+Show the **prompt** before the final confirmation line — that's what the user pastes, so it's what they need to verify. The rich doc is on disk for inspection separately (and the prompt commands the next agent to read it). You can't detect from inside the skill whether the optional SessionStart hook is installed, so always give the manual `/clear`-and-paste instruction and append the auto-load pointer.
 
 Deliver, in this order:
 

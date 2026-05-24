@@ -45,6 +45,20 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 
 ## The seven skills
 
+### Which skill should I use?
+
+| Need | Use | Side effect |
+|---|---|---|
+| Build a new prompt from scratch | `craft-prompt` | returns copy-pasteable text |
+| Decide the shape of a new skill-like artifact | `craft-skill-spec` | returns a spec; reads radar references |
+| Review a prompt or skill before editing | `craft-critique` | read-only |
+| Apply improvements to an existing prompt or skill | `craft-tune` | edits the artifact |
+| Learn from comparable assets first | `craft-survey` | read-only recommendations |
+| Improve reliability with measured runs | `craft-autoresearch` | runs evals and may edit mutable files |
+| Preserve session context for a later agent | `craft-handoff` | writes handoff files and may copy to clipboard |
+
+When two skills could trigger, choose the least invasive one that answers the request: review-only wording goes to `craft-critique`; apply/fix/improve wording goes to `craft-tune`; repeated measurable failures go to `craft-autoresearch`; prior-art questions go to `craft-survey`.
+
 | Skill | Use when |
 |---|---|
 | `craft-prompt` | a new prompt is needed from scratch for any LLM (Claude, GPT, Gemini, Perplexity, etc.) |
@@ -60,6 +74,16 @@ Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML 
 ## Status
 
 Five of the seven skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-tune` was reshaped to run an autonomous self-converging review-and-fix loop; the read-only diagnose role stays with the separate `craft-critique` skill. The next autoresearch pass will run against this shape. `craft-handoff` and `craft-skill-spec` are new and have not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
+
+| Skill | Eval status | Score source | Known gap |
+|---|---|---|---|
+| `craft-prompt` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-prompt/<date-slug>/` | keep volatile provider guidance in guides |
+| `craft-critique` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-critique/<date-slug>/` | re-run on fresh failure examples after major wording changes |
+| `craft-tune` | autoresearch pass completed, then reshaped into self-converging loop | commit body + `~/.craftkit/autoresearch/craft-tune/<date-slug>/` | next pass should test the newer loop contract |
+| `craft-survey` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-survey/<date-slug>/` | example must keep proving provenance and edit-target rules |
+| `craft-autoresearch` | reflexive autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-autoresearch/<date-slug>/` | examples must stay synchronized with the contract fields |
+| `craft-skill-spec` | not yet autoresearched | none yet | first pass should test radar-dependent standalone behavior |
+| `craft-handoff` | not yet autoresearched | none yet | first pass should test side effects, fallback, and resume quality |
 
 ## What belongs in CraftKit
 

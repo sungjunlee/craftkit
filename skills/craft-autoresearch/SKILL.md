@@ -170,7 +170,10 @@ Budget: 8 experiments. Stop condition: 95% binary pass rate sustained for 3 cons
 - target: `skills/craft-tune/SKILL.md`
 - inputs: 3 prompts
 - evals: 3 binary + 1 comparative
-- harness: `node scripts/run-skill.mjs craft-tune <input.txt>`
+- mutable files: `skills/craft-tune/SKILL.md`; all other files frozen
+- evals 4th diagnostic: baseline plausibly returns Changelog rows without `effect`, so the traceability eval has a concrete failing output
+- harness design: example command harness, e.g. `node <repo-specific-runner> craft-tune <input.txt>`; cheaper than manual replay, but only valid after confirming the runner exists in this repo
+- first-mutation hypothesis preview: `## Final output` / Changelog subsection, because the failing outputs point to missing build-step enforcement of the three changelog fields
 - budget: 8; stop: 95% × 3 consecutive
 
 **Baseline**

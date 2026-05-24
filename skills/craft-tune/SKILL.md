@@ -36,6 +36,7 @@ craft-tune always edits. When the user wants a one-shot critique *without* edits
 
 Each round is autonomous. Do not pause for user input between rounds — run them back-to-back and present the full trail at the end.
 
+0. **Pre-edit safety.** Before Round 1 edits, inspect the current diff and protect only the files you expect to touch (for example by noting their pre-edit contents or using a file-level checkpoint). If the loop worsens the artifact or must abandon an edit, restore only those touched files. Do not use broad rollback commands that could destroy unrelated user work.
 1. **Round 1.** Restate the artifact's current intent (lock it in — this is what every subsequent round must preserve). Diagnose. If convergence is already met (see § Stop conditions), declare it and stop. Otherwise apply the minimal-diff edits.
 2. **Round N (N ≥ 2).** Diagnose the *current state* of the artifact — i.e., what Round N-1 produced after its edits. Do not carry Round N-1's Diagnostics list forward; regenerate against the new state. If a previous round's edit introduced or failed to resolve an issue, that's exactly what this round should surface. Tag any item that already appeared in a prior round (and was not resolved) with `[CARRIED]`. Apply edits.
 3. **Check stop conditions after each round.** See § Stop conditions. If any fires, exit the loop and produce the final output (§ Final output).
@@ -107,6 +108,7 @@ If the loop exited on Persistent fixpoint, No-op round, or Hard cap, list the `[
 ## Guardrails
 
 - diagnose before editing — every changelog entry must trace to a specific Diagnostics item from the round that introduced it
+- protect touched files before editing, and rollback only those files if a round must be abandoned
 - minimal-diff per round — do not rewrite everything in any single round
 - never exit the loop without naming the stop condition
 - a clean Self-LGTM exit requires *no* `[HIGH]`/`[MED]` items in the final round's Diagnostics — do not declare convergence just because edits are getting smaller
