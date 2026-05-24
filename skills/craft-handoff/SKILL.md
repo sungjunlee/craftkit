@@ -235,148 +235,95 @@ Always deliver in this order:
 
 Do not paste the rich doc into the chat in the normal file-write path — it lives on disk by design. In portable fallback where the doc cannot be written, paste the rich doc body after the prompt and clearly mark that the file write was skipped. Do not summarize what you put in the doc separately — the user can `cat` it when the file exists. Do not add a "session retrospective" — that's a different skill.
 
-## Cross-platform notes
-
-| Platform | Clipboard tool | Notes |
-|---|---|---|
-| macOS | `pbcopy` | Bundled |
-| Linux Wayland | `wl-copy` | `wl-clipboard` package |
-| Linux X11 | `xclip` or `xsel` | Most distros, may need install |
-| Windows / WSL | `clip.exe` | Bundled with Windows |
-
-The wrapper script tries them in that order. If your system has none, the prompt is still saved to the `PENDING_PATH` and the doc to the `DOC_PATH` gather-state reported in Step 1 — you can `cat` them manually.
-
-## Auto-load on `/clear` (Claude Code only, optional)
-
-This is a Claude-Code-specific convenience — skip on Codex or other agents (the clipboard step above is the cross-agent path).
-
-`/clear` itself can't be invoked from a skill — built-in commands are not exposed to the Skill tool. But a `SessionStart` hook with `matcher: "clear"` *can* inject `additionalContext` into the post-clear session. That's the bridge.
-
-The hook scans `~/.craftkit/handoff/pending/`, picks the newest entry whose `worktree:` matches the current cwd's git toplevel, returns it as `additionalContext`, and archives the consumed file. The rich doc at `~/.craftkit/handoff/docs/<slug>.md` is **not** touched by the hook — it stays put for the next agent to read on the prompt's `<rules>` instruction.
-
-See `references/auto-load-hook.md` for the one-time installation (settings.json snippet + a Node script).
-
 ## Failure modes
 
 - **Empty handoff**: skill ran on a no-state session. Tell the user there's nothing to hand off and skip both file writes.
 - **Outside a git repo**: `gather-state.mjs` reports `(not a git repo)` for branch and `(clean)` for status. Drop the State block from both artifacts and lean on the conversation-derived sections.
 - **Multi-subtask session**: the conversation covered several unrelated threads. Don't merge them — ask the user which thread to carry forward, or pick the most recently active one and say so explicitly in the doc's Project section.
 - **Prompt / doc divergence**: user (or you) edits the rich doc by hand after the prompt was already pasted into the next session. The next session reads the doc on the prompt's instruction, so it picks up the latest doc — but its `## Decisions (one-liners)` snapshot in the prompt still shows the old summary. For substantive doc edits, regenerate the prompt as well. Mitigation: prefer to amend the doc *and* the prompt's snapshot together, or re-run craft-handoff if the session is still active.
-- **Stale pending handoffs**: each run writes a new timestamped file under `~/.craftkit/handoff/pending/`, so nothing is overwritten. The auto-load hook archives entries older than 72h (configurable via `CRAFTKIT_HANDOFF_TTL_HOURS`; set to `0` to disable) as `stale-*` without injection, and moves older same-worktree entries aside as `superseded-*` when a newer one is injected. See `references/auto-load-hook.md`. The doc is **not** TTL'd — it stays at `DOC_PATH` until the next handoff for the same project overwrites it (with archive-on-overwrite per §Step 4a).
-- **Concurrent wrap-ups in the same worktree**: rare but possible (two Claude Code windows, same repo). Each run writes its own timestamped prompt file; the hook picks the newest match and supersedes the rest. Both runs also write to the same `DOC_PATH` — the second one archives the first. If you want both narratives recovered, grab the older from `~/.craftkit/handoff/archive/`.
 - **Under-loaded prompt**: the prompt skips so much state that the next agent can't tell what was accomplished without reading the doc — defeats the snapshot-as-immediate-orientation purpose. Pull more snapshot content (Done outcomes, key Decisions one-liners, current State) up into the prompt so it stands on its own even when the doc-read fails or is skipped.
 - **Bloated prompt**: the prompt has paragraphs where one-liners belong, or repeats the doc's narrative. Decisions in the prompt are one-sentence one-liners with a because-clause; long-form rationale belongs in the doc. Done in the prompt is outcome-bullets; the path that got there belongs in the doc.
 - **Bloated rich doc**: the doc narrates every conversational turn rather than capturing decisions and outcomes that resulted. Apply §Step 2's inclusion tests harder.
 - **Doc unreachable on resume**: the next agent tries to read `~/.craftkit/handoff/docs/<slug>.md` and gets ENOENT (archived during cleanup, deleted manually, slug mismatch from a moved worktree). The conditional read-doc rule in §Step 3b's `<rules>` template handles this — the snapshot in the prompt remains usable on its own, and the agent flags the missing doc to the user rather than failing silently.
-- **Pair-write atomicity (§4a succeeds, §4b fails)**: doc was written and previous archived, but prompt-write failed (file-write error, disk full, agent interrupted). The doc on disk reflects this session, but no prompt is queued — the next `/clear` won't auto-load anything for this worktree. Recovery: re-run §Step 3b/§4b only (the doc is intact and still current); or accept that the next session starts cold and the user must paste manually. Do not re-run §4a or you'll archive the just-written doc.
-- **Auto-load injects when not wanted** (Claude Code only): user ran `/clear` to truly reset, but a pending handoff for the same worktree was lurking. The hook archives after injection (one-shot) and skips injection for handoffs older than 72h. Manual cleanup: `rm -rf ~/.craftkit/handoff/pending/`. Past handoffs live in `~/.craftkit/handoff/archive/`.
-- **Double injection after crash** (Claude Code only): the hook writes `additionalContext` to stdout *before* archiving the consumed file. If the process is killed between the write and the archive, the next `/clear` re-injects the same handoff. Recovery: `rm ~/.craftkit/handoff/pending/<file>` by hand, or wait for the 72h TTL to kick in.
-- **Malformed `settings.json` after manual hook install** (Claude Code only): the hook silently fails to fire. Validate the JSON (`node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.claude/settings.json','utf-8'))"`) and check `~/.claude/logs/` if available.
 - **craft-prompt not installed**: Step 3a delegates the doc body to craft-prompt's template, and Step 3b uses craft-prompt's process to compose the prompt. If craft-prompt is absent (craft-handoff copied standalone), compose both directly using the §Step 2 inclusion tests + the shapes shown in the Example below. Tell the user to install craft-prompt — the two ship together in craftkit.
 
-## Maintenance
-
-The pair (prompt at `pending/<ts>-<slug>.md` + doc at `docs/<slug>.md`) is the unit of handoff. The hook archives prompts on consume; the doc accumulates per project until overwritten or pruned.
-
-- **Remove one project's handoff completely**: use the slug from `gather-state.mjs`, then `rm ~/.craftkit/handoff/docs/<slug>.md && find ~/.craftkit/handoff/pending -name "*-<slug>.md" -delete`.
-- **Inspect before purging stale rich docs**: `find ~/.craftkit/handoff/docs -maxdepth 1 -mtime +30 -print`. Delete with `-delete` once you've confirmed.
-- **Find a doc by project name**: `ls ~/.craftkit/handoff/docs/ | grep <project-name>`. The 6-char hash suffix (sha1 of the absolute worktree path) disambiguates worktree-clones of the same repo.
+For stale prompt cleanup, concurrent wrap-ups, pair-write recovery, clipboard portability, and maintenance commands, load `references/operational-details.md`. For the optional Claude Code auto-load hook, load `references/auto-load-hook.md`.
 
 ## Example
 
 ### Input situation
 
-Session spent 90 minutes adding JWT auth middleware. Two files modified. One primary decision (rejected sessions in favor of JWT for stateless deploy) plus two sub-decisions (HS256 over RS256, 15min TTL no refresh). One approach attempted and abandoned (express-session — pulled Redis dependency). One config experiment reverted (secret-in-JSON). Tests passing. Next step: wire the middleware into the route table.
+Session added JWT auth middleware. Tests pass. One rejected path matters: server sessions were discarded because the deploy target is stateless. Next step: wire the middleware into protected routes.
 
-### Output — rich doc at `~/.craftkit/handoff/docs/acme-api-7c3a92.md`
+### Output sketch
 
 ```markdown
 ---
 worktree: /Users/dev/work/acme-api
 branch: feat/jwt-auth
 created: 2026-04-25T00:14:09.000Z
-next: Wire auth middleware into the protected route group in src/routes/index.ts
+next: Wire auth middleware into the protected route group
 ---
 
 <context>
 ## Project
-acme-api — Node/Express REST backend. Internal-only API in alpha; deploy target is stateless Cloud Run (no sticky sessions, no shared cache yet).
+acme-api — Node/Express REST backend.
 
 ## Done (with path)
-- Added JWT verification middleware at `src/middleware/auth.ts`. Exports `authMiddleware` (request handler) and `signToken(payload)` helper. Reads `JWT_SECRET` from env at boot; throws on missing.
-- Wired token issuance into `src/routes/login.ts:42`. POST `/api/login` returns `{ token, expiresAt }` on credential success.
-- Added `jsonwebtoken@9.0.2` to dependencies; lockfile updated.
+- Added JWT verification middleware at `src/middleware/auth.ts`. Exports `authMiddleware` and `signToken`.
 
 ## State
 - Branch: `feat/jwt-auth` (3 ahead of `main`)
-- Tests: passing (`npm test`, all 47 specs)
+- Tests: passing (`npm test`)
 - Blockers: none
 
 ## Decisions (long form)
-- **JWT over server sessions.** Deploy target is stateless Cloud Run — no sticky load balancing and no shared session store budgeted for alpha. JWT removes the server-state requirement entirely. Trigger to revisit: if Cloud Run is replaced with a sticky-capable target, or if token revocation requirements emerge that exceed what short TTLs can absorb.
-- **HS256 over RS256.** Single-issuer single-verifier topology, no public client signing. Key rotation isn't a near-term requirement, and HS256 with a single env-var secret is the lowest-ceremony option that matches the threat model. Revisit if compliance asks for asymmetric keys or if multiple services need to verify independently.
-- **15-minute TTL, no refresh tokens.** Login flow is internal-only in alpha — re-login friction is acceptable. Refresh-token machinery would be net-new surface for ~zero current value. Revisit when external clients arrive or when 15min interrupts a real workflow.
+- **JWT over server sessions.** Deploy target is stateless, so a server-side session store would add infrastructure before the alpha needs it.
 
 ## What didn't work
-- **Tried `express-session` first.** Looked promising (familiar API, well-trodden path) but pulling its `connect-redis` adapter surfaced a Redis dependency that doesn't fit the stateless deploy. Discarded after ~20 minutes; switched to JWT.
-- **Tried embedding the secret in `config/auth.json`.** Worked locally, reverted before commit when `docs/security.md:12` was re-read — secrets must come from env. Caught by the team's existing convention; no new policy needed.
-
-## Open notes (not blockers, parked)
-- Token introspection endpoint deferred — only useful once external clients exist.
-- Considered logging signed JWTs to a separate auth-audit channel; deferred until we have the audit infrastructure.
+- **Tried `express-session`.** It pulled in a shared store dependency, so it was dropped for this deploy shape.
 </context>
 ```
-
-The doc body stops at `</context>`. The next session's `<task>` and `<rules>` come from the **prompt** below — not from the doc. (Doc has no `<task>` / `<rules>` blocks, by design.)
-
-### Output — prompt at `~/.craftkit/handoff/pending/2026-04-25T00-14-09-000Z-acme-api-7c3a92.md` (also clipboard, frontmatter-stripped)
 
 ```xml
 <context>
 ## Project
-acme-api — Node/Express REST backend (internal alpha, stateless Cloud Run target).
+acme-api — Node/Express REST backend.
 
 ## State
 - Branch: feat/jwt-auth (3 ahead of main)
-- Tests: passing (`npm test`, 47 specs)
+- Tests: passing (`npm test`)
 - Blockers: none
 
 ## Done (snapshot)
 - JWT verification middleware: `src/middleware/auth.ts` (exports `authMiddleware`, `signToken`)
-- Token issuance wired: `src/routes/login.ts:42` — POST `/api/login` returns `{ token, expiresAt }`
-- Dependency: `jsonwebtoken@9.0.2` added
 
-## Decisions (one-liners; long-form rationale + rejected alternatives in handoff doc)
-- JWT over server sessions — because stateless Cloud Run target
-- HS256 over RS256 — because single-issuer/single-verifier and no rotation requirement yet
-- 15-min TTL, no refresh — because internal-only alpha
+## Decisions (one-liners; full rationale in handoff doc)
+- JWT over server sessions — because the deploy target is stateless
 
 ## Background
-Full session narrative, decision rationale in long form, abandoned approaches (`express-session`, secret-in-JSON), and parked notes are at `~/.craftkit/handoff/docs/acme-api-7c3a92.md`. Read it first before acting — it captures *why* the current shape is what it is.
+Full session narrative and abandoned approaches are at `~/.craftkit/handoff/docs/acme-api-7c3a92.md`. Read it first before acting.
 </context>
 
 <task>
-Wire the JWT auth middleware into the protected route group in `src/routes/index.ts`. Add an integration test that hits `/api/me` with and without a valid token.
+Wire the JWT auth middleware into the protected route group in `src/routes/index.ts`.
 
 Success criteria:
-- `/api/me` returns 401 without token, 200 with valid token
-- `npm test` stays green (47 → 49 specs after the new test)
-- No new dependencies added
+- protected routes return 401 without token and 200 with a valid token
+- `npm test` stays green
 </task>
 
 <rules>
 - All paths are worktree-relative
-- Read `~/.craftkit/handoff/docs/acme-api-7c3a92.md` first if reachable — it has the prior context (rationale, rejected alternatives, parked notes); if missing or inconsistent with this snapshot, proceed and flag it
-- Read `src/middleware/auth.ts` first to confirm export shape (`authMiddleware`, `signToken`)
+- Read `~/.craftkit/handoff/docs/acme-api-7c3a92.md` first if reachable; if missing or inconsistent with this snapshot, proceed with this snapshot and flag the discrepancy
 - Run `npm test` before declaring done
-- Do not add refresh-token machinery or a session store — those decisions are already recorded; revisit only if the handoff doc says to
 </rules>
 ```
 
-Prompt copied to clipboard. Saved to `~/.craftkit/handoff/pending/2026-04-25T00-14-09-000Z-acme-api-7c3a92.md`. Rich doc at `~/.craftkit/handoff/docs/acme-api-7c3a92.md` — the prompt instructs the next agent to read it first.
-Start a fresh or reset session in the target agent, then paste. For Claude Code, run `/clear` first.
-On Claude Code, you can skip the paste step by installing the SessionStart hook — see `references/auto-load-hook.md`.
+For a complete paired output, load `references/full-example.md`.
 
 ## References (load on demand)
 
 - `references/auto-load-hook.md` — Optional `SessionStart` hook that auto-injects the prompt for the current worktree after `/clear`, removing the manual paste step. The doc is read by the next agent on the prompt's instruction, not injected by the hook.
+- `references/operational-details.md` — Clipboard portability, stale-prompt cleanup, concurrent wrap-ups, pair-write recovery, and maintenance commands.
+- `references/full-example.md` — Full rich-doc + prompt example for the JWT auth scenario.
