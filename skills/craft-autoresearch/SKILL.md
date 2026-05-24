@@ -157,9 +157,9 @@ Test inputs: three real "improve this prompt" requests from last week.
 
 Eval criteria:
 
-- Binary: output has exactly five sections (Intent preserved, Diagnostics, Revised artifact, Changelog, Tradeoffs).
-- Binary: Diagnostics section contains at most 5 prioritized items with severity tags.
-- Binary: every Changelog entry names all three fields (changed / why / effect).
+- Binary: output includes at least one `Round N` trail and a final `Convergence` block.
+- Binary: each per-round Diagnostics section contains at most 5 prioritized items with severity tags.
+- Binary: every Cumulative changelog entry names all three fields (changed / why / effect).
 - Comparative: is the revision more reviewable than baseline? (blind A/B judge)
 
 Budget: 8 experiments. Stop condition: 95% binary pass rate sustained for 3 consecutive kept experiments.
@@ -178,18 +178,18 @@ Budget: 8 experiments. Stop condition: 95% binary pass rate sustained for 3 cons
 - budget: 8; stop: 95% × 3 consecutive
 
 **Baseline**
-Score: 7/12 (58%). Failing: section count varies (3-6); Diagnostics item count unbounded; Changelog entries often omit `effect`.
+Score: 7/12 (58%). Failing: final `Convergence` block is often missing; Diagnostics item count is unbounded; Cumulative changelog entries often omit `effect`.
 
 **Experiment log**
 
-| # | Hypothesis | Change | Score | Decision |
-|---|---|---|---|---|
-| 1 | Tighten section spec | Added "exactly these 5 sections" line | 9/12 | KEEP |
-| 2 | Cap Diagnostics list | Added "1-5 items, severity-tagged" | 11/12 | KEEP |
-| 3 | Enforce three-field Changelog | Added table example + "all three fields per entry" rule | 12/12 | KEEP |
-| 4 | Deletion check | Removed the added Changelog example | 10/12 | DISCARD (example carries weight) |
-| 5 | Restore + sharpen example | Restored Changelog table with three rows | 12/12 | KEEP |
-| 6 | Stability check | Re-ran to confirm | 12/12 | KEEP — 3 consecutive hit, STOP |
+| # | Hypothesis | Change | Score | Decision | Rationale |
+|---|---|---|---|---|---|
+| 1 | Tighten final-output spec | Added explicit `Convergence` block requirement | 9/12 | KEEP | fixes missing final-state signal without changing loop scope |
+| 2 | Cap Diagnostics list | Added "1-5 items, severity-tagged" | 11/12 | KEEP | removes unbounded review output while preserving priority |
+| 3 | Enforce three-field changelog | Added table example + "all three fields per entry" rule | 12/12 | KEEP | makes every accepted change auditable |
+| 4 | Deletion check | Removed the added changelog example | 10/12 | DISCARD | score regressed; example carries the changelog behavior |
+| 5 | Restore + sharpen example | Restored changelog table with three rows | 12/12 | KEEP | restores the behavior with less wording |
+| 6 | Stability check | Re-ran to confirm | 12/12 | KEEP — 3 consecutive hit, STOP | stop condition satisfied |
 
 **Direction shifts**
 - Flipped from "softer wording" to "explicit constraints" after baseline showed agents needed more structure, not less.

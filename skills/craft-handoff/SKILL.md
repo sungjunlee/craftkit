@@ -6,7 +6,7 @@ description: >-
   that commands the next agent to read the doc first. Use proactively
   whenever a session is wrapping up. Triggers: "wrap up", "마무리",
   "세션 정리", "핸드오프", "다음 세션으로 넘겨", "next session으로 넘겨",
-  or before /clear.
+  or before clearing/resetting context (for Claude Code, /clear).
 ---
 
 # craft-handoff
@@ -27,7 +27,7 @@ This is *not* a session-summary doc for humans, and *not* a single compact promp
 ## Use this when
 
 - the user says "wrap up", "마무리", "세션 정리", "핸드오프", "다음 세션으로 넘겨", or "next session으로 넘겨"
-- the user is about to run `/clear` and wants continuity
+- the user is about to clear or reset context and wants continuity (for Claude Code, `/clear`)
 - a long session is ending and the next session should pick up cleanly
 - a task is paused mid-flight and needs a clean resume point
 
@@ -61,7 +61,7 @@ git diff --stat | tail -20
 git log --oneline -8
 ```
 
-**Portable fallback.** If scripts, file writing, or clipboard access are unavailable, still produce the same two-artifact content shape in chat: a rich doc body and a paste-ready prompt that points to where the doc should live. Tell the user which side effect was skipped (script gather, file write, or clipboard copy). This loses automatic resume, but preserves the cross-agent handoff content. Missing hook support alone is not a fallback trigger; hooks are optional and Claude-Code-specific.
+**Portable fallback.** If scripts are unavailable, gather state with the fallback commands below. If file writing is unavailable, produce the same two-artifact content shape in chat: a rich doc body and a paste-ready prompt that points to where the doc should live. If only clipboard access is unavailable, keep the normal file-write path and report that clipboard copy was skipped. Missing hook support alone is not a fallback trigger; hooks are optional and Claude-Code-specific.
 
 Drawn from the conversation (you must extract these — no script can):
 
@@ -215,13 +215,13 @@ The wrapper auto-detects the platform (`pbcopy` → `wl-copy` → `xclip` → `x
 
 ### Step 5 — Inform
 
-Show the **prompt** before the final confirmation line — that's what the user pastes, so it's what they need to verify. The rich doc is on disk for inspection separately (and the prompt commands the next agent to read it). You can't detect from inside the skill whether the optional SessionStart hook is installed, so always give the manual `/clear`-and-paste instruction and append the auto-load pointer.
+Show the **prompt** before the final confirmation line — that's what the user pastes, so it's what they need to verify. The rich doc is on disk for inspection separately (and the prompt commands the next agent to read it). You can't detect from inside the skill whether the optional SessionStart hook is installed, so always give the target-neutral fresh-session-and-paste instruction and append the Claude Code auto-load pointer.
 
 Deliver, in this order:
 
 1. The prompt in a fenced code block so the user can verify it.
 2. `Prompt copied to clipboard. Saved to <PENDING_PATH>. Rich doc at <DOC_PATH> — the prompt instructs the next agent to read it first.` (use the actual paths).
-3. "Run `/clear`, then paste."
+3. "Start a fresh or reset session in the target agent, then paste. For Claude Code, run `/clear` first."
 4. *"On Claude Code, you can skip the paste step by installing the SessionStart hook — see `references/auto-load-hook.md`."*
 
 ## Output format
@@ -373,7 +373,7 @@ Success criteria:
 ```
 
 Prompt copied to clipboard. Saved to `~/.craftkit/handoff/pending/2026-04-25T00-14-09-000Z-acme-api-7c3a92.md`. Rich doc at `~/.craftkit/handoff/docs/acme-api-7c3a92.md` — the prompt instructs the next agent to read it first.
-Run `/clear`, then paste.
+Start a fresh or reset session in the target agent, then paste. For Claude Code, run `/clear` first.
 
 ## References (load on demand)
 
