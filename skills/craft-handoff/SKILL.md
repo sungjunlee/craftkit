@@ -187,6 +187,27 @@ Success criteria:
 
 If the rich doc was not produced (e.g. empty handoff), do not write the prompt either — fail loudly per §Failure modes.
 
+#### 3c. Optional goal candidate — chat output only
+
+If the next task is durable, verifiable, and likely to need multiple turns, compose an **optional goal candidate** for the final response. This is not a third handoff artifact: do not write it into the rich doc, do not put it inside the paste-and-resume prompt by default, and do not activate it automatically.
+
+Only include the candidate when all of these are true:
+
+- the next task has an observable end state
+- there is a concrete verification surface (command, artifact, report, source, or transcript-visible check)
+- there are meaningful constraints or non-goals
+- there is a reasonable turn/time budget or blocked stop condition
+
+Use this shape:
+
+```text
+Optional goal candidate, review before activating:
+
+/goal Continue from the handoff prompt until <observable end state>, verified by <command/artifact output visible in transcript>, while preserving <constraints>. Stop after <N> turns or if <blocked condition>.
+```
+
+Skip the candidate when the next step is small, vague, exploratory, or not independently verifiable. The normal handoff prompt is still the primary resume artifact.
+
 ### Step 4 — Persist + copy
 
 The slug `<slug>` and paths come from gather-state's `--- Handoff target ---` block. Use them verbatim.
@@ -223,6 +244,7 @@ Deliver, in this order:
 2. `Prompt copied to clipboard. Saved to <PENDING_PATH>. Rich doc at <DOC_PATH> — the prompt instructs the next agent to read it first.` (use the actual paths).
 3. "Start a fresh or reset session in the target agent, then paste. For Claude Code, run `/clear` first."
 4. *"On Claude Code, you can skip the paste step by installing the SessionStart hook — see `references/auto-load-hook.md`."*
+5. If produced, the optional goal candidate, clearly labeled `review before activating`.
 
 ## Output format
 
@@ -232,6 +254,7 @@ Always deliver in this order:
 2. A 1-line confirmation: prompt path, doc path, clipboard status.
 3. The next-step instruction (one line).
 4. The Claude Code auto-load pointer when applicable.
+5. The optional goal candidate when §Step 3c says it is warranted.
 
 Do not paste the rich doc into the chat in the normal file-write path — it lives on disk by design. In portable fallback where the doc cannot be written, paste the rich doc body after the prompt and clearly mark that the file write was skipped. Do not summarize what you put in the doc separately — the user can `cat` it when the file exists. Do not add a "session retrospective" — that's a different skill.
 

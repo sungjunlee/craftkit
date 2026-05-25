@@ -31,6 +31,7 @@ Depending on the prompt's purpose, collect what's needed:
 - **Task prompt**: What the LLM should do, constraints, output format
 - **Research prompt**: Questions to answer, source preferences, recency requirements
 - **Session handoff**: What was done, current state, what's next. Proactively gather: run `git status`, `git diff --stat`, `git log --oneline -5`, check test output, and note recently modified files
+- **Goal condition / Goal spec**: Outcome, evidence, constraints, non-goals, scope, budget, and blocked stop condition. For expensive or ambiguous work, shape a reviewable spec before giving the final `/goal` activation text
 - **System prompt**: Persona, capabilities, boundaries, tone
 - **Reusable template**: Variable placeholders, usage instructions
 
@@ -131,7 +132,7 @@ Ask if the user wants adjustments. Refine based on feedback — tweak tone, add/
 - `references/components-guide.md` — Deep dive on each building block with examples and anti-patterns
 - `references/prompt-patterns.md` — 8 common patterns: research, code gen, review, writing, extraction, analysis, handoff, decision
 - `references/quality-checklist.md` — Quality checks with failure modes and fixes
-- `references/goal-conditions.md` — Writing `/goal` completion conditions for Claude Code and Codex autonomous loops (single-string directive read by a no-tools evaluator; cross-platform differences and caveats)
+- `references/goal-conditions.md` — Writing `/goal` completion conditions and reviewable goal specs for Claude Code and Codex autonomous loops (transcript-visible evidence, cross-platform differences, and caveats)
 
 ## Guides (platform-specific tips)
 

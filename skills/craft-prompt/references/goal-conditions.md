@@ -1,6 +1,6 @@
 # Writing `/goal` completion conditions
 
-For the `/goal` slash command in **Claude Code** (2.1.139+) and **Codex CLI**. The value you pass to `/goal` is a single condition string read by two consumers:
+For the `/goal` slash command in **Claude Code** (2.1.139+) and **Codex CLI**. The value you pass to `/goal` is usually a single condition string, or a file reference where the host supports it. Either way, the active goal is read by two consumers:
 
 - **The main model** treats it as a directive — it starts working toward the condition.
 - **A separate evaluator** (Claude Code: small fast model, usually Haiku; Codex: internal) decides "done or not done" after every turn. The evaluator **does not call tools**. It only sees the condition + what already appears in the conversation transcript.
@@ -9,9 +9,42 @@ That second consumer is the load-bearing one. Most bad `/goal` conditions fail b
 
 ---
 
-## What the condition must contain
+## Two output shapes
 
-Three load-bearing parts. Keep them inline in 1–3 sentences — this is a single string, not a multi-section prompt:
+Use the smallest shape that preserves the contract.
+
+### Inline condition
+
+Use for small, clear goals where the objective, check, constraints, and stop clause fit in 1-3 sentences:
+
+```text
+/goal <measurable end state>, verified by <exact check whose output appears in the conversation>, while preserving <constraints>. Stop after <turn/time cap> or if <blocked condition>.
+```
+
+### Reviewable goal spec
+
+Use for expensive, ambiguous, or multi-hour work. Save a markdown contract such as `goals/<slug>.md` only when the user wants a durable activation artifact, then ask them to review it before activation.
+
+A saved goal spec is not active goal state. It becomes active only after the user runs an activation command such as `/goal @goals/<slug>.md`, where the target agent supports file references. If file references are not supported, paste the final goal text directly after review.
+
+Include these fields in the spec:
+
+- **Outcome**: what must be true at the end
+- **Evidence**: command, artifact, report, source, or transcript-visible proof
+- **Constraints**: behavior, APIs, files, compatibility, style, data, or performance that must not regress
+- **Non-goals**: what the agent should avoid even if it seems useful
+- **Scope**: allowed files, repos, tools, network, credentials, and data sources
+- **Budget**: turn, time, token, command, or cost cap
+- **Blocked stop condition**: when to stop and what to report
+- **Final report**: what the user should receive when the goal stops
+
+Do not auto-activate a reviewable spec. Long-running goals can spend real time and tokens; activation should be an explicit user action after the contract is readable.
+
+---
+
+## What the active condition must contain
+
+Three load-bearing parts. For inline goals, keep them in 1–3 sentences. For reviewable specs, make sure the final activation text still contains these parts:
 
 1. **One measurable end state** — a test result, a build exit code, an empty queue, a file count. The evaluator must be able to read the transcript and answer yes/no.
 2. **A stated check** — the exact command the operator must run so its output lands in the transcript. Without this, the evaluator has nothing to read.
