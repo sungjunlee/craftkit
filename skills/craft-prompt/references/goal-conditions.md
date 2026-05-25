@@ -42,9 +42,9 @@ Do not auto-activate a reviewable spec. Long-running goals can spend real time a
 
 ---
 
-## What the condition must contain
+## What the active condition must contain
 
-Three load-bearing parts. Keep them inline in 1–3 sentences — this is a single string, not a multi-section prompt:
+Three load-bearing parts. For inline goals, keep them in 1–3 sentences. For reviewable specs, make sure the final activation text still contains these parts:
 
 1. **One measurable end state** — a test result, a build exit code, an empty queue, a file count. The evaluator must be able to read the transcript and answer yes/no.
 2. **A stated check** — the exact command the operator must run so its output lands in the transcript. Without this, the evaluator has nothing to read.
