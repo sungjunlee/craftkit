@@ -26,6 +26,9 @@ Unless machine-specific details matter, treat every path in these templates as r
 
 ## What didn't work
 - {{approach_tried}} → {{why_abandoned}}
+
+## Suggested skills
+- {{skill_or_capability}} — because {{why_it_helps_next}}
 </context>
 
 <task>
@@ -79,6 +82,9 @@ Success criteria:
 - State decisions, not deliberations — "chose JWT because X" not "we discussed JWT vs sessions"
 - The **What didn't work** section is empirically the highest-value part of a handoff — name every approach tried that did not pan out, one line each
 - Name specific files using worktree-relative paths — `src/auth.ts` not "see the auth module" or `/abs/path/src/auth.ts`
+- Reference existing artifacts instead of duplicating them only when the next session can reach them. Same-worktree resumes can reference files present in that worktree; fresh/different worktrees should rely on committed paths, remote URLs, or durable external docs. Untracked worktree-local docs are not safe for fresh worktrees unless you summarize the needed facts or recommend committing/attaching the artifact.
+- Redact secrets, tokens, private URLs, personal data, and customer data before writing or copying a handoff.
+- Omit **Suggested skills** when no specific skill or capability would change what the next agent does.
 - Include the test command — saves the new session from guessing
 - **Sizing depends on artifact role**:
   - **Paste-and-resume prompt** (one artifact pasted into the next session) → keep tight; cut anything that doesn't change the next session's behavior.
