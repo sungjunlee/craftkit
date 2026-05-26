@@ -343,6 +343,12 @@ Success criteria:
 </rules>
 ```
 
+```text
+Optional goal candidate, review before activating:
+
+/goal Continue from the handoff prompt until the JWT middleware is wired into protected routes and verified by `npm test` output in the conversation, while preserving route URLs and avoiding refresh-token or session-store changes. Stop after 20 turns or if the auth export shape is inconsistent with the handoff snapshot.
+```
+
 For a complete paired output, load `references/full-example.md`.
 
 ## References (load on demand)
