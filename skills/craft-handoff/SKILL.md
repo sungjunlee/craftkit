@@ -343,6 +343,8 @@ Success criteria:
 </rules>
 ```
 
+When §Step 3c is warranted, append this after the normal confirmation lines:
+
 ```text
 Optional goal candidate, review before activating:
 
