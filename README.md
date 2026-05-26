@@ -61,7 +61,7 @@ Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML 
 
 ## Status
 
-Five of the seven skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-tune` was reshaped to run an autonomous self-converging review-and-fix loop; the read-only diagnose role stays with the separate `craft-critique` skill. The next autoresearch pass will run against this shape. `craft-handoff` and `craft-skill-spec` are new and have not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
+Six of the seven skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-tune` was reshaped to run an autonomous self-converging review-and-fix loop; the read-only diagnose role stays with the separate `craft-critique` skill. The next autoresearch pass will run against this shape. `craft-skill-spec` is new and has not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
 
 | Skill | Eval status | Score source | Known gap |
 |---|---|---|---|
@@ -71,7 +71,7 @@ Five of the seven skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft
 | `craft-survey` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-survey/<date-slug>/` | example must keep proving provenance and edit-target rules |
 | `craft-autoresearch` | reflexive autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-autoresearch/<date-slug>/` | examples must stay synchronized with the contract fields |
 | `craft-skill-spec` | not yet autoresearched | none yet | first pass should test radar-dependent standalone behavior |
-| `craft-handoff` | not yet autoresearched | none yet | first pass should test side effects, fallback, and resume quality |
+| `craft-handoff` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-handoff/2026-05-26-goal-pressure/` | replay against real agent outputs to catch wording failures beyond deterministic checks |
 
 ## What belongs in CraftKit
 
