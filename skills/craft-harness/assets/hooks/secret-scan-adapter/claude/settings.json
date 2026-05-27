@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.agents/hooks/scripts/secret-scan-adapter.mjs\"",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -22,7 +22,8 @@ Codex defaults:
 - Prefer repo-local `AGENTS.md` for stable shared conventions.
 - Prefer `.agents/skills/` for reusable workflows.
 - Prefer skills or scripts for project-specific repeatable commands; document manual invocation separately for Codex app/CLI surfaces.
-- Prefer hooks only after the deterministic miss is proven.
+- Prefer `.agents/hooks/scripts/` as the shared source for hook scripts, then call those scripts from `.codex/hooks.json` or `.codex/config.toml`.
+- Prefer hooks only when the check is deterministic and timing-sensitive. Community-proven guardrails may be proposed as approval-gated candidates during bootstrap/maintain; project-specific hooks still need repeated-miss evidence.
 - Prefer plugin packaging after project-local value is proven and sharing matters.
 
 ## Claude Code
@@ -34,7 +35,7 @@ Codex defaults:
 | Rules | `.claude/rules/*.md` | Modular rules; optional `paths` frontmatter scopes loading to matching files. | Directory/file-type guidance should not live in root context. | Task-specific workflow belongs in a skill. | Path scopes can drift from repo structure. |
 | Skill | `.claude/skills/<name>/SKILL.md` | Reusable workflow, invocable by slash command or model selection. | On-demand procedure with supporting files. | Simple command shortcut or stable project fact. | Discovery budget and stale descriptions. |
 | Command | `.claude/commands/*.md` | Legacy/manual slash-command style. | Explicit manual shortcut that should not auto-trigger. | A reusable workflow needs supporting files or model selection. | New workflows usually fit skills better. |
-| Hook | `.claude/settings.json`, `.claude/settings.local.json`, or plugin/skill/agent hook config | Lifecycle automation with event matchers and optional JSON control output. | Deterministic enforcement, logging, context injection, or validation. | The behavior is exploratory or risky. | Code execution, settings drift, hard-to-debug blocking. |
+| Hook | `.claude/settings.json`, `.claude/settings.local.json`, or plugin/skill/agent hook config | Lifecycle automation with event matchers and optional JSON control output. This skill's starter assets use command hooks only. | Deterministic enforcement, logging, context injection, or validation. | The behavior is exploratory or risky. | Code execution, settings drift, hard-to-debug blocking. |
 | Subagent | `.claude/agents/*.md` | Markdown + frontmatter; project/user/plugin scopes with priority rules. | Specialized role, isolated context, or delegated investigation. | A skill is enough. | Tool permissions and duplicate names. |
 | MCP/integration | `.mcp.json`, settings, or plugin-provided config | External tools and data access. | The agent needs structured access outside the repo. | A local command or checked-in doc is enough. | Auth, data exposure, platform-specific setup. |
 | Plugin | `.claude-plugin/plugin.json` plus marketplace | Installable package with visible components and optional auto-update. | Sharing skills/hooks/agents/MCP across projects or teams. | One repo-local harness is still changing. | Supply-chain review and version drift. |
@@ -44,6 +45,7 @@ Claude Code defaults:
 - If `AGENTS.md` is the shared source, use a `CLAUDE.md` import or symlink rather than duplicating content.
 - Keep `CLAUDE.md` concise; move path-specific detail to `.claude/rules/`.
 - Prefer skills for reusable workflows and commands only for manual shortcuts.
+- Prefer `.agents/hooks/scripts/` as the shared source for hook scripts, then call those scripts from `.claude/settings.json`.
 - Treat hooks, MCP, plugins, and write-capable subagents as approval-gated changes.
 
 ## Cross-target rules
@@ -51,6 +53,9 @@ Claude Code defaults:
 - Do not mechanically mirror paths. Start from one provider-neutral placement decision, then emit separate Codex and Claude targets.
 - Root context should contain triggers and stable facts, not long procedures.
 - If both agents need the same workflow, write one neutral skill body first and adapt install paths second.
+- If both agents need the same hook logic, write one neutral script first and adapt hook config second.
 - If one agent has a mature surface and the other does not, make the asymmetry explicit instead of pretending parity.
 - Prefer checked-in repo-local files for team-shared behavior. Use user/global config only for personal preferences.
 - Record trust and rollback notes for anything executable.
+
+For a concrete dual-target repo layout, see `dual-target-layout.md`. For deciding whether a hook is appropriate at all, see `hook-patterns.md`.

@@ -1,0 +1,8 @@
+{
+  "hook_event_name": "PostToolUse",
+  "tool_name": "apply_patch",
+  "cwd": ".",
+  "tool_input": {
+    "path": "src/example.py"
+  }
+}

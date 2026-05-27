@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "apply_patch|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/.agents/hooks/scripts/python-ruff-check.mjs\"",
+            "timeout": 45,
+            "statusMessage": "Checking Python with Ruff"
+          }
+        ]
+      }
+    ]
+  }
+}

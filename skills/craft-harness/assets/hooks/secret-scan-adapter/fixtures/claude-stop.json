@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "cwd": ".",
+  "transcript_path": "/tmp/example-transcript.json"
+}
