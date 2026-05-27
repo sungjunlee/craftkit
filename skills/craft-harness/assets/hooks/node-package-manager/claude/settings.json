@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.agents/hooks/scripts/package-manager-guard.mjs\"",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}

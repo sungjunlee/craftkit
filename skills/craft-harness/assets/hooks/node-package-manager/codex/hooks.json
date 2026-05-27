@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "apply_patch|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/.agents/hooks/scripts/package-manager-guard.mjs\"",
+            "timeout": 20,
+            "statusMessage": "Checking package manager drift"
+          }
+        ]
+      }
+    ]
+  }
+}

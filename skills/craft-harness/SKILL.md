@@ -39,8 +39,10 @@ Before making recommendations:
    - provider-specific skill, command, hook, subagent, MCP, plugin, and rules locations
    - repo workflow files: `package.json`, `Makefile`, CI config, scripts, docs
 2. Read `references/platform-surfaces.md` when a recommendation touches provider-specific paths, hooks, subagents, MCP, plugins, or install locations.
-3. Read `references/eval-cases.md` when drafting or validating `craft-harness` changes.
-4. Read adjacent CraftKit skills only when the recommendation would create or modify a prompt/skill artifact.
+3. Read `references/dual-target-layout.md` when the harness targets both Codex and Claude Code, uses `.agents/` as shared source, or needs symlink/copy decisions.
+4. Read `references/hook-patterns.md` when recommending, reviewing, pruning, or generating hooks.
+5. Read `references/eval-cases.md` when drafting or validating `craft-harness` changes.
+6. Read adjacent CraftKit skills only when the recommendation would create or modify a prompt/skill artifact.
 
 Do not inspect user/global config unless the user explicitly asks for personal or global harness work.
 
@@ -67,7 +69,7 @@ Choose one primary mode and mention secondary modes when useful:
    - skill for reusable judgment workflow
    - command for explicit manual shortcut
    - script for deterministic checks that should be run on demand
-   - hook for deterministic lifecycle automation that has earned its risk
+   - hook for deterministic lifecycle automation: either a community-proven guardrail candidate or a project-specific repeated miss where timing matters
    - MCP/integration for structured access to an external system
    - subagent for isolated exploration, review, or role separation
    - plugin for installable multi-surface packaging
@@ -101,7 +103,7 @@ Defer by default:
 - plugin packaging and publishing
 - broad agent-team factories
 
-When proposing a hook, include rollback notes. When proposing third-party adoption, inspect the files that execute or steer tools before recommending install.
+When proposing a hook, name the hook class, dry-run command, false-positive notes, and rollback steps. When proposing third-party adoption, inspect the files that execute or steer tools before recommending install.
 
 ## Output format
 
@@ -149,6 +151,12 @@ Table with:
 - risk gate: `none`, `approval required`, or `defer`
 - rationale
 
+For hook rows, also include:
+
+- hook class: `community-proven guardrail` or `project-specific`
+- dry-run command
+- rollback note
+
 ### Codex target
 List Codex-specific files, commands, trust/reload steps, and caveats.
 
@@ -167,7 +175,8 @@ List work intentionally skipped, why now is too early, and the reassessment trig
 - Prefer `AGENTS.md` plus a `CLAUDE.md` import or symlink only when both agents should read the same stable core. Do not assume identical load behavior.
 - Prefer a skill over a long root instruction when the guidance is a reusable workflow.
 - Prefer a script over prose when the rule is deterministic and easy to run.
-- Prefer a hook over a script only when timing matters and repeated misses justify lifecycle automation.
+- Prefer a community-proven guardrail hook candidate during `bootstrap` or `maintain` only when it is deterministic, fast, read-only by default, no-network by default, low-noise, and easy to roll back.
+- Prefer a project-specific hook over a script only when timing matters and repeated repo-specific misses justify lifecycle automation.
 - Prefer a subagent only when isolated context, parallel work, or a constrained role improves output quality.
 - Prefer a plugin only when installation, versioning, bundled integrations, or marketplace distribution are part of the value.
 - Prefer no change when the existing harness already supports the job.
@@ -182,14 +191,17 @@ Use these as starter evals. For full expected placement, target, risk, and failu
 4. "Before creating a local frontend QA skill, search whether an existing skill or plugin fits this project."
 5. "This repo has a hook that runs old tests no one uses. Decide whether to update, disable, or remove it."
 6. "This monorepo has conflicting package conventions. Decide what belongs at root and what belongs in local overrides."
+7. "This Python repo already uses Ruff. Propose a dual-target guardrail hook candidate without installing anything."
 
 Checks:
 
 - output inventories existing harness before edits
 - provider-neutral decisions are separate from Codex and Claude target paths
+- shared source lives under `.agents/` when both targets should use the same skill body or hook script
 - at least one operating/maintenance case is handled, not only bootstrap
 - buy-vs-build is present or explicitly skipped
 - hooks, MCP, plugins, global config, and write-capable subagents have risk gates
+- hook candidates include class, dry-run, rollback, and false-positive notes
 - verification includes behavior evidence, not only file syntax
 
 ## Failure modes
@@ -199,7 +211,8 @@ Checks:
 - putting long workflow procedures into `AGENTS.md` or `CLAUDE.md`
 - skipping external search and rebuilding a maintained asset
 - recommending third-party install without trust and maintenance checks
-- avoiding hooks even when the miss is deterministic, recurring, and timing-sensitive
+- avoiding hooks even when the guardrail is deterministic, common, low-noise, and timing-sensitive
+- installing hooks automatically instead of proposing reviewable scripts and target adapters
 - adding hooks or MCP config without rollback or approval notes
 
 ## Example

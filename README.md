@@ -98,6 +98,8 @@ Six of the eight skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-
 
 For evolving skill-authoring guidance, the `craft-skill-spec` skill carries its own radar layer at `skills/craft-skill-spec/references/radar/` — start with `current.md` there and consult the dated snapshots only when a `watch` item needs deeper context.
 
+`craft-harness` also ships reviewable hook asset recipes under `skills/craft-harness/assets/hooks/`. They provide shared `.agents/hooks/scripts/` scripts plus Codex and Claude adapter snippets; they are intentionally not auto-installers.
+
 ## Use in other agents
 
 CraftKit skills are plain markdown with YAML frontmatter, so they port easily:
