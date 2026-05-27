@@ -18,11 +18,7 @@ End the current session cleanly by producing **two paired artifacts the next ses
 1. **A rich handoff doc** at `~/.craftkit/handoff/docs/<worktree-slug>.md` — narrative-first, depth scales with what actually happened in the session. The durable record of how this session got here: decision rationale in long form, what didn't work, abandoned approaches, time-ordered progress, related external context. Per-project, overwritten on the next handoff for the same project (previous version archived).
 2. **A craft-prompt-grade prompt** at `~/.craftkit/handoff/pending/<timestamp>-<worktree-slug>.md` (mirrored to clipboard) — structurally complete (context / task / rules / success criteria), and **explicitly commands the next agent to read the handoff doc first** to fully restore prior context before acting. Per-session, never overwritten.
 
-The prompt is what gets pasted (or auto-loaded by the SessionStart hook). The doc is what the prompt instructs the agent to read. Both are part of the intended workflow — the prompt is *not* a "fallback if the doc is missing"; it is the entry artifact that orchestrates the resume, and the doc is its required reading. Modern Claude / GPT context windows handle this pair comfortably; the depth wins back the turns saved by not having the next agent ask "why did we do X?"
-
-This pairs the patterns that mature AI session-handoff designs converge on (Cline memory-bank, BMad story-files, claude-code-context-handoff): a structured entry artifact + a deeper durable doc.
-
-This is *not* a session-summary doc for humans, and *not* a single compact prompt. The pair is the unit of handoff.
+The prompt is the entry artifact. It orients the next agent, names the next task, and tells the agent to read the doc for full context. The doc is the durable narrative. The pair is the unit of handoff.
 
 ## Use this when
 
@@ -35,11 +31,10 @@ For a multi-day project you intend to commit to git, prefer `/session-handoff` (
 
 Skip when the session was a quick Q&A with no state worth carrying.
 
-## How it differs from related skills
+## Related skills
 
-- `/session-handoff` (sungjunlee-claude-config) — writes a verbose `docs/handoff/HANDOFF-*.md` into the project. Use that for multi-day continuity with team-readable docs.
-- `craft-prompt` — the composition engine for both artifacts. `craft-handoff` gathers session state, applies the snapshot/narrative split (§Step 2), then uses craft-prompt's process for both: the **rich doc** body via `craft-prompt/templates/session-handoff.md`, and the **prompt** via craft-prompt's full Step 1–4 process (the prompt is craft-prompt grade by construction). Use craft-prompt directly when you want to author a prompt without session-state gathering.
-- `reflect` (jangpm-meta-skills) — focuses on docs/automation/learnings post-session. `craft-handoff` focuses on the next-session bootstrap pair (prompt + doc).
+- `/session-handoff` writes repo-local human/team handoff docs. Use that for multi-day continuity you intend to commit.
+- `craft-prompt` supplies the prompt/template discipline. Use it directly when you want prompt authoring without session-state gathering.
 
 ## Inputs
 
@@ -61,7 +56,7 @@ git diff --stat | tail -20
 git log --oneline -8
 ```
 
-**Portable fallback.** If scripts are unavailable, gather state with the fallback commands below. If file writing is unavailable, produce the same two-artifact content shape in chat: a rich doc body and a paste-ready prompt that points to where the doc should live. If only clipboard access is unavailable, keep the normal file-write path and report that clipboard copy was skipped. Missing hook support alone is not a fallback trigger; hooks are optional and Claude-Code-specific.
+**Portable fallback.** If scripts are unavailable, gather state with the commands above. If file writing is unavailable, produce the same two-artifact content shape in chat. If only clipboard access is unavailable, keep the normal file-write path and report that clipboard copy was skipped. Missing hook support alone is not a fallback trigger; hooks are optional and Claude-Code-specific.
 
 Drawn from the conversation (you must extract these — no script can):
 
@@ -70,8 +65,9 @@ Drawn from the conversation (you must extract these — no script can):
 - **What didn't work** — approaches tried that did not pan out, with one-line outcomes. Empirically the highest-value section; do not skip if any approach failed.
 - **Blockers** — anything that actively blocks Next. Skip if none.
 - **Next** — concrete next steps the new session should take, each with at least one observable success criterion
+- **Suggested skills/capabilities** — only when a specific next-step skill would materially improve the resume. Include why, not just the name.
 
-Optionally ask the user (one terse question, only if genuinely ambiguous): which next step to prioritize.
+If the user passed a focus for the next session, treat it as the intended resume target and tailor `Next`, `next:`, and suggested skills around it. Optionally ask the user (one terse question, only if genuinely ambiguous): which next step to prioritize.
 
 ## Steps
 
@@ -102,6 +98,9 @@ Inclusion tests (apply both for prompt-form and doc-form):
 - **What didn't work** (doc only — keep out of the prompt): every approach tried that did not pan out. "Tried X → Y because Z." Empirically the highest-value section in real handoffs; do not skip if any approach failed. If nothing failed, omit the heading.
 - **Blockers**: include only if it actively blocks Next. An "open question I want to revisit" is not a blocker — move it into Next or drop. Same in both artifacts.
 - **Next**: 1–3 concrete tasks, each with at least one **observable** success criterion. *Prompt form* is the action statement + criteria — this is what the next agent operates on. *Doc form* may add "and here's what we considered doing instead."
+- **Existing artifacts**: avoid duplicating material already captured in PRDs, plans, ADRs, issues, commits, diffs, or review docs. Reference them only when the next session can actually reach them. For same-worktree resume, files present in that worktree are usually reachable. For fresh/different worktree resume, prefer committed paths, GitHub URLs, issue URLs, and durable external docs. Untracked worktree-local docs are **not** safe cross-worktree references; either summarize the needed facts in the handoff, advise committing/attaching the artifact before relying on it, or mark it explicitly as "untracked local, not available in a fresh worktree."
+- **Sensitive data**: redact API keys, passwords, tokens, private URLs, personal data, and customer data. Record the existence, location, or handling status without copying the secret value.
+- **Suggested skills/capabilities**: include only when actionable ("Use `craft-critique` to review the updated skill before editing" beats "craft-critique"). Keep provider-specific tool names out unless the target agent requires them.
 
 Use **worktree-relative paths** (`src/auth.ts:45`, not absolute paths) in both artifacts. All paths are relative to the worktree root reported above.
 
@@ -133,7 +132,7 @@ The durable narrative. Depth scales with what actually happened in the session �
 
 This is the entry artifact: craft-prompt grade, structurally complete. The next agent paste-and-runs this. It carries the **snapshot form** of state and decisions plus an explicit `<rules>` line commanding the agent to read the handoff doc first (with a fallback for when the doc is unreachable).
 
-Compose using craft-prompt's full process — Step 1 (Understand: target is Claude Code or generic XML-parsing agent), Step 3 (building blocks: include Project + State + Done snapshot + Decisions one-liners + Background pointer + Task with criteria + Rules), Step 4 (Sharpen: cut fluff, specific over generic).
+Compose with craft-prompt discipline: understand the target agent, include only the needed building blocks, then sharpen for specificity.
 
 Fill this shape (adjust the section bullets to your distilled content; keep the structure):
 
@@ -158,6 +157,8 @@ Fill this shape (adjust the section bullets to your distilled content; keep the 
 
 ## Background
 Full session narrative, decision rationale in long form, and abandoned approaches at `~/.craftkit/handoff/docs/<slug>.md`. Read it first to fully restore prior context before acting.
+
+{{optional_suggested_skills_block}}
 </context>
 
 <task>
@@ -176,6 +177,15 @@ Success criteria:
 </rules>
 ```
 
+Fill `{{optional_suggested_skills_block}}` only when a specific skill or capability would materially change the next agent's behavior:
+
+```markdown
+## Suggested skills
+- <skill/capability> — because <why it helps the next task>
+```
+
+Otherwise remove the placeholder entirely.
+
 **Required signals** (enforce after fill):
 
 - The `<rules>` block contains a conditional read-doc line that (a) references the doc path, (b) makes the read conditional on reachability, and (c) tells the agent what to do if the doc is missing or inconsistent with the snapshot. Wording flexibility allowed; the three components are required. This is the orchestration link, not optional.
@@ -183,6 +193,9 @@ Success criteria:
 - Every `## Done` bullet is one line; outcomes only.
 - `<task>` has a `Success criteria:` (or `성공 기준:`) list with at least one **observable** item.
 - All paths are worktree-relative.
+- References to existing artifacts are reachable from the intended receiving session. Do not make an untracked local doc the only source of needed context for a fresh/different worktree; summarize the needed facts or advise committing/attaching it.
+- Sensitive values are redacted from both the doc and the prompt before writing files or copying to the clipboard.
+- `## Suggested skills` is omitted when no specific skill/capability would change the next agent's behavior.
 - The prompt is as long as the structure makes it — do not pad to a target, do not trim past structural completeness. If the prompt feels thin, the session probably was; that's fine.
 
 If the rich doc was not produced (e.g. empty handoff), do not write the prompt either — fail loudly per §Failure modes.
@@ -232,19 +245,11 @@ sed '1,/^---$/d;1,/^---$/d' "$PENDING_PATH" | bash <skill-dir>/scripts/copy-clip
 
 The auto-load hook path doesn't need this — the hook strips the frontmatter before injection. The `sed` form just keeps both paths consistent.
 
-The wrapper auto-detects the platform (`pbcopy` → `wl-copy` → `xclip` → `xsel` → `clip.exe`). If none are available it exits non-zero and prints to stderr — surface that to the user. Both file writes still succeeded; the user can `cat` them manually.
+If clipboard copy fails, surface the error. Both file writes still succeeded.
 
 ### Step 5 — Inform
 
-Show the **prompt** before the final confirmation line — that's what the user pastes, so it's what they need to verify. The rich doc is on disk for inspection separately (and the prompt commands the next agent to read it). You can't detect from inside the skill whether the optional SessionStart hook is installed, so always give the target-neutral fresh-session-and-paste instruction and append the Claude Code auto-load pointer.
-
-Deliver, in this order:
-
-1. The prompt in a fenced code block so the user can verify it.
-2. `Prompt copied to clipboard. Saved to <PENDING_PATH>. Rich doc at <DOC_PATH> — the prompt instructs the next agent to read it first.` (use the actual paths).
-3. "Start a fresh or reset session in the target agent, then paste. For Claude Code, run `/clear` first."
-4. *"On Claude Code, you can skip the paste step by installing the SessionStart hook — see `references/auto-load-hook.md`."*
-5. If produced, the optional goal candidate, clearly labeled `review before activating`.
+Show the **prompt** first — that's what the user pastes. Do not paste the rich doc when file writing succeeded. If §Step 3c produced a goal candidate, append it after the normal confirmation lines and label it `review before activating`.
 
 ## Output format
 
@@ -256,18 +261,20 @@ Always deliver in this order:
 4. The Claude Code auto-load pointer when applicable.
 5. The optional goal candidate when §Step 3c says it is warranted.
 
-Do not paste the rich doc into the chat in the normal file-write path — it lives on disk by design. In portable fallback where the doc cannot be written, paste the rich doc body after the prompt and clearly mark that the file write was skipped. Do not summarize what you put in the doc separately — the user can `cat` it when the file exists. Do not add a "session retrospective" — that's a different skill.
+In the normal file-write path, do not paste or summarize the rich doc; it lives on disk. If the doc could not be written, paste the doc body after the prompt and clearly mark the file-write fallback.
 
 ## Failure modes
 
 - **Empty handoff**: skill ran on a no-state session. Tell the user there's nothing to hand off and skip both file writes.
 - **Outside a git repo**: `gather-state.mjs` reports `(not a git repo)` for branch and `(clean)` for status. Drop the State block from both artifacts and lean on the conversation-derived sections.
 - **Multi-subtask session**: the conversation covered several unrelated threads. Don't merge them — ask the user which thread to carry forward, or pick the most recently active one and say so explicitly in the doc's Project section.
-- **Prompt / doc divergence**: user (or you) edits the rich doc by hand after the prompt was already pasted into the next session. The next session reads the doc on the prompt's instruction, so it picks up the latest doc — but its `## Decisions (one-liners)` snapshot in the prompt still shows the old summary. For substantive doc edits, regenerate the prompt as well. Mitigation: prefer to amend the doc *and* the prompt's snapshot together, or re-run craft-handoff if the session is still active.
-- **Under-loaded prompt**: the prompt skips so much state that the next agent can't tell what was accomplished without reading the doc — defeats the snapshot-as-immediate-orientation purpose. Pull more snapshot content (Done outcomes, key Decisions one-liners, current State) up into the prompt so it stands on its own even when the doc-read fails or is skipped.
-- **Bloated prompt**: the prompt has paragraphs where one-liners belong, or repeats the doc's narrative. Decisions in the prompt are one-sentence one-liners with a because-clause; long-form rationale belongs in the doc. Done in the prompt is outcome-bullets; the path that got there belongs in the doc.
-- **Bloated rich doc**: the doc narrates every conversational turn rather than capturing decisions and outcomes that resulted. Apply §Step 2's inclusion tests harder.
-- **Doc unreachable on resume**: the next agent tries to read `~/.craftkit/handoff/docs/<slug>.md` and gets ENOENT (archived during cleanup, deleted manually, slug mismatch from a moved worktree). The conditional read-doc rule in §Step 3b's `<rules>` template handles this — the snapshot in the prompt remains usable on its own, and the agent flags the missing doc to the user rather than failing silently.
+- **Prompt / doc divergence**: if the rich doc is edited after prompt generation, regenerate the prompt or update its snapshot too.
+- **Stale pending handoffs**: the hook archives stale/superseded prompts; details live in `references/auto-load-hook.md`. The rich doc stays at `DOC_PATH` until the next same-project handoff archives it.
+- **Concurrent wrap-ups in the same worktree**: prompts do not collide, but both runs target the same `DOC_PATH`; recover older narratives from `~/.craftkit/handoff/archive/`.
+- **Wrong sizing**: if the prompt cannot orient without the doc, pull up Done/State/Decision snapshots; if it repeats narrative, push detail back to the doc. If the doc narrates every turn, apply §Step 2 harder.
+- **Doc unreachable on resume**: the prompt snapshot must remain usable on its own, and the next agent should flag the missing doc.
+- **Pair-write atomicity (§4a succeeds, §4b fails)**: re-run §3b/§4b only; do not re-run §4a or the just-written doc will be archived.
+- **Auto-load surprises** (Claude Code only): clear `~/.craftkit/handoff/pending/` manually when you want a true reset or see repeated injection.
 - **craft-prompt not installed**: Step 3a delegates the doc body to craft-prompt's template, and Step 3b uses craft-prompt's process to compose the prompt. If craft-prompt is absent (craft-handoff copied standalone), compose both directly using the §Step 2 inclusion tests + the shapes shown in the Example below. Tell the user to install craft-prompt — the two ship together in craftkit.
 
 For stale prompt cleanup, concurrent wrap-ups, pair-write recovery, clipboard portability, and maintenance commands, load `references/operational-details.md`. For the optional Claude Code auto-load hook, load `references/auto-load-hook.md`.
@@ -276,7 +283,7 @@ For stale prompt cleanup, concurrent wrap-ups, pair-write recovery, clipboard po
 
 ### Input situation
 
-Session added JWT auth middleware. Tests pass. One rejected path matters: server sessions were discarded because the deploy target is stateless. Next step: wire the middleware into protected routes.
+Session added JWT auth middleware. Two files modified. One primary decision (JWT over sessions for stateless deploy), one abandoned approach (`express-session`), tests passing. Next step: wire middleware into the route table.
 
 ### Output sketch
 
@@ -301,10 +308,11 @@ acme-api — Node/Express REST backend.
 - Blockers: none
 
 ## Decisions (long form)
-- **JWT over server sessions.** Deploy target is stateless, so a server-side session store would add infrastructure before the alpha needs it.
+- **JWT over server sessions.** Deploy target is stateless Cloud Run — no sticky load balancing and no shared session store budgeted for alpha. JWT removes the server-state requirement entirely. Trigger to revisit: if Cloud Run is replaced with a sticky-capable target, or if token revocation requirements emerge that exceed what short TTLs can absorb.
 
 ## What didn't work
-- **Tried `express-session`.** It pulled in a shared store dependency, so it was dropped for this deploy shape.
+- **Tried `express-session` first.** Looked promising (familiar API, well-trodden path) but pulling its `connect-redis` adapter surfaced a Redis dependency that doesn't fit the stateless deploy. Discarded after ~20 minutes; switched to JWT.
+- **Tried embedding the secret in `config/auth.json`.** Worked locally, reverted before commit. Record the convention ("secrets come from env") but never copy secret values into handoff artifacts.
 </context>
 ```
 
@@ -321,11 +329,11 @@ acme-api — Node/Express REST backend.
 ## Done (snapshot)
 - JWT verification middleware: `src/middleware/auth.ts` (exports `authMiddleware`, `signToken`)
 
-## Decisions (one-liners; full rationale in handoff doc)
-- JWT over server sessions — because the deploy target is stateless
+## Decisions (one-liners; long-form rationale + rejected alternatives in handoff doc)
+- JWT over server sessions — because stateless Cloud Run target
 
 ## Background
-Full session narrative and abandoned approaches are at `~/.craftkit/handoff/docs/acme-api-7c3a92.md`. Read it first before acting.
+Full session narrative, decision rationale in long form, and abandoned approaches are at `~/.craftkit/handoff/docs/acme-api-7c3a92.md`. Read it first before acting — it captures *why* the current shape is what it is.
 </context>
 
 <task>
@@ -338,7 +346,8 @@ Success criteria:
 
 <rules>
 - All paths are worktree-relative
-- Read `~/.craftkit/handoff/docs/acme-api-7c3a92.md` first if reachable; if missing or inconsistent with this snapshot, proceed with this snapshot and flag the discrepancy
+- Read `~/.craftkit/handoff/docs/acme-api-7c3a92.md` first if reachable — it has the prior context (rationale and rejected alternatives); if missing or inconsistent with this snapshot, proceed and flag it
+- Read `src/middleware/auth.ts` first to confirm export shape (`authMiddleware`, `signToken`)
 - Run `npm test` before declaring done
 </rules>
 ```
