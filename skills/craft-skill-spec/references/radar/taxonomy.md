@@ -16,6 +16,28 @@ This taxonomy exists to force the first design question:
 
 ## Artifact classes
 
+### 0. Not a skill-like artifact yet
+
+Use when the user's problem is real, but the smallest useful answer is not a skill, skill suite, subagent, or plugin.
+
+Typical shape:
+
+- root or local context update
+- existing documentation update
+- deterministic command, script, or hook
+- external integration setup
+- no new artifact
+
+Good fit when:
+
+- the need is project-specific placement, not reusable workflow design
+- the guidance belongs closer to the code or source of truth
+- the user is asking for a harness, process, or documentation shape before a repeated skill trigger is proven
+
+Common failure:
+
+- forcing a skill or plugin because the vocabulary sounds agentic
+
 ### 1. Single skill
 
 Use when one cohesive capability can be expressed as one trigger surface plus one core workflow.
@@ -99,7 +121,8 @@ Common failure:
 
 Default to the smallest artifact that solves the job:
 
-1. Start with `single skill`.
+0. Start with `none yet` when the problem does not require a skill-like artifact.
+1. Escalate to `single skill` when one reusable trigger and workflow are clear.
 2. Escalate to `skill suite` when triggers or workflows want to split.
 3. Escalate to `subagent` when role separation or delegation is the primary value.
 4. Escalate to `plugin` when packaging multiple extension surfaces becomes the real product.
@@ -107,6 +130,12 @@ Default to the smallest artifact that solves the job:
 Do not skip levels casually. Escalation should be justified by the job, not by ambition.
 
 ## Decision cues
+
+### Choose `none yet` when
+
+- the smallest useful change is root/local context, docs, a script, a hook, or no artifact
+- the repeated task workflow is not clear enough to trigger on demand
+- the request is mainly about project-specific placement
 
 ### Choose `single skill` when
 
@@ -138,6 +167,7 @@ Do not skip levels casually. Escalation should be justified by the job, not by a
 
 Apply it directly for:
 
+- `none yet` when explaining why a skill is premature
 - `single skill`
 
 Apply it selectively for:
