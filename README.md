@@ -10,7 +10,7 @@ Prompt assets and agent skills often become fragmented, provider-specific, and h
 
 ## Install
 
-All seven skills install as [Claude Code custom slash commands](https://docs.anthropic.com/en/docs/claude-code/skills).
+All eight skills install as Agent Skills and are invocable in Claude Code through slash-style skill discovery. They are also plain `SKILL.md` files that can be used by Codex and other compatible agents.
 
 ### Via npx skills
 
@@ -43,25 +43,26 @@ npx skills add . -g -y
 
 For Codex or any other agent, see [Use in other agents](#use-in-other-agents) below.
 
-## The seven skills
+## The eight skills
 
 | Skill | Use when | Side effect |
 |---|---|---|
 | `craft-prompt` | a new prompt is needed from scratch for any LLM (Claude, GPT, Gemini, Perplexity, etc.) | returns copy-pasteable text |
 | `craft-skill-spec` | a new skill needs a concrete spec based on current CraftKit skill-radar judgments before writing `SKILL.md` | returns a spec; reads radar references |
+| `craft-harness` | a project-specific agent harness needs to be built, repaired, synced, pruned, or evolved across Codex and Claude Code | may inspect and edit repo-local harness files; gates risky surfaces |
 | `craft-critique` | an existing prompt or skill needs a read-only review before editing or shipping | surfaces strengths, prioritized findings, recommendations, and a rewrite plan without editing |
 | `craft-tune` | an existing prompt or skill needs sharpening applied | runs an autonomous review-and-fix loop and edits the artifact |
 | `craft-survey` | a new skill should be grounded in prior art before drafting | returns read-only recommendations |
 | `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration | runs evals and may edit mutable files |
 | `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt | writes handoff files and may copy to clipboard |
 
-When two skills could trigger, choose the least invasive one that answers the request: review-only wording goes to `craft-critique`; apply/fix/improve wording goes to `craft-tune`; repeated measurable failures go to `craft-autoresearch`; prior-art questions go to `craft-survey`.
+When two skills could trigger, choose the least invasive one that answers the request: review-only wording goes to `craft-critique`; apply/fix/improve wording goes to `craft-tune`; repeated measurable failures go to `craft-autoresearch`; prior-art questions go to `craft-survey`; repo harness placement and Codex/Claude setup work goes to `craft-harness`.
 
 Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML frontmatter, loadable as a Claude Code skill or copy-pasteable into any other agent.
 
 ## Status
 
-Six of the seven skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-tune` was reshaped to run an autonomous self-converging review-and-fix loop; the read-only diagnose role stays with the separate `craft-critique` skill. The next autoresearch pass will run against this shape. `craft-skill-spec` is new and has not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
+Six of the eight skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-tune` was reshaped to run an autonomous self-converging review-and-fix loop; the read-only diagnose role stays with the separate `craft-critique` skill. The next autoresearch pass will run against this shape. `craft-skill-spec` and `craft-harness` are new and have not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
 
 | Skill | Eval status | Score source | Known gap |
 |---|---|---|---|
@@ -71,6 +72,7 @@ Six of the seven skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-
 | `craft-survey` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-survey/<date-slug>/` | example must keep proving provenance and edit-target rules |
 | `craft-autoresearch` | reflexive autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-autoresearch/<date-slug>/` | examples must stay synchronized with the contract fields |
 | `craft-skill-spec` | not yet autoresearched | none yet | first pass should test radar-dependent standalone behavior |
+| `craft-harness` | not yet autoresearched | none yet | first pass should test lifecycle modes, Codex/Claude target separation, and risk gates |
 | `craft-handoff` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-handoff/2026-05-26-goal-pressure/` | replay against real agent outputs to catch wording failures beyond deterministic checks |
 
 ## What belongs in CraftKit
@@ -78,6 +80,7 @@ Six of the seven skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-
 - generating new prompts from scratch (task, research, session handoff, templates)
 - prompt design and restructuring
 - reusable skill design
+- project-specific agent harness design and maintenance
 - diagnostic review and minimal-diff editing
 - iterative improvement loops
 - survey-backed best practices
@@ -89,7 +92,7 @@ Six of the seven skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-
 1. File-first and diff-friendly
 2. Small composable units
 3. Explicit inputs and outputs
-4. Cross-agent portability (core skill spines stay provider-neutral; platform-specific detail stays in sub-skills like `craft-prompt/guides/`)
+4. Cross-agent portability (core skill spines stay provider-neutral; platform-specific detail stays in guides or reference files)
 5. Eval-driven improvement when possible
 6. Copy-pasteable results over fancy abstractions
 

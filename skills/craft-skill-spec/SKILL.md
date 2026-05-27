@@ -33,11 +33,12 @@ If the user does not state all of these, infer what is safe to infer and keep mo
 
 Before producing the spec:
 
-1. Read `references/radar/taxonomy.md` and classify the artifact: `single skill`, `skill suite`, `subagent`, or `plugin`.
+1. Read `references/radar/taxonomy.md` and classify the artifact: `none yet`, `single skill`, `skill suite`, `subagent`, or `plugin`.
 2. Read `references/radar/current.md`.
 3. If the target touches a `Watch` area, or if the artifact class is `subagent` or `plugin`, consult `references/radar/policy.md` and the relevant entries in `references/radar/sources.md`.
 4. Read the newest relevant snapshot in `references/radar/` only when the policy requires fresh context.
-5. Read an existing CraftKit skill only when it is directly adjacent to the proposed job.
+5. If the target is a project-specific agent harness, read `references/project-harness-toolkit.md` before deciding whether the answer should be a skill-like artifact, a concrete harness change plan, or both.
+6. Read an existing CraftKit skill only when it is directly adjacent to the proposed job.
 
 Do not start with open-ended web research unless the user explicitly asks for it. The point of this skill is to use the curated internal layer first.
 
@@ -45,7 +46,7 @@ If the radar references are unavailable in a standalone copy, say that the spec 
 
 ## Steps
 
-1. Classify the artifact first. If it should really be a `subagent` or `plugin`, say so before drafting a skill-shaped answer.
+1. Classify the artifact first. If it should really be `none yet`, `subagent`, or `plugin`, say so before drafting a skill-shaped answer.
 2. Restate the proposed artifact's real job in one sentence. If you cannot state the job cleanly, the spec will drift.
 3. Define the wedge. Name what the artifact should do and what it should explicitly not try to do.
 4. Apply the current radar. Pick the relevant `Adopt`, `Avoid`, and `Watch` items from `references/radar/current.md`. In standalone fallback mode, label this section `Fallback radar judgment` and use the default design stance above instead of pretending the missing radar file was read.
@@ -111,6 +112,8 @@ For the file or package plan, name concrete paths and one-line purposes. Start w
 
 ### Trigger draft
 Provide this section only when the artifact includes one or more skills.
+
+Skip this section when the class is `none yet` or a non-skill harness placement.
 
 Provide:
 
@@ -203,3 +206,4 @@ Propose a skill-design spec that turns CraftKit's current radar into a stable de
 - `references/radar/decision-log.md` — why a pattern moved between adopt / avoid / watch
 - `references/radar/TEMPLATE.md` — if a new snapshot or event-based addendum is needed
 - `references/spec-checklist.md` — structured review pass for checking whether the spec is specific, narrow, and ready to turn into `SKILL.md`
+- `references/project-harness-toolkit.md` — optional project-harness design seed for deciding when repo guidance should become context files, skills, commands, hooks, subagents, plugins, MCP setup, or external adoption work

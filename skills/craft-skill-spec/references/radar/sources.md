@@ -4,7 +4,7 @@ This file is the live reference registry for `skill-radar`.
 
 Its goal is not to summarize every source. Its goal is to keep a maintained list of the sources that are important enough to revisit as the ecosystem shifts.
 
-- last reviewed: `2026-05-01`
+- last reviewed: `2026-05-27`
 - owner: `CraftKit maintainers`
 
 ## Tiers
@@ -95,6 +95,116 @@ Examples:
 - revisit when: the post is updated or when Anthropic publishes follow-up architecture guidance
 - last reviewed: `2026-04-16`
 
+### Anthropic Claude Code large-codebase harness guidance
+
+- tier: `A`
+- surface: `project-harness`
+- authority: `official product blog`
+- URL: `https://claude.com/blog/how-claude-code-works-in-large-codebases-best-practices-and-where-to-start`
+- why it matters: Frames large-codebase agent adoption as a project-specific harness problem spanning root context, local context, skills, hooks, plugins, integrations, language intelligence, and subagents.
+- change sensitivity: `medium`
+- revisit when: Anthropic publishes follow-up large-codebase guidance or changes how extension surfaces are positioned
+- last reviewed: `2026-05-27`
+
+### Codex AGENTS.md docs
+
+- tier: `A`
+- surface: `project-context`
+- authority: `official product docs`
+- URL: `https://developers.openai.com/codex/guides/agents-md`
+- why it matters: Defines Codex instruction discovery, global/project layering, nested overrides, fallback filenames, and the default context-size limit for project docs.
+- change sensitivity: `high`
+- revisit when: discovery order, file names, override behavior, or context caps change
+- last reviewed: `2026-05-27`
+
+### Codex skills docs
+
+- tier: `A`
+- surface: `skill`
+- authority: `official product docs`
+- URL: `https://developers.openai.com/codex/skills`
+- why it matters: Defines Codex skill shape, progressive disclosure behavior, invocation model, repository/user/admin/system skill locations, and the current split between skills as workflow authoring format and plugins as distribution unit.
+- change sensitivity: `high`
+- revisit when: skill loading, install locations, or plugin relationship changes
+- last reviewed: `2026-05-27`
+
+### Codex hooks docs
+
+- tier: `A`
+- surface: `hook`
+- authority: `official product docs`
+- URL: `https://developers.openai.com/codex/hooks`
+- why it matters: Defines Codex lifecycle hook events, config locations, trust flow, plugin-bundled hook support, and the distinction between deterministic automation and prompt guidance.
+- change sensitivity: `high`
+- revisit when: hook events, trust policy, plugin hook support, or config shape changes
+- last reviewed: `2026-05-27`
+
+### Codex app commands docs
+
+- tier: `A`
+- surface: `command`
+- authority: `official product docs`
+- URL: `https://developers.openai.com/codex/app/commands`
+- why it matters: Defines Codex app command behavior, including built-in commands and skill-style command invocation, so `craft-harness` can distinguish manual shortcuts from repo-local skills or scripts.
+- change sensitivity: `high`
+- revisit when: app command invocation, custom command support, or skill command behavior changes
+- last reviewed: `2026-05-27`
+
+### Codex CLI slash commands docs
+
+- tier: `A`
+- surface: `command`
+- authority: `official product docs`
+- URL: `https://developers.openai.com/codex/cli/slash-commands`
+- why it matters: Defines the CLI command surface, which is separate from checked-in project harness files but still affects how maintainers invoke local skills and workflows.
+- change sensitivity: `high`
+- revisit when: CLI slash commands, skill invocation, or command extensibility changes
+- last reviewed: `2026-05-27`
+
+### Codex subagents docs
+
+- tier: `A`
+- surface: `subagent`
+- authority: `official product docs`
+- URL: `https://developers.openai.com/codex/subagents`
+- why it matters: Defines Codex subagent orchestration, built-in agent roles, explicit-spawn behavior, project/user custom agent locations, and inheritance of sandbox and approval settings.
+- change sensitivity: `high`
+- revisit when: custom agent file format, automatic spawning, visibility, or sandbox inheritance changes
+- last reviewed: `2026-05-27`
+
+### Codex plugins docs
+
+- tier: `A`
+- surface: `plugin`
+- authority: `official product docs`
+- URL: `https://developers.openai.com/codex/plugins`
+- why it matters: Defines Codex plugins as reusable bundles for skills, app integrations, and MCP servers, plus plugin directory and marketplace discovery behavior.
+- change sensitivity: `high`
+- revisit when: supported plugin components, marketplace behavior, or distribution rules change
+- last reviewed: `2026-05-27`
+
+### Codex build plugins docs
+
+- tier: `A`
+- surface: `plugin`
+- authority: `official product docs`
+- URL: `https://developers.openai.com/codex/plugins/build`
+- why it matters: Gives the current escalation rule: start with a local skill for one repo or personal workflow; build a plugin when sharing, bundling integrations/MCP config/hooks, or publishing stable packages becomes the value.
+- change sensitivity: `high`
+- revisit when: plugin manifest, marketplace paths, or packaged hook support changes
+- last reviewed: `2026-05-27`
+
+### Codex MCP docs
+
+- tier: `A`
+- surface: `mcp`
+- authority: `official product docs`
+- URL: `https://developers.openai.com/codex/mcp`
+- why it matters: Defines Codex MCP configuration through `config.toml`, including user scope and trusted project-scoped `.codex/config.toml`, plus plugin-provided MCP servers and approval controls.
+- change sensitivity: `high`
+- revisit when: MCP config shape, project trust behavior, OAuth handling, or plugin-provided MCP behavior changes
+- last reviewed: `2026-05-27`
+
 ### Claude Code subagents docs
 
 - tier: `A`
@@ -104,7 +214,62 @@ Examples:
 - why it matters: Defines how subagents are discovered, prioritized, and constrained; critical for deciding when a design should become a subagent instead of a skill.
 - change sensitivity: `high`
 - revisit when: subagent fields, plugin interaction, or priority rules change
-- last reviewed: `2026-04-16`
+- last reviewed: `2026-05-27`
+
+### Claude Code memory and rules docs
+
+- tier: `A`
+- surface: `project-context`
+- authority: `official product docs`
+- URL: `https://code.claude.com/docs/en/memory`
+- why it matters: Defines `CLAUDE.md`, `AGENTS.md`, imported files, `.claude/rules/`, path-scoped rules, and large-team memory management for Claude Code project harnesses.
+- change sensitivity: `high`
+- revisit when: loading hierarchy, rules behavior, `AGENTS.md` support, or auto-memory behavior changes
+- last reviewed: `2026-05-27`
+
+### Claude Code skills docs
+
+- tier: `A`
+- surface: `skill`
+- authority: `official product docs`
+- URL: `https://code.claude.com/docs/en/slash-commands`
+- why it matters: Defines Claude Code skills as `SKILL.md` workflows invocable by slash command or model selection, with frontmatter for tool permissions, argument hints, path scoping, forked subagent context, and skill-scoped hooks.
+- change sensitivity: `high`
+- revisit when: frontmatter fields, invocation, tool permissions, or path-scoped activation changes
+- last reviewed: `2026-05-27`
+
+### Claude Code hooks docs
+
+- tier: `A`
+- surface: `hook`
+- authority: `official product docs`
+- URL: `https://code.claude.com/docs/en/hooks`
+- why it matters: Defines Claude Code hook settings, events, matchers, project script references, JSON control outputs, and MCP tool naming for hook targeting.
+- change sensitivity: `high`
+- revisit when: supported events, JSON output fields, or project hook config behavior changes
+- last reviewed: `2026-05-27`
+
+### Claude Code plugins marketplace docs
+
+- tier: `A`
+- surface: `plugin`
+- authority: `official product docs`
+- URL: `https://code.claude.com/docs/en/discover-plugins`
+- why it matters: Defines marketplace discovery, official/community plugin sources, install scopes, visible component review, auto-update behavior, and security caveats for adopting instead of building harness parts.
+- change sensitivity: `high`
+- revisit when: marketplace commands, install scopes, component review, or official plugin categories change
+- last reviewed: `2026-05-27`
+
+### Claude Code MCP docs
+
+- tier: `A`
+- surface: `mcp`
+- authority: `official product docs`
+- URL: `https://code.claude.com/docs/en/mcp`
+- why it matters: Defines Claude Code MCP installation scopes, project-shared `.mcp.json`, user/local storage, plugin-provided MCP servers, approval prompts, remote authentication, resources, prompts, and tool-search scaling.
+- change sensitivity: `high`
+- revisit when: MCP scopes, `.mcp.json` shape, plugin MCP behavior, approval flow, or tool-search behavior changes
+- last reviewed: `2026-05-27`
 
 ### Anthropic plugins in the SDK
 
