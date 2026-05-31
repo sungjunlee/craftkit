@@ -32,6 +32,6 @@ elif command -v clip.exe >/dev/null 2>&1; then
 else
   echo "copy-clipboard: no clipboard tool found." >&2
   echo "  Install one of: pbcopy (macOS), wl-clipboard, xclip, xsel, clip.exe (Windows)." >&2
-  echo "  Prompt is still saved to ~/.craftkit/handoff/pending.md." >&2
+  echo "  Prompt is still saved under ~/.craftkit/handoff/pending/." >&2
   exit 1
 fi
