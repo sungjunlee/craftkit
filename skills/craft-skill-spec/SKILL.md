@@ -13,6 +13,8 @@ This is not a generic skill-creation walkthrough. It is the decision layer that 
 
 Use it when the question is not just "how do I write a skill?" but "what kind of artifact should this become right now?"
 
+The common path is intentionally light: classify the artifact, define its wedge, choose the smallest useful file shape, draft the trigger surface, and name the first eval checks. The radar exists to sharpen those decisions, not to turn every run into research.
+
 ## How it differs from related skills
 
 - `craft-survey` studies prior art. `craft-skill-spec` starts from the already-curated `references/radar/current.md` and only dips into snapshots when a watched area matters.
@@ -36,13 +38,13 @@ Before producing the spec:
 1. Read `references/radar/taxonomy.md` and classify the artifact: `none yet`, `single skill`, `skill suite`, `subagent`, or `plugin`.
 2. Read `references/radar/current.md`.
 3. If the target touches a `Watch` area, or if the artifact class is `subagent` or `plugin`, consult `references/radar/policy.md` and the relevant entries in `references/radar/sources.md`.
-4. Read the newest relevant snapshot in `references/radar/` only when the policy requires fresh context.
+4. Read dated snapshots in `references/radar/` only when a `Watch` item, subagent/plugin boundary, or freshness-sensitive decision requires them.
 5. If the target is a project-specific agent harness, read `references/project-harness-toolkit.md` before deciding whether the answer should be a skill-like artifact, a concrete harness change plan, or both.
 6. Read an existing CraftKit skill only when it is directly adjacent to the proposed job.
 
 Do not start with open-ended web research unless the user explicitly asks for it. The point of this skill is to use the curated internal layer first.
 
-If the radar references are unavailable in a standalone copy, say that the spec is running in fallback mode. Use the default design stance embedded in this `SKILL.md`: classify the artifact, define its wedge, choose the smallest viable file shape, draft trigger wording, and include an eval plan. Ask for the missing radar files only when the artifact class is `subagent` or `plugin`, or when a decision would depend on current `Watch` guidance.
+If the radar references are unavailable in a standalone copy, say that the spec is running in fallback mode. Use the default design stance embedded in this `SKILL.md`: classify the artifact, define its wedge, choose the smallest viable file shape, draft trigger wording when relevant, and include an eval plan. Ask for the missing radar files only when the artifact class is `subagent` or `plugin`, or when a decision would depend on current `Watch` guidance. Do not cite or summarize radar files that were not available.
 
 ## Steps
 

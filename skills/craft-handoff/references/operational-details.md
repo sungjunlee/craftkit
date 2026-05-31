@@ -44,6 +44,15 @@ If rich-doc write succeeds but prompt-write fails, do not re-run the doc write. 
 
 Recover by composing and writing the prompt only, then copying that prompt body to the clipboard. If recovery is not possible, tell the user the rich doc exists but no pending prompt is queued.
 
+## Extended failure catalog
+
+- **Prompt/doc divergence**: if the rich doc is edited after prompt generation, regenerate the prompt or update its snapshot too.
+- **Doc unreachable on resume**: the prompt snapshot must remain usable on its own, and the next agent should flag the missing doc.
+- **Stale pending handoffs**: the hook archives stale or superseded prompts; the rich doc remains at `DOC_PATH` until the next same-project handoff archives it.
+- **Concurrent wrap-ups in one worktree**: prompts do not collide, but both runs target the same `DOC_PATH`; recover older narratives from `~/.craftkit/handoff/archive/`.
+- **Wrong sizing**: if the prompt cannot orient without the doc, pull up Done/State/Decision snapshots; if it repeats narrative, push detail back to the doc.
+- **craft-prompt not installed**: compose both artifacts directly from the main skill's shapes and tell the user that installing `craft-prompt` restores the preferred template path.
+
 ## Auto-load edge cases
 
 - **Unwanted injection**: remove pending prompts with `rm -rf ~/.craftkit/handoff/pending/` when the user wants a true reset.

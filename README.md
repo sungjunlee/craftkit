@@ -8,6 +8,8 @@ CraftKit is a cross-agent toolkit for creating, improving, and operationalizing 
 
 Prompt assets and agent skills often become fragmented, provider-specific, and hard to reuse. CraftKit exists to keep them file-first, portable, reviewable, and easy to improve over time.
 
+CraftKit is an artifact-quality toolkit: it helps author, critique, tune, and carry forward prompts and skills. It is not a general coding-agent workflow suite, project-management layer, deployment system, or runtime framework. When a workflow needs those things, CraftKit should produce clear files, specs, or handoffs that another tool can use rather than becoming the tool itself.
+
 ## Install
 
 All eight skills install as Agent Skills and are invocable in Claude Code through slash-style skill discovery. They are also plain `SKILL.md` files that can be used by Codex and other compatible agents.
@@ -99,6 +101,16 @@ Six of the eight skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-
 For evolving skill-authoring guidance, the `craft-skill-spec` skill carries its own radar layer at `skills/craft-skill-spec/references/radar/` — start with `current.md` there and consult the dated snapshots only when a `watch` item needs deeper context.
 
 `craft-harness` also ships reviewable hook asset recipes under `skills/craft-harness/assets/hooks/`. They provide shared `.agents/hooks/scripts/` scripts plus Codex and Claude adapter snippets; they are intentionally not auto-installers.
+
+## Skill spine budget
+
+`AGENTS.md` keeps a hard 500-line ceiling for each `SKILL.md`, but day-to-day edits should aim much lower:
+
+- Normal skills: about 100-160 lines.
+- Complex loop or orchestration skills: about 160-220 lines.
+- Anything growing past that should move examples, platform notes, maintenance commands, or edge-case catalogs into `references/`.
+
+The spine should still be understandable alone: purpose, inputs, steps, output contract, one compact example, limitations, and links to on-demand references. References carry depth; the spine carries the operating path.
 
 ## Use in other agents
 
