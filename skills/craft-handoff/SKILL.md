@@ -49,7 +49,7 @@ git diff --stat | tail -20
 git log --oneline -8
 ```
 
-Also derive the handoff target yourself: `WORKTREE_SLUG` is `<sanitized basename>-<first 6 chars of sha1(git rev-parse --show-toplevel output)>`; `DOC_PATH` is `~/.craftkit/handoff/docs/<slug>.md`; `PENDING_PATH` is `~/.craftkit/handoff/pending/<timestamp>-<slug>.md`; `ARCHIVE_DIR` is `~/.craftkit/handoff/archive`; frontmatter carries `worktree`, `branch`, and `created` for both artifacts, plus `next` for the doc.
+Also derive the handoff target yourself: `WORKTREE_SLUG` is `<sanitized basename>-<first 6 chars of sha1(git rev-parse --show-toplevel output, or cwd outside git)>`; `DOC_PATH` is `~/.craftkit/handoff/docs/<slug>.md`; `PENDING_PATH` is `~/.craftkit/handoff/pending/<timestamp>-<slug>.md`; `ARCHIVE_DIR` is `~/.craftkit/handoff/archive`; frontmatter carries `worktree`, `branch`, and `created` for both artifacts, plus `next` for the doc.
 
 Then extract from the conversation:
 
