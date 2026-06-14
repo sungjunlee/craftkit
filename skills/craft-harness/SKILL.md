@@ -1,6 +1,6 @@
 ---
 name: craft-harness
-description: Build, repair, sync, prune, and evolve a project-specific agent harness for Codex and Claude Code. Use when a user wants to set up or improve repo agent guidance, AGENTS.md/CLAUDE.md, local skills, commands, hooks, subagents, MCP/integrations, plugins, or adoption choices; when agents keep repeating mistakes in a repo; when Codex and Claude setup drift; or when deciding whether to build, adopt, or remove harness components.
+description: Build, repair, sync, prune, and evolve a project-specific agent harness for Codex and Claude Code. Use when repo guidance, AGENTS.md/CLAUDE.md, local skills, commands, hooks, subagents, MCP/integration notes, plugins, or adoption choices need a repo-local plan or small edits.
 ---
 
 # craft-harness
@@ -12,6 +12,14 @@ Build and maintain the agent harness around a real repo.
 A harness is the set of files and installed capabilities that help coding agents work well in a project: root context, local context/rules, skills, commands, scripts, hooks, subagents, MCP/integrations, plugins, and external assets worth adopting.
 
 This skill is not only for first setup. Use it across the harness lifecycle: bootstrap, task-fit, repair, sync, adopt, prune, and maintain.
+
+## Non-goals
+
+- Not a global config manager.
+- Not an installer or plugin publisher.
+- Not a runtime framework.
+- Not a replacement for the user's agent settings UI or marketplace flow.
+- Default output is a repo-local plan, small repo-local markdown/skill edits, or reviewable asset recipes.
 
 ## How it differs from related skills
 
@@ -103,7 +111,7 @@ Defer by default:
 - plugin packaging and publishing
 - broad agent-team factories
 
-When proposing a hook, name the hook class, dry-run command, false-positive notes, and rollback steps. When proposing third-party adoption, inspect the files that execute or steer tools before recommending install.
+This skill may propose high-risk surfaces, but it does not install or enable them unless the user explicitly asks for that after seeing the plan. When proposing a hook, name the hook class, dry-run command, false-positive notes, and rollback steps. When proposing third-party adoption, inspect the files that execute or steer tools before recommending install.
 
 ## Output format
 
@@ -127,29 +135,10 @@ Table with:
 ### Buy vs build
 Include when a new skill, plugin, MCP server, hook, or integration is plausible.
 
-For each candidate:
-
-- source
-- decision: `adopt`, `fork/adapt`, `build local`, or `defer`
-- trust notes
-- why it fits or fails
-
-Trust checklist:
-
-- provenance: who maintains it and where it comes from
-- execution: whether it runs scripts, hooks, MCP servers, or shell commands
-- permissions: what tools, files, credentials, or external systems it touches
-- freshness: whether it matches current Codex/Claude behavior
-- portability: whether it works for both targets or needs an adapter
-- rollback: how to remove or disable it if it hurts the repo
+For each candidate, name source, decision (`adopt`, `fork/adapt`, `build local`, or `defer`), trust notes, why it fits or fails, and rollback path. Trust notes cover provenance, execution, permissions, freshness, and portability.
 
 ### Proposed edits
-Table with:
-
-- path or target
-- action
-- risk gate: `none`, `approval required`, or `defer`
-- rationale
+Table with path/target, action, risk gate (`none`, `approval required`, or `defer`), and rationale.
 
 For hook rows, also include:
 
@@ -183,26 +172,12 @@ List work intentionally skipped, why now is too early, and the reassessment trig
 
 ## Verification prompts
 
-Use these as starter evals. For full expected placement, target, risk, and failure checks, see `references/eval-cases.md`.
+Use one or two starter evals before shipping changes to this skill. The full case set and expected checks live in `references/eval-cases.md`.
 
-1. "Set up this repo so Codex and Claude both know the test, lint, and release workflow without bloating root instructions."
-2. "Agents keep missing migration safety checks in this repo. Decide whether to use context, skill, script, hook, or subagent."
-3. "Codex has a project skill for PR review but Claude has stale command docs. Sync the harness without duplicating the workflow."
-4. "Before creating a local frontend QA skill, search whether an existing skill or plugin fits this project."
-5. "This repo has a hook that runs old tests no one uses. Decide whether to update, disable, or remove it."
-6. "This monorepo has conflicting package conventions. Decide what belongs at root and what belongs in local overrides."
-7. "This Python repo already uses Ruff. Propose a dual-target guardrail hook candidate without installing anything."
+- "Set up this repo so Codex and Claude both know the test, lint, and release workflow without bloating root instructions."
+- "Agents keep missing migration safety checks in this repo. Decide whether to use context, skill, script, hook, or subagent."
 
-Checks:
-
-- output inventories existing harness before edits
-- provider-neutral decisions are separate from Codex and Claude target paths
-- shared source lives under `.agents/` when both targets should use the same skill body or hook script
-- at least one operating/maintenance case is handled, not only bootstrap
-- buy-vs-build is present or explicitly skipped
-- hooks, MCP, plugins, global config, and write-capable subagents have risk gates
-- hook candidates include class, dry-run, rollback, and false-positive notes
-- verification includes behavior evidence, not only file syntax
+Pass signal: the output inventories existing harness files first, separates provider-neutral decisions from Codex/Claude targets, risk-gates high-risk surfaces, and verifies behavior rather than only file syntax.
 
 ## Failure modes
 
@@ -232,14 +207,6 @@ Checks:
 | need | repeated agent job | evidence | placement | promotion trigger |
 |---|---|---|---|---|
 | migration safety checklist | verification/review | repeated misses during DB work | repo-local skill plus short root pointer | promote to hook only if agents still skip deterministic checks |
-
-**Proposed edits**
-| path or target | action | risk gate | rationale |
-|---|---|---|---|
-| shared root context | add one-line pointer to migration skill | none | root gets the trigger, not the full procedure |
-| Codex repo-local skill path | create Codex skill draft | none | reusable workflow with examples |
-| Claude Code repo-local skill path | create Claude-compatible copy or symlink plan | none | same workflow for Claude users |
-| Codex hook config | propose post-edit migration check | approval required | hook timing may help, but execution needs trust |
 
 **Verification**
 - Prompt: "Review this migration change and tell me what safety checks apply."

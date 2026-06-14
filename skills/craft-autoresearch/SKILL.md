@@ -1,6 +1,6 @@
 ---
 name: craft-autoresearch
-description: Eval-driven autonomous optimization loop for a prompt or skill. Define eval criteria and a run harness, then iterate — run the artifact on test inputs, score outputs, mutate the prompt or skill, keep improvements, discard regressions, and stop on a written condition. Use this whenever the user wants to automatically improve a prompt or skill, mentions autoresearch, eval-driven optimization, benchmarking a skill, running evals, self-improving a prompt, or any iterative test-and-refine request — including 스킬 개선, 스킬 최적화, 스킬 벤치마크, 스킬 평가 — even if they don't say "autoresearch."
+description: Eval-driven optimization loop for a prompt or skill. Use when a prompt or skill needs measured iteration with test inputs, an eval runner, scoring, bounded mutations, and a written stop condition.
 ---
 
 # craft-autoresearch
@@ -19,11 +19,12 @@ Unlike `craft-tune` (judgment-driven autonomous diagnose-and-edit), autoresearch
 - measurable quality criteria exist or can be drafted (format rules, pass/fail checks, comparative quality)
 - human-driven tuning has hit a plateau
 - a skill is about to be shipped and should be benchmarked first
+- the user mentions autoresearch, eval-driven optimization, benchmarking, running evals, self-improving prompts, 스킬 개선, 스킬 최적화, 스킬 벤치마크, or 스킬 평가
 
 Do not use this when:
 
 - quality is entirely subjective with no rubric even sketchable — prefer `craft-critique` (read-only findings) or `craft-tune` (the review-and-fix loop)
-- the run harness cannot be automated at reasonable cost
+- the eval runner cannot be automated at reasonable cost
 - the artifact is too new and has no rough baseline yet
 
 This skill is for optimizing prompt and skill artifacts against output-quality evals, not for generic code-metric loops (test coverage, bundle size, lint errors).
@@ -33,7 +34,7 @@ This skill is for optimizing prompt and skill artifacts against output-quality e
 - **Target artifact** — path to the prompt or skill file to optimize
 - **Test inputs** — 3-5 realistic prompts or scenarios
 - **Eval criteria** — 3-6 binary checks plus 0-2 comparative quality checks
-- **Run harness** — the exact repeatable command or procedure that runs the artifact on a test input
+- **Eval runner** — the exact repeatable command or procedure that runs the artifact on a test input
 - **Budget** — max experiments per session (default: 10)
 - **Stop condition** — target score, or "plateau for N kept experiments"
 
@@ -41,13 +42,13 @@ If the user provides an `evals.json`, use it directly instead of drafting evals 
 
 ## Steps
 
-1. **Capture the experiment contract.** Lock in target, inputs, evals, harness, budget, and stop condition *before* running anything. A fuzzy contract produces fuzzy gains — ambiguity at this step compounds with every experiment.
+1. **Capture the experiment contract.** Lock in target, inputs, evals, eval runner, budget, and stop condition *before* running anything. A fuzzy contract produces fuzzy gains — ambiguity at this step compounds with every experiment.
 2. **Design the eval suite.** Prefer deterministic checks (regex, section presence, parse success) over LLM-as-judge. Aim for at least half the suite at Tier 1-2 — see `references/eval-guide.md` for the full determinism hierarchy and quality checks. First-time suites skew toward Structure/Length only and saturate on baseline; see the Guardrails rule on near-100% baselines and `references/eval-guide.md` § "If your baseline scores near 100%" before locking the suite. For research, agentic, or high-impact prompts, include grounding, instruction-consistency, missing-context, or action-safety evals when those risks matter.
-3. **Establish a baseline.** Snapshot the target artifact, run it on every test input through the harness, score every output, record the total in `results.tsv`. No mutation happens before baseline or the gains are unmeasurable. A near-saturated baseline (≥ 95% binary pass rate) is a signal, not a success — stop and strengthen the suite before mutating. See Guardrails below.
-4. **Run the mutation loop.** For each experiment: analyze failing evals → form one hypothesis → make one bounded change at one mutation level → checkpoint the touched files → run harness → score → KEEP or DISCARD by the rules below → log. The change may span multiple files only when those files together implement the same hypothesis. See `references/mutation-guide.md` for mutation levels and when each fits.
+3. **Establish a baseline.** Snapshot the target artifact, run it on every test input through the eval runner, score every output, record the total in `results.tsv`. No mutation happens before baseline or the gains are unmeasurable. A near-saturated baseline (≥ 95% binary pass rate) is a signal, not a success — stop and strengthen the suite before mutating. See Guardrails below.
+4. **Run the mutation loop.** For each experiment: analyze failing evals → form one hypothesis → make one bounded change at one mutation level → checkpoint the touched files → run the eval runner → score → KEEP or DISCARD by the rules below → log. The change may span multiple files only when those files together implement the same hypothesis. See `references/mutation-guide.md` for mutation levels and when each fits.
 5. **Respect rollback safety.** Before each mutation, commit (git-assisted mode) or snapshot (file-checkpoint mode) only the files you are about to touch. DISCARD rolls back only those files — never `git reset --hard`, which would destroy unrelated work in the repo.
 6. **Try deletion every 5th experiment.** Remove recently added rules or examples. If the score holds, keep the deletion. Artifacts that only grow are a smell — bloat hides the real drivers.
-7. **Stop on condition, not on vibes.** Stop when the budget is hit, when the stop condition is met (e.g. 95%+ binary pass rate sustained for 3 consecutive kept experiments), when the user interrupts, or when the harness is no longer trustworthy. Running out of ideas is not a stop condition — change mutation level first.
+7. **Stop on condition, not on vibes.** Stop when the budget is hit, when the stop condition is met (e.g. 95%+ binary pass rate sustained for 3 consecutive kept experiments), when the user interrupts, or when the eval runner is no longer trustworthy. Running out of ideas is not a stop condition — change mutation level first.
 8. **Report back.** Baseline → final score, total experiments, keep rate, top helpful changes, remaining failure patterns, artifact size change, direction shifts.
 
 ## When the target is a skill (vs a prompt)
@@ -84,11 +85,11 @@ Additional guardrails:
 
 ### Experiment contract
 
-A compact record of target, inputs, evals, harness, budget, stop condition. In addition, state these quality commitments explicitly, not just as labels:
+A compact record of target, inputs, evals, eval runner, budget, stop condition. In addition, state these quality commitments explicitly, not just as labels:
 
 - **mutable files** — explicit list of the files the session may modify. All other files are frozen. Mandatory for skill targets; every skill has more than one file even when references are not planned to change.
 - **evals 4th diagnostic** — for every non-shape eval (Logic, Grounding, Consistency, Missing context, Action safety, or Comparative), name a concrete output the target-skill-as-written would plausibly produce that fails the check (the 4th diagnostic question from `references/eval-guide.md`). A non-shape eval without a named plausible-failing-output is a loose eval and usually saturates.
-- **harness design** — the named design category plus its trade-off against alternatives. A bare command string is not a harness design.
+- **runner design** — the named eval-runner category plus its trade-off against alternatives. A bare command string is not a runner design.
 - **first-mutation hypothesis preview** — the predicted mutation locus in the target (a specific `## Output format` subsection, a specific `## Steps` entry, or a specific reference-file section) plus a justification that either invokes the Build-step enforcement prior from `references/mutation-guide.md` by name, or explicitly argues why a non-build-step locus is warranted from the failing outputs.
 
 ### Baseline
@@ -112,7 +113,7 @@ Run artifacts live in `~/.craftkit/`, not in the target repo. This keeps `git st
 
 ```text
 ~/.craftkit/autoresearch/<skill-name>/<YYYY-MM-DD-slug>/
-├── run-harness.md      # exact harness and contract for this session
+├── eval-runner.md      # exact runner and contract for this session
 ├── evals.json          # eval suite used
 ├── results.tsv         # one row per experiment
 ├── changelog.md        # mutation rationale + human insights
@@ -130,7 +131,7 @@ The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prev
 ## Guardrails
 
 - One hypothesis per experiment. The accepted change may touch more than one file only when those files implement the same mutation and are checkpointed as a unit.
-- Always run the harness and record the score; never KEEP on "this feels better."
+- Always run the eval runner and record the score; never KEEP on "this feels better."
 - Deterministic evals first; LLM-as-judge only with a rubric explicit enough that two reviewers would agree.
 - Rollback touches only the files in the mutation — never broad reverts.
 - Autonomy is batch-based. Set a budget and stop condition up front, not "loop forever."
@@ -159,10 +160,10 @@ Optimize `skills/craft-tune/SKILL.md` against 3 realistic "improve this prompt" 
 - target: `skills/craft-tune/SKILL.md`
 - inputs: 3 prompts
 - evals: 3 binary + 1 comparative
-- harness: manual replay procedure
+- eval runner: manual replay procedure
 - mutable files: `skills/craft-tune/SKILL.md`; all other files frozen
 - evals 4th diagnostic: baseline plausibly returns Changelog rows without `effect`, and a longer revision that satisfies section shape but is no easier to audit
-- harness design: manual replay harness; slower than a command runner, but exact and valid before this repo ships a runner script
+- runner design: manual replay; slower than a command runner, but exact and valid before this repo ships a runner script
 - first-mutation hypothesis preview: `## Final output` / Convergence subsection, invoking the Build-step enforcement prior because the first failing output lacks the final-state signal that the current `craft-tune` contract requires
 - budget: 8; stop: 95% x 3 consecutive
 

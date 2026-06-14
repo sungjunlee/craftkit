@@ -166,6 +166,6 @@ Exp 3 (DISCARD) is absent — `git reset --soft` + `git restore` removed it from
 ## Simplifications from a real run
 
 - Running and judging E4 requires an explicit rubric and, ideally, a fixed judge model. See `eval-guide.md` § "Drafting evals with an agent" and `eval-guide.md` § "The golden rule."
-- A Node run harness (`scripts/run-experiment.mjs`) would take the three inputs × two runs automatically. This example assumes the runs are invoked manually and outputs saved by hand into `~/.craftkit/autoresearch/craft-critique/<session>/runs/exp-N/<input-id>/`.
-- The full artifact layout (`results.tsv`, `changelog.md`, `research-log.json`, `run-harness.md`) is referenced but not shown — see the SKILL.md § "Artifact layout" for the folder shape.
+- A Node eval runner (`scripts/run-experiment.mjs`) would take the three inputs × two runs automatically. This example assumes the runs are invoked manually and outputs saved by hand into `~/.craftkit/autoresearch/craft-critique/<session>/runs/exp-N/<input-id>/`.
+- The full artifact layout (`results.tsv`, `changelog.md`, `research-log.json`, `eval-runner.md`) is referenced but not shown — see the SKILL.md § "Artifact layout" for the folder shape.
 - Real runs will see more noise in Tier 3 evals than this example shows. Plan for it — run three times instead of two if the comparative evals feel jittery.

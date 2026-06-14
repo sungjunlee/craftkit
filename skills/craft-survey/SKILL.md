@@ -1,6 +1,6 @@
 ---
 name: craft-survey
-description: One-shot prior-art survey — study comparable prompts, skills, or repo assets, extract recurring patterns worth adopting, flag patterns to avoid, and synthesize actionable improvements for the current artifact. Use this whenever the user wants to ground a prompt or skill in proven patterns, references older assets to learn from, asks "how do others do this," mentions "survey," "prior art," or "research," or is designing something new and wants a literature-review pass before committing — even if they don't say "survey." Distinct from craft-autoresearch (which runs an eval-driven optimization loop, not a prior-art survey).
+description: One-shot prior-art survey for prompts, skills, or repo assets. Use when the user asks how others do this, mentions survey/prior art/research, references older assets, or wants adopt/avoid patterns before drafting. Distinct from craft-autoresearch, which runs eval-driven optimization.
 ---
 
 # craft-survey
@@ -17,6 +17,7 @@ A grounded survey matters because agents that invent from scratch often rediscov
 - a new skill should be grounded in proven patterns
 - the current artifact feels under-informed
 - best practices should be incorporated without cargo-culting them
+- the user asks "how do others do this?" or wants a literature-review pass before committing
 
 ## Inputs
 

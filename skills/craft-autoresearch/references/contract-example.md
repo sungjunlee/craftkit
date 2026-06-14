@@ -23,10 +23,10 @@ Budget: 8 experiments. Stop condition: 95% binary pass rate sustained for 3 cons
 - target: `skills/craft-tune/SKILL.md`
 - inputs: 3 prompts
 - evals: 3 binary + 1 comparative
-- harness: manual replay procedure — for each input, start a fresh agent session, load `skills/craft-tune/SKILL.md` as the operating instruction, paste the input, and save the response under `runs/<input-name>/output.md`
+- eval runner: manual replay procedure — for each input, start a fresh agent session, load `skills/craft-tune/SKILL.md` as the operating instruction, paste the input, and save the response under `runs/<input-name>/output.md`
 - mutable files: `skills/craft-tune/SKILL.md`; all other files frozen
 - evals 4th diagnostic: baseline plausibly returns Changelog rows without `effect`, so the traceability eval has a concrete failing output; baseline also plausibly returns a longer revision that satisfies section shape but is no easier to audit, so the comparative reviewability eval has a concrete failing output
-- harness design: manual replay harness; slower than a command runner, but exact and valid before this repo ships a runner script
+- runner design: manual replay; slower than a command runner, but exact and valid before this repo ships a runner script
 - first-mutation hypothesis preview: `## Final output` / Convergence subsection, invoking the Build-step enforcement prior because the first failing output lacks the final-state signal that the current `craft-tune` contract requires
 - budget: 8; stop: 95% x 3 consecutive
 

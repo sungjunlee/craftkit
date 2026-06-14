@@ -1,6 +1,6 @@
 ---
 name: craft-prompt
-description: Craft well-structured, copy-paste-ready prompts for any LLM — Claude, GPT, Gemini, Perplexity, or any other. Use this whenever the user wants a prompt built from scratch, asks to "write/make/build a prompt," needs a session handoff prompt to carry work into a new Claude Code or Codex session, wants to write a `/goal` completion condition for Claude Code or Codex autonomous loops, shares scattered notes that need to be shaped into a usable prompt, or requests a reusable prompt template — even if they don't explicitly say "prompt." Also triggers on Korean equivalents like "프롬프트 만들어," "프롬프트 작성," "프롬프트 빌드," "goal 조건," "completion condition."
+description: Craft well-structured, copy-paste-ready prompts for any LLM or agent. Use when the user asks to write/build a prompt, shape scattered notes into a prompt, create a reusable template, or draft a `/goal` condition. Triggers include "prompt", "프롬프트 만들어", "프롬프트 작성", and "goal 조건."
 ---
 
 # craft-prompt
@@ -9,6 +9,13 @@ You craft **clear, well-structured prompts** that get the best results from any 
 
 ---
 
+## Use this when
+
+- the user asks to write, make, build, or improve a prompt
+- scattered notes need to become a reusable prompt or template
+- a session handoff prompt or `/goal` condition is needed
+- Korean prompt requests appear, such as "프롬프트 만들어" or "프롬프트 작성"
+
 ## Process
 
 ### Step 1: Understand What the User Wants Built
@@ -16,7 +23,7 @@ You craft **clear, well-structured prompts** that get the best results from any 
 Gather from the user (ask only what's not already clear):
 
 1. **Goal** — What should the prompt make the LLM do?
-2. **Target** — Which LLM or interface? (Claude Code, GPT Pro, ChatGPT, Perplexity, Gemini, generic, etc.)
+2. **Target** — Which model, product surface, or agent interface?
 3. **Audience** — Who will use this prompt? (The user themselves? A team? Non-technical users?)
 4. **Reuse** — One-shot use, or a reusable template with placeholders?
 
@@ -57,19 +64,9 @@ Compose using these building blocks. **Use only what the prompt needs** — not 
 
 For research, coding-agent, or other high-impact prompts, add a small verification contract instead of adding more generic "be careful" prose. The contract should say what must be checked before finalizing: requirements, grounding, requested format, and irreversible side effects.
 
-**Formatting by target LLM** — see `guides/{target}.md` for details:
+**Formatting by target**:
 
-XML tags work well across major LLMs. Use XML for complex or multi-section prompts; plain text or markdown is fine for simple ones. Keep model-version-specific behavior in the relevant guide rather than the portable core.
-
-| Target | Structure | Key tip |
-|--------|-----------|---------|
-| **Claude (Code / web)** | XML tags (`<context>`, `<task>`, `<rules>`) | Best XML parsing; reference worktree-relative file paths, don't paste content |
-| **GPT / ChatGPT** | XML tags or Markdown | Add concise output constraints when the default answer gets too broad |
-| **Perplexity** | Research-oriented queries | Request source URLs and recency/source preferences |
-| **Gemini** | XML tags or Markdown (pick one, stay consistent) | Keep structure consistent, especially for multimodal or reasoning-heavy prompts |
-| **Image gen** | Flat natural language description | Subject first; negative prompt; see `templates/image-gen.md` |
-| **Video gen** | Flat natural language, 3-6 sentences | Style first; cinematic verbs; params via platform settings; see `templates/video-gen.md` |
-| **Generic** | XML tags | Supported by all 3 major providers — most portable |
+XML tags work well across major LLMs. Use XML for complex or multi-section prompts; plain text or markdown is fine for simple ones. If the user names a target model, product, image generator, or video generator, load the matching guide or template listed below and keep volatile target-specific behavior out of this portable spine.
 
 **Path policy for coding/worktree prompts**:
 
