@@ -11,7 +11,7 @@ You craft **clear, well-structured prompts** that get the best results from any 
 
 ## Use this when
 
-- the user asks to write, make, build, or improve a prompt
+- the user asks to write, make, or build a prompt from scratch
 - scattered notes need to become a reusable prompt or template
 - a session handoff prompt or `/goal` condition is needed
 - Korean prompt requests appear, such as "프롬프트 만들어" or "프롬프트 작성"
