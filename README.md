@@ -49,7 +49,7 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 
 | Skill | Use when | Side effect |
 |---|---|---|
-| `craft-prompt` | a new prompt is needed from scratch for any LLM (Claude, GPT, Gemini, Perplexity, etc.) | returns copy-pasteable text |
+| `craft-prompt` | a new prompt is needed from scratch for any LLM or agent interface | returns copy-pasteable text |
 | `craft-skill-spec` | a new skill needs a concrete spec based on current CraftKit skill-radar judgments before writing `SKILL.md` | returns a spec; reads radar references |
 | `craft-harness` | a project-specific agent harness needs to be built, repaired, synced, pruned, or evolved across Codex and Claude Code | may inspect and edit repo-local harness files; gates risky surfaces |
 | `craft-critique` | an existing prompt or skill needs a read-only review before editing or shipping | surfaces strengths, prioritized findings, recommendations, and a rewrite plan without editing |
@@ -59,6 +59,8 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt | writes handoff files and may copy to clipboard |
 
 When two skills could trigger, choose the least invasive one that answers the request: review-only wording goes to `craft-critique`; apply/fix/improve wording goes to `craft-tune`; repeated measurable failures go to `craft-autoresearch`; prior-art questions go to `craft-survey`; repo harness placement and Codex/Claude setup work goes to `craft-harness`.
+
+Terminology note: `craft-harness` means repo-local agent guidance and provider surfaces. `craft-autoresearch` uses an **eval runner** for replaying test inputs and scoring outputs. Do not use "harness" for both.
 
 Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML frontmatter, loadable as a Claude Code skill or copy-pasteable into any other agent.
 
@@ -72,7 +74,7 @@ Six of the eight skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-
 | `craft-critique` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-critique/<date-slug>/` | re-run on fresh failure examples after major wording changes |
 | `craft-tune` | autoresearch pass completed, then reshaped into self-converging loop | commit body + `~/.craftkit/autoresearch/craft-tune/<date-slug>/` | next pass should test the newer loop contract |
 | `craft-survey` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-survey/<date-slug>/` | example must keep proving provenance and edit-target rules |
-| `craft-autoresearch` | reflexive autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-autoresearch/<date-slug>/` | examples must stay synchronized with the contract fields |
+| `craft-autoresearch` | reflexive autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-autoresearch/<date-slug>/` | examples must stay synchronized with the eval-runner contract fields |
 | `craft-skill-spec` | not yet autoresearched | none yet | first pass should test radar-dependent standalone behavior |
 | `craft-harness` | not yet autoresearched | none yet | first pass should test lifecycle modes, Codex/Claude target separation, and risk gates |
 | `craft-handoff` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-handoff/2026-05-26-goal-pressure/` | replay against real agent outputs to catch wording failures beyond deterministic checks |
@@ -111,6 +113,18 @@ For evolving skill-authoring guidance, the `craft-skill-spec` skill carries its 
 - Anything growing past that should move examples, platform notes, maintenance commands, or edge-case catalogs into `references/`.
 
 The spine should still be understandable alone: purpose, inputs, steps, output contract, one compact example, limitations, and links to on-demand references. References carry depth; the spine carries the operating path.
+
+## Routing checks
+
+Use these lightweight checks after editing skill descriptions or routing boundaries. They are manual contract checks, not a new runtime.
+
+| Prompt | Expected skill | Failure signal |
+|---|---|---|
+| "review this skill, don't edit" | `craft-critique` | edits the artifact or routes to `craft-tune` |
+| "improve this skill and apply changes" | `craft-tune` | stops at read-only findings |
+| "run measured iterations on failures" | `craft-autoresearch` | describes repo harness setup instead of an eval runner |
+| "set up Codex + Claude repo guidance" | `craft-harness` | installs or enables hooks/MCP/plugins without an approval gate |
+| "write a prompt for GPT" | `craft-prompt` | refuses to deliver a copy-pasteable prompt |
 
 ## Use in other agents
 

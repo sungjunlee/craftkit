@@ -11,7 +11,7 @@ Run an autonomous critique-and-edit loop over an existing prompt or skill until 
 
 A working artifact rarely converges in one pass: diagnosis surfaces issues, edits introduce new ones, and the next round of diagnosis depends on the revised text rather than the original. craft-tune keeps cycling on its own: re-critique against the current state, apply minimal-diff edits, re-critique again. The loop terminates when the critique itself has nothing significant left to say (the Self-LGTM condition) — at which point the user gets the final artifact and the round-by-round trail of how it got there.
 
-This is *not* eval-driven (no scored rubric, no run harness — that's `craft-autoresearch`). It is judgment-driven: the same critique discipline that produced a trusted finding in Round 1 also decides when to stop in Round N.
+This is *not* eval-driven (no scored rubric, no eval runner — that's `craft-autoresearch`). It is judgment-driven: the same critique discipline that produced a trusted finding in Round 1 also decides when to stop in Round N.
 
 ## Use this when
 
