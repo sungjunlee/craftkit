@@ -1,17 +1,17 @@
 ---
 name: craft-harness
-description: Build, repair, sync, prune, and evolve a project-specific agent harness for Codex and Claude Code. Use when repo guidance, AGENTS.md/CLAUDE.md, local skills, commands, hooks, subagents, MCP/integration notes, plugins, or adoption choices need a repo-local plan or small edits.
+description: Decide placement and propose gated repo-local agent harness changes for Codex and Claude Code. Use when repo guidance, AGENTS.md/CLAUDE.md, local skills, commands, hooks, subagents, MCP/integration notes, plugins, or adoption choices need cleanup, sync, pruning, or a small change plan.
 ---
 
 # craft-harness
 
 ## Purpose
 
-Build and maintain the agent harness around a real repo.
+Decide where agent guidance belongs in a real repo and propose the smallest useful harness change.
 
-A harness is the set of files and installed capabilities that help coding agents work well in a project: root context, local context/rules, skills, commands, scripts, hooks, subagents, MCP/integrations, plugins, and external assets worth adopting.
+A harness is the repo-local guidance and supporting surfaces that help coding agents work well in a project: root context, local context/rules, skills, commands, scripts, and approval-gated candidates such as hooks, subagents, MCP/integrations, plugins, or external assets worth adopting.
 
-This skill is not only for first setup. Use it across the harness lifecycle: bootstrap, task-fit, repair, sync, adopt, prune, and maintain.
+This skill is not a "build every surface" workflow. Its job is placement judgment: inspect what exists, decide what should stay small, name what should change, and gate anything executable or global.
 
 ## Non-goals
 
@@ -19,12 +19,13 @@ This skill is not only for first setup. Use it across the harness lifecycle: boo
 - Not an installer or plugin publisher.
 - Not a runtime framework.
 - Not a replacement for the user's agent settings UI or marketplace flow.
-- Default output is a repo-local plan, small repo-local markdown/skill edits, or reviewable asset recipes.
+- Not a full implementation pass for every possible harness surface.
+- Default output is a repo-local plan, small markdown/skill edits, or reviewable asset recipes.
 
 ## How it differs from related skills
 
 - `craft-skill-spec` designs one reusable artifact: a skill, skill suite, subagent, or plugin.
-- `craft-harness` decides what a repo's agent harness needs, where each piece belongs, and what to create, adopt, update, defer, or remove.
+- `craft-harness` decides what a repo's agent harness needs, where each piece belongs, and what to keep, update, defer, prune, or hand off to a narrower skill.
 - `craft-survey` studies prior art. `craft-harness` uses prior-art search as one step when buy-vs-build matters.
 - `craft-critique` reviews a prompt or skill without editing. `craft-harness` may use critique-style checks on the harness plan before applying changes.
 
@@ -71,7 +72,7 @@ Choose one primary mode and mention secondary modes when useful:
 1. State the harness mode and primary target. If tradeoffs conflict, prefer the user's current primary agent; otherwise prefer Codex while keeping Claude Code support explicit.
 2. Inventory the existing harness. Mark each relevant file or installed surface as `keep`, `update`, `missing`, `risky`, or `prune`.
 3. Name the repeated agent jobs: navigation, implementation, review, verification, release, incident work, research, handoff, backlog work, external-tool work, or project onboarding.
-4. Choose placement for each need:
+4. Choose the smallest placement for each need. Do not fill every category; use `no change` when the existing harness is enough:
    - root context for stable rules every task needs
    - local context or path-scoped rules for directory-specific facts
    - skill for reusable judgment workflow
@@ -83,9 +84,10 @@ Choose one primary mode and mention secondary modes when useful:
    - plugin for installable multi-surface packaging
    - external adoption when a maintained asset fits better than local invention
    - no change when the existing harness is enough
-5. Run buy-vs-build when a new skill, plugin, MCP server, hook, or integration is plausible. Search or explicitly say why search was skipped. Use `adopt`, `fork/adapt`, `build local`, or `defer`.
-6. Produce a patch plan before high-risk edits. Low-risk repo-local markdown and skill drafts may be edited when the user asked to make the change.
-7. Verify the harness with prompts or commands that exercise the intended behavior, not just static file syntax.
+5. Hand off detailed artifact design when needed. Use `craft-skill-spec` for a new skill/subagent/plugin body instead of fully designing it inline.
+6. Run buy-vs-build when a new skill, plugin, MCP server, hook, or integration is plausible. Search or explicitly say why search was skipped. Use `adopt`, `fork/adapt`, `build local`, or `defer`.
+7. Produce a patch plan before high-risk edits. Low-risk repo-local markdown and skill drafts may be edited when the user asked to make the change.
+8. Verify the harness with prompts or commands that exercise the intended behavior, not just static file syntax.
 
 ## Risk gates
 
@@ -115,7 +117,7 @@ This skill may propose high-risk surfaces, but it does not install or enable the
 
 ## Output format
 
-### Harness mode
+### Harness thesis
 - mode
 - primary target
 - why this mode fits
@@ -137,7 +139,7 @@ Include when a new skill, plugin, MCP server, hook, or integration is plausible.
 
 For each candidate, name source, decision (`adopt`, `fork/adapt`, `build local`, or `defer`), trust notes, why it fits or fails, and rollback path. Trust notes cover provenance, execution, permissions, freshness, and portability.
 
-### Proposed edits
+### Proposed changes
 Table with path/target, action, risk gate (`none`, `approval required`, or `defer`), and rationale.
 
 For hook rows, also include:
@@ -182,6 +184,7 @@ Pass signal: the output inventories existing harness files first, separates prov
 ## Failure modes
 
 - over-generating every possible harness surface instead of solving the repeated job
+- designing full skill, subagent, plugin, hook, and MCP implementations in one pass
 - treating Codex and Claude paths as a mechanical one-to-one migration
 - putting long workflow procedures into `AGENTS.md` or `CLAUDE.md`
 - skipping external search and rebuilding a maintained asset

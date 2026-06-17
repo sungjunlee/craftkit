@@ -124,12 +124,29 @@ function checkTerminology() {
   }
 }
 
-function checkReadmePath() {
+function checkDocumentationPaths() {
   const text = readText(path.join(root, "README.md"));
+  const statusPath = path.join(root, "docs/status.md");
 
-  for (const phrase of ["## 30-second path", "npm run verify"]) {
+  for (const phrase of ["## 30-second path", "docs/status.md", "npm run verify"]) {
     if (!text.includes(phrase)) {
       fail(`README.md must include ${phrase}`);
+    }
+  }
+
+  if (text.includes("~/.craftkit/autoresearch/")) {
+    fail("README.md must keep maintainer-local autoresearch paths in docs/status.md");
+  }
+
+  if (!fs.existsSync(statusPath)) {
+    fail("docs/status.md must exist as the public quality evidence index");
+    return;
+  }
+
+  const statusText = readText(statusPath);
+  for (const phrase of ["Public evidence", "Maintainer-local evidence", "npm run verify"]) {
+    if (!statusText.includes(phrase)) {
+      fail(`docs/status.md must include ${phrase}`);
     }
   }
 }
@@ -149,7 +166,7 @@ checkJsonFiles();
 checkPackageBoundary();
 checkSkillFiles();
 checkTerminology();
-checkReadmePath();
+checkDocumentationPaths();
 checkPackDryRun();
 
 if (failures.length > 0) {

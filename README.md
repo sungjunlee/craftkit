@@ -69,7 +69,7 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 |---|---|---|
 | `craft-prompt` | a new prompt is needed from scratch for any LLM or agent interface | returns copy-pasteable text |
 | `craft-skill-spec` | a new skill needs a concrete spec based on current CraftKit skill-radar judgments before writing `SKILL.md` | returns a spec; reads radar references |
-| `craft-harness` | a project-specific agent harness needs to be built, repaired, synced, pruned, or evolved across Codex and Claude Code | may inspect and edit repo-local harness files; gates risky surfaces |
+| `craft-harness` | a repo's agent guidance needs placement decisions, cleanup, sync, or a gated change plan across Codex and Claude Code | returns a repo-local plan or small markdown/skill edits; gates risky surfaces |
 | `craft-critique` | an existing prompt or skill needs a read-only review before editing or shipping | surfaces strengths, prioritized findings, recommendations, and a rewrite plan without editing |
 | `craft-tune` | an existing prompt or skill needs sharpening applied | runs an autonomous review-and-fix loop and edits the artifact |
 | `craft-survey` | a new skill should be grounded in prior art before drafting | returns read-only recommendations |
@@ -84,18 +84,7 @@ Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML 
 
 ## Maintainer status
 
-Six of the eight skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-tune` was reshaped to run an autonomous self-converging review-and-fix loop; the read-only diagnose role stays with the separate `craft-critique` skill. The next autoresearch pass will run against this shape. `craft-skill-spec` and `craft-harness` are new and have not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
-
-| Skill | Eval status | Score source | Known gap |
-|---|---|---|---|
-| `craft-prompt` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-prompt/<date-slug>/` | keep volatile provider guidance in guides |
-| `craft-critique` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-critique/<date-slug>/` | re-run on fresh failure examples after major wording changes |
-| `craft-tune` | autoresearch pass completed, then reshaped into self-converging loop | commit body + `~/.craftkit/autoresearch/craft-tune/<date-slug>/` | next pass should test the newer loop contract |
-| `craft-survey` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-survey/<date-slug>/` | example must keep proving provenance and edit-target rules |
-| `craft-autoresearch` | reflexive autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-autoresearch/<date-slug>/` | examples must stay synchronized with the eval-runner contract fields |
-| `craft-skill-spec` | not yet autoresearched | none yet | first pass should test radar-dependent standalone behavior |
-| `craft-harness` | not yet autoresearched | none yet | first pass should test lifecycle modes, Codex/Claude target separation, and risk gates |
-| `craft-handoff` | autoresearch pass completed | commit body + `~/.craftkit/autoresearch/craft-handoff/2026-05-26-goal-pressure/` | replay against real agent outputs to catch wording failures beyond deterministic checks |
+Six of the eight skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-skill-spec` and `craft-harness` are newer and have not yet been through an autoresearch pass. Publicly reproducible status and local-maintainer evidence boundaries are tracked in [`docs/status.md`](docs/status.md).
 
 ## What belongs in CraftKit
 
@@ -162,7 +151,7 @@ Run the repo-local smoke check before release or packaging changes:
 npm run verify
 ```
 
-It checks JSON syntax, skill frontmatter, `SKILL.md` line budgets, terminology leaks, and `npm pack --dry-run`.
+It checks JSON syntax, package boundaries, skill frontmatter, `SKILL.md` line budgets, terminology leaks, required README/status paths, and `npm pack --dry-run`.
 
 ## Prior art
 
