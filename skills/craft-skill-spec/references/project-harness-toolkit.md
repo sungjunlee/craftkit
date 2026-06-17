@@ -2,7 +2,7 @@
 
 ## Summary
 
-Use this reference when a user wants a project- or task-specific agent harness, not just a new skill. A harness is the set of repo files and installed capabilities that make agents work well in a real project: root context, local context, skills, commands, hooks, subagents, MCP/integrations, and plugin/adoption choices.
+Use this reference when a user wants a project- or task-specific agent harness, not just a new skill. A harness is the repo-local guidance and supporting surfaces that make agents work well in a real project: root context, local context, skills, commands, scripts, and approval-gated candidates such as hooks, subagents, MCP/integrations, plugins, or adoption choices.
 
 This is the design seed that produced `craft-harness`. `craft-skill-spec` can still use this reference to decide whether a project-harness request should stay a placement decision, hand off to `craft-harness`, or become a detailed skill/subagent/plugin spec.
 
@@ -10,7 +10,7 @@ This is the design seed that produced `craft-harness`. `craft-skill-spec` can st
 
 `craft-skill-spec` designs one reusable artifact: a skill, skill suite, subagent, or plugin.
 
-`craft-harness` should design or update a project harness around a real repo. It may recommend several artifacts at once, but it should not fully spec every part inline. When a local skill, subagent, or plugin needs detailed design, hand that part back to `craft-skill-spec`.
+`craft-harness` should decide placement and propose gated repo-local harness changes around a real repo. It may recommend several artifacts at once, but it should not fully spec every part inline. When a local skill, subagent, or plugin needs detailed design, hand that part back to `craft-skill-spec`.
 
 Good `craft-harness` output:
 
@@ -29,7 +29,7 @@ Bad `craft-harness` output:
 
 ## Artifact thesis
 
-- job: inspect a repo and task, then build, repair, sync, prune, or evolve project-specific harness changes that help Codex and Claude Code work better without fighting the user's existing setup
+- job: inspect a repo and task, decide the smallest useful placement for project-specific harness changes, and keep Codex and Claude Code aligned without fighting the user's existing setup
 - non-goals: agent-team architecture factory, full plugin packaging by default, unmanaged hook installation, broad repo audit unrelated to agent workflow
 - target users or agents: maintainers who alternate between Codex and Claude Code and want project-specific skills, commands, hooks, subagents, context files, and integrations to stay aligned
 - success condition: output names what to create, adopt, update, or defer; separates Codex and Claude target files; and keeps high-risk changes behind explicit gates
@@ -73,7 +73,7 @@ paths and load/trust differences.
    - inspect Claude official/community/plugin marketplaces when relevant
    - rate candidates on fit, trust, maintenance, portability, install cost, and security posture
 5. Produce a patch plan before editing. Apply only approved changes for hooks, subagents, plugins, MCP, or global/user-scope files.
-6. Verify with eval prompts that exercise the harness, not just static syntax.
+6. Verify with eval prompts or commands that exercise the chosen placement, not just static syntax.
 
 ## Output seed
 
