@@ -10,9 +10,27 @@ Prompt assets and agent skills often become fragmented, provider-specific, and h
 
 CraftKit is an artifact-quality toolkit: it helps author, critique, tune, and carry forward prompts and skills. It is not a general coding-agent workflow suite, project-management layer, deployment system, or runtime framework. When a workflow needs those things, CraftKit should produce clear files, specs, or handoffs that another tool can use rather than becoming the tool itself.
 
+## 30-second path
+
+Start with the smallest skill that does the job:
+
+| If you need to... | Use |
+|---|---|
+| write a new prompt or reusable prompt template | `craft-prompt` |
+| review an existing prompt or skill without changing it | `craft-critique` |
+| improve an existing prompt or skill in place | `craft-tune` |
+
+Reach for the other skills when the job gets more specific:
+
+- `craft-survey` — study prior art before drafting.
+- `craft-autoresearch` — run measured iterations with test inputs and an eval runner.
+- `craft-skill-spec` — decide the shape of a new skill-like artifact before writing it.
+- `craft-harness` — plan or repair repo-local agent guidance and related surfaces.
+- `craft-handoff` — end a long session with a durable doc plus a resume prompt.
+
 ## Install
 
-All eight skills install as Agent Skills and are invocable in Claude Code through slash-style skill discovery. They are also plain `SKILL.md` files that can be used by Codex and other compatible agents.
+CraftKit installs as Agent Skills for Claude Code, and each skill is also a plain `SKILL.md` file that can be used by Codex and other compatible agents.
 
 ### Via npx skills
 
@@ -64,7 +82,7 @@ Terminology note: `craft-harness` means repo-local agent guidance and provider s
 
 Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML frontmatter, loadable as a Claude Code skill or copy-pasteable into any other agent.
 
-## Status
+## Maintainer status
 
 Six of the eight skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-tune` was reshaped to run an autonomous self-converging review-and-fix loop; the read-only diagnose role stays with the separate `craft-critique` skill. The next autoresearch pass will run against this shape. `craft-skill-spec` and `craft-harness` are new and have not yet been through an autoresearch pass. Per-session baseline → kept-state scores and mutation rationale live in the commit bodies. Run artifacts are preserved at `~/.craftkit/autoresearch/<skill>/<date-slug>/` outside the repo.
 
@@ -135,6 +153,16 @@ CraftKit skills are plain markdown with YAML frontmatter, so they port easily:
 3. Keep the frontmatter `description` line as context so the agent knows when to apply the skill.
 
 See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a walk-through of diagnosing and tuning an existing prompt, then optionally running a short improvement loop.
+
+## Verify
+
+Run the repo-local smoke check before release or packaging changes:
+
+```bash
+npm run verify
+```
+
+It checks JSON syntax, skill frontmatter, `SKILL.md` line budgets, terminology leaks, and `npm pack --dry-run`.
 
 ## Prior art
 

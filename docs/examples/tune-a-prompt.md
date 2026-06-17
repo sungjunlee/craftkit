@@ -74,7 +74,7 @@ Autoresearch is an eval-driven loop, so it needs three things you did not need f
 
 1. **A small set of test inputs** — three real code snippets the prompt should review.
 2. **Eval criteria** — for this prompt, e.g. *exactly 3 sections present*, *Top issues ≤ 5*, *every issue cites file:line*, plus one comparative eval: *is this review more actionable than the baseline?*
-3. **A run harness** — the exact command that runs the prompt on each input and captures outputs.
+3. **An eval runner** — the exact command that runs the prompt on each input and captures outputs.
 
 With those in place, autoresearch establishes a baseline score, then runs mutation experiments: one bounded change per iteration, rescored, KEEP if it helped, DISCARD otherwise. It stops when the stop condition is hit (e.g. 95% binary pass rate sustained over three kept experiments) or the budget runs out. See `skills/craft-autoresearch/SKILL.md` for the full loop and `references/eval-guide.md` / `references/mutation-guide.md` for the deep detail.
 
@@ -89,4 +89,4 @@ If several teams in the org already have code-review prompts, run `craft-survey`
 - **Critique to see, tune to fix.** `craft-critique` is read-only — it returns findings and a plan; `craft-tune` runs the autonomous review-and-fix loop and returns the revised artifact. Pick by whether you want the file edited.
 - **Tune with minimal diffs.** The final prompt is recognizable as an evolution of the original, not a replacement. Every Changelog entry traces back to a Diagnostics item.
 - **Survey is opt-in prior art.** It grounds the design when comparable assets exist.
-- **Autoresearch is opt-in measurement.** It pays off when you have evals and a harness; for a one-off prompt, it is overhead.
+- **Autoresearch is opt-in measurement.** It pays off when you have evals and an eval runner; for a one-off prompt, it is overhead.

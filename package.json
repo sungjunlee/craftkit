@@ -5,6 +5,17 @@
   "license": "MIT",
   "author": "Sungjun Lee",
   "type": "module",
+  "scripts": {
+    "verify": "node scripts/verify.mjs"
+  },
+  "files": [
+    ".claude-plugin/",
+    "AGENTS.md",
+    "CHANGELOG.md",
+    "docs/",
+    "scripts/",
+    "skills/"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/sungjunlee/craftkit.git"
