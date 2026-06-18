@@ -6,6 +6,7 @@
   "author": "Sungjun Lee",
   "type": "module",
   "scripts": {
+    "test": "node --test",
     "verify": "node scripts/verify.mjs"
   },
   "files": [
