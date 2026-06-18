@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 
 const root = process.cwd();
 const failures = [];
+const skipPackDryRunForTests = process.env.CRAFTKIT_VERIFY_TEST_SKIP_PACK_DRY_RUN === "1";
 
 function fail(message) {
   failures.push(message);
@@ -156,6 +157,10 @@ function checkDocumentationPaths() {
 }
 
 function checkPackDryRun() {
+  if (skipPackDryRunForTests) {
+    return;
+  }
+
   const result = spawnSync("npm", ["pack", "--dry-run", "--json"], {
     cwd: root,
     encoding: "utf8",

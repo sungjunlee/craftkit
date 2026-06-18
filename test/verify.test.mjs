@@ -62,19 +62,25 @@ function createFixture() {
   return root;
 }
 
-function runVerify(root) {
+function runVerify(root, options = {}) {
+  const env = { ...process.env };
+  if (options.skipPackDryRun) {
+    env.CRAFTKIT_VERIFY_TEST_SKIP_PACK_DRY_RUN = "1";
+  }
+
   return spawnSync(process.execPath, [verifyScript], {
     cwd: root,
     encoding: "utf8",
+    env,
   });
 }
 
-function expectVerifyFailure(name, mutate, expectedMessage) {
+function expectVerifyFailure(name, mutate, expectedMessage, options = { skipPackDryRun: true }) {
   test(name, () => {
     const root = createFixture();
     mutate(root);
 
-    const result = runVerify(root);
+    const result = runVerify(root, options);
 
     assert.notEqual(result.status, 0);
     assert.match(`${result.stdout}\n${result.stderr}`, expectedMessage);
@@ -151,11 +157,11 @@ expectVerifyFailure("fails when docs status is missing required evidence text", 
 
 expectVerifyFailure("fails when npm package misses a required file", (root) => {
   removeFile(root, "AGENTS.md");
-}, /npm package is missing AGENTS\.md/);
+}, /npm package is missing AGENTS\.md/, { skipPackDryRun: false });
 
 expectVerifyFailure("fails when npm package includes forbidden local test artifacts", (root) => {
   updatePackageJson(root, (packageJson) => {
     packageJson.files.push("test/");
   });
   writeFile(root, "test/generated-output.txt", "not for package\n");
-}, /npm package must not include test\/generated-output\.txt/);
+}, /npm package must not include test\/generated-output\.txt/, { skipPackDryRun: false });
