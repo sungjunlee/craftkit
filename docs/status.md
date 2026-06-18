@@ -18,7 +18,7 @@ npm run verify
 The verify command checks:
 
 - JSON syntax across checked-in JSON files
-- `package.json` package boundary and `scripts.verify`
+- `package.json` package boundary plus `scripts.verify` and `scripts.test`
 - every `skills/*/SKILL.md` frontmatter block
 - every `SKILL.md` against the 500-line hard ceiling
 - known terminology leaks, such as legacy harness wording in autoresearch docs
@@ -34,8 +34,8 @@ The verify command checks:
 | `craft-tune` | `npm run verify` checks frontmatter and spine budget | autoresearch pass artifacts under `~/.craftkit/autoresearch/craft-tune/` and commit bodies | next pass should test the newer self-converging loop |
 | `craft-survey` | `npm run verify` checks frontmatter and spine budget | autoresearch pass artifacts under `~/.craftkit/autoresearch/craft-survey/` and commit bodies | example must keep proving provenance and edit-target rules |
 | `craft-autoresearch` | `npm run verify` checks terminology, frontmatter, and spine budget | reflexive autoresearch pass artifacts under `~/.craftkit/autoresearch/craft-autoresearch/` and commit bodies | examples must stay synchronized with the eval-runner contract fields |
-| `craft-skill-spec` | `npm run verify` checks frontmatter and spine budget | none yet | first pass should test radar-dependent standalone behavior |
-| `craft-harness` | `npm run verify` checks frontmatter and spine budget | none yet | first pass should test placement planning, Codex/Claude target separation, and risk gates |
+| `craft-skill-spec` | `npm run verify` checks frontmatter and spine budget | contract evidence pass at `~/.craftkit/autoresearch/craft-skill-spec/2026-06-18-first-evidence-pass/` | replay after the next radar refresh against real drafted specs |
+| `craft-harness` | `npm run verify` checks frontmatter and spine budget | contract evidence pass at `~/.craftkit/autoresearch/craft-harness/2026-06-18-first-evidence-pass/` | replay after the next substantial wording change against real agent outputs |
 | `craft-handoff` | `npm run verify` checks frontmatter and spine budget | autoresearch pass artifacts under `~/.craftkit/autoresearch/craft-handoff/` and commit bodies | replay against real agent outputs beyond deterministic checks |
 
 ## Maintainer-local evidence
