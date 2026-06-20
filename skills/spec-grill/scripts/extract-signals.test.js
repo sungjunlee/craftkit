@@ -749,6 +749,19 @@ description: Mirror issues.
     assert.match(result.capabilities[0].candidate_goal, /Fill in via grill/);
   });
 
+  it("groups single commit evidence under normalized directory candidates", () => {
+    mkdir(repo, "src/Auth Service");
+    const result = extractSignals({
+      repoRoot: repo,
+      exec: () => "feat(auth-service): initial scaffold",
+    });
+
+    const candidate = result.capabilities.find((c) => c.name === "auth-service");
+    assert.ok(candidate);
+    assert.ok(candidate.evidence.source_dirs.includes("src/Auth Service/"));
+    assert.ok(candidate.evidence.commits.includes("commit-scope:auth-service (1)"));
+  });
+
   it("large feature-first repo: reports raw signals without treating feature count as final spec", () => {
     write(repo, "README.md", `# Tamgu Note
 

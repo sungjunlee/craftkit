@@ -742,6 +742,7 @@ function extractSignals({
   ].filter(([, content]) => content !== null).map(([name]) => name);
   const sourceRoot = detectSourceRoot(repoRoot, deps);
   const dirNames = listCapabilityCandidates(sourceRoot, deps);
+  const normalizedDirNames = new Set(dirNames.map((name) => slugifyCandidate(name)).filter(Boolean));
   const commitMessages = getRecentCommitMessages(repoRoot, commitLimit, deps);
   const scopeCounts = extractCommitScopes(commitMessages);
   const charterObjectives = readCharterObjectives(repoRoot, deps);
@@ -767,7 +768,7 @@ function extractSignals({
     if (sourceRoot) addEvidence(groupedEvidence, name, "source_dirs", `${sourceRoot.name}/${name}/`);
   }
   for (const [scope, count] of scopeCounts.entries()) {
-    if (count >= 2 || dirNames.includes(scope)) {
+    if (count >= 2 || normalizedDirNames.has(scope)) {
       addEvidence(groupedEvidence, scope, "commits", `commit-scope:${scope} (${count})`);
     }
   }

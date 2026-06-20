@@ -35,7 +35,7 @@ Capability slugs are strict routing handles used by sprint `component:` frontmat
 
 Resolve helper scripts from the installed `spec-grill` skill directory, not from the target repo. In a source checkout, that means the local `scripts/` directory beside this `SKILL.md`. Always pass the target repo explicitly (`--repo-root <target-repo>`) so helpers do not inspect the skill directory by accident.
 
-On a brownfield repo with no `spec/capabilities.md`, or when candidate evidence is requested, run `extract-signals.js --repo-root <target-repo> --json` first. The script reports raw capability evidence. It never writes `spec/capabilities.md`; admission, merging, splitting, and naming belong to this skill.
+On a brownfield repo with no `spec/capabilities.md`, or when candidate evidence is requested, run `node <skill-dir>/scripts/extract-signals.js --repo-root <target-repo> --json` first. The script reports raw capability evidence. It never writes `spec/capabilities.md`; admission, merging, splitting, and naming belong to this skill.
 
 ### Completion Contract
 
