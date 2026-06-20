@@ -38,6 +38,7 @@ describe("parseArgs", () => {
 
   it("errors on missing value for --path", () => {
     assert.match(parseArgs(["--path"]).error, /Missing value for --path/);
+    assert.match(parseArgs(["--path", "--json"]).error, /Missing value for --path/);
   });
 });
 
@@ -111,6 +112,7 @@ describe("findLongDecisionsRationale", () => {
   it("flags rows whose rationale exceeds 140 chars", () => {
     const longText = "x".repeat(180);
     const body = [
+      "## Decisions",
       "| date       | decision | rationale | supersedes |",
       "| ---------- | -------- | --------- | ---------- |",
       `| 2026-05-01 | short    | ${longText} | — |`,
@@ -123,6 +125,20 @@ describe("findLongDecisionsRationale", () => {
 
   it("ignores header and separator rows", () => {
     const body = [
+      "## Decisions",
+      "| date | decision | rationale | supersedes |",
+      "| ---- | -------- | --------- | ---------- |",
+    ].join("\n");
+    assert.deepEqual(findLongDecisionsRationale(body), []);
+  });
+
+  it("ignores tables outside the Decisions section", () => {
+    const longText = "x".repeat(180);
+    const body = [
+      "## Objectives",
+      "| date | decision | rationale | supersedes |",
+      `| 2026-05-01 | not a decision | ${longText} | — |`,
+      "## Decisions",
       "| date | decision | rationale | supersedes |",
       "| ---- | -------- | --------- | ---------- |",
     ].join("\n");
@@ -180,6 +196,12 @@ describe("analyze", () => {
     const result = analyze(content);
     assert.equal(result.exceeded, true);
     assert.equal(result.overWords, true);
+  });
+
+  it("rounds estimated reading time up at the boundary", () => {
+    const content = `# Charter\n\n${"word ".repeat(1001)}`;
+    const result = analyze(content);
+    assert.equal(result.readMinutes, 6);
   });
 
   it("flags overline charters", () => {

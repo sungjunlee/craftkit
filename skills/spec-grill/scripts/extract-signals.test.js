@@ -76,6 +76,12 @@ describe("parseArgs", () => {
     assert.match(parseArgs(["--commit-limit", "abc"]).error, /positive integer/);
   });
 
+  it("errors on zero or missing option values", () => {
+    assert.match(parseArgs(["--commit-limit", "0"]).error, /positive integer/);
+    assert.match(parseArgs(["--commit-limit=0"]).error, /positive integer/);
+    assert.match(parseArgs(["--repo-root", "--json"]).error, /Missing value/);
+  });
+
   it("errors on missing --repo-root value", () => {
     assert.match(parseArgs(["--repo-root"]).error, /Missing value/);
   });
@@ -128,12 +134,15 @@ describe("extractCommitScopes", () => {
       "fix(auth): retry on token expiry",
       "docs(auth): clarify flow",
       "chore(api): bump deps",
+      "feat(api/routes): add nested route",
+      "fix(api routes): normalize spaced scope",
       "feat: scopeless commit",
       "feat(api,auth): combined scope",
     ];
     const scopes = extractCommitScopes(messages);
     assert.equal(scopes.get("auth"), 4);
     assert.equal(scopes.get("api"), 2);
+    assert.equal(scopes.get("api-routes"), 2);
   });
 
   it("returns empty map for an empty input", () => {
@@ -297,7 +306,10 @@ description: Create capability contracts.
     assert.ok(collectScriptCandidates(repo).some((c) => c.name === "extract-signals"));
     assert.ok(collectTestCandidates(repo).some((c) => c.name === "extract-signals"));
     assert.deepEqual(collectDocCandidates(repo), []);
-    assert.ok(collectDocCandidates(repo, {}, ["spec-system"]).some((c) => c.signal.includes("docs/spec-system-design.md")));
+    const docs = collectDocCandidates(repo, {}, ["spec-system", "spec-grill"]);
+    assert.ok(docs.some((c) => c.signal.includes("docs/spec-system-design.md")));
+    assert.ok(docs.some((c) => c.signal.includes("skills/spec-grill/references/capabilities.md")));
+    assert.ok(!docs.some((c) => c.signal.includes("skills/spec-grill/SKILL.md")));
   });
 
   it("collects folded YAML skill descriptions without leaking the block marker", () => {
@@ -372,6 +384,23 @@ describe("summarizeEvidence", () => {
     assert.equal(summary.admission_hint, "weak-single-source");
     assert.deepEqual(summary.blocking_missing_evidence, ["spec/system-map.md"]);
   });
+
+  it("does not treat a skill file plus its folder as enough support", () => {
+    const summary = summarizeEvidence({
+      system_map: [],
+      readme: [],
+      skill: ["skill:example (Example skill.)"],
+      scripts: [],
+      docs: [],
+      tests: [],
+      source_dirs: ["skills/example/"],
+      commits: [],
+    });
+
+    assert.equal(summary.evidence_class_count, 2);
+    assert.deepEqual(summary.evidence_classes, ["skill", "source_dirs"]);
+    assert.equal(summary.admission_hint, "weak-single-source");
+  });
 });
 
 describe("buildSignalAuthority", () => {
@@ -403,6 +432,22 @@ describe("buildSignalAuthority", () => {
     const charter = authority.find((entry) => entry.signal === "spec/charter.md");
     assert.equal(charter.authority, "product");
     assert.equal(charter.found, true);
+  });
+
+  it("labels repo-surface evidence independently from source roots", () => {
+    const authority = buildSignalAuthority({
+      readmeFound: false,
+      charterFound: false,
+      charterSource: "missing",
+      systemMapFound: false,
+      harnessFiles: [],
+      sourceRoot: null,
+      commitsScanned: 0,
+      repoSurfaceFound: true,
+    });
+
+    const surface = authority.find((entry) => entry.signal === "skill/script/doc/test surfaces");
+    assert.equal(surface.found, true);
   });
 });
 

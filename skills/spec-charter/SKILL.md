@@ -61,7 +61,7 @@ Absence is supported. Projects opt in by creating the file; other skills degrade
 | Tier | Sections | Mutation discipline | Rationale |
 |------|----------|---------------------|-----------|
 | **1 · Direction** | Problem, Approach, Non-Goals | Human-gated: propose -> confirm -> apply. Slowest-moving: the core that survives if scope shrinks. | A stable core is what makes the moving parts meaningful. |
-| **2 · Predicates** | Objectives | Status advance (`active` -> `validated`/`deferred`) requires **proof**. Adding/removing an objective is human-gated. | You cannot evolve the axis to declare victory; you must prove it. |
+| **2 · Predicates** | Objectives | Status advance to `validated` requires **proof**. Deferral requires a cited parking or scope-change rationale. Adding/removing an objective is human-gated. | You cannot evolve the axis to declare victory; you must prove it. |
 | **3 · History** | Decisions | **Append-only.** Never edit or delete a row; reverse via a new `supersedes` row. | Provenance is immutable. |
 
 This tiering prevents the axis from self-evolving into a rubber-stamp: direction changes are gated, objective status requires proof, and history is frozen.
@@ -100,7 +100,7 @@ First re-read `spec/charter.md`. If it is absent but root `CHARTER.md` exists, r
 Apply the 3-tier discipline:
 
 - Tier 1 plus objective add/remove: surface stale or weak items, challenge them, propose concrete diffs, confirm with the user, then apply. Do not rubber-stamp.
-- Tier 2 status advance: require proof for `active` -> `validated` or `deferred`; cite a merged PR, passing check, or relay run whose Done Criteria match the predicate. Without proof, refuse the advance and flag it.
+- Tier 2 status advance: require proof for `active` -> `validated`; cite a merged PR, passing check, or relay run whose Done Criteria match the predicate. For `active` -> `deferred`, require a cited parking or scope-change rationale. Without the required evidence or rationale, refuse the advance and flag it.
 - Tier 3 Decisions: append only. Never edit or delete an existing row; a reversal is a new row with `supersedes`.
 
 After applying an accepted amendment, bump `last_amended` to today and increment `revision`. Then run `check-size.js --path <target-repo>/spec/charter.md` from the installed skill's `scripts/` directory to confirm the 5-minute-read property still holds; collapse long `deferred` lists or oversized Decisions rationale if the script warns.
@@ -119,8 +119,8 @@ If reassess finds that `spec/system-map.md` is missing on a brownfield repo, rec
 
 Dispatch contract:
 
-1. Resolve helper scripts from the installed dev-backlog skill directory; if unavailable, report **Missing Evidence**.
-2. Start with bounded evidence: `capabilities-doctor.js --json`, `component-lint.js --json`, named charter, system-map, or capability sections, the active sprint, and at most the latest five completed sprint files.
+1. Start with bounded file evidence: named charter, system-map, or capability sections, the active sprint when present, and at most the latest five completed sprint files.
+2. Use repo-local helper scripts such as `capabilities-doctor.js --json` or `component-lint.js --json` only when they are present in the target repo. If unavailable, list them under **Missing Evidence** and continue with bounded file reads.
 3. Emit these report sections: **Evidence**, **No Change**, **System Map Candidates**, **Grill Candidates**, **Amend Candidates**, **Learning Actions**, **Missing Evidence**, **Recommended Next Step**.
 4. Use `references/reassess.md` as the source of truth for evidence order, report shape, recommendation rules, Learning Actions, and stale-spec failure modes.
 

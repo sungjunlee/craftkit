@@ -29,7 +29,7 @@ Non-Goals:
 
 ## Tier 2 Proof Gate
 
-Objective status advances are proof-gated. Advancing `active` to `validated` or `deferred` requires cited evidence that matches the objective predicate.
+Objective status advances are gated. Advancing `active` to `validated` requires cited evidence that matches the objective predicate. Advancing `active` to `deferred` requires a cited rationale for parking, scope reduction, or sequencing change.
 
 Acceptable proof includes:
 
@@ -37,7 +37,7 @@ Acceptable proof includes:
 - A passing check, test, or smoke run that demonstrates the predicate.
 - A relay run whose Done Criteria match the predicate and completed successfully.
 
-If proof is absent or does not match the predicate, refuse the status advance and flag the missing evidence. Do not weaken the objective so the proof appears sufficient.
+If proof is absent or does not match a `validated` predicate, refuse the status advance and flag the missing evidence. If deferral rationale is absent, refuse the deferral and ask what changed. Do not weaken the objective so the proof appears sufficient.
 
 Adding or removing objectives is human-gated, not proof-gated. Removed objective IDs are never reused.
 

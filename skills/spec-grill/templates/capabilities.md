@@ -53,6 +53,7 @@ Do not store issue-specific acceptance criteria, relay Done Criteria, scoring ru
 <!-- LEARN:END -->
 
 ### Decisions
+
 | date | decision | rationale | supersedes |
 | --- | --- | --- | --- |
 

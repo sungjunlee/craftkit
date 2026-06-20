@@ -41,7 +41,7 @@ export function parseArgs(args) {
     }
     if (arg === "--path") {
       const next = args[i + 1];
-      if (!next) return { ...options, error: `Missing value for --path. ${usage()}` };
+      if (!next || next.startsWith("-")) return { ...options, error: `Missing value for --path. ${usage()}` };
       options.charterPath = next;
       i += 1;
       continue;
@@ -94,8 +94,13 @@ export function findDeferredObjectives(content) {
 export function findLongDecisionsRationale(content) {
   const offenders = [];
   const lines = content.split("\n");
+  let inDecisions = false;
   for (const line of lines) {
-    if (!line.startsWith("|") || !line.includes("|")) continue;
+    if (line.startsWith("## ")) {
+      inDecisions = line.trim() === "## Decisions";
+      continue;
+    }
+    if (!inDecisions || !line.startsWith("|") || !line.includes("|")) continue;
     const cells = line.split("|").map((c) => c.trim());
     if (cells.length < 5) continue;
     const date = cells[1];
@@ -142,7 +147,7 @@ export function analyze(content) {
   const body = stripFrontmatter(content);
   const wordCount = countWords(body);
   const lineCount = countLines(content);
-  const readMinutes = Math.max(1, Math.round(wordCount / WORDS_PER_MINUTE));
+  const readMinutes = Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE));
   const deferredIds = findDeferredObjectives(body);
   const longRationale = findLongDecisionsRationale(body);
   const overWords = wordCount > WORD_LIMIT;

@@ -41,7 +41,16 @@ const EVIDENCE_KINDS = ["system_map", "readme", "skill", "scripts", "docs", "tes
 const SUMMARY_DIR_LIMIT = 5;
 const DEFAULT_COMMIT_LIMIT = 100;
 
-function buildSignalAuthority({ readmeFound, charterFound, charterSource, systemMapFound, harnessFiles, sourceRoot, commitsScanned }) {
+function buildSignalAuthority({
+  readmeFound,
+  charterFound,
+  charterSource,
+  systemMapFound,
+  harnessFiles,
+  sourceRoot,
+  commitsScanned,
+  repoSurfaceFound = sourceRoot !== null,
+}) {
   return [
     {
       signal: "README.md",
@@ -78,7 +87,7 @@ function buildSignalAuthority({ readmeFound, charterFound, charterSource, system
     {
       signal: "skill/script/doc/test surfaces",
       authority: "repo-surface",
-      found: sourceRoot !== null,
+      found: repoSurfaceFound,
       note: "Command and documentation surfaces can support candidates, but do not admit capabilities by themselves.",
     },
     {
@@ -110,7 +119,7 @@ function parseArgs(args) {
 
     if (arg === "--repo-root") {
       const next = args[i + 1];
-      if (!next) return { ...options, error: `Missing value for --repo-root. ${usage()}` };
+      if (!next || next.startsWith("-")) return { ...options, error: `Missing value for --repo-root. ${usage()}` };
       options.repoRoot = next; i += 1; continue;
     }
     if (arg.startsWith("--repo-root=")) {
@@ -118,14 +127,14 @@ function parseArgs(args) {
     }
     if (arg === "--commit-limit") {
       const next = args[i + 1];
-      if (!next || !/^\d+$/.test(next)) {
+      if (!next || !/^[1-9]\d*$/.test(next)) {
         return { ...options, error: `--commit-limit expects a positive integer. ${usage()}` };
       }
       options.commitLimit = Number(next); i += 1; continue;
     }
     if (arg.startsWith("--commit-limit=")) {
       const raw = arg.slice("--commit-limit=".length);
-      if (!/^\d+$/.test(raw)) {
+      if (!/^[1-9]\d*$/.test(raw)) {
         return { ...options, error: `--commit-limit expects a positive integer. ${usage()}` };
       }
       options.commitLimit = Number(raw); continue;
@@ -166,7 +175,7 @@ function extractCommitScopes(commitMessages) {
     const match = message.match(/^[a-z]+\(([a-z][\w.\-,/ ]*)\)[!:]/);
     if (!match) continue;
     for (const raw of match[1].split(",")) {
-      const scope = raw.trim();
+      const scope = slugifyCandidate(raw.trim());
       if (!scope) continue;
       scopes.set(scope, (scopes.get(scope) || 0) + 1);
     }
@@ -260,11 +269,17 @@ function summarizeEvidence(evidence = makeEmptyEvidence(), missingEvidence = [])
   const hasOnlySourceDirs = evidenceClassCount === 1 && evidenceClasses.includes("source_dirs");
   const hasOnlyCommits = evidenceClassCount === 1 && evidenceClasses.includes("commits");
   const hasOnlySkill = evidenceClassCount === 1 && evidenceClasses.includes("skill");
+  const hasOnlySkillAndDirectory = evidenceClassCount === 2
+    && evidenceClasses.includes("skill")
+    && evidenceClasses.includes("source_dirs");
   const blockingMissingEvidence = [...missingEvidence].sort();
   let admissionHint = "interview-seed";
   let admissionReason = "Raw signal needs grill review before it becomes a durable capability contract.";
 
-  if (evidenceClassCount >= 2) {
+  if (hasOnlySkillAndDirectory) {
+    admissionHint = "weak-single-source";
+    admissionReason = "Only a skill file and its directory are present; find docs, tests, scripts, commits, or system-map evidence before admission.";
+  } else if (evidenceClassCount >= 2) {
     admissionHint = "supported";
     admissionReason = `Supported by ${evidenceClassCount} evidence classes: ${evidenceClasses.join(", ")}.`;
   } else if (hasOnlySourceDirs || hasOnlyCommits || hasOnlySkill) {
@@ -489,6 +504,7 @@ function collectDocCandidates(repoRoot, deps = {}, knownNames = []) {
     const root = path.join(repoRoot, rootName);
     for (const relPath of listMarkdownFiles(root, deps).slice(0, 100)) {
       const normalized = relPath.replace(/\\/g, "/");
+      if (rootName === "skills" && normalized.endsWith("/SKILL.md")) continue;
       const normalizedSlug = slugifyCandidate(normalized);
       const matched = known.find((name) => normalizedSlug.includes(name));
       if (!matched) continue;
@@ -723,16 +739,6 @@ function extractSignals({
     commitScopeCount: scopeCounts.size,
     charterObjectiveCount: charterObjectives.length,
   };
-  const signalAuthority = buildSignalAuthority({
-    readmeFound: readme !== null,
-    charterFound: charter.found,
-    charterSource: charter.source,
-    systemMapFound: systemMap !== null,
-    harnessFiles,
-    sourceRoot,
-    commitsScanned: commitMessages.length,
-  });
-
   for (const name of dirNames) {
     if (sourceRoot) addEvidence(groupedEvidence, name, "source_dirs", `${sourceRoot.name}/${name}/`);
   }
@@ -762,6 +768,20 @@ function extractSignals({
   for (const candidate of collectDocCandidates(repoRoot, deps, [...groupedEvidence.keys()])) {
     addEvidence(groupedEvidence, candidate.name, "docs", candidate.signal);
   }
+
+  const repoSurfaceFound = [...groupedEvidence.values()].some((candidate) =>
+    ["skill", "scripts", "docs", "tests"].some((kind) => (candidate.evidence[kind] || []).length > 0),
+  );
+  const signalAuthority = buildSignalAuthority({
+    readmeFound: readme !== null,
+    charterFound: charter.found,
+    charterSource: charter.source,
+    systemMapFound: systemMap !== null,
+    harnessFiles,
+    sourceRoot,
+    commitsScanned: commitMessages.length,
+    repoSurfaceFound,
+  });
 
   if (!systemMap) {
     for (const name of dirNames) addMissingEvidence(groupedEvidence, name, "spec/system-map.md");

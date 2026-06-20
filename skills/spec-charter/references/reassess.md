@@ -6,7 +6,7 @@ Use this reference in `spec-charter reassess` after reading the Reassess Mode se
 
 - `SKILL.md` owns the dispatch contract: when to invoke reassess, the no-edit boundary, and the required report sections.
 - This reference owns the operational procedure: evidence order, report shape, recommendation rules, Learning Actions, and stale-spec failure modes.
-- `docs/spec-system-design.md` owns durable design policy: lifecycle, naming policy, source-of-truth map, and historical rationale.
+- This shipped reference set owns the durable policy needed for portable use. Do not depend on repo-local design docs unless the target repo provides them.
 
 ## Operating Principle
 
@@ -34,15 +34,14 @@ Keep this low-noise: the review can still conclude "no change," and it does not 
 
 Prefer bounded evidence before broad reading:
 
-1. `capabilities-doctor.js --json` for compactness, marker health, and inline Learnings count.
-2. `component-lint.js --json` for sprint `component:` routing drift.
-3. `spec/charter.md` Objectives and Decisions when a recommendation could affect project-wide direction.
-4. `spec/system-map.md` when evidence points to stale project-wide structure, boundaries, flows, or invariants.
-5. `spec/capabilities.md` capability blocks named by the evidence.
-6. `CLAUDE.md` / `AGENTS.md` only when the reassess question involves harness behavior, local commands, or agent context loading.
-7. Latest five completed sprint files, plus the active sprint when it exists.
+1. `spec/charter.md` Objectives and Decisions when a recommendation could affect project-wide direction.
+2. `spec/system-map.md` when evidence points to stale project-wide structure, boundaries, flows, or invariants.
+3. `spec/capabilities.md` capability blocks named by the evidence.
+4. Repo-local helper scripts when present, such as `capabilities-doctor.js --json` for marker health or `component-lint.js --json` for sprint `component:` routing drift.
+5. `CLAUDE.md` / `AGENTS.md` only when the reassess question involves harness behavior, local commands, or agent context loading.
+6. Latest five completed sprint files, plus the active sprint when it exists.
 
-If a script is missing, say it was skipped and continue with file reads. Missing `spec/charter.md`, `spec/system-map.md`, or `spec/capabilities.md` is not an error; it is an opt-in state with a next-step recommendation.
+If an optional script is missing, say it was skipped and continue with file reads. Missing `spec/charter.md`, `spec/system-map.md`, or `spec/capabilities.md` is not an error; it is an opt-in state with a next-step recommendation.
 
 ## Report Shape
 
@@ -114,7 +113,7 @@ Do not rewrite the map during reassess. Name the suspected section and the evide
 Recommend `spec-charter amend` when evidence affects project-wide direction:
 
 - a repeated Learning changes multiple capabilities
-- an Objective appears validated or deferred but lacks proof
+- an Objective appears validated but lacks proof, or appears deferred without a clear parking rationale
 - a Non-Goal is repeatedly violated by accepted work
 - a capability-level Decision is cross-cutting enough to belong in `spec/charter.md`
 
@@ -140,4 +139,4 @@ Archive older Learnings when they are useful history but no longer startup conte
 
 ## Reserved Names
 
-Naming policy lives in `docs/spec-system-design.md`. Summary: today the callable spec-series skills are `spec-charter`, `spec-system-map`, and `spec-grill`. The names `spec-reassess` and `spec-learn` are reserved/non-callable future split candidates. Mention them only when discussing naming policy or split triggers, not as commands the user can run.
+Today the callable spec-series skills are `spec-charter`, `spec-system-map`, and `spec-grill`. The names `spec-reassess` and `spec-learn` are reserved/non-callable future split candidates. Mention them only when discussing naming policy or split triggers, not as commands the user can run.

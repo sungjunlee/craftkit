@@ -230,7 +230,7 @@ Do not admit a brownfield capability from one weak signal alone. Directory-only 
 
 `## Learnings` is recent operational memory, not an endless audit log. Grill mode may notice that a capability is over its 5-7 Learning budget, but it should recommend a user-approved Learning Action rather than define a separate cleanup workflow here.
 
-Use the canonical policy in `docs/spec-system-design.md` and the operational report rules in `references/reassess.md`:
+Use the mutation policy in this reference and the reassess rules in `../spec-charter/references/reassess.md`:
 
 - keep recent Learnings inline when they still help startup context
 - promote durable capability facts to `## Decisions`
