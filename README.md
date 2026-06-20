@@ -27,6 +27,7 @@ Reach for the other skills when the job gets more specific:
 - `craft-skill-spec` — decide the shape of a new skill-like artifact before writing it.
 - `craft-harness` — plan or repair repo-local agent guidance and related surfaces.
 - `craft-handoff` — end a long session with a durable doc plus a resume prompt.
+- `spec-charter`, `spec-system-map`, `spec-grill` — land a brownfield repo spec axis from direction to system shape to capability contracts.
 
 ## Install
 
@@ -63,7 +64,7 @@ npx skills add . -g -y
 
 For Codex or any other agent, see [Use in other agents](#use-in-other-agents) below.
 
-## The eight skills
+## The skills
 
 | Skill | Use when | Side effect |
 |---|---|---|
@@ -75,22 +76,28 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | `craft-survey` | a new skill should be grounded in prior art before drafting | returns read-only recommendations |
 | `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration | runs evals and may edit mutable files |
 | `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt | writes handoff files and may copy to clipboard |
+| `spec-charter` | a repo needs a project-wide spec axis for direction, Objectives, Decisions, or stale-spec reassessment | creates or amends `spec/charter.md` |
+| `spec-system-map` | a brownfield repo needs high-level system shape, runtime boundaries, flows, invariants, and candidate capability boundaries | creates or amends `spec/system-map.md` |
+| `spec-grill` | candidate repo boundaries need to become accepted capability contracts with Behaviors and Hard Constraints | creates or refines `spec/capabilities.md` after evidence review |
 
 When two skills could trigger, choose the least invasive one that answers the request: review-only wording goes to `craft-critique`; apply/fix/improve wording goes to `craft-tune`; repeated measurable failures go to `craft-autoresearch`; prior-art questions go to `craft-survey`; repo harness placement and Codex/Claude setup work goes to `craft-harness`.
 
 Terminology note: `craft-harness` means repo-local agent guidance and provider surfaces. `craft-autoresearch` uses an **eval runner** for replaying test inputs and scoring outputs. Do not use "harness" for both.
 
+The `spec-*` skills form a pipeline: `spec-charter -> spec-system-map -> spec-grill`. Use them when a brownfield repo needs a compact spec axis grounded in real repo evidence instead of a generic architecture document.
+
 Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML frontmatter, loadable as a Claude Code skill or copy-pasteable into any other agent.
 
 ## Maintainer status
 
-Six of the eight skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-skill-spec` and `craft-harness` are newer and have maintainer-local contract evidence, but have not yet been through full autoresearch passes. Publicly reproducible status and local-maintainer evidence boundaries are tracked in [`docs/status.md`](docs/status.md).
+Six skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-skill-spec`, `craft-harness`, and the `spec-*` skills are newer and have maintainer-local or repo-local contract evidence, but have not yet been through full autoresearch passes. Publicly reproducible status and local-maintainer evidence boundaries are tracked in [`docs/status.md`](docs/status.md).
 
 ## What belongs in CraftKit
 
 - generating new prompts from scratch (task, research, session handoff, templates)
 - prompt design and restructuring
 - reusable skill design
+- repo spec-axis creation for charter, system map, and capability contracts
 - project-specific agent harness design and maintenance
 - diagnostic review and minimal-diff editing
 - iterative improvement loops
