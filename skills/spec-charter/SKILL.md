@@ -103,7 +103,7 @@ Apply the 3-tier discipline:
 - Tier 2 status advance: require proof for `active` -> `validated`; cite a merged PR, passing check, or relay run whose Done Criteria match the predicate. For `active` -> `deferred`, require a cited parking or scope-change rationale. Without the required evidence or rationale, refuse the advance and flag it.
 - Tier 3 Decisions: append only. Never edit or delete an existing row; a reversal is a new row with `supersedes`.
 
-After applying an accepted amendment, bump `last_amended` to today and increment `revision`. Then run `check-size.js --path <target-repo>/spec/charter.md` from the installed skill's `scripts/` directory to confirm the 5-minute-read property still holds; collapse long `deferred` lists or oversized Decisions rationale if the script warns.
+After applying an accepted amendment, bump `last_amended` to today and increment `revision`. Then run `node <skill-dir>/scripts/check-size.js --path <target-repo>/spec/charter.md` to confirm the 5-minute-read property still holds; collapse long `deferred` lists or oversized Decisions rationale if the script warns.
 
 Amend mode can take a `backlog-triage` Alignment Check report as a seed of proposed changes. The report proposes; this skill applies through the gates.
 

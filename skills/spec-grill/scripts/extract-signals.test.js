@@ -346,6 +346,7 @@ description: >-
     write(repo, "src/kwi/cli/commands/github-pr-export.ts", "");
     write(repo, "src/kwi/cli/commands/github-pr-export.test.ts", "");
     write(repo, "src/kwi/sources/confluence.ts", "");
+    write(repo, "src/kwi/sources/confluence.spec.ts", "");
     write(repo, "src/kwi/sources/jira/index.ts", "");
     write(repo, "tests/unit/sources/confluence.test.ts", "");
 
@@ -758,6 +759,7 @@ description: Mirror issues.
 
     const candidate = result.capabilities.find((c) => c.name === "auth-service");
     assert.ok(candidate);
+    assert.equal(candidate.provenance.directory, "src/Auth Service/");
     assert.ok(candidate.evidence.source_dirs.includes("src/Auth Service/"));
     assert.ok(candidate.evidence.commits.includes("commit-scope:auth-service (1)"));
   });

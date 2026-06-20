@@ -499,7 +499,8 @@ function listSourceSurfaceEntries(root, { readdir = fs.readdirSync, statSync = f
       if (entry.startsWith(".") || entry.startsWith("_")) return false;
       try {
         const stat = statSync(path.join(root, entry));
-        return stat.isDirectory() || (stat.isFile() && /\.[cm]?[jt]s$/.test(entry) && !/\.test\.[cm]?[jt]s$/.test(entry));
+        return stat.isDirectory()
+          || (stat.isFile() && /\.[cm]?[jt]s$/.test(entry) && !/\.(test|spec)\.[cm]?[jt]s$/.test(entry));
       } catch {
         return false;
       }
@@ -630,8 +631,11 @@ function summarizeReadme(readme) {
 }
 
 function buildCapability({ name, sourceRootName, signals, evidence, missingEvidence, readmeSummary, charterObjectives }) {
+  const sourceDirSignals = evidence?.source_dirs || [];
   const directorySignal = sourceRootName
-    ? signals.find((signal) => signal === `${sourceRootName}/${name}/`) || null
+    ? sourceDirSignals.find((signal) => signal.startsWith(`${sourceRootName}/`))
+      || signals.find((signal) => signal === `${sourceRootName}/${name}/`)
+      || null
     : null;
   const commitSignals = signals.filter((signal) => signal.startsWith("commit-scope:"));
   const systemMapSignals = evidence?.system_map || [];
