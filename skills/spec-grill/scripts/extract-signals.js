@@ -454,7 +454,7 @@ function scriptCandidateName(entry) {
 }
 
 function isSkillScriptTest(entry) {
-  return /\.(test|integration\.test|cli\.test)\.[cm]?[jt]s$/.test(entry);
+  return /\.(test|spec|integration\.test|cli\.test)\.[cm]?[jt]s$/.test(entry);
 }
 
 function listScriptFiles(root, { readdir = fs.readdirSync, statSync = fs.statSync, fileExists = fs.existsSync } = {}) {
@@ -595,16 +595,27 @@ function collectTestCandidates(repoRoot, deps = {}) {
       if (!isSkillScriptTest(entry)) continue;
       const base = entry
         .replace(/\.(integration|cli)\.test\.[cm]?[jt]s$/, "")
-        .replace(/\.test\.[cm]?[jt]s$/, "");
+        .replace(/\.(test|spec)\.[cm]?[jt]s$/, "");
       candidates.push({
         name: base,
         signal: `test:skills/${skill}/scripts/${entry}`,
       });
     }
   }
+  candidates.push(...collectRepoScriptTestCandidates(repoRoot, deps));
   candidates.push(...collectSourceTestCandidates(repoRoot, deps));
   candidates.push(...collectCliCommandTestCandidates(repoRoot, deps));
   return candidates;
+}
+
+function collectRepoScriptTestCandidates(repoRoot, deps = {}) {
+  const scriptsRoot = path.join(repoRoot, "scripts");
+  return listScriptFiles(scriptsRoot, deps)
+    .filter((entry) => /\.(test|spec)\.[cm]?[jt]s$/.test(entry))
+    .map((entry) => ({
+      name: entry.replace(/\.(test|spec)\.[cm]?[jt]s$/, ""),
+      signal: `test:scripts/${entry}`,
+    }));
 }
 
 function collectSourceTestCandidates(repoRoot, deps = {}) {
