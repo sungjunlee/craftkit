@@ -465,11 +465,28 @@ function collectCliCommandCandidates(repoRoot, deps = {}) {
   for (const packageName of listDirs(srcRoot, deps)) {
     const commandsRoot = path.join(srcRoot, packageName, "cli", "commands");
     for (const entry of listScriptFiles(commandsRoot, deps)) {
-      if (/\.test\.[cm]?[jt]s$/.test(entry)) continue;
+      if (/\.(test|spec)\.[cm]?[jt]s$/.test(entry)) continue;
       const base = entry.replace(/\.[cm]?[jt]s$/, "");
       candidates.push({
         name: base,
         signal: `script:src/${packageName}/cli/commands/${entry}`,
+      });
+    }
+  }
+  return candidates;
+}
+
+function collectCliCommandTestCandidates(repoRoot, deps = {}) {
+  const srcRoot = path.join(repoRoot, "src");
+  const candidates = [];
+  for (const packageName of listDirs(srcRoot, deps)) {
+    const commandsRoot = path.join(srcRoot, packageName, "cli", "commands");
+    for (const entry of listScriptFiles(commandsRoot, deps)) {
+      if (!/\.(test|spec)\.[cm]?[jt]s$/.test(entry)) continue;
+      const base = entry.replace(/\.(test|spec)\.[cm]?[jt]s$/, "");
+      candidates.push({
+        name: base,
+        signal: `test:src/${packageName}/cli/commands/${entry}`,
       });
     }
   }
@@ -514,7 +531,7 @@ function collectDocCandidates(repoRoot, deps = {}, knownNames = []) {
   const known = knownNames.map((name) => slugifyCandidate(name)).filter(Boolean).sort((a, b) => b.length - a.length);
   for (const rootName of roots) {
     const root = path.join(repoRoot, rootName);
-    for (const relPath of listMarkdownFiles(root, deps).slice(0, 100)) {
+    for (const relPath of listMarkdownFiles(root, deps)) {
       const normalized = relPath.replace(/\\/g, "/");
       if (rootName === "skills" && normalized.endsWith("/SKILL.md")) continue;
       const normalizedSlug = slugifyCandidate(normalized);
@@ -524,6 +541,7 @@ function collectDocCandidates(repoRoot, deps = {}, knownNames = []) {
         name: matched,
         signal: `doc:${rootName}/${normalized}`,
       });
+      if (candidates.length >= 100) return candidates;
     }
   }
   return candidates;
@@ -574,6 +592,7 @@ function collectTestCandidates(repoRoot, deps = {}) {
     }
   }
   candidates.push(...collectSourceTestCandidates(repoRoot, deps));
+  candidates.push(...collectCliCommandTestCandidates(repoRoot, deps));
   return candidates;
 }
 

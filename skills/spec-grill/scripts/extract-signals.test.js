@@ -304,6 +304,10 @@ description: Create capability contracts.
     write(repo, "skills/spec-grill/references/capabilities.md", "# Capability reference\n");
     write(repo, "docs/spec-system-design.md", "# Spec design\n");
     write(repo, "docs/api-guide.md", "# API guide\n");
+    for (let i = 0; i < 100; i += 1) {
+      write(repo, `docs/aaa-${String(i).padStart(3, "0")}.md`, "# Irrelevant\n");
+    }
+    write(repo, "docs/auth-guide.md", "# Auth guide\n");
 
     assert.deepEqual(collectSkillCandidates(repo).map((c) => c.name), ["spec-grill"]);
     assert.ok(collectScriptCandidates(repo).some((c) => c.name === "extract-signals"));
@@ -317,6 +321,7 @@ description: Create capability contracts.
     assert.ok(docs.some((c) => c.signal.includes("skills/spec-grill/references/capabilities.md")));
     assert.ok(!docs.some((c) => c.signal.includes("skills/spec-grill/SKILL.md")));
     assert.deepEqual(collectDocCandidates(repo, {}, ["ui"]), []);
+    assert.ok(collectDocCandidates(repo, {}, ["auth"]).some((c) => c.signal.includes("docs/auth-guide.md")));
   });
 
   it("collects folded YAML skill descriptions without leaking the block marker", () => {
@@ -345,6 +350,7 @@ description: >-
   it("collects source commands, source surfaces, and source tests", () => {
     write(repo, "src/kwi/cli/commands/github-pr-export.ts", "");
     write(repo, "src/kwi/cli/commands/github-pr-export.test.ts", "");
+    write(repo, "src/kwi/cli/commands/sync.spec.ts", "");
     write(repo, "src/kwi/sources/confluence.ts", "");
     write(repo, "src/kwi/sources/confluence.spec.ts", "");
     write(repo, "src/kwi/sources/jira/index.ts", "");
@@ -353,6 +359,8 @@ description: >-
     assert.deepEqual(collectCliCommandCandidates(repo).map((c) => c.name), ["github-pr-export"]);
     assert.deepEqual(collectSourceSurfaceCandidates(repo).map((c) => c.name), ["confluence", "jira"]);
     assert.deepEqual(collectSourceTestCandidates(repo).map((c) => c.name), ["confluence"]);
+    assert.ok(collectTestCandidates(repo).some((c) => c.signal.includes("src/kwi/cli/commands/github-pr-export.test.ts")));
+    assert.ok(collectTestCandidates(repo).some((c) => c.signal.includes("src/kwi/cli/commands/sync.spec.ts")));
   });
 });
 
