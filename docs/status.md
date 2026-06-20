@@ -37,6 +37,9 @@ The verify command checks:
 | `craft-skill-spec` | `npm run verify` checks frontmatter and spine budget | contract evidence pass at `~/.craftkit/autoresearch/craft-skill-spec/2026-06-18-first-evidence-pass/` | replay after the next radar refresh against real drafted specs |
 | `craft-harness` | `npm run verify` checks frontmatter and spine budget | contract evidence pass at `~/.craftkit/autoresearch/craft-harness/2026-06-18-first-evidence-pass/` | replay after the next substantial wording change against real agent outputs |
 | `craft-handoff` | `npm run verify` checks frontmatter and spine budget | autoresearch pass artifacts and real-output replay under `~/.craftkit/autoresearch/craft-handoff/` | re-run replay after prompt/doc storage, frontmatter, hook, or sizing changes |
+| `spec-charter` | `npm run verify` checks frontmatter and spine budget; `node --test` covers `check-size.js` | dogfooded on brownfield spec-axis creation flows | run a dedicated autoresearch or replay pass after more public repo examples |
+| `spec-system-map` | `npm run verify` checks frontmatter and spine budget | dogfooded with `spec-charter -> spec-system-map -> spec-grill` pipeline usage | add replay evidence for candidate-boundary handoff quality |
+| `spec-grill` | `npm run verify` checks frontmatter and spine budget; `node --test` covers `extract-signals.js` evidence summaries | dogfooded on brownfield capability-contract extraction and admission review | add replay evidence for report-only, next-capability, and audit routes |
 
 ## Maintainer-local evidence
 
