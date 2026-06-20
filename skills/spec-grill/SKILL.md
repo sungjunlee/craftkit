@@ -2,7 +2,7 @@
 name: spec-grill
 argument-hint: "[natural-language request]"
 description: "Create or refine spec/capabilities.md by grilling existing repo signals into capability contracts, Behaviors, and Hard Constraints. Use after spec-charter on existing repos, or when users ask for capability specs, component contracts, middle-layer specs, repo capability boundaries, 능력 명세, or grill."
-compatibility: Requires git. Works on Claude Code and Codex.
+compatibility: Requires git.
 metadata:
   related-skills: "spec-charter, dev-backlog, backlog-triage"
 ---

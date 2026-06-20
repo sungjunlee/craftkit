@@ -2,7 +2,7 @@
 name: spec-charter
 argument-hint: "[create|amend|reassess]"
 description: "Create, amend, and reassess spec/charter.md as the project-wide spec axis. Use to establish or evolve project direction, Objectives, Non-Goals, Decisions, stale spec findings, project charter, 기준, 헌장, 방향성, spec axis."
-compatibility: Requires git. Works on Claude Code and Codex.
+compatibility: Requires git.
 metadata:
   related-skills: "spec-system-map, spec-grill, dev-backlog, backlog-triage"
 ---

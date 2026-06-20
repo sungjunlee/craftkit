@@ -18,5 +18,6 @@ revision: 1
 - O1 [active] <verifiable predicate, e.g. "a user can log in with Google"> · src: user
 
 ## Decisions          <!-- Tier 3 · History (immutable, append-only) -->
+
 | date | decision | rationale | supersedes |
 | --- | --- | --- | --- |
