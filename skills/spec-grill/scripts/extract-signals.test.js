@@ -299,17 +299,24 @@ description: Create capability contracts.
 `);
     write(repo, "skills/spec-grill/scripts/extract-signals.js", "");
     write(repo, "skills/spec-grill/scripts/extract-signals.test.js", "");
+    write(repo, "skills/spec-grill/scripts/build-index.ts", "");
+    write(repo, "skills/spec-grill/scripts/build-index.test.ts", "");
     write(repo, "skills/spec-grill/references/capabilities.md", "# Capability reference\n");
     write(repo, "docs/spec-system-design.md", "# Spec design\n");
+    write(repo, "docs/api-guide.md", "# API guide\n");
 
     assert.deepEqual(collectSkillCandidates(repo).map((c) => c.name), ["spec-grill"]);
     assert.ok(collectScriptCandidates(repo).some((c) => c.name === "extract-signals"));
+    assert.ok(collectScriptCandidates(repo).some((c) => c.name === "build-index"));
+    assert.ok(!collectScriptCandidates(repo).some((c) => c.name === "build-index-test-ts"));
     assert.ok(collectTestCandidates(repo).some((c) => c.name === "extract-signals"));
+    assert.ok(collectTestCandidates(repo).some((c) => c.name === "build-index"));
     assert.deepEqual(collectDocCandidates(repo), []);
     const docs = collectDocCandidates(repo, {}, ["spec-system", "spec-grill"]);
     assert.ok(docs.some((c) => c.signal.includes("docs/spec-system-design.md")));
     assert.ok(docs.some((c) => c.signal.includes("skills/spec-grill/references/capabilities.md")));
     assert.ok(!docs.some((c) => c.signal.includes("skills/spec-grill/SKILL.md")));
+    assert.deepEqual(collectDocCandidates(repo, {}, ["ui"]), []);
   });
 
   it("collects folded YAML skill descriptions without leaking the block marker", () => {
@@ -506,6 +513,19 @@ describe("mergeCandidates", () => {
     const auth = merged.find(([n]) => n === "auth")[1];
     assert.ok(auth.includes("src/auth/"));
     assert.ok(auth.some((s) => s.includes("commit-scope:auth")));
+  });
+
+  it("normalizes directory candidate keys before merging", () => {
+    const sourceRoot = { name: "src", path: "/repo/src" };
+    const merged = mergeCandidates({
+      sourceRoot,
+      dirNames: ["Auth Service"],
+      scopeCounts: new Map([["auth-service", 2]]),
+    });
+
+    assert.deepEqual(merged.map(([name]) => name), ["auth-service"]);
+    assert.ok(merged[0][1].includes("src/Auth Service/"));
+    assert.ok(merged[0][1].some((s) => s.includes("commit-scope:auth-service")));
   });
 
   it("requires >=2 commits to surface a scope without a dir", () => {

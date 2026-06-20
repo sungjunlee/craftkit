@@ -423,8 +423,8 @@ function collectScriptCandidates(repoRoot, deps = {}) {
   for (const skill of listDirs(skillsRoot, deps)) {
     const scriptsRoot = path.join(skillsRoot, skill, "scripts");
     for (const entry of listScriptFiles(scriptsRoot, deps)) {
-      if (/\.test\.js$|\.integration\.test\.js$|\.cli\.test\.js$/.test(entry)) continue;
-      const base = entry.replace(/\.(test|cli|integration)\.js$/, "").replace(/\.(js|sh)$/, "");
+      if (isSkillScriptTest(entry)) continue;
+      const base = scriptCandidateName(entry);
       candidates.push({
         name: base,
         signal: `script:skills/${skill}/scripts/${entry}`,
@@ -433,6 +433,17 @@ function collectScriptCandidates(repoRoot, deps = {}) {
   }
   candidates.push(...collectCliCommandCandidates(repoRoot, deps));
   return candidates;
+}
+
+function scriptCandidateName(entry) {
+  return entry
+    .replace(/\.(test|cli|integration)\.[cm]?[jt]s$/, "")
+    .replace(/\.[cm]?[jt]s$/, "")
+    .replace(/\.sh$/, "");
+}
+
+function isSkillScriptTest(entry) {
+  return /\.(test|integration\.test|cli\.test)\.[cm]?[jt]s$/.test(entry);
 }
 
 function listScriptFiles(root, { readdir = fs.readdirSync, statSync = fs.statSync, fileExists = fs.existsSync } = {}) {
@@ -506,7 +517,7 @@ function collectDocCandidates(repoRoot, deps = {}, knownNames = []) {
       const normalized = relPath.replace(/\\/g, "/");
       if (rootName === "skills" && normalized.endsWith("/SKILL.md")) continue;
       const normalizedSlug = slugifyCandidate(normalized);
-      const matched = known.find((name) => normalizedSlug.includes(name));
+      const matched = known.find((name) => hasSlugBoundaryMatch(normalizedSlug, name));
       if (!matched) continue;
       candidates.push({
         name: matched,
@@ -515,6 +526,11 @@ function collectDocCandidates(repoRoot, deps = {}, knownNames = []) {
     }
   }
   return candidates;
+}
+
+function hasSlugBoundaryMatch(slug, candidate) {
+  const escaped = candidate.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|-)${escaped}(-|$)`).test(slug);
 }
 
 function listMarkdownFiles(root, deps = {}, prefix = "") {
@@ -546,8 +562,10 @@ function collectTestCandidates(repoRoot, deps = {}) {
   for (const skill of listDirs(skillsRoot, deps)) {
     const scriptsRoot = path.join(skillsRoot, skill, "scripts");
     for (const entry of listScriptFiles(scriptsRoot, deps)) {
-      if (!/\.test\.js$|\.integration\.test\.js$|\.cli\.test\.js$/.test(entry)) continue;
-      const base = entry.replace(/\.(integration|cli)\.test\.js$/, "").replace(/\.test\.js$/, "");
+      if (!isSkillScriptTest(entry)) continue;
+      const base = entry
+        .replace(/\.(integration|cli)\.test\.[cm]?[jt]s$/, "")
+        .replace(/\.test\.[cm]?[jt]s$/, "");
       candidates.push({
         name: base,
         signal: `test:skills/${skill}/scripts/${entry}`,
@@ -661,10 +679,16 @@ function mergeCandidates({ sourceRoot, dirNames, scopeCounts, evidenceCandidates
   const merged = new Map();
 
   for (const name of dirNames) {
+    const slug = slugifyCandidate(name);
+    if (!slug) continue;
     const signals = [`${sourceRoot.name}/${name}/`];
-    const count = scopeCounts.get(name) ?? 0;
-    if (count > 0) signals.push(`commit-scope:${name} (${count})`);
-    merged.set(name, signals);
+    const count = scopeCounts.get(slug) ?? 0;
+    if (count > 0) signals.push(`commit-scope:${slug} (${count})`);
+    const existing = merged.get(slug) || [];
+    for (const signal of signals) {
+      if (!existing.includes(signal)) existing.push(signal);
+    }
+    merged.set(slug, existing);
   }
 
   for (const [scope, count] of scopeCounts.entries()) {
