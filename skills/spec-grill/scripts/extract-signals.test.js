@@ -301,6 +301,8 @@ description: Create capability contracts.
     write(repo, "skills/spec-grill/scripts/extract-signals.test.js", "");
     write(repo, "skills/spec-grill/scripts/build-index.ts", "");
     write(repo, "skills/spec-grill/scripts/build-index.test.ts", "");
+    write(repo, "scripts/sync-pull.mjs", "");
+    write(repo, "scripts/sync-pull.test.mjs", "");
     write(repo, "skills/spec-grill/references/capabilities.md", "# Capability reference\n");
     write(repo, "docs/spec-system-design.md", "# Spec design\n");
     write(repo, "docs/api-guide.md", "# API guide\n");
@@ -312,7 +314,9 @@ description: Create capability contracts.
     assert.deepEqual(collectSkillCandidates(repo).map((c) => c.name), ["spec-grill"]);
     assert.ok(collectScriptCandidates(repo).some((c) => c.name === "extract-signals"));
     assert.ok(collectScriptCandidates(repo).some((c) => c.name === "build-index"));
+    assert.ok(collectScriptCandidates(repo).some((c) => c.name === "sync-pull"));
     assert.ok(!collectScriptCandidates(repo).some((c) => c.name === "build-index-test-ts"));
+    assert.ok(!collectScriptCandidates(repo).some((c) => c.name === "sync-pull-test"));
     assert.ok(collectTestCandidates(repo).some((c) => c.name === "extract-signals"));
     assert.ok(collectTestCandidates(repo).some((c) => c.name === "build-index"));
     assert.deepEqual(collectDocCandidates(repo), []);

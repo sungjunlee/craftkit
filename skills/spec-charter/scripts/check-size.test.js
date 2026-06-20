@@ -79,6 +79,11 @@ describe("countWords", () => {
   it("counts link text, not URLs", () => {
     assert.equal(countWords("[click here](https://example.com/path)"), 2);
   });
+
+  it("counts non-ASCII charter prose", () => {
+    assert.equal(countWords("문제 접근 비목표"), 4);
+    assert.ok(countWords("사용자는 로그인할 수 있다") > 0);
+  });
 });
 
 describe("countLines", () => {

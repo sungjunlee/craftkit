@@ -71,8 +71,14 @@ export function countWords(body) {
     .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
     .replace(/[#>*_|\-]+/g, " ");
 
-  const tokens = cleaned.split(/\s+/).filter((t) => /\w/.test(t));
-  return tokens.length;
+  const tokens = cleaned.match(/[\p{L}\p{N}]+/gu) || [];
+  return tokens.reduce((count, token) => count + tokenWordCount(token), 0);
+}
+
+function tokenWordCount(token) {
+  const cjkChars = Array.from(token).filter((char) => /[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af\u3040-\u30ff\u3400-\u9fff]/u.test(char)).length;
+  if (cjkChars === 0) return 1;
+  return Math.max(1, Math.ceil(cjkChars / 2));
 }
 
 export function countLines(content) {

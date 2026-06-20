@@ -431,8 +431,19 @@ function collectScriptCandidates(repoRoot, deps = {}) {
       });
     }
   }
+  candidates.push(...collectRepoScriptCandidates(repoRoot, deps));
   candidates.push(...collectCliCommandCandidates(repoRoot, deps));
   return candidates;
+}
+
+function collectRepoScriptCandidates(repoRoot, deps = {}) {
+  const scriptsRoot = path.join(repoRoot, "scripts");
+  return listScriptFiles(scriptsRoot, deps)
+    .filter((entry) => !isSkillScriptTest(entry))
+    .map((entry) => ({
+      name: scriptCandidateName(entry),
+      signal: `script:scripts/${entry}`,
+    }));
 }
 
 function scriptCandidateName(entry) {
