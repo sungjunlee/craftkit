@@ -165,3 +165,11 @@ expectVerifyFailure("fails when npm package includes forbidden local test artifa
   });
   writeFile(root, "test/generated-output.txt", "not for package\n");
 }, /npm package must not include test\/generated-output\.txt/, { skipPackDryRun: false });
+
+expectVerifyFailure("fails when npm package includes skill script tests", (root) => {
+  writeFile(root, "skills/example/scripts/helper.test.js", "export {};\n");
+}, /npm package must not include skills\/example\/scripts\/helper\.test\.js/, { skipPackDryRun: false });
+
+expectVerifyFailure("fails when npm package includes skill script jsx/tsx specs", (root) => {
+  writeFile(root, "skills/example/scripts/helper.spec.tsx", "export {};\n");
+}, /npm package must not include skills\/example\/scripts\/helper\.spec\.tsx/, { skipPackDryRun: false });

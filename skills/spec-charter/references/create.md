@@ -101,7 +101,7 @@ Whatever lands in Decisions on revision 1 — including seeded entries — is im
 
 A first-revision charter produced via this checklist should:
 
-- Read in under 5 minutes (run [`check-size.js`](../scripts/check-size.js) if available).
+- Read in under 5 minutes by inspection; collapse operational HOW-knowledge or long rationale before finishing.
 - Carry Problem / Approach / Non-Goals that survived a challenge round, not first-draft acceptance.
 - List 2–3 Objectives, each one the 30-second test would pass.
 - Have an empty or lightly-seeded Decisions table.

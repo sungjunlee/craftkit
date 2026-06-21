@@ -29,14 +29,14 @@ When no mode is specified, route by intent first, then use file state only for g
 
 ### Helper Scripts
 
-Resolve helper scripts from the installed `spec-charter` skill directory, not from the target repo. In a source checkout, that means the local `scripts/` directory beside this `SKILL.md`; in an installed skill, first locate the skill directory and run the same script from there. Always pass the target repo explicitly (`--path <target-repo>/spec/charter.md`) so helpers do not inspect the skill directory by accident. If a helper is unavailable, report **Missing Evidence** and continue with bounded file reads.
+Do not rely on bundled helper scripts for charter work. Inspect the target repo directly and keep all paths target-repo-relative so the skill never analyzes its own installation directory by accident.
 
 ### Completion Contract
 
 End every mode with a short summary:
 
 - `create`: created files, unresolved assumptions, and a concrete next natural-language action. On brownfield repos, recommend creating `spec/system-map.md` before asking `spec-grill` to review capability boundaries.
-- `amend`: accepted changes, refused/parked changes, proof cited for status advances, and size-check result.
+- `amend`: accepted changes, refused/parked changes, proof cited for status advances, and 5-minute-read inspection result.
 - `reassess`: required report sections from the Reassess Mode dispatch contract, with one recommended next natural-language action.
 
 When recommending follow-up spec work, do not require users to memorize downstream arguments such as `map`, `fill`, or `audit`. Prefer plain actions like "create the system map" or "ask spec-grill to review candidate capability boundaries." Include 2-5 candidate boundary names only when they are supported by evidence from README, `spec/system-map.md`, scripts, tests, docs, or recent commit scopes.
@@ -103,7 +103,7 @@ Apply the 3-tier discipline:
 - Tier 2 status advance: require proof for `active` -> `validated`; cite a merged PR, passing check, or relay run whose Done Criteria match the predicate. For `active` -> `deferred`, require a cited parking or scope-change rationale. Without the required evidence or rationale, refuse the advance and flag it.
 - Tier 3 Decisions: append only. Never edit or delete an existing row; a reversal is a new row with `supersedes`.
 
-After applying an accepted amendment, bump `last_amended` to today and increment `revision`. Then run `node <skill-dir>/scripts/check-size.js --path <target-repo>/spec/charter.md` to confirm the 5-minute-read property still holds; collapse long `deferred` lists or oversized Decisions rationale if the script warns.
+After applying an accepted amendment, bump `last_amended` to today and increment `revision`. Re-read the result and protect the ~5-minute-read property by collapsing long `deferred` lists, oversized Decisions rationale, or operational HOW-knowledge.
 
 Amend mode can take a `backlog-triage` Alignment Check report as a seed of proposed changes. The report proposes; this skill applies through the gates.
 

@@ -29,7 +29,7 @@ import {
   mergeCandidates,
   extractSignals,
   formatHumanReport,
-} from "./extract-signals.js";
+} from "../../../skills/spec-grill/scripts/extract-signals.js";
 
 function makeRepo() {
   return fs.mkdtempSync(path.join(os.tmpdir(), "extract-signals-"));
