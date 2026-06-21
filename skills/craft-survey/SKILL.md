@@ -1,6 +1,7 @@
 ---
 name: craft-survey
 description: Survey prior art for prompts, skills, or repo assets. Use for "how others do this", adopt/avoid patterns, older assets, or pre-draft research.
+disable-model-invocation: true
 ---
 
 # craft-survey

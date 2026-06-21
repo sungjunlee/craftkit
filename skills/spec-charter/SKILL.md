@@ -2,6 +2,7 @@
 name: spec-charter
 argument-hint: "[create|amend|reassess]"
 description: "Create, amend, or reassess spec/charter.md. Use for project direction, Objectives, Non-Goals, Decisions, stale spec findings, 기준, 헌장, 방향성, or spec axis."
+disable-model-invocation: true
 compatibility: Requires git.
 metadata:
   related-skills: "spec-system-map, spec-grill, dev-backlog, backlog-triage"

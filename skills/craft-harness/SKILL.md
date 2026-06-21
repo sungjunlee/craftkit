@@ -1,6 +1,7 @@
 ---
 name: craft-harness
 description: Decide repo-local agent harness placement. Use for AGENTS.md/CLAUDE.md, skills, commands, hooks, subagents, MCP, plugin, sync, pruning, or adoption plans.
+disable-model-invocation: true
 ---
 
 # craft-harness

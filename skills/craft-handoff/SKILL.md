@@ -5,6 +5,7 @@ description: >-
   Use when wrapping up, clearing context, pausing work, or the user says
   "마무리", "세션 정리", "핸드오프", "다음 세션으로 넘겨",
   or "next session으로 넘겨".
+disable-model-invocation: true
 ---
 
 # craft-handoff

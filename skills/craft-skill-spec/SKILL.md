@@ -1,6 +1,7 @@
 ---
 name: craft-skill-spec
 description: Design a skill-like artifact before writing it. Use for skill specs, suites, subagents, plugins, artifact-class decisions, triggers, file shape, or "meta-skill" requests.
+disable-model-invocation: true
 ---
 
 # craft-skill-spec
