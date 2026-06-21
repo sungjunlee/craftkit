@@ -40,6 +40,8 @@ function createFixture() {
     "skills/example/SKILL.md",
     "---\nname: example\ndescription: Example skill for tests.\n---\n\n# Example\n",
   );
+  writeFile(root, "skills/craft-critique/references/failure-modes.md", "# Failure Modes\n\nShared fixture.\n");
+  writeFile(root, "skills/craft-tune/references/failure-modes.md", "# Failure Modes\n\nShared fixture.\n");
   writeFile(
     root,
     "package.json",
@@ -149,6 +151,10 @@ expectVerifyFailure("fails when mirrored references drift", (root) => {
   writeFile(root, "skills/craft-critique/references/failure-modes.md", "# Failure Modes\n\nSame.\n");
   writeFile(root, "skills/craft-tune/references/failure-modes.md", "# Failure Modes\n\nDifferent.\n");
 }, /mirrored references and must stay identical/);
+
+expectVerifyFailure("fails when a mirrored reference is missing", (root) => {
+  removeFile(root, "skills/craft-tune/references/failure-modes.md");
+}, /skills\/craft-tune\/references\/failure-modes\.md is missing from a mirrored reference pair/);
 
 expectVerifyFailure("fails on legacy autoresearch harness wording", (root) => {
   writeFile(root, "docs/examples/tune-a-prompt.md", "This still says run harness.\n");

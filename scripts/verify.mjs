@@ -163,7 +163,13 @@ function checkMirroredReferences() {
     const firstPath = path.join(root, first);
     const secondPath = path.join(root, second);
 
-    if (!fs.existsSync(firstPath) || !fs.existsSync(secondPath)) {
+    if (!fs.existsSync(firstPath)) {
+      fail(`${first} is missing from a mirrored reference pair`);
+      continue;
+    }
+
+    if (!fs.existsSync(secondPath)) {
+      fail(`${second} is missing from a mirrored reference pair`);
       continue;
     }
 
