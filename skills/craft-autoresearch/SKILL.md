@@ -1,6 +1,6 @@
 ---
 name: craft-autoresearch
-description: Eval-driven optimization loop for a prompt or skill. Use when a prompt or skill needs measured iteration with test inputs, an eval runner, scoring, bounded mutations, and a written stop condition.
+description: Optimize prompts or skills with measured eval loops. Use for repeatable test inputs, eval runners, scoring, bounded mutations, or written stop conditions.
 ---
 
 # craft-autoresearch

@@ -135,6 +135,21 @@ expectVerifyFailure("fails when a skill exceeds the 500-line ceiling", (root) =>
   writeFile(root, "skills/example/SKILL.md", `---\nname: example\ndescription: Example skill.\n---\n${body}\n`);
 }, /over the 500-line hard ceiling/);
 
+expectVerifyFailure("fails when a skill exceeds the 220-line soft budget", (root) => {
+  const body = Array.from({ length: 221 }, (_, index) => `line ${index + 1}`).join("\n");
+  writeFile(root, "skills/example/SKILL.md", `---\nname: example\ndescription: Example skill.\n---\n${body}\n`);
+}, /over the 220-line soft budget/);
+
+expectVerifyFailure("fails when a skill description exceeds the trigger budget", (root) => {
+  const words = Array.from({ length: 51 }, (_, index) => `word${index + 1}`).join(" ");
+  writeFile(root, "skills/example/SKILL.md", `---\nname: example\ndescription: ${words}\n---\n\n# Example\n`);
+}, /over the 50-word trigger budget/);
+
+expectVerifyFailure("fails when mirrored references drift", (root) => {
+  writeFile(root, "skills/craft-critique/references/failure-modes.md", "# Failure Modes\n\nSame.\n");
+  writeFile(root, "skills/craft-tune/references/failure-modes.md", "# Failure Modes\n\nDifferent.\n");
+}, /mirrored references and must stay identical/);
+
 expectVerifyFailure("fails on legacy autoresearch harness wording", (root) => {
   writeFile(root, "docs/examples/tune-a-prompt.md", "This still says run harness.\n");
 }, /docs\/examples\/tune-a-prompt\.md still contains "run harness"/);

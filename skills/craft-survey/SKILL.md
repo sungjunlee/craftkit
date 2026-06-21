@@ -1,6 +1,6 @@
 ---
 name: craft-survey
-description: One-shot prior-art survey for prompts, skills, or repo assets. Use when the user asks how others do this, mentions survey/prior art/research, references older assets, or wants adopt/avoid patterns before drafting. Distinct from craft-autoresearch, which runs eval-driven optimization.
+description: Survey prior art for prompts, skills, or repo assets. Use for "how others do this", adopt/avoid patterns, older assets, or pre-draft research.
 ---
 
 # craft-survey

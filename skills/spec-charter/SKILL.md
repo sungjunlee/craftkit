@@ -1,7 +1,7 @@
 ---
 name: spec-charter
 argument-hint: "[create|amend|reassess]"
-description: "Create, amend, and reassess spec/charter.md as the project-wide spec axis. Use to establish or evolve project direction, Objectives, Non-Goals, Decisions, stale spec findings, project charter, 기준, 헌장, 방향성, spec axis."
+description: "Create, amend, or reassess spec/charter.md. Use for project direction, Objectives, Non-Goals, Decisions, stale spec findings, 기준, 헌장, 방향성, or spec axis."
 compatibility: Requires git.
 metadata:
   related-skills: "spec-system-map, spec-grill, dev-backlog, backlog-triage"

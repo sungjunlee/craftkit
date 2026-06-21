@@ -1,6 +1,6 @@
 ---
 name: craft-harness
-description: Decide placement and propose gated repo-local agent harness changes for Codex and Claude Code. Use when repo guidance, AGENTS.md/CLAUDE.md, local skills, commands, hooks, subagents, MCP/integration notes, plugins, or adoption choices need cleanup, sync, pruning, or a small change plan.
+description: Decide repo-local agent harness placement. Use for AGENTS.md/CLAUDE.md, skills, commands, hooks, subagents, MCP, plugin, sync, pruning, or adoption plans.
 ---
 
 # craft-harness
@@ -41,17 +41,19 @@ If the user does not state a primary target, default to dual-target output with 
 
 ## Required reads
 
-Before making recommendations:
+Always inspect existing repo harness files before making recommendations:
 
-1. Inspect existing repo harness files first:
-   - shared root and local context files
-   - provider-specific skill, command, hook, subagent, MCP, plugin, and rules locations
-   - repo workflow files: `package.json`, `Makefile`, CI config, scripts, docs
-2. Read `references/platform-surfaces.md` when a recommendation touches provider-specific paths, hooks, subagents, MCP, plugins, or install locations.
-3. Read `references/dual-target-layout.md` when the harness targets both Codex and Claude Code, uses `.agents/` as shared source, or needs symlink/copy decisions.
-4. Read `references/hook-patterns.md` when recommending, reviewing, pruning, or generating hooks.
-5. Read `references/eval-cases.md` when drafting or validating `craft-harness` changes.
-6. Read adjacent CraftKit skills only when the recommendation would create or modify a prompt/skill artifact.
+- shared root and local context files
+- provider-specific skill, command, hook, subagent, MCP, plugin, and rules locations
+- repo workflow files: `package.json`, `Makefile`, CI config, scripts, docs
+
+Then load references only for the branch you are actually taking:
+
+- `references/platform-surfaces.md` — provider-specific paths, hooks, subagents, MCP, plugins, or install locations.
+- `references/dual-target-layout.md` — dual Codex/Claude targets, shared `.agents/`, or symlink/copy decisions.
+- `references/hook-patterns.md` — hook recommendation, review, pruning, or generation.
+- `references/eval-cases.md` — changes to this skill or explicit harness-behavior validation.
+- Adjacent CraftKit skills — creating or modifying a prompt/skill artifact.
 
 Do not inspect user/global config unless the user explicitly asks for personal or global harness work.
 
@@ -195,11 +197,7 @@ Pass signal: the output inventories existing harness files first, separates prov
 
 ## Example
 
-### Input
-
 "Agents keep missing our migration safety process. We use Codex more lately, but some teammates use Claude Code too."
-
-### Output sketch
 
 **Harness mode**
 - mode: `repair`

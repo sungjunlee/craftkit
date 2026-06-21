@@ -1,12 +1,9 @@
 ---
 name: craft-handoff
 description: >-
-  Produce two paired session-handoff artifacts that the next session uses
-  together — a rich narrative doc on disk and a craft-prompt-grade prompt
-  that commands the next agent to read the doc first. Use proactively
-  whenever a session is wrapping up. Triggers: "wrap up", "마무리",
-  "세션 정리", "핸드오프", "다음 세션으로 넘겨", "next session으로 넘겨",
-  or before clearing/resetting session context.
+  Produce paired session-handoff artifacts: a rich doc plus a resume prompt.
+  Use when wrapping up, clearing context, pausing work, or the user says
+  "마무리", "핸드오프", or "다음 세션으로 넘겨".
 ---
 
 # craft-handoff
@@ -39,7 +36,7 @@ node <skill-dir>/scripts/gather-state.mjs
 
 Read its full output, especially `--- Handoff target ---`: `PENDING_PATH`, `DOC_PATH`, `ARCHIVE_DIR`, `WORKTREE_SLUG`, and ready-to-prepend frontmatter.
 
-If the script is unavailable, gather the same facts manually:
+If the script is unavailable, gather the same git facts manually:
 
 ```bash
 git rev-parse --show-toplevel
@@ -49,7 +46,7 @@ git diff --stat | tail -20
 git log --oneline -8
 ```
 
-Also derive the handoff target yourself: `WORKTREE_SLUG` is `<sanitized basename>-<first 6 chars of sha1(git rev-parse --show-toplevel output, or cwd outside git)>`; `DOC_PATH` is `~/.craftkit/handoff/docs/<slug>.md`; `PENDING_PATH` is `~/.craftkit/handoff/pending/<timestamp>-<slug>.md`; `ARCHIVE_DIR` is `~/.craftkit/handoff/archive`; frontmatter carries `worktree`, `branch`, and `created` for both artifacts, plus `next` for the doc.
+If you must derive paths without the script, use the fallback target rules in `references/operational-details.md`.
 
 Then extract from the conversation:
 
@@ -91,80 +88,25 @@ Apply these inclusion tests:
 
 Write the doc first; it is the narrative source of truth.
 
-Shape:
-
-```markdown
----
-worktree: <absolute worktree>
-branch: <branch>
-created: <timestamp>
-next: <action-first one-liner>
----
-<context>
-## Project
-...
-## Done
-...
-## State
-...
-## Decisions
-...
-## What didn't work
-...
-## Next
-...
-</context>
-```
+Core shape: frontmatter plus a single `<context>...</context>` body. Include Project, Done, State, Decisions, What didn't work, and Next only when those sections have real content.
 
 Rules:
 
-- The body contains only `<context>...</context>`; no `<task>` or `<rules>`.
+- No `<task>` or `<rules>` in the doc.
 - Fill narrative depth only where it helps the next session.
 - Keep decisions reasoned. Add alternatives when they shaped the current state.
-- If craft-prompt templates are installed, use `craft-prompt/templates/session-handoff.md` as the writing model. If not, use the shape above directly.
+- Use `references/artifact-shapes.md` when you need the exact markdown skeleton.
+- If craft-prompt templates are installed, use `craft-prompt/templates/session-handoff.md` as the writing model.
 
 ### 4. Compose the resume prompt
 
 The prompt must be usable even if the doc is unreachable, but it should command the next agent to read the doc first.
 
-Shape:
-
-```xml
-<context>
-## Project
-<name> — <one-liner>
-
-## State
-- Branch: <branch>
-- Tests: <verified status>
-- Blockers: <none or blockers>
-
-## Done (snapshot)
-- <outcome>
-
-## Decisions (one-liners; full rationale in handoff doc)
-- <decision> — because <reason>
-
-## Background
-Full session narrative, decision rationale, and abandoned approaches are at `~/.craftkit/handoff/docs/<slug>.md`. Read it first to fully restore prior context before acting.
-</context>
-
-<task>
-<next task>
-
-Success criteria:
-- <observable criterion>
-</task>
-
-<rules>
-- All paths are worktree-relative
-- Read `~/.craftkit/handoff/docs/<slug>.md` first if reachable; if missing or inconsistent with this snapshot, proceed with this snapshot and surface the discrepancy
-- Read `<key file>` first to confirm <why>
-- Run `<actual verification command>` before declaring done
-</rules>
-```
+Core shape: `<context>` with Project, State, Done snapshot, Decisions, and Background; `<task>` with the next action and success criteria; `<rules>` with path, doc-read, key-file, and verification rules.
 
 Add `## Suggested skills` inside `<context>` only when a specific skill or capability would change the next agent's behavior.
+
+Use `references/artifact-shapes.md` when you need the exact XML skeleton.
 
 ### 5. Persist and copy
 
@@ -202,7 +144,7 @@ Do not paste the rich doc in chat when it was written successfully.
 - **Doc unreachable on resume**: the prompt snapshot must still be usable, and the next agent should flag the missing doc.
 - **Partial write**: if doc write succeeds but prompt write fails, recover by writing only the prompt.
 
-For stale prompts, concurrent wrap-ups, clipboard portability, pair-write recovery, cleanup commands, and hook edge cases, read `references/operational-details.md`.
+For exact artifact skeletons, read `references/artifact-shapes.md`. For stale prompts, concurrent wrap-ups, clipboard portability, pair-write recovery, cleanup commands, and hook edge cases, read `references/operational-details.md`.
 
 ## Example
 
@@ -217,5 +159,6 @@ See `references/full-example.md` for a complete paired output.
 ## References (load on demand)
 
 - `references/full-example.md` — complete rich-doc + prompt example.
+- `references/artifact-shapes.md` — exact rich-doc and resume-prompt skeletons.
 - `references/operational-details.md` — clipboard portability, stale-prompt cleanup, concurrent wrap-ups, pair-write recovery, cleanup commands, and extended failure handling.
 - `references/auto-load-hook.md` — optional SessionStart hook that auto-injects the pending prompt after `/clear`; the hook does not read the rich doc.

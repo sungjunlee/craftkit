@@ -1,6 +1,6 @@
 ---
 name: craft-skill-spec
-description: Design a new skill (or skill suite, subagent, or plugin) using CraftKit's current radar guidance. Use this whenever a user wants to create, architect, or spec a new skill-like artifact and needs help deciding the artifact class, what patterns to adopt/avoid, and the file or package shape before writing `SKILL.md` — including requests like "design a skill", "spec this skill", "make a meta-skill", "design a subagent", "spec a plugin", or "what should this be — skill or subagent?"
+description: Design a skill-like artifact before writing it. Use for skill specs, suites, subagents, plugins, artifact-class decisions, triggers, file shape, or "meta-skill" requests.
 ---
 
 # craft-skill-spec
@@ -36,11 +36,14 @@ If the user does not state all of these, infer what is safe to infer and keep mo
 Before producing the spec:
 
 1. Read `references/radar/taxonomy.md` and classify the artifact: `none yet`, `single skill`, `skill suite`, `subagent`, or `plugin`.
-2. Read `references/radar/current.md`.
-3. If the target touches a `Watch` area, or if the artifact class is `subagent` or `plugin`, consult `references/radar/policy.md` and the relevant entries in `references/radar/sources.md`.
-4. Read dated snapshots in `references/radar/` only when a `Watch` item, subagent/plugin boundary, or freshness-sensitive decision requires them.
-5. If the target is a project-specific agent harness, read `references/project-harness-toolkit.md` before deciding whether the answer should be a skill-like artifact, a concrete harness change plan, or both.
-6. Read an existing CraftKit skill only when it is directly adjacent to the proposed job.
+2. Read `references/radar/current.md` for the default single-skill guidance.
+
+Then load only the branch-specific references you need:
+
+- `references/radar/policy.md` and relevant `references/radar/sources.md` entries — when the target touches a `Watch` area, or the artifact class is `subagent` or `plugin`.
+- Dated snapshots in `references/radar/` — only when a `Watch` item, subagent/plugin boundary, or freshness-sensitive decision requires historical context.
+- `references/project-harness-toolkit.md` — when the target is a project-specific agent harness and the answer may be a context/command/hook/harness plan instead of a skill-like artifact.
+- Existing CraftKit skills — only when one is directly adjacent to the proposed job.
 
 Do not start with open-ended web research unless the user explicitly asks for it. The point of this skill is to use the curated internal layer first.
 
