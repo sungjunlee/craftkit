@@ -1,6 +1,6 @@
 ---
 name: craft-tune
-description: Autonomously sharpen an existing prompt or skill — re-diagnose, minimal-diff edit, repeat until Self-LGTM (no [HIGH]/[MED] findings remain). This is the review-and-fix loop: it edits the artifact in place. Use whenever the user wants to refine, sharpen, tighten, fix, improve, or upgrade an existing prompt or skill, or says it "feels off" or "behaves inconsistently." For a read-only diagnosis with no edits, use craft-critique instead.
+description: Improve an existing prompt or skill in place. Use for refine, sharpen, tighten, fix, upgrade, "feels off", or inconsistent artifact requests.
 ---
 
 # craft-tune
@@ -140,87 +140,20 @@ If a round's Diagnostics keeps surfacing the same fuzzy complaint ("this just fe
 - editing past the diagnosis — changelog entries that no Diagnostics item justifies
 - looping past the hard cap by reframing what "converged" means
 
-## Example (full run, abbreviated)
+## Example
 
-### Input
+Input: tune `Review my code and tell me what to fix. Be thorough.` so reviews are consistent across agents.
 
-Current prompt:
+Output sketch:
 
-> Review my code and tell me what to fix. Be thorough.
+- Round 1 diagnoses undefined "thorough", missing output shape, and missing "review only" guard; edits add scope, non-goal, and a capped output template.
+- Round 2 diagnoses a weak "one question" slot; edits turn it into "one merge-blocking unknown, skip if none".
+- Round 3 has only `[LOW]` items; no edits are applied and Self-LGTM fires.
+- Final output includes the revised prompt, cumulative changed / why / effect table, and tradeoffs.
 
-Target improvement: consistent reviews across agents, with a stable output shape.
+For the expanded round trail and final artifact, load `references/full-run-example.md`.
 
-### Round 1
+## References
 
-**Intent preserved**
-The original job is to get a code review back from an agent — a list of things to fix in code the user already wrote. The "thorough" qualifier signals the user wants more than surface comments, but does not bound what counts as in-scope.
-
-**Diagnostics**
-1. `[HIGH]` "Thorough" is undefined — no scope, no rubric, no length cap. Output volume varies run-to-run.
-2. `[HIGH]` No output template — different agents (Claude vs Codex) return different shapes for the same prompt.
-3. `[MED]` No "review only, don't refactor" guard. The agent occasionally rewrites code it was asked to comment on.
-
-**Edits applied**
-- added explicit `<scope>` + non-goal ("don't refactor") → why Diagnostics #3 → effect: review stays a review
-- replaced "thorough" with capped, ordered 3-section `<output>` template → why Diagnostics #1, #2 → effect: output volume bounded, cross-agent shape stable
-- switched to XML tags for multi-section structure → why Diagnostics #2 → effect: sections parse identically across Claude, GPT, Gemini
-
-### Round 2
-
-**Diagnostics**
-1. `[MED]` Slot 3 of the output template ("one question") is underspecified — tends to surface trivia instead of merge-blocking unknowns.
-2. `[LOW]` Linter-exclusion clause is wordier than needed.
-
-**Edits applied**
-- reframed slot 3 as "one merge-blocking unknown, skip if none" → why Diagnostics #1 → effect: the slot earns its keep or vanishes
-- collapsed linter clause to "Exclude: lint-enforced style." → why Diagnostics #2 → effect: cleaner read, same behavior
-
-### Round 3
-
-**Diagnostics**
-1. `[LOW]` The `<scope>` list could be alphabetized for skim-readability.
-2. `[LOW]` "Top issues (max 5, ordered by severity)" — "by severity" is redundant with "Top issues".
-
-**Edits applied**
-No edits — both items are `[LOW]` and below the action threshold; Self-LGTM fires.
-
-### Convergence
-
-Converged at Round 3 — Self-LGTM (no `[HIGH]`/`[MED]` findings remain; the two `[LOW]` items are below the action threshold).
-
-### Revised artifact
-
-```xml
-<task>
-Review the code below. Do not refactor or rewrite.
-</task>
-
-<scope>
-- Correctness and likely bugs
-- Security and input validation
-- Obvious performance cliffs
-- Readability and naming
-Exclude: lint-enforced style.
-</scope>
-
-<output>
-Return exactly three sections:
-1. Top issues (max 5, ordered by severity)
-2. Minor notes (max 5, one line each)
-3. One merge-blocking unknown — a question whose answer would change whether you'd approve. Skip if none.
-</output>
-```
-
-### Cumulative changelog
-
-| changed | why | effect |
-|---|---|---|
-| added explicit `<scope>` + "don't refactor" non-goal | R1 Diagnostics #3 | review stays a review; no surprise refactors |
-| replaced "thorough" with capped 3-section `<output>` template | R1 Diagnostics #1, #2 | output volume bounded; same shape across agents |
-| switched to XML tags for multi-section structure | R1 Diagnostics #2 | sections parse identically across Claude, GPT, Gemini |
-| reframed slot 3 as "merge-blocking unknown, skip if none" | R2 Diagnostics #1 | section earns its keep or vanishes; no filler questions |
-| collapsed linter clause to "Exclude: lint-enforced style." | R2 Diagnostics #2 | scope reads cleaner; same behavior |
-
-### Tradeoffs
-- length ↑ (still under 200 tokens)
-- flexibility ↓ — less freedom to surface unusual issues, mitigated by the skip-allowed "merge-blocking unknown" slot
+- `references/failure-modes.md` — categorized diagnostic vocabulary for vague or repeated findings.
+- `references/full-run-example.md` — compact full-loop example with rounds, revised artifact, changelog, and tradeoffs.

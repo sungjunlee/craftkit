@@ -1,7 +1,7 @@
 ---
 name: spec-system-map
 argument-hint: "[create|amend]"
-description: "Create or amend spec/system-map.md as a high-level project system map. Use for architecture scope confusion, system shape, runtime boundaries, core flows, invariants, storage/external systems, or SYSTEM_MAP."
+description: "Create or amend spec/system-map.md. Use for architecture scope, system shape, runtime boundaries, core flows, invariants, storage/external systems, or SYSTEM_MAP."
 compatibility: Requires git.
 metadata:
   related-skills: "spec-charter, spec-grill, dev-backlog"

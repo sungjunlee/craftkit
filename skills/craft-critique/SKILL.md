@@ -1,6 +1,6 @@
 ---
 name: craft-critique
-description: Critique a prompt or skill and surface ambiguity, hidden assumptions, weak structure, portability issues, and likely failure modes — a read-only review that never edits the artifact. Use this whenever the user asks to review, audit, critique, or diagnose a prompt or skill, mentions a prompt that "feels off" or behaves inconsistently, or wants the findings before deciding on a rewrite — even if they don't say "critique." For the review-and-fix loop that actually applies edits, use craft-tune instead.
+description: Critique prompts or skills without editing. Use for review-only diagnosis, audit, "feels off" artifacts, or findings before a rewrite.
 ---
 
 # craft-critique

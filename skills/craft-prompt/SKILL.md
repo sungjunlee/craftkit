@@ -1,6 +1,6 @@
 ---
 name: craft-prompt
-description: Craft well-structured, copy-paste-ready prompts for any LLM or agent. Use when the user asks to write/build a prompt, shape scattered notes into a prompt, create a reusable template, or draft a `/goal` condition. Triggers include "prompt", "프롬프트 만들어", "프롬프트 작성", and "goal 조건."
+description: Craft copy-paste-ready prompts. Use to write prompts, turn notes into templates, draft `/goal` conditions, or answer "프롬프트 만들어" requests.
 ---
 
 # craft-prompt

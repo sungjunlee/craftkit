@@ -7,6 +7,8 @@ import { spawnSync } from "node:child_process";
 const root = process.cwd();
 const failures = [];
 const skipPackDryRunForTests = process.env.CRAFTKIT_VERIFY_TEST_SKIP_PACK_DRY_RUN === "1";
+const maxSkillSoftLines = 220;
+const maxDescriptionWords = 50;
 
 function fail(message) {
   failures.push(message);
@@ -83,13 +85,42 @@ function parseFrontmatter(text) {
   return text.slice(4, endIndex);
 }
 
+function parseDescription(frontmatter) {
+  const lines = frontmatter.split("\n");
+  const descriptionIndex = lines.findIndex((line) => line.startsWith("description:"));
+
+  if (descriptionIndex === -1) {
+    return "";
+  }
+
+  const rawDescription = lines[descriptionIndex].replace(/^description:\s*/, "").trim();
+  if (!["|-", "|", ">-", ">"].includes(rawDescription)) {
+    return rawDescription.replace(/^["']|["']$/g, "");
+  }
+
+  const descriptionLines = [];
+  for (const line of lines.slice(descriptionIndex + 1)) {
+    if (!/^\s+/.test(line)) {
+      break;
+    }
+
+    descriptionLines.push(line.trim());
+  }
+
+  return descriptionLines.join(" ");
+}
+
+function countWords(text) {
+  return text.split(/\s+/).filter(Boolean).length;
+}
+
 function checkSkillFiles() {
   const skillFiles = listFiles(path.join(root, "skills"), (item) => path.basename(item) === "SKILL.md");
 
   for (const filePath of skillFiles) {
     const text = readText(filePath);
     const frontmatter = parseFrontmatter(text);
-    const lineCount = text.split("\n").length;
+    const lineCount = text.trimEnd().split("\n").length;
 
     if (!frontmatter) {
       fail(`${relative(filePath)} must start with YAML frontmatter`);
@@ -100,12 +131,44 @@ function checkSkillFiles() {
       fail(`${relative(filePath)} frontmatter must include name`);
     }
 
-    if (!/^description:\s*\S+/m.test(frontmatter)) {
+    const description = parseDescription(frontmatter);
+    if (!description) {
       fail(`${relative(filePath)} frontmatter must include description`);
+    }
+
+    const descriptionWords = countWords(description);
+    if (descriptionWords > maxDescriptionWords) {
+      fail(`${relative(filePath)} description has ${descriptionWords} words, over the ${maxDescriptionWords}-word trigger budget`);
+    }
+
+    if (lineCount > maxSkillSoftLines) {
+      fail(`${relative(filePath)} has ${lineCount} lines, over the ${maxSkillSoftLines}-line soft budget; move deep detail into references or split the skill`);
     }
 
     if (lineCount > 500) {
       fail(`${relative(filePath)} has ${lineCount} lines, over the 500-line hard ceiling`);
+    }
+  }
+}
+
+function checkMirroredReferences() {
+  const mirroredPairs = [
+    [
+      "skills/craft-critique/references/failure-modes.md",
+      "skills/craft-tune/references/failure-modes.md",
+    ],
+  ];
+
+  for (const [first, second] of mirroredPairs) {
+    const firstPath = path.join(root, first);
+    const secondPath = path.join(root, second);
+
+    if (!fs.existsSync(firstPath) || !fs.existsSync(secondPath)) {
+      continue;
+    }
+
+    if (readText(firstPath) !== readText(secondPath)) {
+      fail(`${first} and ${second} are mirrored references and must stay identical`);
     }
   }
 }
@@ -217,6 +280,7 @@ function checkPackDryRun() {
 checkJsonFiles();
 checkPackageBoundary();
 checkSkillFiles();
+checkMirroredReferences();
 checkTerminology();
 checkDocumentationPaths();
 checkPackDryRun();

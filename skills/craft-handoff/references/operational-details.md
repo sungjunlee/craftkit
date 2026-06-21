@@ -22,6 +22,18 @@ The pair is the unit of handoff:
 
 Each run writes a new timestamped prompt, so pending prompts are not overwritten. The live rich doc is per project and is archived before overwrite.
 
+## Fallback target derivation
+
+Use this only when `scripts/gather-state.mjs` is unavailable.
+
+- `WORKTREE_SLUG`: `<sanitized basename>-<first 6 chars of sha1(worktree path)>`
+- `DOC_PATH`: `~/.craftkit/handoff/docs/<slug>.md`
+- `PENDING_PATH`: `~/.craftkit/handoff/pending/<timestamp>-<slug>.md`
+- `ARCHIVE_DIR`: `~/.craftkit/handoff/archive`
+- frontmatter: `worktree`, `branch`, and `created` for both artifacts; add `next` for the rich doc
+
+For non-git directories, use the current working directory path in place of the git root when computing the slug.
+
 ## Stale pending prompts
 
 The optional auto-load hook archives pending prompts older than 72h by default. Configure with `CRAFTKIT_HANDOFF_TTL_HOURS`; set it to `0` to disable stale cleanup.

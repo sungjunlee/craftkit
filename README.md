@@ -120,13 +120,13 @@ For evolving skill-authoring guidance, the `craft-skill-spec` skill carries its 
 
 ## Skill spine budget
 
-`AGENTS.md` keeps a hard 500-line ceiling for each `SKILL.md`, but day-to-day edits should aim much lower:
+`AGENTS.md` keeps an absolute 500-line format ceiling for each `SKILL.md`, but CraftKit's release gate is stricter: `npm run verify` fails when a skill spine exceeds 220 lines or a frontmatter `description` exceeds 50 words.
 
 - Normal skills: about 100-160 lines.
 - Complex loop or orchestration skills: about 160-220 lines.
 - Anything growing past that should move examples, platform notes, maintenance commands, or edge-case catalogs into `references/`.
 
-The spine should still be understandable alone: purpose, inputs, steps, output contract, one compact example, limitations, and links to on-demand references. References carry depth; the spine carries the operating path.
+The spine should still be understandable alone: purpose, inputs, steps, output contract, one compact example, limitations, and links to on-demand references. References carry depth; the spine carries the operating path. Mirrored references are allowed only when the verifier guards them against drift.
 
 ## Routing checks
 
