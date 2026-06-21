@@ -3,7 +3,8 @@ name: craft-handoff
 description: >-
   Produce paired session-handoff artifacts: a rich doc plus a resume prompt.
   Use when wrapping up, clearing context, pausing work, or the user says
-  "마무리", "핸드오프", or "다음 세션으로 넘겨".
+  "마무리", "세션 정리", "핸드오프", "다음 세션으로 넘겨",
+  or "next session으로 넘겨".
 ---
 
 # craft-handoff
