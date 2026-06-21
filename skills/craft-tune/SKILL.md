@@ -1,6 +1,7 @@
 ---
 name: craft-tune
 description: Improve an existing prompt or skill in place. Use for refine, sharpen, tighten, fix, upgrade, "feels off", or inconsistent artifact requests.
+disable-model-invocation: true
 ---
 
 # craft-tune

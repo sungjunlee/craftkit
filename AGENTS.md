@@ -42,12 +42,15 @@ Each skill lives at `skills/<skill-name>/SKILL.md` and uses Claude Code skill fo
 ---
 name: <skill-name>
 description: <one line on what it does + explicit trigger contexts>
+# optional for explicit-only workflows:
+disable-model-invocation: true
 ---
 
 <markdown body>
 ```
 
 - The `description` is the triggering mechanism — include both what the skill does and when to use it.
+- For explicit-only workflows, add `disable-model-invocation: true` in `SKILL.md` for Claude Code and `agents/openai.yaml` with `policy.allow_implicit_invocation: false` for Codex. Use this for costly, mutating, side-effecting, or high-ceremony workflows where the user should opt in directly.
 - Keep the body under 500 lines. If it grows, split into `references/` and link from the body.
 - Favor imperative form and explain the *why* behind each step rather than rigid ALWAYS/NEVER rules.
 - Include at least one concrete example.

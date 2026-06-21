@@ -128,6 +128,25 @@ For evolving skill-authoring guidance, the `craft-skill-spec` skill carries its 
 
 The spine should still be understandable alone: purpose, inputs, steps, output contract, one compact example, limitations, and links to on-demand references. References carry depth; the spine carries the operating path. Mirrored references are allowed only when the verifier guards them against drift.
 
+## Invocation policy
+
+Most CraftKit skills are explicit workflow selectors, not always-on background guidance. Use implicit invocation only when a skill is low-risk and broadly helpful when matched, such as read-only diagnosis or direct prompt drafting.
+
+For explicit-only workflows, pair both platform controls:
+
+```yaml
+# SKILL.md frontmatter, used by Claude Code
+disable-model-invocation: true
+```
+
+```yaml
+# agents/openai.yaml, used by Codex
+policy:
+  allow_implicit_invocation: false
+```
+
+Use explicit-only policy for skills that edit files, write artifacts, mutate clipboard state, run eval loops, create spec files, inspect repo harness surfaces, or otherwise turn a broad user request into a higher-ceremony workflow. Keep the `description` concise and useful for manual skill lists even when it is not injected for implicit routing.
+
 ## Routing checks
 
 Use these lightweight checks after editing skill descriptions or routing boundaries. They are manual contract checks, not a new runtime.
@@ -146,7 +165,8 @@ CraftKit skills are plain markdown with YAML frontmatter, so they port easily:
 
 1. Open the relevant `SKILL.md`.
 2. Paste the body (everything after the frontmatter) into the target agent's system prompt or instructions.
-3. Keep the frontmatter `description` line as context so the agent knows when to apply the skill.
+3. For implicit skills, keep the frontmatter `description` line as context so the agent knows when to apply the skill.
+4. For explicit-only skills, keep the description in the file for menus and manual selection, but preserve the invocation policy fields above when the target agent supports them.
 
 See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a walk-through of diagnosing and tuning an existing prompt, then optionally running a short improvement loop.
 
