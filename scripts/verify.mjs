@@ -162,10 +162,10 @@ function parseOpenAiInvocationPolicy(text) {
     }
 
     const indent = line.match(/^\s*/)[0].length;
-    const trimmed = line.trim();
+    const trimmed = line.replace(/\s+#.*$/, "").trim();
 
     if (indent === 0) {
-      inPolicy = trimmed === "policy:";
+      inPolicy = /^policy:\s*$/.test(trimmed);
       hasPolicy ||= inPolicy;
       continue;
     }
@@ -174,7 +174,7 @@ function parseOpenAiInvocationPolicy(text) {
       continue;
     }
 
-    const match = trimmed.match(/^allow_implicit_invocation:\s*(true|false)$/);
+    const match = trimmed.match(/^allow_implicit_invocation:\s*(true|false)\s*$/);
     if (match) {
       return { hasPolicy, allowImplicit: match[1] === "true" };
     }

@@ -161,6 +161,20 @@ test("passes when explicit-only skills include paired Codex policy", () => {
   assert.equal(result.status, 0, result.stderr || result.stdout);
 });
 
+test("passes when explicit-only Codex policy has inline YAML comments", () => {
+  const root = createFixture();
+  writeFile(
+    root,
+    "skills/example/SKILL.md",
+    "---\nname: example\ndescription: Example skill for tests.\ndisable-model-invocation: true\n---\n\n# Example\n",
+  );
+  writeFile(root, "skills/example/agents/openai.yaml", "policy: # Codex invocation policy\n  allow_implicit_invocation: false # explicit only\n");
+
+  const result = runVerify(root);
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
 test("passes when openai.yaml contains interface metadata without invocation policy", () => {
   const root = createFixture();
   writeFile(root, "skills/example/agents/openai.yaml", "interface:\n  display_name: \"Example\"\n");
