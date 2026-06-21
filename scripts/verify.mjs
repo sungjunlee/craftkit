@@ -204,6 +204,7 @@ function checkPackDryRun() {
     /^tests\//,
     /^\.craftkit\//,
     /^\.relay\//,
+    /^skills\/.*\/scripts\/.*\.(test|spec)\.(js|mjs|cjs|ts|mts|cts|jsx|tsx)$/,
   ];
 
   for (const packageFile of packageFiles) {
