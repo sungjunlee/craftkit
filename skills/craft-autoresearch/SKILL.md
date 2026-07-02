@@ -58,7 +58,7 @@ The loop shape is the same, but the *edit unit* differs. A prompt is a single fi
 
 1. **Target selection.** For a prompt, the target is a single file path. For a skill, decide up front what the target covers — usually `SKILL.md` alone, but a mutation may legitimately touch `references/<file>.md` too. Write it into the experiment contract: *"mutable files: SKILL.md, references/eval-guide.md. All other files are frozen."*
 2. **Mutation locus.** Mutation levels stay the same (wording / example / structure / principle), but for skills a sixth question appears before applying them: *which file?* Prefer editing `SKILL.md` for skill-spine changes and `references/` for deep-detail changes. Adding a new reference file counts as a Level-3 (structural) mutation — it shifts the skill's shape, not just its wording.
-3. **Size metric.** For prompts, `wc -l <file>` is enough. For skills, track two numbers: `skill_lines` (SKILL.md only — the always-loaded budget) and `folder_lines` (everything including references). The primary discipline is keeping `SKILL.md` under its ~500-line target; `folder_lines` is secondary and can grow more before bloat becomes a concern.
+3. **Size metric.** For prompts, `wc -l <file>` is enough. For skills, track two numbers: `skill_lines` (SKILL.md only — the always-loaded budget) and `folder_lines` (everything including references). The primary discipline is keeping `SKILL.md` under CraftKit's 220-line release gate, with normal skills around 100-160 lines and complex loop/orchestration skills around 160-220 lines; `folder_lines` is secondary and can grow more before bloat becomes a concern.
 4. **Mutation safety.** A prompt mutation touches one file, so checkpoint and rollback are trivial. A skill mutation may touch several — record the exact file list in the experiment's checkpoint, and on DISCARD restore *only those files*. Never rollback the whole folder; unrelated files may hold accepted prior-experiment state.
 5. **Fidelity evals (multi-skill pipelines).** If the target is a skill that feeds another skill's input (e.g. `craft-skill-spec` → `craft-tune`), add fidelity evals that check stage-to-stage consistency. Not applicable for single-file prompts.
 
@@ -186,7 +186,7 @@ Representative outputs:
 | 6 | Stability check | Re-ran to confirm | 12/12 | KEEP — 3 consecutive hit, STOP | stop condition satisfied |
 
 **Final artifact**
-Accepted version: `skills/craft-tune/SKILL.md`. Size note: `skill_lines` held under the 500-line target.
+Accepted version: `skills/craft-tune/SKILL.md`. Size note: `skill_lines` stayed within the 160-220 line complex-skill band and below the 220-line release gate.
 
 **Direction shifts**
 - Flipped from "softer wording" to "explicit constraints" after baseline showed missing structure.

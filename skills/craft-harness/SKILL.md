@@ -198,22 +198,12 @@ Pass signal: the output inventories existing harness files first, separates prov
 
 ## Example
 
-"Agents keep missing our migration safety process. We use Codex more lately, but some teammates use Claude Code too."
+Input: "Agents keep missing our migration safety process. We use Codex more lately, but some teammates use Claude Code too."
 
-**Harness mode**
-- mode: `repair`
-- primary target: Codex current-primary, Claude Code first-class target
-- why: the issue is a repeated agent miss in an operating repo
+Output sketch:
+- Harness thesis: `repair`; Codex current-primary and Claude Code first-class target; repeated DB review misses justify a repo-local harness change.
+- Pain / need map: migration safety checklist -> verification/review job -> repo-local skill plus short root pointer; promote to hook only if agents still skip deterministic checks.
+- Verification: prompt "Review this migration change..." should surface rollback, idempotency, data-size, and test checks; failure is generic "run tests" advice.
+- Deferred / prune: plugin packaging and hook install wait until the skill proves useful.
 
-**Pain / need map**
-| need | repeated agent job | evidence | placement | promotion trigger |
-|---|---|---|---|---|
-| migration safety checklist | verification/review | repeated misses during DB work | repo-local skill plus short root pointer | promote to hook only if agents still skip deterministic checks |
-
-**Verification**
-- Prompt: "Review this migration change and tell me what safety checks apply."
-- Expected evidence: agent finds the migration skill and names rollback, idempotency, data-size, and test checks.
-- Failure signal: agent only says "run tests" or misses rollback/data safety.
-
-**Deferred / prune**
-- plugin packaging: defer until the skill proves useful across more than one repo.
+For a fuller repair example, load `references/repair-example.md`.
