@@ -23,6 +23,13 @@ Agents keep missing our migration safety process. We use Codex more lately, but 
 |---|---|---|---|---|
 | migration safety checklist | verification/review | repeated misses during DB work | repo-local skill plus short root pointer | promote to hook only if agents still skip deterministic checks |
 
+**Buy vs build**
+- source: existing repo docs and maintained public migration-safety assets
+- decision: build local
+- trust notes: the checklist is project-specific, repo-local markdown is reviewable, and no install or network permission is needed
+- fit / failure: public guidance is useful background, but it will not know this repo's rollback, idempotency, and data-size conventions
+- rollback path: remove the repo-local skill and root pointer; no hook, MCP, plugin, or global config state remains
+
 **Proposed changes**
 | path/target | action | risk gate | rationale |
 |---|---|---|---|

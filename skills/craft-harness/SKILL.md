@@ -203,6 +203,7 @@ Input: "Agents keep missing our migration safety process. We use Codex more late
 Output sketch:
 - Harness thesis: `repair`; Codex current-primary and Claude Code first-class target; repeated DB review misses justify a repo-local harness change.
 - Pain / need map: migration safety checklist -> verification/review job -> repo-local skill plus short root pointer; promote to hook only if agents still skip deterministic checks.
+- Buy vs build: build local after checking no maintained repo-specific migration skill fits; rollback is removing the skill and root pointer.
 - Verification: prompt "Review this migration change..." should surface rollback, idempotency, data-size, and test checks; failure is generic "run tests" advice.
 - Deferred / prune: plugin packaging and hook install wait until the skill proves useful.
 
