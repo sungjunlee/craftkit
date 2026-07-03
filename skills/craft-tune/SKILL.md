@@ -84,6 +84,8 @@ Once a stop condition fires, append this block. This is what the user reads to t
 
 One line: *"Converged at Round N — <stop condition>."* Use the exact condition name from § Stop conditions (Self-LGTM / Persistent fixpoint / No-op round / Hard cap).
 
+On a Self-LGTM exit, before shipping, publishing, or generalizing the tuned artifact beyond this session, run an independent second pass — `craft-critique` in a fresh context, or ordinary PR review. The loop judges its own output, and a same-context re-read shares the loop's blind spots.
+
 ### Revised artifact
 
 The fully revised prompt or skill at its final state. Copy-pasteable as a standalone replacement.
@@ -113,6 +115,7 @@ If the loop exited on Persistent fixpoint, No-op round, or Hard cap, list the `[
 - minimal-diff per round — do not rewrite everything in any single round
 - never exit the loop without naming the stop condition
 - a clean Self-LGTM exit requires *no* `[HIGH]`/`[MED]` items in the final round's Diagnostics — do not declare convergence just because edits are getting smaller
+- Self-LGTM is convergence of the loop's own judgment, not external validation — same-context review shares the loop's blind spots, so treat the tuned artifact as unverified by anyone outside the loop
 - preserve strengths, not just list problems
 - keep the final revised artifact copy-pasteable
 - prefer structural clarity over clever wording
