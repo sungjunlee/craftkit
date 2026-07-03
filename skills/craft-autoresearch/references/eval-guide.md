@@ -68,6 +68,16 @@ Pipeline-stage consistency. Same pass/fail shape as binary, applied across bound
 
 Record numerator and denominator, not just a percentage. `11/12` keeps the sample-size signal that `91.7%` loses.
 
+## Train/holdout split
+
+Small-suite score deltas are noise-dominated. If the loop optimizes and accepts against the same inputs, it can learn the quirks of those examples instead of the underlying quality bar. Use the train split for cheap KEEP/DISCARD decisions, keep holdout sealed during mutation, then run the final accepted artifact on holdout before reporting an improvement.
+
+Sizing rule: use 6-10 realistic inputs minimum, split roughly 70/30. Holdout needs at least 2 inputs, and those inputs should cover the same failure modes as train rather than easier happy paths. Example: 7 inputs usually means 5 train / 2 holdout; 10 inputs usually means 7 train / 3 holdout.
+
+Acceptance rule: establish baseline train and holdout scores separately. During the mutation loop, run only train. At session end, run the final accepted artifact on holdout and accept the session as an improvement only if holdout does not regress against the baseline holdout score. If train improves but holdout regresses, report an overfit finding, keep the log, do not present the artifact as improved, and strengthen the suite before another run.
+
+Waiver: when the suite genuinely cannot reach 6 inputs, record `holdout: waived (<reason>)` in the experiment contract. The cost is weaker evidence: overfit detection falls back to the 1-week re-run on fresh inputs, which becomes mandatory rather than recommended.
+
 ## Determinism hierarchy
 
 Prefer the highest-determinism check available. More determinism means more stable scores and less optimization of noise.
@@ -177,8 +187,9 @@ When you're stuck, ask an agent for a draft — but give it the category taxonom
 Analyze the SKILL.md below and produce an evals.json file.
 
 Requirements:
-- 3-5 test prompts covering different scenarios (common case, edge case,
-  complex case, previously-failing case, reference-file-required case).
+- 6-10 test prompts covering different scenarios (common case, edge case,
+  complex case, previously-failing case, reference-file-required case),
+  split roughly 70/30 into train and holdout with at least 2 holdout prompts.
 - 4-6 binary assertions per prompt. Every assertion must be judgeable
   as true/false.
 - Tag each assertion with a category from: structure, length, inclusion,
@@ -247,9 +258,10 @@ Design guidelines:
 
 | Field | Recommendation | Reason |
 |---|---|---|
-| Test prompts | 3-5 | Variety without excessive cost |
+| Test prompts | 6-10 | Enough variety to support train/holdout without excessive cost |
+| Holdout prompts | ≥2 | A final non-regression gate against train overfitting |
 | Assertions per prompt | 4-6 | Coverage without overwhelm |
-| Total assertions | 15-30 | Statistically meaningful pass rate |
+| Scored checks | 24-60 | Statistically meaningful pass rate after the split |
 | Assertion text | Natural-language yes/no | So an agent grader can judge it |
 
 ## Anti-patterns
@@ -259,7 +271,7 @@ Design guidelines:
 - **Hidden-weight scoring.** If some evals matter more, state the weights. Equal-weight is a valid choice — but make it a *choice*.
 - **No comparative eval at all.** If nothing captures quality beyond structure, a well-formatted but shallow output scores full marks.
 - **No grounding or safety evals for research/agentic prompts.** The loop may optimize format while preserving unsupported claims, premature finalization, or risky action behavior.
-- **Unbounded eval count.** Every new eval adds noise surface. Six to eight evals cover most skills well; more than ten usually means you're over-specifying.
+- **Unbounded eval count.** Every new eval dimension adds noise surface. Six to eight dimensions cover most skills well; more than ten usually means you're over-specifying.
 - **Overfitting evals (teaching to the test).** If evals are too specific to the test inputs, the skill gets better at those scenarios and worse at everything else. Write evals at the principle level, not the micro-rule level.
 - **Overlapping evals.** "Is it grammatically correct?" + "Any spelling errors?" double-counts. Each eval should test something distinct.
 
