@@ -12,6 +12,7 @@ A walk-through of a full autoresearch cycle against a real CraftKit skill. **Thi
   1. **Short**: a 15-line auth function with a subtle off-by-one bug
   2. **Medium**: a CI config file with three issues of different severity
   3. **Long**: a 150-line React component mixing concerns
+- **Train/holdout**: `holdout: waived (only three realistic review prompts available)` — below the 6-input minimum, so the 1-week re-run on fresh inputs is mandatory for this session
 - **Evals**:
   - E1 [Tier 1, Structure]: output contains exactly five H2 sections — *What's working*, *Issues*, *Recommended changes*, *Failure modes*, *Minimal rewrite plan* — in that order. *(grep + ordering check)*
   - E2 [Tier 1, Length]: the *Issues* section contains at most five items. *(regex count)*
