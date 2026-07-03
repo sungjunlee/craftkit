@@ -52,41 +52,7 @@ End every run with a short summary:
 
 ### Grill Report Contract
 
-Use this report shape for no-arg, ambiguous, candidate-discovery, and audit routes unless the user asks for a shorter answer:
-
-```md
-## Grill Report
-
-### Evidence Read
-- <file/script/signal and what it proves>
-
-### Evidence Missing
-- <missing charter/system-map/tests/docs/surface that weakens confidence>
-
-### Raw Candidates
-- <candidate> - raw signal: <surface>; supporting evidence: <docs/code/tests/history>; missing evidence: <gap>
-
-### Accepted / Rejected / Merged / Split Candidates
-- Accepted: <candidate> - <reason>
-- Rejected: <candidate> - <reason>
-- Merged: <candidate A> + <candidate B> -> <candidate C> - <reason>
-- Split: <candidate> -> <candidate A>, <candidate B> - <reason>
-
-### Sharp Questions
-- <candidate>: <pressure question that must be answered before editing>
-
-### 3-Axis Predicate Findings
-- Rejected predicates: <predicate> - failed <axis>
-- Rewritten predicates: <before> -> <after>
-- Behaviors promoted to constraints: <behavior> -> <constraint>
-- Missing proof/evidence: <predicate> - needs <test/doc/runtime invariant/receipt>
-
-### Proposed Next Capability
-- <slug> - <why this is the next safest contract to write or revise>
-
-### Recommended Edit
-- <specific edit command or "no edit yet">
-```
+Use this report shape for no-arg, ambiguous, candidate-discovery, and audit routes unless the user asks for a shorter answer. Every report must include these sections in order: `## Grill Report`, `### Evidence Read`, `### Evidence Missing`, `### Raw Candidates`, `### Accepted / Rejected / Merged / Split Candidates`, `### Sharp Questions`, `### 3-Axis Predicate Findings`, `### Proposed Next Capability`, `### Recommended Edit`. See `references/grill-report-template.md` for the full skeleton with placeholder fields.
 
 Separate diagnosis from mutation. The report can recommend edits, but it must not edit `spec/capabilities.md` unless the user clearly asked for editing or confirms the proposed edit.
 
@@ -175,4 +141,6 @@ See `references/capabilities.md` for additional grill heuristics and [`../spec-c
 
 ## References
 
+- `references/capabilities.md` — grill heuristics (naming, goal rewrites, 3-axis examples, admission patterns) used after the interview flow.
+- `references/grill-report-template.md` — the full Grill Report skeleton.
 - `references/spec-pipeline-ready.md` — lightweight ready-to-commit checklist for the full `spec-charter -> spec-system-map -> spec-grill` flow.
