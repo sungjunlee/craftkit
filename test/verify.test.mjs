@@ -5,9 +5,17 @@ import path from "node:path";
 import test from "node:test";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { radarStaleness } from "../scripts/verify.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const verifyScript = path.join(repoRoot, "scripts/verify.mjs");
+const radarCurrentPath = "skills/craft-skill-spec/references/radar/current.md";
+
+function isoDateDaysAgo(days) {
+  const date = new Date();
+  date.setUTCDate(date.getUTCDate() - days);
+  return date.toISOString().slice(0, 10);
+}
 
 function writeFile(root, filePath, content) {
   const fullPath = path.join(root, filePath);
@@ -42,6 +50,11 @@ function createFixture() {
   );
   writeFile(root, "skills/craft-critique/references/failure-modes.md", "# Failure Modes\n\nShared fixture.\n");
   writeFile(root, "skills/craft-tune/references/failure-modes.md", "# Failure Modes\n\nShared fixture.\n");
+  writeFile(
+    root,
+    radarCurrentPath,
+    `# Skill Radar: Current Canonical View\n\n- last reviewed: \`${isoDateDaysAgo(0)}\`\n`,
+  );
   writeFile(
     root,
     "package.json",
@@ -252,3 +265,84 @@ expectVerifyFailure("fails when npm package includes skill script tests", (root)
 expectVerifyFailure("fails when npm package includes skill script jsx/tsx specs", (root) => {
   writeFile(root, "skills/example/scripts/helper.spec.tsx", "export {};\n");
 }, /npm package must not include skills\/example\/scripts\/helper\.spec\.tsx/, { skipPackDryRun: false });
+
+test("passes without a radar staleness warning when current.md was reviewed recently", () => {
+  const root = createFixture();
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /warning:/);
+});
+
+test("warns but still passes when radar current.md is stale", () => {
+  const root = createFixture();
+  writeFile(
+    root,
+    radarCurrentPath,
+    `# Skill Radar: Current Canonical View\n\n- last reviewed: \`${isoDateDaysAgo(100)}\`\n`,
+  );
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(`${result.stdout}\n${result.stderr}`, /past the 75-day staleness threshold/);
+});
+
+test("warns but still passes when radar current.md is missing a last reviewed line", () => {
+  const root = createFixture();
+  writeFile(root, radarCurrentPath, "# Skill Radar: Current Canonical View\n\nNo review metadata here.\n");
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(`${result.stdout}\n${result.stderr}`, /missing a parseable "last reviewed" date/);
+});
+
+test("warns but still passes when radar current.md has an unparseable last reviewed date", () => {
+  const root = createFixture();
+  writeFile(root, radarCurrentPath, "# Skill Radar: Current Canonical View\n\n- last reviewed: `not-a-date`\n");
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(`${result.stdout}\n${result.stderr}`, /unparseable "last reviewed" date: not-a-date/);
+});
+
+test("radarStaleness returns null for a fresh review date", () => {
+  const now = new Date("2026-07-04T00:00:00Z");
+
+  assert.equal(radarStaleness("- last reviewed: `2026-07-04`\n", now), null);
+});
+
+test("radarStaleness warns for a review date past the threshold", () => {
+  const now = new Date("2026-07-04T00:00:00Z");
+
+  assert.match(
+    radarStaleness("- last reviewed: `2026-03-01`\n", now),
+    /past the 75-day staleness threshold/,
+  );
+});
+
+test("radarStaleness warns when the last reviewed line is missing", () => {
+  const now = new Date("2026-07-04T00:00:00Z");
+
+  assert.match(radarStaleness("no metadata here\n", now), /missing a parseable "last reviewed" date/);
+});
+
+test("radarStaleness warns when the last reviewed date is unparseable", () => {
+  const now = new Date("2026-07-04T00:00:00Z");
+
+  assert.match(
+    radarStaleness("- last reviewed: `soon`\n", now),
+    /unparseable "last reviewed" date: soon/,
+  );
+});
+
+test("radarStaleness honors a custom max age", () => {
+  const now = new Date("2026-07-04T00:00:00Z");
+  const content = "- last reviewed: `2026-06-01`\n";
+
+  assert.equal(radarStaleness(content, now, 90), null);
+  assert.match(radarStaleness(content, now, 20), /past the 20-day staleness threshold/);
+});

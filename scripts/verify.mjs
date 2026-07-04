@@ -3,15 +3,25 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { pathToFileURL } from "node:url";
 
 const root = process.cwd();
 const failures = [];
+const warnings = [];
 const skipPackDryRunForTests = process.env.CRAFTKIT_VERIFY_TEST_SKIP_PACK_DRY_RUN === "1";
 const maxSkillSoftLines = 220;
 const maxDescriptionWords = 50;
+const radarCurrentPath = "skills/craft-skill-spec/references/radar/current.md";
+// radar/policy.md sets a 2-month (~60 day) review cadence for current.md; 75 days
+// adds slack before this becomes a warning.
+const radarMaxAgeDays = 75;
 
 function fail(message) {
   failures.push(message);
+}
+
+function warn(message) {
+  warnings.push(message);
 }
 
 function listFiles(dir, predicate) {
@@ -296,6 +306,37 @@ function checkDocumentationPaths() {
   }
 }
 
+function radarStaleness(content, now, maxAgeDays = radarMaxAgeDays) {
+  const match = content.match(/^- last reviewed:\s*`([^`]*)`/m);
+  if (!match) {
+    return 'current.md is missing a parseable "last reviewed" date';
+  }
+
+  const reviewedDate = new Date(`${match[1]}T00:00:00Z`);
+  if (Number.isNaN(reviewedDate.getTime())) {
+    return `current.md has an unparseable "last reviewed" date: ${match[1]}`;
+  }
+
+  const ageDays = Math.floor((now.getTime() - reviewedDate.getTime()) / 86_400_000);
+  if (ageDays > maxAgeDays) {
+    return `current.md was last reviewed ${match[1]} (${ageDays} days ago), past the ${maxAgeDays}-day staleness threshold — see radar/policy.md for the refresh cadence`;
+  }
+
+  return null;
+}
+
+function checkRadarStaleness() {
+  const filePath = path.join(root, radarCurrentPath);
+  if (!fs.existsSync(filePath)) {
+    return;
+  }
+
+  const message = radarStaleness(readText(filePath), new Date());
+  if (message) {
+    warn(`${relative(filePath)}: ${message}`);
+  }
+}
+
 function checkPackDryRun() {
   if (skipPackDryRunForTests) {
     return;
@@ -354,21 +395,34 @@ function checkPackDryRun() {
   }
 }
 
-checkJsonFiles();
-checkPackageBoundary();
-checkSkillFiles();
-checkOpenAiInvocationPolicies();
-checkMirroredReferences();
-checkTerminology();
-checkDocumentationPaths();
-checkPackDryRun();
+function main() {
+  checkJsonFiles();
+  checkPackageBoundary();
+  checkSkillFiles();
+  checkOpenAiInvocationPolicies();
+  checkMirroredReferences();
+  checkTerminology();
+  checkDocumentationPaths();
+  checkRadarStaleness();
+  checkPackDryRun();
 
-if (failures.length > 0) {
-  console.error("verify failed:");
-  for (const failure of failures) {
-    console.error(`- ${failure}`);
+  for (const warning of warnings) {
+    console.warn(`warning: ${warning}`);
   }
-  process.exit(1);
+
+  if (failures.length > 0) {
+    console.error("verify failed:");
+    for (const failure of failures) {
+      console.error(`- ${failure}`);
+    }
+    process.exit(1);
+  }
+
+  console.log("verify passed");
 }
 
-console.log("verify passed");
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}
+
+export { radarStaleness };

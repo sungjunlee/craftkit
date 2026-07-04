@@ -55,3 +55,11 @@ Record only durable judgment changes here. Do not duplicate full snapshot conten
 - status: `accepted`
 - rationale: Newer agentic models are proactive enough that old anti-laziness prompts can cause tool, file, or subagent overuse.
 - consequence: CraftKit should prefer criteria-driven tool/subagent rules and avoid blanket "use tools aggressively" language unless a fragile workflow earns it.
+
+## 2026-07-04
+
+### Decision: cadence review completed; radar retention policy adopted
+
+- status: `accepted`
+- rationale: `policy.md` previously had no explicit review cadence for `current.md` and no snapshot retention limit. This cycle closes that gap and performs the first cadence-driven review.
+- consequence: `policy.md` now requires reviewing `current.md` every 2 months (or immediately after a major harness release) and keeping at most the last 3 dated snapshots, folding older conclusions into this log before deletion. This review found no `adopt`/`avoid`/`watch` classification changes; only `current.md`'s `last reviewed` and `status` fields were updated. There are currently exactly 3 dated snapshots (`2026-04.md`, `2026-05.md`, `2026-05-harness.md`) — at the retention cap — so no snapshot deletion was required.

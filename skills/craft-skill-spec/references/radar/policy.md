@@ -67,6 +67,16 @@ Run an immediate pass when:
 
 Use event snapshot names such as `2026-05-mid.md` when waiting for month-end would be misleading.
 
+### `current.md` review cadence
+
+Review `current.md` every 2 months, independent of the monthly baseline pass above. Run an immediate review instead of waiting for the next cycle when a major harness release changes canonical guidance (for example, a new official skill/subagent/plugin surface or a retracted best practice).
+
+A cadence review does not require new research by itself. Re-read `current.md` for internal staleness, update `last reviewed` and `status`, and only escalate to live sources or a new snapshot when the freshness policy above says so.
+
+### Snapshot retention
+
+Keep the last 3 dated snapshots. When a new snapshot would push the count past 3, fold the oldest snapshot's still-relevant conclusions into `decision-log.md`, then delete that snapshot file.
+
 ## Canonical-scope rule
 
 `current.md` is currently the default for **single-skill** design.

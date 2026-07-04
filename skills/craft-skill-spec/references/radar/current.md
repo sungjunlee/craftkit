@@ -1,8 +1,8 @@
 # Skill Radar: Current Canonical View
 
-- last reviewed: `2026-05-01`
+- last reviewed: `2026-07-04`
 - primary basis: `references/radar/2026-04.md` plus `references/radar/2026-05.md`
-- status: `prompt guidance refresh applied`
+- status: `cadence review completed; no classification changes`
 - scope: `single-skill default guidance`
 
 Use this file as the default source of truth when designing or revising a CraftKit skill. Open a snapshot file only when a `watch` item is relevant or a recent classification change needs context.
