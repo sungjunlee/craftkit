@@ -120,6 +120,8 @@ This skill may propose high-risk surfaces, but it does not install or enable the
 
 ## Output format
 
+**Sizing rule**: for a small or `repair`-mode request (a single repeated-failure fix, or a task phrased in a few words), emit only three sections — Harness thesis, Proposed changes, and Verification. Reserve the full section set below for `bootstrap`, `adopt`, and `sync`, where a fuller inventory, buy-vs-build search, or a Codex/Claude target split earn their length. §Risk gates still applies in full at every size — a small report never skips approval or defer rules, it only trims what gets written down.
+
 ### Harness thesis
 - mode
 - primary target
