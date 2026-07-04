@@ -16,6 +16,7 @@ import {
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const verifyScript = path.join(repoRoot, "scripts/verify.mjs");
 const radarCurrentPath = "skills/craft-skill-spec/references/radar/current.md";
+const craftPromptGuidesPath = "skills/craft-prompt/guides";
 
 function isoDateDaysAgo(days) {
   const date = new Date();
@@ -433,6 +434,82 @@ test("warns but still passes when radar current.md has an unparseable last revie
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(`${result.stdout}\n${result.stderr}`, /unparseable "last reviewed" date: not-a-date/);
+});
+
+// --- Check: craft-prompt guide staleness (#119) ---
+
+test("skips the craft-prompt guide staleness check when the guides directory is absent", () => {
+  const root = createFixture();
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /warning:/);
+});
+
+test("passes without a warning when a craft-prompt guide was reviewed recently", () => {
+  const root = createFixture();
+  writeFile(
+    root,
+    `${craftPromptGuidesPath}/example-guide.md`,
+    `# Example Guide\n\n- last reviewed: \`${isoDateDaysAgo(0)}\`\n`,
+  );
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /warning:/);
+});
+
+test("warns but still passes when a craft-prompt guide is stale", () => {
+  const root = createFixture();
+  writeFile(
+    root,
+    `${craftPromptGuidesPath}/example-guide.md`,
+    `# Example Guide\n\n- last reviewed: \`${isoDateDaysAgo(150)}\`\n`,
+  );
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /guides\/example-guide\.md:.*past the 120-day staleness threshold/,
+  );
+});
+
+test("warns but still passes when a craft-prompt guide is missing a last reviewed line", () => {
+  const root = createFixture();
+  writeFile(root, `${craftPromptGuidesPath}/example-guide.md`, "# Example Guide\n\nNo review metadata here.\n");
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /guides\/example-guide\.md:.*missing a parseable "last reviewed" date/,
+  );
+});
+
+test("checks every craft-prompt guide file independently, not just the first", () => {
+  const root = createFixture();
+  writeFile(
+    root,
+    `${craftPromptGuidesPath}/fresh-guide.md`,
+    `# Fresh Guide\n\n- last reviewed: \`${isoDateDaysAgo(0)}\`\n`,
+  );
+  writeFile(
+    root,
+    `${craftPromptGuidesPath}/stale-guide.md`,
+    `# Stale Guide\n\n- last reviewed: \`${isoDateDaysAgo(150)}\`\n`,
+  );
+
+  const result = runVerify(root, { skipPackDryRun: true });
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(output, /stale-guide\.md:.*past the 120-day staleness threshold/);
+  assert.doesNotMatch(output, /fresh-guide\.md:/);
 });
 
 // --- Check: reference-index completeness (#109) ---

@@ -15,6 +15,14 @@ const radarCurrentPath = "skills/craft-skill-spec/references/radar/current.md";
 // radar/policy.md sets a 2-month (~60 day) review cadence for current.md; 75 days
 // adds slack before this becomes a warning.
 const radarMaxAgeDays = 75;
+const craftPromptGuidesPath = "skills/craft-prompt/guides";
+// craft-prompt's guides/*.md track vendor prompting behavior (Claude, GPT,
+// Gemini, Perplexity, local models), which drifts slower than the radar's
+// single-skill classification snapshot. 120 days gives each guide a longer
+// horizon than the radar's 75-day cadence while still forcing a periodic
+// look — a guide that hasn't been reviewed in four months can easily be
+// citing a superseded model or API shape.
+const guideMaxAgeDays = 120;
 
 // Family section contract, derived from docs/skill-anatomy.md ("craft-* family
 // contract" and "spec-* family contract" tables, plus "Documented exemptions").
@@ -682,20 +690,23 @@ function checkDocumentationPaths() {
   }
 }
 
-function radarStaleness(content, now, maxAgeDays = radarMaxAgeDays) {
+// Shared review-date staleness helper (radar current.md, craft-prompt guides).
+// The caller prefixes its own file path, so messages stay file-agnostic;
+// cadenceHint names where the refresh rule lives, when there is one.
+function radarStaleness(content, now, maxAgeDays = radarMaxAgeDays, cadenceHint = "see radar/policy.md for the refresh cadence") {
   const match = content.match(/^- last reviewed:\s*`([^`]*)`/m);
   if (!match) {
-    return 'current.md is missing a parseable "last reviewed" date';
+    return 'missing a parseable "last reviewed" date';
   }
 
   const reviewedDate = new Date(`${match[1]}T00:00:00Z`);
   if (Number.isNaN(reviewedDate.getTime())) {
-    return `current.md has an unparseable "last reviewed" date: ${match[1]}`;
+    return `unparseable "last reviewed" date: ${match[1]}`;
   }
 
   const ageDays = Math.floor((now.getTime() - reviewedDate.getTime()) / 86_400_000);
   if (ageDays > maxAgeDays) {
-    return `current.md was last reviewed ${match[1]} (${ageDays} days ago), past the ${maxAgeDays}-day staleness threshold — see radar/policy.md for the refresh cadence`;
+    return `last reviewed ${match[1]} (${ageDays} days ago), past the ${maxAgeDays}-day staleness threshold${cadenceHint ? ` — ${cadenceHint}` : ""}`;
   }
 
   return null;
@@ -710,6 +721,24 @@ function checkRadarStaleness() {
   const message = radarStaleness(readText(filePath), new Date());
   if (message) {
     warn(`${relative(filePath)}: ${message}`);
+  }
+}
+
+function checkGuideStaleness() {
+  const guidesDir = path.join(root, craftPromptGuidesPath);
+  if (!fs.existsSync(guidesDir)) {
+    return;
+  }
+
+  const guideFiles = fs.readdirSync(guidesDir, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
+    .map((entry) => path.join(guidesDir, entry.name));
+
+  for (const filePath of guideFiles) {
+    const message = radarStaleness(readText(filePath), new Date(), guideMaxAgeDays, "platform guides are reviewed on a 120-day horizon");
+    if (message) {
+      warn(`${relative(filePath)}: ${message}`);
+    }
   }
 }
 
@@ -782,6 +811,7 @@ function main() {
   checkTerminology();
   checkDocumentationPaths();
   checkRadarStaleness();
+  checkGuideStaleness();
   checkPackDryRun();
 
   for (const warning of warnings) {
