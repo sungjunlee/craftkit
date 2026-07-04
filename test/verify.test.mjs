@@ -50,6 +50,8 @@ function createFixture() {
   );
   writeFile(root, "skills/craft-critique/references/failure-modes.md", "# Failure Modes\n\nShared fixture.\n");
   writeFile(root, "skills/craft-tune/references/failure-modes.md", "# Failure Modes\n\nShared fixture.\n");
+  writeFile(root, "skills/craft-prompt/references/shared-principles.md", "# Shared principles\n\nShared fixture.\n");
+  writeFile(root, "skills/craft-tune/references/shared-principles.md", "# Shared principles\n\nShared fixture.\n");
   writeFile(
     root,
     radarCurrentPath,
@@ -467,15 +469,14 @@ test("warns (and still passes) on a baselined missing required section", () => {
   // because createFixture() already seeds a references/ dir under each of them
   // (for the mirrored-reference check and the radar-staleness check), which
   // would also trip the reference-index check or the References requirement.
-  // spec-charter's real knownSectionDeviations entry is exactly
-  // ["Verification prompts"]; reproduce only that single gap.
+  // craft-handoff's real knownSectionDeviations entry is exactly
+  // ["Output format", "Guardrails"]; reproduce exactly those two gaps.
   writeFile(
     root,
-    "skills/spec-charter/SKILL.md",
-    compliantSpecSkillBody("spec-charter").replace(
-      '## Verification prompts\n\n- "A pressure-test prompt." Expected: do the right thing.\n\n',
-      "",
-    ),
+    "skills/craft-handoff/SKILL.md",
+    compliantCraftSkillBody("craft-handoff")
+      .replace("## Output format\n\nA single line.\n\n", "")
+      .replace("## Guardrails\n\n- stay safe\n\n", ""),
   );
 
   const result = runVerify(root, { skipPackDryRun: true });
@@ -483,16 +484,16 @@ test("warns (and still passes) on a baselined missing required section", () => {
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /skills\/spec-charter\/SKILL\.md is missing the required "Verification prompts" section \(baselined/,
+    /skills\/craft-handoff\/SKILL\.md is missing the required "Output format" section \(baselined/,
   );
 });
 
 expectVerifyFailure("fails on a stale baseline entry whose section is now present", (root) => {
-  // craft-prompt's real knownSectionDeviations entry lists 7 keys, including
-  // "Purpose"; supply a fixture that is fully compliant, satisfying all of them
-  // (and so making every one of those baseline entries stale).
-  writeFile(root, "skills/craft-prompt/SKILL.md", compliantCraftSkillBody("craft-prompt"));
-}, /knownSectionDeviations still lists "Purpose".*but the section is now present/);
+  // craft-handoff's real knownSectionDeviations entry lists "Output format" and
+  // "Guardrails"; supply a fixture that is fully compliant, satisfying both
+  // (and so making both baseline entries stale).
+  writeFile(root, "skills/craft-handoff/SKILL.md", compliantCraftSkillBody("craft-handoff"));
+}, /knownSectionDeviations still lists "Output format".*but the section is now present/);
 
 test("passes for a spec-* skill with the full Execution Contract + Verification prompts shape", () => {
   const root = createFixture();

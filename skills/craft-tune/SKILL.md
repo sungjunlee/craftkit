@@ -33,7 +33,7 @@ craft-tune always edits. When the user wants a one-shot critique *without* edits
 - optional: examples of failure (specific outputs the artifact produced that were wrong) — when supplied, each round's Diagnostics expands into root-cause hypotheses tied to those outputs
 - optional: max rounds override (default cap = 8)
 
-## How the loop runs
+## Workflow
 
 Each round is autonomous. Do not pause for user input between rounds — run them back-to-back and present the full trail at the end.
 
@@ -122,12 +122,12 @@ If the loop exited on Persistent fixpoint, No-op round, or Hard cap, list the `[
 
 ## Principles
 
-These four ideas do most of the work behind a good minimal-diff edit. When a round feels stuck, check that the edit respects all four.
+Shared with craft-prompt — full statements in `references/shared-principles.md`. Check a stuck round against all four:
 
-1. **Context beats instruction.** When token budget is tight, richer background usually helps more than more rules. A simple instruction with strong context outperforms elaborate instructions with none.
-2. **Outcome over process.** Say what success looks like, not every step to get there. Modern agents are good at means; they need clarity on ends.
-3. **Cut in this order.** When the artifact is too long, cut verbose role definitions first, then restated context, then hedging language. Do not cut examples, success criteria, or output-format specs — those change behavior the most.
-4. **Right-sized beats thorough-looking.** A 50-token instruction for a simple task is a feature, not a defect. Do not inflate to look rigorous.
+- Context beats instruction
+- Outcome over process
+- Cut in this order
+- Right-sized beats thorough-looking
 
 ## When the diagnosis feels vague
 
@@ -159,5 +159,6 @@ For the expanded round trail and final artifact, load `references/full-run-examp
 
 ## References
 
+- `references/shared-principles.md` — full statements of the four principles shared with craft-prompt.
 - `references/failure-modes.md` — categorized diagnostic vocabulary for vague or repeated findings.
 - `references/full-run-example.md` — compact full-loop example with rounds, revised artifact, changelog, and tradeoffs.

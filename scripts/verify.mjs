@@ -65,28 +65,17 @@ const SPEC_SECTION_CONTRACT = [
   { key: "Verification prompts", match: (h) => hasH2(h, "verification prompts") },
 ];
 
-// Ratchet baseline for #110: every section a skill is CURRENTLY missing, per a
-// fresh run of sectionContractFindings() against the tree on 2026-07-04. Sourced
-// from docs/skill-anatomy.md "Current deviations" plus two findings that doc's
-// "exhaustive" list does not mention (craft-handoff's missing Output format/
-// Guardrails, and craft-harness's missing Guardrails — see verify report for
-// detail). A baselined miss warns (burn-down signal); remove the entry once the
-// section is added, or verify will fail telling you the entry is stale.
+// Ratchet baseline for #110: every section a skill is CURRENTLY missing, kept
+// in sync with docs/skill-anatomy.md "Current deviations". A baselined miss
+// warns (burn-down signal); remove the entry once the section is added, or
+// verify will fail telling you the entry is stale. #111/#112/#115 cleared the
+// spec-* and craft-prompt/craft-tune entries; what remains is the unmapped
+// bucket (see the anatomy doc).
 const knownSectionDeviations = {
-  "craft-prompt": ["Purpose", "Inputs", "Steps/Workflow", "Output format", "Guardrails", "Failure modes", "Example"],
   "craft-harness": ["Use this when", "Guardrails", "References"],
   "craft-skill-spec": ["Use this when"],
-  "craft-tune": ["Steps/Workflow"],
   "craft-critique": ["References"],
   "craft-handoff": ["Output format", "Guardrails"],
-  "spec-charter": ["Verification prompts"],
-  "spec-grill": ["Verification prompts"],
-  "spec-system-map": [
-    "Execution Contract wrapper",
-    "Mode Router (nested)",
-    "Completion Contract (nested)",
-    "Verification prompts",
-  ],
 };
 
 function fail(message) {
@@ -420,6 +409,10 @@ function checkMirroredReferences() {
     [
       "skills/craft-critique/references/failure-modes.md",
       "skills/craft-tune/references/failure-modes.md",
+    ],
+    [
+      "skills/craft-prompt/references/shared-principles.md",
+      "skills/craft-tune/references/shared-principles.md",
     ],
   ];
 

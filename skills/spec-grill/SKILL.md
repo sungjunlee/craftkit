@@ -8,15 +8,15 @@ metadata:
   related-skills: "spec-charter, dev-backlog, backlog-triage"
 ---
 
-# Spec Grill
+# spec-grill
 
 Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and the active sprint. `spec-grill` is not a file generator; it pressure-tests existing repo signals into durable capability contracts.
 
 Use this after `spec-charter create` on existing/brownfield repos, or whenever the user asks to define capability boundaries, component contracts, Behaviors, or Hard Constraints.
 
-## Execution Contract
+## Execution contract
 
-### Intent Router
+### Intent router
 
 Do not require users to memorize arguments. Interpret the user's request and choose the safest matching route. Power-user aliases such as `map`, `fill`, `audit`, and exact capability slugs are accepted, but they are optional shorthand, not the primary workflow.
 
@@ -32,13 +32,13 @@ If intent is unclear, prefer report-only. Treat natural-language requests to wri
 
 Capability slugs are strict routing handles used by sprint `component:` frontmatter. Keep them lowercase and singular, then put nuance in Goal/Scope prose.
 
-### Helper Scripts
+### Helper scripts
 
 Resolve helper scripts from the installed `spec-grill` skill directory, not from the target repo. In a source checkout, that means the local `scripts/` directory beside this `SKILL.md`. Always pass the target repo explicitly (`--repo-root <target-repo>`) so helpers do not inspect the skill directory by accident.
 
 On a brownfield repo with no `spec/capabilities.md`, or when candidate evidence is requested, run `node <skill-dir>/scripts/extract-signals.js --repo-root <target-repo> --json` first. The script reports raw capability evidence. It never writes `spec/capabilities.md`; admission, merging, splitting, and naming belong to this skill.
 
-### Completion Contract
+### Completion contract
 
 End every run with a short summary:
 
@@ -50,13 +50,13 @@ End every run with a short summary:
 - missing proof or evidence
 - follow-up Learning Actions if any
 
-### Grill Report Contract
+### Grill report contract
 
 Use this report shape for no-arg, ambiguous, candidate-discovery, and audit routes unless the user asks for a shorter answer. Every report must include these sections in order: `## Grill Report`, `### Evidence Read`, `### Evidence Missing`, `### Raw Candidates`, `### Accepted / Rejected / Merged / Split Candidates`, `### Sharp Questions`, `### 3-Axis Predicate Findings`, `### Proposed Next Capability`, `### Recommended Edit`. See `references/grill-report-template.md` for the full skeleton with placeholder fields.
 
 Separate diagnosis from mutation. The report can recommend edits, but it must not edit `spec/capabilities.md` unless the user clearly asked for editing or confirms the proposed edit.
 
-## Brownfield Signal Rules
+## Brownfield signal rules
 
 `extract-signals.js` draws from README, `spec/charter.md` with legacy root `CHARTER.md` fallback, `spec/system-map.md`, `CLAUDE.md`/`AGENTS.md`, top-level source dirs, skill files, script surfaces, docs, tests, and recent commit messages.
 
@@ -71,7 +71,7 @@ Harness context can seed questions about conventions and workflow, but it must n
 
 Accepted brownfield capabilities need code-understood support, not just surface signals. Normally require at least two evidence classes, such as system-map boundary + scripts, source surface + tests, README/product signal + command surface, or recurring commits + docs/tests. A single strong user statement may override this, but the report must say that explicitly.
 
-## File Shape
+## File shape
 
 `spec/capabilities.md` lives at the target repo root in `spec/`. The single-file shape is intentional while the spec remains compact: target 5-10 capabilities, warn above 12 capabilities or 400 lines, and split only above 500 lines, above 15 capabilities, or when ownership boundaries demand separate review paths.
 
@@ -82,7 +82,7 @@ The file's mutation discipline:
 - `## Learnings`: not an interview target. If a bounded Learnings writer exists, only that writer appends between magic markers. Until then, Learnings changes require a human-approved Learning Action.
 - `## Decisions`: append-only by convention; promote cross-cutting decisions to `spec/charter.md` through `spec-charter amend`.
 
-## Capability Admission Test
+## Capability admission test
 
 Before interviewing a candidate capability, decide whether it deserves to exist. Raw extraction signals are not accepted specs.
 
@@ -100,7 +100,7 @@ Use this as a bloat check before the per-capability flow. A large feature-first 
 
 Directory-only, commit-scope-only, or harness-context-only candidates remain interview seeds. Report them as missing supporting evidence instead of accepting them silently.
 
-## Per-Capability Interview Flow
+## Per-capability interview flow
 
 For each capability, walk the user through this order; do not skip ahead:
 
@@ -111,7 +111,7 @@ For each capability, walk the user through this order; do not skip ahead:
 
 Stop at three Behaviors and two Hard Constraints per capability on the first pass; more is bloat and harder to keep falsifiable. Add later via rerun.
 
-## The 3-Axis Predicate Test
+## The 3-axis predicate test
 
 Every Behavior and Hard Constraint must pass all three axes before it is committed:
 
@@ -123,7 +123,7 @@ A predicate that passes all three is committable. A predicate that fails any axi
 
 Classify positive normal outcomes as Expected Behaviors. Classify bright-line negations and anti-Goodhart guards as Hard Constraints. When both forms fit, prefer the Hard Constraint only when the negative form protects against an optimization or data-loss shortcut.
 
-## Writing Rules
+## Writing rules
 
 When the user accepts a first capability edit and `spec/capabilities.md` is absent, copy `templates/capabilities.md` to `spec/capabilities.md` at the repo root, then write only the accepted capability. On rerun, edit only the named capability block and leave the rest of the file untouched.
 
@@ -131,7 +131,7 @@ After applying an accepted change, do not bump a revision number on `spec/capabi
 
 See `references/capabilities.md` for additional grill heuristics and [`../spec-charter/SKILL.md`](../spec-charter/SKILL.md) for the project-wide charter layer.
 
-## Pressure Prompts
+## Verification prompts
 
 - "Create capabilities from a repo where only top-level directories are known." Expected: use directories as raw signals only; require supporting evidence before admission.
 - "A commit scope appears often but has no docs, tests, or distinct behavior." Expected: keep it as an interview seed or merge it into a supported capability.

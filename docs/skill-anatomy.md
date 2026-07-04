@@ -17,11 +17,11 @@ Conditionally required: `disable-model-invocation: true` for explicit-only (high
 
 spec-* only, required (all three carry these identically-shaped today): `argument-hint` (e.g. `"[create|amend|reassess]"`), `compatibility: Requires git.`, `metadata.related-skills`. No craft-* skill carries these fields yet (#113).
 
-**H1 rule**: the H1 is the literal skill slug in its own case, e.g. `# craft-critique`, matching `name` — not a prose title. All craft-* skills already follow this. All three spec-* skills use a prose Title Case H1 (`# Spec Charter`) instead — a deviation.
+**H1 rule**: the H1 is the literal skill slug in its own case, e.g. `# craft-critique`, matching `name` — not a prose title. All 11 skills follow this (spec-* converged in #111).
 
 ## Heading case rule
 
-Sentence case everywhere — H1 through H3, including the H1 title itself, both families. `spec-*` currently uses Title Case throughout (`## Execution Contract`, `### Mode Router`, `## Brownfield Signal Rules`); this is a listed deviation, not an accepted family variant.
+Sentence case everywhere — H1 through H3, including the H1 title itself, both families (`## Execution contract`, `### Mode router`, `## Brownfield signal rules`). spec-*'s former Title Case was normalized in #111. Headings that name sections of a *generated artifact* (e.g. spec-grill's `## Grill Report` output skeleton) keep the artifact's own casing — they describe output, not this file's structure.
 
 ## craft-* family contract
 
@@ -51,7 +51,7 @@ Skills may add extra sections for their own mechanics — loop-control (`Stop co
 | Verification prompts | Required | Unified name (decision point 6) for the pressure-test / eval-prompt section. Last required section before References. |
 | References | Required | Dedicated, last. Must index every `references/*.md` and `templates/*.md` file cited in the body. |
 
-All three currently wrap the router under `## Execution Contract` except `spec-system-map`, which uses a flatter `## Boundary` + `## Mode Router` shape with no wrapper and an extra `## Quality Checks` section the other two lack. This doc treats the Execution Contract wrapper as required and `spec-system-map`'s shape as a deviation to converge (decision point 7), not a second accepted variant.
+All three wrap the router under `## Execution contract` (`spec-system-map` converged in #111; its extra `## Quality checks` section stays as an allowed addition).
 
 ## Documented exemptions
 
@@ -77,24 +77,24 @@ Exhaustive as of this writing. Every unchecked item is something #109/#110 autom
 
 ### #111 — validation-section naming + craft-critique collision
 
-- [ ] `spec-system-map`: rename `## Eval Prompts` to `## Verification prompts`
-- [ ] `spec-grill`: rename `## Pressure Prompts` to `## Verification prompts`
-- [ ] `spec-charter`: add a `## Verification prompts` section (has none today — beyond the PRD's original C2 wording)
-- [ ] `craft-critique`: resolve "Common mistakes" vs "Failure modes" collision — rename or keep the documented exemption above
-- [ ] `spec-charter`, `spec-system-map`, `spec-grill`: convert H1 from Title Case to the literal lowercase skill slug (extends C1 to the H1, not just H2/H3)
-- [ ] `spec-charter`, `spec-system-map`, `spec-grill`: convert all Title Case section headings to sentence case (`Mode Router` -> `Mode router`, `Helper Scripts` -> `Helper scripts`, `Brownfield Signal Rules` -> `Brownfield signal rules`, etc.)
-- [ ] `spec-system-map`: converge onto the `## Execution Contract` wrapper used by the other two instead of the flatter `Boundary` + `Mode Router` shape, and rename `## Completion Output` to the contract's `Completion Contract` while doing so (new finding, not in the original C-list)
+- [x] `spec-system-map`: rename `## Eval Prompts` to `## Verification prompts`
+- [x] `spec-grill`: rename `## Pressure Prompts` to `## Verification prompts`
+- [x] `spec-charter`: add a `## Verification prompts` section
+- [x] `craft-critique`: "Common mistakes" vs "Failure modes" collision — resolved by keeping the documented exemption above (no rename)
+- [x] `spec-charter`, `spec-system-map`, `spec-grill`: convert H1 from Title Case to the literal lowercase skill slug
+- [x] `spec-charter`, `spec-system-map`, `spec-grill`: convert all Title Case section headings to sentence case
+- [x] `spec-system-map`: converge onto the `## Execution contract` wrapper and rename `## Completion Output` to `### Completion contract`
 
 ### #112 — craft-prompt missing Purpose/Example/Failure modes
 
-- [ ] `craft-prompt`: add `## Purpose`
-- [ ] `craft-prompt`: add `## Guardrails`
-- [ ] `craft-prompt`: add `## Failure modes`
-- [ ] `craft-prompt`: add `## Example`
-- [ ] `craft-prompt`: add `## Inputs` (missing entirely; new finding beyond the original C3 wording)
-- [ ] `craft-prompt`: add `## Output format` (missing entirely; delivery shape currently lives inside the `Deliver` step)
-- [ ] `craft-prompt`: rename `## Process` to `## Steps` or `## Workflow` (new finding; ties to decision point 3)
-- [ ] `craft-prompt`: convert Title Case H3s under `## Process` to sentence case (`Understand What the User Wants Built`, `Gather the Raw Material`, `Build the Prompt`) — the only craft-* heading-case deviation
+- [x] `craft-prompt`: add `## Purpose`
+- [x] `craft-prompt`: add `## Guardrails`
+- [x] `craft-prompt`: add `## Failure modes`
+- [x] `craft-prompt`: add `## Example`
+- [x] `craft-prompt`: add `## Inputs`
+- [x] `craft-prompt`: add `## Output format`
+- [x] `craft-prompt`: rename `## Process` to `## Workflow`
+- [x] `craft-prompt`: Title Case H3s under the old `## Process` — resolved by folding the steps into a numbered list under `## Workflow` (no H3s remain)
 
 ### #113 — frontmatter parity + craft-survey invocation policy
 
@@ -106,7 +106,7 @@ Exhaustive as of this writing. Every unchecked item is something #109/#110 autom
 - [ ] `craft-harness`: no dedicated `## References` section — its 5 `references/*.md` files are cited via `## Required reads` and inline mentions instead; add one indexing all 5 (decision point 5)
 - [ ] `craft-critique`: no dedicated `## References` section — its 1 `references/failure-modes.md` is cited inline only; add one (decision point 5)
 - [ ] `craft-harness`, `craft-skill-spec`: missing `## Use this when` (both use `## How it differs from related skills` instead); add `## Use this when` alongside it (decision point 2)
-- [ ] `craft-tune`: `## How the loop runs` deviates from the Steps/Workflow naming rule; rename to `## Workflow` or formally bless a third name for loop-shaped skills (decision point 3)
+- [x] `craft-tune`: `## How the loop runs` renamed to `## Workflow` (decision point 3, done with #115)
 - [ ] `craft-handoff`: missing `## Guardrails` entirely (found by the #110 check, not the original doc audit)
 - [ ] `craft-handoff`: missing `## Output format` — the output shape is folded into `## Workflow` steps 3/4 prose (found by the #110 check)
 - [ ] `craft-harness`: missing `## Guardrails` entirely — "guardrail" appears only in unrelated prose about hook guardrails (found by the #110 check)
