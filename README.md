@@ -8,7 +8,9 @@ CraftKit is a cross-agent toolkit for creating, improving, and operationalizing 
 
 Prompt assets and agent skills often become fragmented, provider-specific, and hard to reuse. CraftKit exists to keep them file-first, portable, reviewable, and easy to improve over time.
 
-CraftKit is an artifact-quality toolkit: it helps author, critique, tune, and carry forward prompts and skills. It is not a general coding-agent workflow suite, project-management layer, deployment system, or runtime framework. When a workflow needs those things, CraftKit should produce clear files, specs, or handoffs that another tool can use rather than becoming the tool itself.
+CraftKit covers two wedges. The first is artifact quality: author, critique, tune, and carry forward prompts and skills (`craft-*`). The second is the repo spec axis: `spec-charter -> spec-system-map -> spec-grill` turns a brownfield repo's direction, system shape, and capability boundaries into reference contracts that other tools can consume — most directly `dev-backlog`, which measures sprints and triage against them.
+
+CraftKit is not a general coding-agent workflow suite, project-management layer, deployment system, or runtime framework. The spec axis defines what good looks like — it does not manage tasks, sprints, or backlog priority; that stays with `dev-backlog`. When a workflow needs those things, CraftKit should produce clear files, specs, or handoffs that another tool can use rather than becoming the tool itself.
 
 ## 30-second path
 
@@ -85,6 +87,8 @@ When two skills could trigger, choose the least invasive one that answers the re
 Terminology note: `craft-harness` means repo-local agent guidance and provider surfaces. `craft-autoresearch` uses an **eval runner** for replaying test inputs and scoring outputs. Do not use "harness" for both.
 
 The `spec-*` skills form a pipeline: `spec-charter -> spec-system-map -> spec-grill`. Use them when a brownfield repo needs a compact spec axis grounded in real repo evidence instead of a generic architecture document.
+
+The spec axis supersedes `dev-backlog`'s retired `backlog-charter` skill (dev-backlog split that surface into the spec-series in its 0.6.0): `spec/charter.md` is the successor home for the project reference axis, and `spec-charter`'s amend mode reads a legacy root `CHARTER.md` as a fallback and migrates it deliberately rather than silently. `dev-backlog` consumes the axis — it measures sprints and triage against `spec/charter.md` — but does not own it.
 
 Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML frontmatter, loadable as a Claude Code skill or copy-pasteable into any other agent.
 
