@@ -3,3 +3,6 @@ node_modules/
 *.log
 .env
 .env.local
+
+# local sprint/task mirrors (issues live on GitHub)
+backlog/
