@@ -36,8 +36,8 @@ Do not rely on bundled helper scripts for charter work. Inspect the target repo 
 
 End every mode with a short summary:
 
-- `create`: created files, unresolved assumptions, and a concrete next natural-language action. On brownfield repos, recommend creating `spec/system-map.md` before asking `spec-grill` to review capability boundaries.
-- `amend`: accepted changes, refused/parked changes, proof cited for status advances, and 5-minute-read inspection result.
+- `create`: created files, unresolved assumptions, and a concrete next natural-language action. On brownfield repos, create `spec/system-map.md` first when absent; recommend `spec-grill` only when capability candidates are evidence-backed.
+- `amend`: accepted changes, refused/parked changes, proof cited for status advances, and a charter length check (report the line count; flag when the charter exceeds a ~5-minute read, roughly 150 lines).
 - `reassess`: required report sections from the Reassess mode dispatch contract, with one recommended next natural-language action.
 
 When recommending follow-up spec work, do not require users to memorize downstream arguments such as `map`, `fill`, or `audit`. Prefer plain actions like "create the system map" or "ask spec-grill to review candidate capability boundaries." Include 2-5 candidate boundary names only when they are supported by evidence from README, `spec/system-map.md`, scripts, tests, docs, or recent commit scopes.
@@ -46,7 +46,7 @@ When recommending follow-up spec work, do not require users to memorize downstre
 
 `spec/charter.md` lives in the target repo's project spec directory. It records what good looks like: the problem, approach, explicit non-goals, verifiable objectives, and immutable decision history the backlog is measured against.
 
-Absence is supported. Projects opt in by creating the file; other skills degrade gracefully when it is missing. Legacy root `CHARTER.md` is read as a fallback and should be migrated deliberately. Keep the charter under a ~5-minute read. Operational know-how does not belong here; put rediscovery-prone HOW-knowledge in `_context.md`.
+Absence is supported. Projects opt in by creating the file; other skills degrade gracefully when it is missing. See `references/spec-axis.md` for the legacy root `CHARTER.md` fallback and migration policy. Keep the charter under a ~5-minute read. Operational know-how does not belong here; put rediscovery-prone HOW-knowledge in `_context.md`.
 
 | File | Question it answers |
 |------|---------------------|
@@ -74,7 +74,7 @@ Use create mode when neither `spec/charter.md` nor legacy root `CHARTER.md` exis
 1. Draft from repo signals: product/user-facing signals (`README.md`, open epics/issues, `CHANGELOG.md`) before development-harness signals (`CLAUDE.md`, `AGENTS.md`). Harness files may inform workflow conventions, local commands, and repo-specific guardrails, but they do not override README, charter, issues, code structure, or user interview answers for product/capability authority unless they explicitly describe product boundaries. When signals conflict, surface the conflict in the interview rather than picking silently.
 2. Interview the user to fill and sharpen Problem, Approach, Non-Goals, and initial Objectives. Follow the checklist in `references/create.md`: Problem framing options, the wedge test for Approach, Non-Goals elicitation, and Objective framing that cites `references/objectives.md`. If the user asked for autonomous progress and repo evidence is strong enough, non-interactive create mode may draft without blocking on interview; mark inferred claims and Objectives with `src: inferred`, list unresolved assumptions, and recommend `spec-charter amend` for later human correction.
 3. Create `spec/` if needed, then write `spec/charter.md` from `templates/charter.md` with `revision: 1` and today's `last_amended`. The Decisions table may be left empty. Seed 3-5 rows only when prior design docs, ADRs, or notable merged PRs already record direction; whatever lands becomes immutable from revision 2.
-4. If the target repo is brownfield, recommend `spec-system-map` as the next step when `spec/system-map.md` is absent. After the map exists, recommend asking `spec-grill` to review candidate capability boundaries. Brownfield signals include existing source roots (`src/`, `app/`, `lib/`, `packages/`, `skills/`), commit history, tests/scripts/config, open issues, or multiple top-level feature/workflow surfaces.
+4. If the target repo is brownfield, use the create-mode completion contract to choose the next spec-axis action. Brownfield signals include existing source roots (`src/`, `app/`, `lib/`, `packages/`, `skills/`), commit history, tests/scripts/config, open issues, or multiple top-level feature/workflow surfaces.
 
 Objective conventions:
 
@@ -96,7 +96,7 @@ See `references/objectives.md` for worked examples, rewrite patterns, and a 30-s
 
 Use amend mode when `spec/charter.md` exists, legacy root `CHARTER.md` exists, or when invoked as `spec-charter amend`.
 
-First re-read `spec/charter.md`. If it is absent but root `CHARTER.md` exists, read that legacy file, state that the canonical path is now `spec/charter.md`, and recommend migrating before or during the accepted amendment. Direct hand-edits are allowed because it is the user's file; this skill is the disciplined path for applying the tier gates.
+First re-read `spec/charter.md`. If it is absent but root `CHARTER.md` exists, apply the legacy fallback and migration policy in `references/spec-axis.md`: read the legacy file, state that the canonical path is now `spec/charter.md`, and recommend migrating before or during the accepted amendment. Direct hand-edits are allowed because it is the user's file; this skill is the disciplined path for applying the tier gates.
 
 Apply the 3-tier discipline:
 
@@ -143,6 +143,7 @@ Use these as quick pressure tests when changing this skill or a generated charte
 - `references/alignment.md` — shared work-to-objective mapping logic consumed by `backlog-triage` and `dev-backlog`.
 - `references/objectives.md` — verifiable-predicate examples, common rewrite patterns, 30-second test.
 - `references/reassess.md` — report-only stale-spec reassessment: evidence sources, output shape, Learning Actions, and failure modes.
+- `references/spec-axis.md` — spec-axis file boundaries, ownership, and the legacy root `CHARTER.md` fallback policy.
 - [`../spec-system-map/SKILL.md`](../spec-system-map/SKILL.md) — companion skill for authoring `spec/system-map.md`.
 - [`../spec-grill/SKILL.md`](../spec-grill/SKILL.md) — companion skill for authoring `spec/capabilities.md`.
 - [`../spec-grill/references/spec-pipeline-ready.md`](../spec-grill/references/spec-pipeline-ready.md) — final checklist for landing the full spec axis.

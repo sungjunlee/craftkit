@@ -23,10 +23,12 @@ When no mode is specified, route by file state. Create `spec/` if needed.
 
 ### Completion contract
 
-End create mode with:
+End create and amend modes with:
 
 - `Evidence Read`: concise bullets naming the concrete docs, entrypoints, configs, tests, storage/external surfaces, and history inspected.
 - `Evidence Missing`: concise bullets naming unavailable or ambiguous evidence that affects confidence.
+
+Done when the map reflects only evidence-backed project-wide changes, low-level detail has been demoted or refused, charter or capability changes have been routed out, and the final response names evidence read and evidence missing.
 
 ## Boundary
 
