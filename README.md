@@ -128,6 +128,8 @@ For evolving skill-authoring guidance, the `craft-skill-spec` skill carries its 
 
 The spine should still be understandable alone: purpose, inputs, steps, output contract, one compact example, limitations, and links to on-demand references. References carry depth; the spine carries the operating path. Mirrored references are allowed only when the verifier guards them against drift.
 
+See [`docs/skill-anatomy.md`](docs/skill-anatomy.md) for the canonical per-family section contract each skill is normalized against.
+
 ## Invocation policy
 
 Most CraftKit skills are explicit workflow selectors, not always-on background guidance. Use implicit invocation only when a skill is low-risk and broadly helpful when matched, such as read-only diagnosis or direct prompt drafting.
