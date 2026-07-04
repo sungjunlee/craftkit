@@ -98,7 +98,7 @@ Rules:
 - Fill narrative depth only where it helps the next session.
 - Keep decisions reasoned. Add alternatives when they shaped the current state.
 - Use `references/artifact-shapes.md` when you need the exact markdown skeleton.
-- If craft-prompt templates are installed, use `craft-prompt/templates/session-handoff.md` as the writing model.
+- If craft-prompt templates are installed, use `skills/craft-prompt/templates/session-handoff.md` as the writing model.
 
 ### 4. Compose the resume prompt
 
