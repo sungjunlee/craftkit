@@ -546,20 +546,110 @@ function checkFamilySectionContract() {
   }
 }
 
+// Terminology rules table: adding a new rule is a one-entry addition here, not
+// a new function. Each entry is { files, forbidden, why }:
+//   - files: repo-relative paths, each either an explicit literal path or a
+//     minimal glob (`*` = within one path segment, `**` = across segments).
+//   - forbidden: literal phrases (exact substring match) or RegExp (tested
+//     against the whole file text; first match is reported).
+//   - why: explains the rule so a failure message points back to its source
+//     of truth, so a future maintainer isn't left guessing.
+const terminologyRules = [
+  {
+    // Original single-file check this table replaces (#114); behavior preserved
+    // exactly (same file, same two phrases).
+    files: ["docs/examples/tune-a-prompt.md"],
+    forbidden: ["run harness", "evals and a harness"],
+    why: 'craft-autoresearch renamed its loop mechanism to "eval runner"; this doc should not still say "harness"',
+  },
+  {
+    // README.md's "Terminology note" (search that phrase): craft-autoresearch
+    // uses an "eval runner"; "harness" is craft-harness's word for repo-local
+    // agent guidance/provider surfaces — "Do not use 'harness' for both."
+    // Scoped to craft-autoresearch's own docs (not the whole repo) because
+    // other skills — most obviously craft-harness itself, and any skill that
+    // cross-references it by name — legitimately say "craft-harness". The
+    // forbidden pattern is a word-boundary match on "harness" with a negative
+    // lookbehind for the "craft-" prefix, so "craft-harness" mentions are
+    // exempt but a bare "harness" (the word this rule actually bans here) is
+    // still caught. As of this writing skills/craft-autoresearch/** contains
+    // zero occurrences of "harness" in any form, so this passes the existing
+    // tree cleanly; it exists to catch future regressions.
+    files: ["skills/craft-autoresearch/**/*.md"],
+    forbidden: [/(?<!craft-)\bharness\b/i],
+    why: 'README.md\'s Terminology note reserves "harness" for craft-harness; craft-autoresearch must say "eval runner" instead',
+  },
+];
+
+// Pure, unit-testable: minimal glob match (no dependency). `*` matches within
+// one path segment, `**` matches across segments (including the empty case,
+// so `a/**/*.md` also matches `a/x.md`). Patterns without `*` are compared as
+// exact literal paths.
+function matchesFilePattern(pattern, filePath) {
+  if (!pattern.includes("*")) {
+    return pattern === filePath;
+  }
+
+  let reSource = "^";
+  for (let i = 0; i < pattern.length; i++) {
+    const char = pattern[i];
+
+    if (char === "*") {
+      if (pattern[i + 1] === "*") {
+        reSource += ".*";
+        i++;
+        if (pattern[i + 1] === "/") {
+          i++;
+        }
+      } else {
+        reSource += "[^/]*";
+      }
+      continue;
+    }
+
+    reSource += /[.+^${}()|[\]\\]/.test(char) ? `\\${char}` : char;
+  }
+  reSource += "$";
+
+  return new RegExp(reSource).test(filePath);
+}
+
+// Pure, unit-testable: returns the forbidden phrases/patterns found in `text`,
+// as their matched literal text (so failure messages quote what was actually
+// found, not just the pattern that found it).
+function terminologyFindings(text, forbidden) {
+  const found = [];
+
+  for (const pattern of forbidden) {
+    if (typeof pattern === "string") {
+      if (text.includes(pattern)) {
+        found.push(pattern);
+      }
+      continue;
+    }
+
+    const match = text.match(pattern);
+    if (match) {
+      found.push(match[0]);
+    }
+  }
+
+  return found;
+}
+
 function checkTerminology() {
-  const checks = [
-    {
-      file: "docs/examples/tune-a-prompt.md",
-      forbidden: ["run harness", "evals and a harness"],
-    },
-  ];
+  const allFiles = listFiles(root, () => true).map(relative);
 
-  for (const check of checks) {
-    const text = readText(path.join(root, check.file));
+  for (const rule of terminologyRules) {
+    const matchingFiles = allFiles.filter((filePath) =>
+      rule.files.some((pattern) => matchesFilePattern(pattern, filePath)),
+    );
 
-    for (const phrase of check.forbidden) {
-      if (text.includes(phrase)) {
-        fail(`${check.file} still contains "${phrase}"`);
+    for (const filePath of matchingFiles) {
+      const text = readText(path.join(root, filePath));
+
+      for (const match of terminologyFindings(text, rule.forbidden)) {
+        fail(`${filePath} still contains "${match}" (${rule.why})`);
       }
     }
   }
@@ -713,4 +803,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   main();
 }
 
-export { radarStaleness, sectionContractFindings };
+export { radarStaleness, sectionContractFindings, matchesFilePattern, terminologyFindings, terminologyRules };

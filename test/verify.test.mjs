@@ -5,7 +5,13 @@ import path from "node:path";
 import test from "node:test";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { radarStaleness, sectionContractFindings } from "../scripts/verify.mjs";
+import {
+  radarStaleness,
+  sectionContractFindings,
+  matchesFilePattern,
+  terminologyFindings,
+  terminologyRules,
+} from "../scripts/verify.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const verifyScript = path.join(repoRoot, "scripts/verify.mjs");
@@ -232,6 +238,124 @@ expectVerifyFailure("fails when a mirrored reference is missing", (root) => {
 expectVerifyFailure("fails on legacy autoresearch harness wording", (root) => {
   writeFile(root, "docs/examples/tune-a-prompt.md", "This still says run harness.\n");
 }, /docs\/examples\/tune-a-prompt\.md still contains "run harness"/);
+
+// --- Check: terminology rules table (#114) ---
+
+expectVerifyFailure("fails when craft-autoresearch docs use bare 'harness' instead of 'eval runner'", (root) => {
+  writeFile(
+    root,
+    "skills/craft-autoresearch/SKILL.md",
+    "---\nname: craft-autoresearch\ndescription: Example.\n---\n\n# craft-autoresearch\n\nSet up the harness and replay inputs.\n",
+  );
+}, /skills\/craft-autoresearch\/SKILL\.md still contains "harness"/);
+
+test("passes when craft-autoresearch docs use 'eval runner' and only mention craft-harness by name", () => {
+  const root = createFixture();
+  writeFile(
+    root,
+    "skills/craft-autoresearch/SKILL.md",
+    `---
+name: craft-autoresearch
+description: Example craft-autoresearch skill for terminology tests.
+---
+
+# craft-autoresearch
+
+## Purpose
+
+Runs measured iterations against an eval runner.
+
+## Use this when
+
+- always
+
+## Inputs
+
+- none
+
+## Steps
+
+1. Use an eval runner to replay inputs, per \`references/eval-guide.md\`. For
+   repo agent guidance instead, see craft-harness.
+
+## Output format
+
+A single line.
+
+## Guardrails
+
+- stay safe
+
+## Failure modes
+
+- it might fail
+
+## Example
+
+Input: x
+Output: y
+
+## References
+
+- \`references/eval-guide.md\`
+`,
+  );
+  writeFile(
+    root,
+    "skills/craft-autoresearch/references/eval-guide.md",
+    "# Eval guide\n\nAn eval runner replays test inputs and scores outputs.\n",
+  );
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+test("terminologyRules ships the two seeded rules with files/forbidden/why", () => {
+  assert.equal(terminologyRules.length, 2);
+  for (const rule of terminologyRules) {
+    assert.ok(Array.isArray(rule.files) && rule.files.length > 0);
+    assert.ok(Array.isArray(rule.forbidden) && rule.forbidden.length > 0);
+    assert.equal(typeof rule.why, "string");
+  }
+});
+
+test("matchesFilePattern treats a pattern without '*' as an exact literal path", () => {
+  assert.equal(matchesFilePattern("docs/examples/tune-a-prompt.md", "docs/examples/tune-a-prompt.md"), true);
+  assert.equal(matchesFilePattern("docs/examples/tune-a-prompt.md", "docs/examples/other.md"), false);
+});
+
+test("matchesFilePattern's '**/*.md' matches nested files but not sibling skills", () => {
+  const pattern = "skills/craft-autoresearch/**/*.md";
+
+  assert.equal(matchesFilePattern(pattern, "skills/craft-autoresearch/SKILL.md"), true);
+  assert.equal(matchesFilePattern(pattern, "skills/craft-autoresearch/references/eval-guide.md"), true);
+  assert.equal(matchesFilePattern(pattern, "skills/craft-harness/SKILL.md"), false);
+  assert.equal(matchesFilePattern(pattern, "skills/craft-autoresearch/references/nested/deep.md"), true);
+  assert.equal(matchesFilePattern(pattern, "skills/craft-autoresearch/README.txt"), false);
+});
+
+test("terminologyFindings reports the matched literal phrase for a string rule (violation found)", () => {
+  assert.deepEqual(
+    terminologyFindings("This still says run harness.\n", ["run harness", "evals and a harness"]),
+    ["run harness"],
+  );
+});
+
+test("terminologyFindings returns no findings for a clean file", () => {
+  assert.deepEqual(
+    terminologyFindings("Uses an eval runner instead.\n", ["run harness", "evals and a harness"]),
+    [],
+  );
+});
+
+test("terminologyFindings' harness-vs-eval-runner regex catches bare 'harness' but permits 'craft-harness' (scoping respected)", () => {
+  const forbidden = [/(?<!craft-)\bharness\b/i];
+
+  assert.deepEqual(terminologyFindings("Set up the harness first.", forbidden), ["harness"]);
+  assert.deepEqual(terminologyFindings("See craft-harness for repo guidance.", forbidden), []);
+  assert.deepEqual(terminologyFindings("Use an eval runner, not a Harness.", forbidden), ["Harness"]);
+});
 
 expectVerifyFailure("fails when README required path text is missing", (root) => {
   writeFile(root, "README.md", "# Fixture\n");
