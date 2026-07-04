@@ -1,6 +1,8 @@
 ---
 name: craft-critique
 description: Critique prompts or skills without editing. Use for review-only diagnosis, audit, "feels off" artifacts, or findings before a rewrite.
+metadata:
+  related-skills: "craft-tune, craft-autoresearch"
 ---
 
 # craft-critique

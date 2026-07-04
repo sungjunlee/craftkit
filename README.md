@@ -149,6 +149,8 @@ policy:
 
 Use explicit-only policy for skills that edit files, write artifacts, mutate clipboard state, run eval loops, create spec files, inspect repo harness surfaces, or otherwise turn a broad user request into a higher-ceremony workflow. Keep the `description` concise and useful for manual skill lists even when it is not injected for implicit routing.
 
+Read-only is necessary but not sufficient for implicit invocation: `craft-survey` is read-only yet stays explicit-only, because it launches a time-consuming multi-source web research workflow rather than a quick read-only diagnosis like `craft-critique`. That higher ceremony means the user should opt in directly instead of having it triggered implicitly.
+
 ## Routing checks
 
 Use these lightweight checks after editing skill descriptions or routing boundaries. They are manual contract checks, not a new runtime.

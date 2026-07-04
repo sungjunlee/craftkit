@@ -15,7 +15,13 @@ Required for every skill, both families: `name` (matches the skill directory exa
 
 Conditionally required: `disable-model-invocation: true` for explicit-only (higher-ceremony, mutating, or side-effecting) workflows, paired with `skills/<name>/agents/openai.yaml` setting `policy.allow_implicit_invocation: false` (CLAUDE.md "Skill file conventions"; enforced by `checkOpenAiInvocationPolicies`). Already consistent across all 11 skills — no deviations found here.
 
-spec-* only, required (all three carry these identically-shaped today): `argument-hint` (e.g. `"[create|amend|reassess]"`), `compatibility: Requires git.`, `metadata.related-skills`. No craft-* skill carries these fields yet (#113).
+spec-* only, required (all three carry these identically-shaped today): `argument-hint` (e.g. `"[create|amend|reassess]"`), `compatibility: Requires git.`, `metadata.related-skills`.
+
+craft-* policy for these three fields (#113, decided): each is conditional on a real underlying need, not family-wide parity for its own sake.
+
+- `metadata.related-skills` — add only where a real cluster exists. The `craft-critique` ↔ `craft-tune` ↔ `craft-autoresearch` triangle carries it today (each lists the other two), matching spec-*'s `metadata:\n  related-skills: "a, b, c"` YAML shape exactly. Other craft-* skills without a comparably tight cluster don't get it.
+- `argument-hint` — add only where a skill has real positional-argument structure (explicit modes like `create|amend`). No craft-* skill has this today, so no craft-* skill carries `argument-hint`.
+- `compatibility` — declare only for real requirements (spec-* skills require git). Absence means no special requirements, not an oversight. No craft-* skill has a comparable hard requirement today.
 
 **H1 rule**: the H1 is the literal skill slug in its own case, e.g. `# craft-critique`, matching `name` — not a prose title. All 11 skills follow this (spec-* converged in #111).
 
@@ -55,7 +61,7 @@ All three wrap the router under `## Execution contract` (`spec-system-map` conve
 
 ## Documented exemptions
 
-- **craft-critique "Common mistakes" vs "Failure modes."** Its own meta-section is named "Common mistakes" instead of "Failure modes" because its *output contract* (what it produces for the artifact under review) already has a `### Failure modes` subsection — reusing the name would collide with the output template. Exemption until #111 resolves it (rename to "Failure modes (of this skill)" or keep this documented split).
+- **craft-critique "Common mistakes" vs "Failure modes."** Its own meta-section is named "Common mistakes" instead of "Failure modes" because its *output contract* (what it produces for the artifact under review) already has a `### Failure modes` subsection — reusing the name would collide with the output template. Resolved in #111 by keeping this documented split (no rename); verify encodes "Common mistakes" as satisfying the Failure modes slot.
 - **Loop-shaped Output format decomposition.** `craft-autoresearch` and `craft-tune` split "Output format" into multiple named parts (`Experiment contract`/`Baseline`/`Experiment log`/`Final artifact`; `Per-round output`/`Final output`) because a single-shot section can't describe a multi-round artifact. Satisfies the requirement in spirit; no separate top-level "Output format" heading required when the skill is loop-shaped and all parts are present.
 
 ## Decision points flagged for maintainer review
@@ -98,8 +104,10 @@ Exhaustive as of this writing. Every unchecked item is something #109/#110 autom
 
 ### #113 — frontmatter parity + craft-survey invocation policy
 
-- [ ] craft-* skills: decide and apply `argument-hint` / `metadata.related-skills` parity, at least for the `craft-tune` ↔ `craft-critique` ↔ `craft-autoresearch` triangle; decide `compatibility` policy once for the family
-- [ ] `craft-survey`: decide implicit vs explicit-only invocation policy against the stated "read-only is implicit" rule — flip it or document why survey is higher-ceremony than critique
+- [x] craft-* skills: `metadata.related-skills` added to the `craft-critique` ↔ `craft-tune` ↔ `craft-autoresearch` triangle (each lists the other two), matching spec-*'s YAML shape; no other craft-* skill gets it (no comparably tight cluster)
+- [x] craft-* skills: `argument-hint` policy decided — only for skills with real positional-argument structure (modes like `create|amend`); no craft-* skill qualifies, so none carry it
+- [x] craft-* skills: `compatibility` policy decided — declare only for real requirements (spec-* require git); no craft-* skill has a comparable requirement, so none carry it
+- [x] `craft-survey`: stays explicit-only — read-only is necessary but not sufficient; survey launches a time-consuming multi-source web research workflow, higher-ceremony than a quick read-only diagnosis like `craft-critique`, so the user opts in explicitly (documented in README "Invocation policy")
 
 ### Not yet mapped to an issue
 

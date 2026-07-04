@@ -2,6 +2,8 @@
 name: craft-autoresearch
 description: Optimize prompts or skills with measured eval loops. Use for repeatable test inputs, eval runners, scoring, bounded mutations, or written stop conditions.
 disable-model-invocation: true
+metadata:
+  related-skills: "craft-critique, craft-tune"
 ---
 
 # craft-autoresearch
