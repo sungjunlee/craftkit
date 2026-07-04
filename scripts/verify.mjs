@@ -16,6 +16,79 @@ const radarCurrentPath = "skills/craft-skill-spec/references/radar/current.md";
 // adds slack before this becomes a warning.
 const radarMaxAgeDays = 75;
 
+// Family section contract, derived from docs/skill-anatomy.md ("craft-* family
+// contract" and "spec-* family contract" tables, plus "Documented exemptions").
+// Each entry is a requirement slot: `key` is the label used in fail/warn messages,
+// `match(headings)` reports whether a skill's parsed headings satisfy the slot.
+// `headings` is the flat list from parseHeadings(); `hasHeadingAnyLevel` lets
+// loop-shaped skills satisfy "Output format" via their multi-part decomposition
+// (docs/skill-anatomy.md "Documented exemptions" § Loop-shaped Output format
+// decomposition) without hardcoding craft-tune/craft-autoresearch by name.
+const CRAFT_SECTION_CONTRACT = [
+  { key: "Purpose", match: (h) => hasH2(h, "purpose") },
+  { key: "Use this when", match: (h) => hasH2(h, "use this when") },
+  { key: "Inputs", match: (h) => hasH2(h, "inputs") },
+  { key: "Steps/Workflow", match: (h) => hasH2(h, "steps") || hasH2(h, "workflow") },
+  {
+    key: "Output format",
+    match: (h) =>
+      hasH2(h, "output format") ||
+      (hasHeadingAnyLevel(h, "per-round output (compact trail)") && hasHeadingAnyLevel(h, "final output (after convergence)")) ||
+      (hasHeadingAnyLevel(h, "per-round output") && hasHeadingAnyLevel(h, "final output")) ||
+      (hasHeadingAnyLevel(h, "experiment contract") && hasHeadingAnyLevel(h, "final artifact")),
+  },
+  { key: "Guardrails", match: (h) => hasH2(h, "guardrails") },
+  // craft-critique names this "Common mistakes" instead of "Failure modes" because
+  // its own output template already has a `### Failure modes` subsection (name
+  // collision, documented exemption) — encoded as an alternate heading, not a
+  // skill-name check.
+  { key: "Failure modes", match: (h) => hasH2(h, "failure modes") || hasH2(h, "common mistakes") },
+  { key: "Example", match: (h) => hasH2(h, "example") },
+];
+
+// spec-* requires the Execution Contract wrapper to literally contain the Mode
+// Router/Intent Router and Completion Contract H3s (docs/skill-anatomy.md "spec-*
+// family contract"). Ordering within the wrapper is not checked (PRD §8
+// de-risking); presence and nesting are. Headings are compared case-insensitively
+// because Title Case -> sentence case normalization is #111's job, not #110's —
+// checking case here would double-report the same drift under two issues.
+const SPEC_SECTION_CONTRACT = [
+  { key: "Execution Contract wrapper", match: (h) => hasH2(h, "execution contract") },
+  {
+    key: "Mode Router (nested)",
+    match: (h, sections) => sectionChildIncludes(sections, "execution contract", ["mode router", "intent router"]),
+  },
+  {
+    key: "Completion Contract (nested)",
+    match: (h, sections) => sectionChildIncludes(sections, "execution contract", ["completion contract"]),
+  },
+  { key: "Verification prompts", match: (h) => hasH2(h, "verification prompts") },
+];
+
+// Ratchet baseline for #110: every section a skill is CURRENTLY missing, per a
+// fresh run of sectionContractFindings() against the tree on 2026-07-04. Sourced
+// from docs/skill-anatomy.md "Current deviations" plus two findings that doc's
+// "exhaustive" list does not mention (craft-handoff's missing Output format/
+// Guardrails, and craft-harness's missing Guardrails — see verify report for
+// detail). A baselined miss warns (burn-down signal); remove the entry once the
+// section is added, or verify will fail telling you the entry is stale.
+const knownSectionDeviations = {
+  "craft-prompt": ["Purpose", "Inputs", "Steps/Workflow", "Output format", "Guardrails", "Failure modes", "Example"],
+  "craft-harness": ["Use this when", "Guardrails", "References"],
+  "craft-skill-spec": ["Use this when"],
+  "craft-tune": ["Steps/Workflow"],
+  "craft-critique": ["References"],
+  "craft-handoff": ["Output format", "Guardrails"],
+  "spec-charter": ["Verification prompts"],
+  "spec-grill": ["Verification prompts"],
+  "spec-system-map": [
+    "Execution Contract wrapper",
+    "Mode Router (nested)",
+    "Completion Contract (nested)",
+    "Verification prompts",
+  ],
+};
+
 function fail(message) {
   failures.push(message);
 }
@@ -122,6 +195,116 @@ function parseDescription(frontmatter) {
 
 function countWords(text) {
   return text.split(/\s+/).filter(Boolean).length;
+}
+
+function normalizeHeading(text) {
+  return text.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function parseHeadings(body) {
+  const headings = [];
+  const headingPattern = /^(#{2,3})\s+(.+?)\s*$/gm;
+  let match;
+
+  while ((match = headingPattern.exec(body))) {
+    headings.push({ level: match[1].length, text: normalizeHeading(match[2]) });
+  }
+
+  return headings;
+}
+
+function hasH2(headings, text) {
+  return headings.some((heading) => heading.level === 2 && heading.text === text);
+}
+
+function hasHeadingAnyLevel(headings, text) {
+  return headings.some((heading) => heading.text === text);
+}
+
+function hasReferencesHeading(headings) {
+  return headings.some((heading) => heading.level === 2 && /^references\b/.test(heading.text));
+}
+
+// Groups H3 headings under their nearest preceding H2, so nested requirements
+// (spec-*'s "Execution Contract > Mode Router") can be checked without assuming
+// a fixed order among sibling H2 sections.
+function buildH2Sections(headings) {
+  const sections = new Map();
+  let currentH2 = null;
+
+  for (const heading of headings) {
+    if (heading.level === 2) {
+      currentH2 = heading.text;
+      if (!sections.has(currentH2)) {
+        sections.set(currentH2, []);
+      }
+      continue;
+    }
+
+    if (currentH2 !== null) {
+      sections.get(currentH2).push(heading.text);
+    }
+  }
+
+  return sections;
+}
+
+function sectionChildIncludes(sections, h2Text, childTextAlternatives) {
+  const children = sections.get(h2Text) ?? [];
+  return childTextAlternatives.some((alternative) => children.includes(alternative));
+}
+
+function skillFamilyOf(skillName) {
+  if (skillName.startsWith("craft-")) {
+    return "craft";
+  }
+
+  if (skillName.startsWith("spec-")) {
+    return "spec";
+  }
+
+  return null;
+}
+
+// Pure helper (unit-tested directly): returns the list of required-section keys
+// a skill's SKILL.md body is currently missing, given its family contract. Does
+// not know about the ratchet baseline — callers diff the result against
+// knownSectionDeviations to decide warn() vs fail().
+function sectionContractFindings(skillName, body, hasReferencesDir) {
+  const family = skillFamilyOf(skillName);
+  if (!family) {
+    return [];
+  }
+
+  const headings = parseHeadings(body);
+  const findings = [];
+
+  if (family === "craft") {
+    for (const requirement of CRAFT_SECTION_CONTRACT) {
+      if (!requirement.match(headings)) {
+        findings.push(requirement.key);
+      }
+    }
+
+    if (hasReferencesDir && !hasReferencesHeading(headings)) {
+      findings.push("References");
+    }
+
+    return findings;
+  }
+
+  const sections = buildH2Sections(headings);
+  for (const requirement of SPEC_SECTION_CONTRACT) {
+    if (!requirement.match(headings, sections)) {
+      findings.push(requirement.key);
+    }
+  }
+
+  if (!hasReferencesHeading(headings)) {
+    findings.push("References");
+  }
+
+  return findings;
 }
 
 function checkSkillFiles() {
@@ -256,6 +439,116 @@ function checkMirroredReferences() {
 
     if (readText(firstPath) !== readText(secondPath)) {
       fail(`${first} and ${second} are mirrored references and must stay identical`);
+    }
+  }
+}
+
+// Conservative citation matcher for #109: matches `references/...md` path-like
+// strings, with an optional chain of leading path segments (`../`, `skills/`,
+// `spec-grill/`, ...) so cross-skill citations like
+// `../spec-grill/references/spec-pipeline-ready.md` or
+// `skills/craft-prompt/references/prompt-patterns.md` are captured whole rather
+// than truncated at the literal "references/" token.
+//
+// templates/...md and guides/...md are deliberately NOT in scope here (issue
+// #109 globs references/ only): craft-handoff/SKILL.md has an existing
+// `craft-prompt/templates/session-handoff.md` mention that is missing a `../`
+// or `skills/` prefix and would dangle under this same regex — extending scope
+// to templates/guides is not "trivially the same code path" once that citation
+// style exists, so it's left unenforced rather than papered over with more
+// special-casing. See the verify report for this finding.
+const referenceCitationPattern = /(?:[\w.-]+\/)*references\/[\w.\-/]+\.md/g;
+
+function resolveCitation(skillDir, citation) {
+  if (citation.startsWith("skills/")) {
+    return path.join(root, citation);
+  }
+
+  return path.join(skillDir, citation);
+}
+
+function checkReferenceIndex() {
+  const skillsRoot = path.join(root, "skills");
+  const skillDirNames = fs.readdirSync(skillsRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+
+  for (const skillName of skillDirNames) {
+    const skillDir = path.join(skillsRoot, skillName);
+    const skillMdPath = path.join(skillDir, "SKILL.md");
+
+    if (!fs.existsSync(skillMdPath)) {
+      continue;
+    }
+
+    const body = readText(skillMdPath);
+
+    // Direction (a): every top-level references/*.md file must be cited
+    // somewhere in this skill's own SKILL.md. Subdirectories (e.g.
+    // craft-skill-spec/references/radar/) are out of scope for this direction —
+    // the issue globs one level only.
+    const referencesDir = path.join(skillDir, "references");
+    if (fs.existsSync(referencesDir)) {
+      const topLevelFiles = fs.readdirSync(referencesDir, { withFileTypes: true })
+        .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
+        .map((entry) => entry.name);
+
+      for (const fileName of topLevelFiles) {
+        const citation = `references/${fileName}`;
+        if (!body.includes(citation)) {
+          fail(`${relative(skillMdPath)} does not cite ${citation}, which exists in ${relative(referencesDir)}/`);
+        }
+      }
+    }
+
+    // Direction (b): every references/templates/guides path-like citation must
+    // resolve to a real file, relative to the skill dir (or the repo root for
+    // citations spelled out from `skills/...`).
+    const citations = new Set(body.match(referenceCitationPattern) ?? []);
+    for (const citation of citations) {
+      const resolvedPath = resolveCitation(skillDir, citation);
+      if (!fs.existsSync(resolvedPath)) {
+        fail(`${relative(skillMdPath)} cites ${citation}, which does not exist (resolved to ${relative(resolvedPath)})`);
+      }
+    }
+  }
+}
+
+function checkFamilySectionContract() {
+  const skillsRoot = path.join(root, "skills");
+  const skillDirNames = fs.readdirSync(skillsRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+
+  for (const skillName of skillDirNames) {
+    if (!skillFamilyOf(skillName)) {
+      continue;
+    }
+
+    const skillDir = path.join(skillsRoot, skillName);
+    const skillMdPath = path.join(skillDir, "SKILL.md");
+
+    if (!fs.existsSync(skillMdPath)) {
+      continue;
+    }
+
+    const body = readText(skillMdPath);
+    const hasReferencesDir = fs.existsSync(path.join(skillDir, "references"));
+    const findings = sectionContractFindings(skillName, body, hasReferencesDir);
+    const baseline = knownSectionDeviations[skillName] ?? [];
+
+    for (const key of findings) {
+      if (baseline.includes(key)) {
+        warn(`${relative(skillMdPath)} is missing the required "${key}" section (baselined deviation from docs/skill-anatomy.md — burn down when convenient)`);
+      } else {
+        fail(`${relative(skillMdPath)} is missing the required "${key}" section (new drift, not in the knownSectionDeviations baseline)`);
+      }
+    }
+
+    for (const key of baseline) {
+      if (!findings.includes(key)) {
+        fail(`${relative(skillMdPath)}: knownSectionDeviations still lists "${key}" as missing, but the section is now present — remove the stale baseline entry`);
+      }
     }
   }
 }
@@ -401,6 +694,8 @@ function main() {
   checkSkillFiles();
   checkOpenAiInvocationPolicies();
   checkMirroredReferences();
+  checkReferenceIndex();
+  checkFamilySectionContract();
   checkTerminology();
   checkDocumentationPaths();
   checkRadarStaleness();
@@ -425,4 +720,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   main();
 }
 
-export { radarStaleness };
+export { radarStaleness, sectionContractFindings };

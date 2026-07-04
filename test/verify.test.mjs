@@ -5,7 +5,7 @@ import path from "node:path";
 import test from "node:test";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { radarStaleness } from "../scripts/verify.mjs";
+import { radarStaleness, sectionContractFindings } from "../scripts/verify.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const verifyScript = path.join(repoRoot, "scripts/verify.mjs");
@@ -307,6 +307,325 @@ test("warns but still passes when radar current.md has an unparseable last revie
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(`${result.stdout}\n${result.stderr}`, /unparseable "last reviewed" date: not-a-date/);
+});
+
+// --- Check: reference-index completeness (#109) ---
+
+test("passes when every top-level references/*.md file is cited", () => {
+  const root = createFixture();
+  writeFile(
+    root,
+    "skills/example-refs/SKILL.md",
+    "---\nname: example-refs\ndescription: Example skill for reference-index tests.\n---\n\n# example-refs\n\nSee `references/one.md` and `references/two.md`.\n",
+  );
+  writeFile(root, "skills/example-refs/references/one.md", "# One\n");
+  writeFile(root, "skills/example-refs/references/two.md", "# Two\n");
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+expectVerifyFailure("fails on an uncited references/*.md file", (root) => {
+  writeFile(
+    root,
+    "skills/example-refs/SKILL.md",
+    "---\nname: example-refs\ndescription: Example skill for reference-index tests.\n---\n\n# example-refs\n\nSee `references/one.md`.\n",
+  );
+  writeFile(root, "skills/example-refs/references/one.md", "# One\n");
+  writeFile(root, "skills/example-refs/references/two.md", "# Two\n");
+}, /skills\/example-refs\/SKILL\.md does not cite references\/two\.md/);
+
+expectVerifyFailure("fails on a dangling references/ citation", (root) => {
+  writeFile(
+    root,
+    "skills/example-refs/SKILL.md",
+    "---\nname: example-refs\ndescription: Example skill for reference-index tests.\n---\n\n# example-refs\n\nSee `references/ghost.md`.\n",
+  );
+}, /skills\/example-refs\/SKILL\.md cites references\/ghost\.md, which does not exist/);
+
+test("does not require citing files inside a references/ subdirectory", () => {
+  const root = createFixture();
+  writeFile(
+    root,
+    "skills/example-refs/SKILL.md",
+    "---\nname: example-refs\ndescription: Example skill for reference-index tests.\n---\n\n# example-refs\n\nSee `references/one.md`.\n",
+  );
+  writeFile(root, "skills/example-refs/references/one.md", "# One\n");
+  writeFile(root, "skills/example-refs/references/sub/nested.md", "# Nested\n");
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+test("resolves a cross-skill ../sibling/references/ citation instead of flagging it as dangling", () => {
+  const root = createFixture();
+  writeFile(
+    root,
+    "skills/example-refs-a/SKILL.md",
+    "---\nname: example-refs-a\ndescription: Sibling skill A for reference-index tests.\n---\n\n# example-refs-a\n\nSee [`../example-refs-b/references/shared.md`](../example-refs-b/references/shared.md).\n",
+  );
+  writeFile(
+    root,
+    "skills/example-refs-b/SKILL.md",
+    "---\nname: example-refs-b\ndescription: Sibling skill B for reference-index tests.\n---\n\n# example-refs-b\n\nSee `references/shared.md`.\n",
+  );
+  writeFile(root, "skills/example-refs-b/references/shared.md", "# Shared\n");
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+// --- Check: family section contract (#110) ---
+
+const compliantCraftSkillBody = (name) => `---
+name: ${name}
+description: Example ${name} skill for section contract tests.
+---
+
+# ${name}
+
+## Purpose
+
+Does a thing.
+
+## Use this when
+
+- always
+
+## Inputs
+
+- none
+
+## Steps
+
+1. Do it.
+
+## Output format
+
+A single line.
+
+## Guardrails
+
+- stay safe
+
+## Failure modes
+
+- it might fail
+
+## Example
+
+Input: x
+Output: y
+`;
+
+expectVerifyFailure("fails on a non-baselined missing required section", (root) => {
+  writeFile(
+    root,
+    "skills/craft-newskill/SKILL.md",
+    compliantCraftSkillBody("craft-newskill").replace("## Purpose\n\nDoes a thing.\n\n", ""),
+  );
+}, /skills\/craft-newskill\/SKILL\.md is missing the required "Purpose" section \(new drift/);
+
+const compliantSpecSkillBody = (name) => `---
+name: ${name}
+description: Example ${name} skill for section contract tests.
+---
+
+# ${name}
+
+Intro paragraph.
+
+## Execution Contract
+
+### Mode Router
+
+Routes intent to a mode.
+
+### Completion Contract
+
+Reports what changed.
+
+## Domain Rules
+
+Whatever this skill mutates.
+
+## Verification prompts
+
+- "A pressure-test prompt." Expected: do the right thing.
+
+## References
+
+Nothing to cite.
+`;
+
+test("warns (and still passes) on a baselined missing required section", () => {
+  const root = createFixture();
+  // Note: craft-tune, craft-critique, and craft-skill-spec are avoided here
+  // because createFixture() already seeds a references/ dir under each of them
+  // (for the mirrored-reference check and the radar-staleness check), which
+  // would also trip the reference-index check or the References requirement.
+  // spec-charter's real knownSectionDeviations entry is exactly
+  // ["Verification prompts"]; reproduce only that single gap.
+  writeFile(
+    root,
+    "skills/spec-charter/SKILL.md",
+    compliantSpecSkillBody("spec-charter").replace(
+      '## Verification prompts\n\n- "A pressure-test prompt." Expected: do the right thing.\n\n',
+      "",
+    ),
+  );
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /skills\/spec-charter\/SKILL\.md is missing the required "Verification prompts" section \(baselined/,
+  );
+});
+
+expectVerifyFailure("fails on a stale baseline entry whose section is now present", (root) => {
+  // craft-prompt's real knownSectionDeviations entry lists 7 keys, including
+  // "Purpose"; supply a fixture that is fully compliant, satisfying all of them
+  // (and so making every one of those baseline entries stale).
+  writeFile(root, "skills/craft-prompt/SKILL.md", compliantCraftSkillBody("craft-prompt"));
+}, /knownSectionDeviations still lists "Purpose".*but the section is now present/);
+
+test("passes for a spec-* skill with the full Execution Contract + Verification prompts shape", () => {
+  const root = createFixture();
+  writeFile(root, "skills/spec-newmap/SKILL.md", compliantSpecSkillBody("spec-newmap"));
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+expectVerifyFailure("fails on a spec-* skill missing the Execution Contract wrapper", (root) => {
+  writeFile(
+    root,
+    "skills/spec-newmap/SKILL.md",
+    `---
+name: spec-newmap
+description: Example spec-newmap skill for section contract tests.
+---
+
+# spec-newmap
+
+## Mode Router
+
+Routes intent to a mode, but not under Execution Contract.
+
+## Verification prompts
+
+- "A pressure-test prompt." Expected: do the right thing.
+
+## References
+
+Nothing to cite.
+`,
+  );
+}, /skills\/spec-newmap\/SKILL\.md is missing the required "Execution Contract wrapper" section \(new drift/);
+
+// --- sectionContractFindings unit tests ---
+
+test("sectionContractFindings returns no findings for a fully compliant craft-* skill", () => {
+  assert.deepEqual(sectionContractFindings("craft-x", compliantCraftSkillBody("craft-x"), false), []);
+});
+
+test("sectionContractFindings requires References only when a references/ dir exists", () => {
+  const bodyWithoutReferences = compliantCraftSkillBody("craft-x");
+
+  assert.deepEqual(sectionContractFindings("craft-x", bodyWithoutReferences, false), []);
+  assert.deepEqual(sectionContractFindings("craft-x", bodyWithoutReferences, true), ["References"]);
+
+  const bodyWithReferences = `${bodyWithoutReferences}\n## References\n\n- \`references/foo.md\`\n`;
+  assert.deepEqual(sectionContractFindings("craft-x", bodyWithReferences, true), []);
+});
+
+test("sectionContractFindings exempts craft-critique's 'Common mistakes' for Failure modes", () => {
+  const body = compliantCraftSkillBody("craft-critique").replace(
+    "## Failure modes\n\n- it might fail\n\n",
+    "## Common mistakes\n\n- it might fail\n\n",
+  );
+
+  assert.deepEqual(sectionContractFindings("craft-critique", body, false), []);
+});
+
+test("sectionContractFindings accepts the loop-shaped Output format decomposition", () => {
+  const body = compliantCraftSkillBody("craft-tune")
+    .replace("## Steps\n\n1. Do it.\n\n", "## How the loop runs\n\n1. Do it.\n\n")
+    .replace(
+      "## Output format\n\nA single line.\n\n",
+      "## Per-round output (compact trail)\n\nRound trail.\n\n## Final output (after convergence)\n\nFinal artifact.\n\n",
+    );
+
+  assert.deepEqual(sectionContractFindings("craft-tune", body, false), ["Steps/Workflow"]);
+});
+
+test("sectionContractFindings requires Mode Router and Completion Contract nested under Execution Contract", () => {
+  const flatBody = `---
+name: spec-x
+description: Example.
+---
+
+# spec-x
+
+## Mode Router
+
+Not nested.
+
+## Completion Output
+
+Not named Completion Contract.
+
+## Verification prompts
+
+- prompt
+
+## References
+
+- none
+`;
+
+  assert.deepEqual(
+    sectionContractFindings("spec-x", flatBody, false),
+    ["Execution Contract wrapper", "Mode Router (nested)", "Completion Contract (nested)"],
+  );
+
+  const nestedBody = `---
+name: spec-x
+description: Example.
+---
+
+# spec-x
+
+## Execution Contract
+
+### Intent Router
+
+Nested.
+
+### Completion Contract
+
+Nested.
+
+## Verification prompts
+
+- prompt
+
+## References
+
+- none
+`;
+
+  assert.deepEqual(sectionContractFindings("spec-x", nestedBody, false), []);
+});
+
+test("sectionContractFindings returns no requirements for a skill outside both families", () => {
+  assert.deepEqual(sectionContractFindings("example", "# example\n\nNo required sections.\n", true), []);
 });
 
 test("radarStaleness returns null for a fresh review date", () => {
