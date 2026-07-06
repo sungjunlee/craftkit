@@ -106,3 +106,7 @@ A prompt that asks the agent to "make this better" without saying what better me
 1. add the goal — everything else depends on a defined target
 2. add intent-preservation constraint — cheap, prevents scope drift during the next two edits
 3. add the output template — highest reach, but only meaningful once the goal exists
+
+## References
+
+- `references/failure-modes.md` — categorized diagnostic vocabulary (ambiguity, scope, context, portability, verification, structure) for when top-level findings stay fuzzy.

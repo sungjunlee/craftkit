@@ -77,13 +77,12 @@ const SPEC_SECTION_CONTRACT = [
 // in sync with docs/skill-anatomy.md "Current deviations". A baselined miss
 // warns (burn-down signal); remove the entry once the section is added, or
 // verify will fail telling you the entry is stale. #111/#112/#115 cleared the
-// spec-* and craft-prompt/craft-tune entries; what remains is the unmapped
-// bucket (see the anatomy doc).
-const knownSectionDeviations = {
-  "craft-harness": ["Use this when", "Guardrails", "References"],
-  "craft-skill-spec": ["Use this when"],
-  "craft-critique": ["References"],
-};
+// spec-* and craft-prompt/craft-tune entries; #126/#133 (the review-hardening
+// pass) cleared the remaining craft-harness/craft-skill-spec/craft-critique
+// entries, so the baseline is empty. Adding an entry back is an explicit,
+// temporary act — do it only alongside a matching "Current deviations" note
+// in docs/skill-anatomy.md, and remove both together once the section lands.
+const knownSectionDeviations = {};
 
 function fail(message) {
   failures.push(message);

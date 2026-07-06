@@ -79,7 +79,7 @@ Each choice below is already applied in this doc; flip it here and in the tables
 
 ## Current deviations
 
-Exhaustive as of this writing. Every unchecked item is something #109/#110 automation should catch once wired up, and something #111/#112/#113 should burn down. Items not yet mapped to an issue are called out explicitly.
+Exhaustive as of this writing. All items below are resolved as of the #126/#133 review-hardening pass — `scripts/verify.mjs`'s `knownSectionDeviations` baseline is empty, so every skill satisfies its family's section contract. A future gap gets added here as a new unchecked item, paired with a matching baseline entry in `scripts/verify.mjs`, and both are removed together once the section lands.
 
 ### #111 — validation-section naming + craft-critique collision
 
@@ -111,13 +111,13 @@ Exhaustive as of this writing. Every unchecked item is something #109/#110 autom
 
 ### Not yet mapped to an issue
 
-- [ ] `craft-harness`: no dedicated `## References` section — its 5 `references/*.md` files are cited via `## Required reads` and inline mentions instead; add one indexing all 5 (decision point 5)
-- [ ] `craft-critique`: no dedicated `## References` section — its 1 `references/failure-modes.md` is cited inline only; add one (decision point 5)
-- [ ] `craft-harness`, `craft-skill-spec`: missing `## Use this when` (both use `## How it differs from related skills` instead); add `## Use this when` alongside it (decision point 2)
+- [x] `craft-harness`: no dedicated `## References` section — its 5 `references/*.md` files are cited via `## Required reads` and inline mentions instead; add one indexing all 5 (decision point 5)
+- [x] `craft-critique`: no dedicated `## References` section — its 1 `references/failure-modes.md` is cited inline only; add one (decision point 5)
+- [x] `craft-harness`, `craft-skill-spec`: missing `## Use this when` (both use `## How it differs from related skills` instead); add `## Use this when` alongside it (decision point 2)
 - [x] `craft-tune`: `## How the loop runs` renamed to `## Workflow` (decision point 3, done with #115)
 - [x] `craft-handoff`: missing `## Guardrails` entirely (found by the #110 check, not the original doc audit)
 - [x] `craft-handoff`: missing `## Output format` — the output shape is folded into `## Workflow` steps 3/4 prose (found by the #110 check)
-- [ ] `craft-harness`: missing `## Guardrails` entirely — "guardrail" appears only in unrelated prose about hook guardrails (found by the #110 check)
+- [x] `craft-harness`: missing `## Guardrails` entirely — "guardrail" appears only in unrelated prose about hook guardrails (found by the #110 check)
 
 ## References
 

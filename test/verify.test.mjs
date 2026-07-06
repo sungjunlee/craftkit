@@ -86,13 +86,42 @@ function createFixture() {
   return root;
 }
 
+function withInjectedBaseline(root, baseline) {
+  // The checked-in knownSectionDeviations baseline is empty (#126/#133 cleared
+  // the last entries), so mechanism tests for the warn-vs-fail/stale-entry
+  // branches inject a synthetic baseline into the fixture's copy of
+  // scripts/verify.mjs rather than relying on real (now nonexistent) entries.
+  const verifyPath = path.join(root, "scripts/verify.mjs");
+  const content = fs.readFileSync(verifyPath, "utf8");
+  const updated = content.replace(
+    "const knownSectionDeviations = {};",
+    `const knownSectionDeviations = ${JSON.stringify(baseline)};`,
+  );
+
+  if (updated === content) {
+    throw new Error("expected to find `const knownSectionDeviations = {};` in the fixture's scripts/verify.mjs");
+  }
+
+  fs.writeFileSync(verifyPath, updated);
+}
+
 function runVerify(root, options = {}) {
   const env = { ...process.env };
   if (options.skipPackDryRun) {
     env.CRAFTKIT_VERIFY_TEST_SKIP_PACK_DRY_RUN = "1";
   }
 
-  return spawnSync(process.execPath, [verifyScript], {
+  // Spawn the fixture's own copy of the script (written by createFixture),
+  // not the outer repo's scripts/verify.mjs, so tests that mutate the copy
+  // (e.g. withInjectedBaseline) actually take effect. Resolve the script path
+  // through fs.realpathSync: on macOS, os.tmpdir() returns a /var path that is
+  // itself a symlink to /private/var, so the raw path and the resolved
+  // import.meta.url the script sees at runtime wouldn't match, and the
+  // `if (import.meta.url === pathToFileURL(process.argv[1]).href) main();`
+  // entry-point guard at the bottom of verify.mjs would silently skip main().
+  const scriptPath = fs.realpathSync(path.join(root, "scripts/verify.mjs"));
+
+  return spawnSync(process.execPath, [scriptPath], {
     cwd: root,
     encoding: "utf8",
     env,
@@ -670,8 +699,10 @@ test("warns (and still passes) on a baselined missing required section", () => {
   // because createFixture() already seeds a references/ dir under each of them
   // (for the mirrored-reference check and the radar-staleness check), which
   // would also trip the reference-index check or the References requirement.
-  // craft-handoff's real knownSectionDeviations entry is exactly
-  // ["Output format", "Guardrails"]; reproduce exactly those two gaps.
+  // The checked-in knownSectionDeviations baseline is empty (#126/#133), so
+  // inject a synthetic entry for craft-handoff and reproduce exactly those
+  // two gaps to exercise the warn (not fail) branch.
+  withInjectedBaseline(root, { "craft-handoff": ["Output format", "Guardrails"] });
   writeFile(
     root,
     "skills/craft-handoff/SKILL.md",
@@ -690,9 +721,10 @@ test("warns (and still passes) on a baselined missing required section", () => {
 });
 
 expectVerifyFailure("fails on a stale baseline entry whose section is now present", (root) => {
-  // craft-handoff's real knownSectionDeviations entry lists "Output format" and
-  // "Guardrails"; supply a fixture that is fully compliant, satisfying both
-  // (and so making both baseline entries stale).
+  // Inject a synthetic baseline entry (the checked-in baseline is empty as of
+  // #126/#133) listing "Output format" and "Guardrails", then supply a fixture
+  // that is fully compliant, satisfying both (and so making both entries stale).
+  withInjectedBaseline(root, { "craft-handoff": ["Output format", "Guardrails"] });
   writeFile(root, "skills/craft-handoff/SKILL.md", compliantCraftSkillBody("craft-handoff"));
 }, /knownSectionDeviations still lists "Output format".*but the section is now present/);
 

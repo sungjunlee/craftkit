@@ -16,6 +16,14 @@ Use it when the question is not just "how do I write a skill?" but "what kind of
 
 The common path is intentionally light: classify the artifact, define its wedge, choose the smallest useful file shape, draft the trigger surface, and name the first eval checks. The radar exists to sharpen those decisions, not to turn every run into research.
 
+## Use this when
+
+- a rough skill idea needs a concrete, reviewable spec before writing `SKILL.md`
+- the artifact class is unclear — single skill, skill suite, subagent, or plugin
+- an existing skill needs reshaping before a redraft, not a tuning pass
+- trigger wording, file shape, or eval-plan decisions need CraftKit's current radar judgment
+- the user asks for a "meta-skill" or explicitly wants a skill designed, not written
+
 ## How it differs from related skills
 
 - `craft-survey` studies prior art. `craft-skill-spec` starts from the already-curated `references/radar/current.md` and only dips into snapshots when a watched area matters.
