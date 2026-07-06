@@ -122,7 +122,7 @@ Dispatch contract:
 
 1. Start with bounded file evidence: named charter, system-map, or capability sections, recent execution logs (e.g. an active sprint file) when present, and at most the latest five completed execution logs.
 2. Use repo-local helper scripts such as `capabilities-doctor.js --json` or `component-lint.js --json` only when they are present in the target repo. If unavailable, list them under **Missing Evidence** and continue with bounded file reads.
-3. Emit these report sections: **Evidence**, **No Change**, **System Map Candidates**, **Grill Candidates**, **Amend Candidates**, **Learning Actions**, **Missing Evidence**, **Recommended Next Step**.
+3. **Sizing rule**: default to a quick reassess when the user asks a narrow staleness question about one file or section — emit only **Evidence**, **No Change**, **Recommended Next Step**. Reserve the full reassess report — **Evidence**, **No Change**, **System Map Candidates**, **Grill Candidates**, **Amend Candidates**, **Learning Actions**, **Missing Evidence**, **Recommended Next Step** — for periodic health checks, multi-file drift review, or when the user explicitly asks for the full report. A quick-reassess finding that would need a trimmed section gets one line under Recommended Next Step pointing to a full reassess instead. Reassess discipline applies in full at every size: quick reassess is still report-only (never edits) and still routes accepted fixes through `spec-charter amend`, `spec-system-map amend`, or `spec-grill`; it only trims what gets written down.
 4. Use `references/reassess.md` as the source of truth for evidence order, report shape, recommendation rules, Learning Actions, and stale-spec failure modes.
 
 ## Verification prompts
@@ -142,7 +142,7 @@ Use these as quick pressure tests when changing this skill or a generated charte
 - `references/amendment.md` — challenge checklist, proof-gate rules, no-rubber-stamp discipline, and bloat checks.
 - `references/alignment.md` — shared work-to-objective mapping logic consumed by `backlog-triage` and `dev-backlog`.
 - `references/objectives.md` — verifiable-predicate examples, common rewrite patterns, 30-second test.
-- `references/reassess.md` — report-only stale-spec reassessment: evidence sources, output shape, Learning Actions, and failure modes.
+- `references/reassess.md` — report-only stale-spec reassessment: evidence sources, sizing gate, output shape, Learning Actions, and failure modes.
 - `references/spec-axis.md` — spec-axis file boundaries, ownership, and the legacy root `CHARTER.md` fallback policy.
 - [`../spec-system-map/SKILL.md`](../spec-system-map/SKILL.md) — companion skill for authoring `spec/system-map.md`.
 - [`../spec-grill/SKILL.md`](../spec-grill/SKILL.md) — companion skill for authoring `spec/capabilities.md`.

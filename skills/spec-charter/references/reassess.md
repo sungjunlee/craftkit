@@ -45,7 +45,9 @@ If an optional script is missing, say it was skipped and continue with file read
 
 ## Report Shape
 
-Use this structure unless the user asks for a shorter answer:
+**Sizing rule**: default to a quick reassess for a narrow staleness question about one file or section — three sections: **Evidence**, **No Change**, **Recommended Next Step**. A quick-reassess finding that would need System Map Candidates, Grill Candidates, Amend Candidates, Learning Actions, or Missing Evidence gets one line under Recommended Next Step pointing to a full reassess instead of full sections. Reserve the full reassess report below for periodic health checks, multi-file drift review, or when the user explicitly asks for the full report. Reassess discipline applies in full at every size: quick reassess is still report-only (never edits) and still routes accepted fixes through `spec-charter amend`, `spec-system-map amend`, or `spec-grill`; it only trims what gets written down.
+
+Full reassess report:
 
 ```md
 ## Reassess Report
@@ -75,6 +77,21 @@ Use this structure unless the user asks for a shorter answer:
 
 ### Recommended Next Step
 - <one command or human action>
+```
+
+Quick reassess:
+
+```md
+## Reassess Report
+
+### Evidence
+- <script/file signal and what it means>
+
+### No Change
+- <area that still matches current evidence>
+
+### Recommended Next Step
+- <one command or human action; if a finding needs a trimmed section, name it here and point to a full reassess>
 ```
 
 Separate evidence from recommendation. The evidence says what was observed; the recommendation says what the user may choose to do.
