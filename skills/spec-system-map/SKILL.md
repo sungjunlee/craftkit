@@ -43,7 +43,7 @@ Do not turn `system-map.md` into exhaustive module documentation, API reference,
 ## Create mode
 
 1. Read bounded signals: `spec/charter.md` if present, `README.md`, `AGENTS.md`/`CLAUDE.md`, top-level directories, package/config files, and existing docs that appear architecture-related.
-2. Run a Repo Evidence Pass before drafting. Inspect enough code reality to understand system shape: entrypoints and command surfaces, package/config scripts, runtime boundaries, storage/state surfaces, external systems, tests that reveal intended behavior, and recent commit/sprint evidence when available.
+2. Run a Repo Evidence Pass before drafting. Inspect enough code reality to understand system shape: entrypoints and command surfaces, package/config scripts, runtime boundaries, storage/state surfaces, external systems, tests that reveal intended behavior, and recent commit history and execution logs (e.g. sprint files) when available.
 3. Draft from `templates/system-map.md`; keep sections short and link out instead of expanding subsystem detail.
 4. Include these sections: System Shape, Runtime Boundaries, Core Flows, Storage And External Systems, Project-Wide Invariants, Candidate Capability Boundaries, Where To Go Next.
 5. If the repo is brownfield, explicitly mark uncertain boundaries as assumptions rather than inventing detail.

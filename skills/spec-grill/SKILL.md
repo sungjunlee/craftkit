@@ -10,7 +10,7 @@ metadata:
 
 # spec-grill
 
-Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and the active sprint. `spec-grill` is not a file generator; it pressure-tests existing repo signals into durable capability contracts.
+Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and day-to-day execution work. `spec-grill` is not a file generator; it pressure-tests existing repo signals into durable capability contracts.
 
 Use this after `spec-charter create` on existing/brownfield repos, or whenever the user asks to define capability boundaries, component contracts, Behaviors, or Hard Constraints.
 
@@ -30,7 +30,7 @@ Do not require users to memorize arguments. Interpret the user's request and cho
 
 If intent is unclear, prefer report-only. Treat natural-language requests to write or apply the recommended next capability as edit intent, not as no-arg ambiguity. If the user asks for an edit while evidence is weak, emit the report first, identify the missing evidence, and ask before writing.
 
-Capability slugs are strict routing handles used by sprint `component:` frontmatter. Keep them lowercase and singular, then put nuance in Goal/Scope prose.
+Capability slugs are strict routing handles; downstream tools (e.g. sprint tooling) may use them to route work and learnings. Keep them lowercase and singular, then put nuance in Goal/Scope prose.
 
 ### Helper scripts
 
@@ -90,7 +90,7 @@ Admit a capability only when most of these are true:
 
 - It is a repeated decision boundary, not just a directory name or commit scope.
 - It is supported by at least two evidence classes in brownfield mode, unless the user explicitly authorizes a single-source capability.
-- It owns a primary relay-learning destination.
+- It owns a primary destination for captured learnings.
 - Its Goal can be stated as an observable user or operator outcome.
 - Its Behaviors and Hard Constraints differ meaningfully from neighboring candidates.
 - If two candidates share nearly all predicates, merge them.

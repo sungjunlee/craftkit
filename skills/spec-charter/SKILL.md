@@ -10,7 +10,7 @@ metadata:
 
 # spec-charter
 
-Create and amend `spec/charter.md`, the opt-in project reference axis used to measure backlog work, sprint plans, and drift. This skill is rerunnable.
+Create and amend `spec/charter.md`, the opt-in project reference axis used to measure ongoing execution (e.g. backlog items, sprint plans) and drift. This skill is rerunnable.
 
 `spec/charter.md` is the first layer, not the whole large-repo spec. On existing/brownfield repos, finish create mode by recommending `spec-system-map` for `spec/system-map.md` and `spec-grill` for `spec/capabilities.md` from real repo signals.
 
@@ -101,7 +101,7 @@ First re-read `spec/charter.md`. If it is absent but root `CHARTER.md` exists, a
 Apply the 3-tier discipline:
 
 - Tier 1 plus objective add/remove: surface stale or weak items, challenge them, propose concrete diffs, confirm with the user, then apply. Do not rubber-stamp.
-- Tier 2 status advance: require proof for `active` -> `validated`; cite a merged PR, passing check, or relay run whose Done Criteria match the predicate. For `active` -> `deferred`, require a cited parking or scope-change rationale. Without the required evidence or rationale, refuse the advance and flag it.
+- Tier 2 status advance: require proof for `active` -> `validated`; cite a merged PR, passing check, or a recorded agent run whose Done Criteria match the predicate. For `active` -> `deferred`, require a cited parking or scope-change rationale. Without the required evidence or rationale, refuse the advance and flag it.
 - Tier 3 Decisions: append only. Never edit or delete an existing row; a reversal is a new row with `supersedes`.
 
 After applying an accepted amendment, bump `last_amended` to today and increment `revision`. Re-read the result and protect the ~5-minute-read property by collapsing long `deferred` lists, oversized Decisions rationale, or operational HOW-knowledge.
@@ -120,7 +120,7 @@ If reassess finds that `spec/system-map.md` is missing on a brownfield repo, rec
 
 Dispatch contract:
 
-1. Start with bounded file evidence: named charter, system-map, or capability sections, the active sprint when present, and at most the latest five completed sprint files.
+1. Start with bounded file evidence: named charter, system-map, or capability sections, recent execution logs (e.g. an active sprint file) when present, and at most the latest five completed execution logs.
 2. Use repo-local helper scripts such as `capabilities-doctor.js --json` or `component-lint.js --json` only when they are present in the target repo. If unavailable, list them under **Missing Evidence** and continue with bounded file reads.
 3. Emit these report sections: **Evidence**, **No Change**, **System Map Candidates**, **Grill Candidates**, **Amend Candidates**, **Learning Actions**, **Missing Evidence**, **Recommended Next Step**.
 4. Use `references/reassess.md` as the source of truth for evidence order, report shape, recommendation rules, Learning Actions, and stale-spec failure modes.
@@ -130,7 +130,7 @@ Dispatch contract:
 Use these as quick pressure tests when changing this skill or a generated charter:
 
 - "Create a charter for a repo with no README and a vague objective list." Expected: interview until Problem/Approach/Non-Goals are concrete; refuse to accept objectives that aren't verifiable predicates.
-- "Mark this objective validated because the team believes it's done." Expected: refuse the status advance without a cited merged PR, passing check, or relay run; keep it `active`.
+- "Mark this objective validated because the team believes it's done." Expected: refuse the status advance without a cited merged PR, passing check, or recorded agent run; keep it `active`.
 - "Add a Non-Goal that's really just an unstated risk." Expected: sharpen it into a concrete boundary statement, or push back that it isn't a non-goal.
 - "Edit a past Decisions row to fix a typo in the rationale." Expected: refuse; append a new row instead, since Decisions are append-only.
 - "This charter hasn't been amended in a year — is it stale?" Expected: route to reassess mode rather than silently rewriting Tier 1 content.
