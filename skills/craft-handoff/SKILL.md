@@ -30,6 +30,8 @@ Skip quick Q&A sessions with no state worth carrying.
 
 ## Inputs
 
+`<skill-dir>` is the directory containing this SKILL.md — resolve it from where the skill was loaded (e.g. an installed skill directory such as `~/.claude/skills/craft-handoff`, or `skills/craft-handoff` in a source checkout).
+
 Gather machine state with the bundled script:
 
 ```bash
@@ -59,8 +61,6 @@ Then extract from the conversation:
 - **Next**: 1-3 concrete next steps with observable success criteria.
 - **Suggested skills/capabilities**: only when they would materially change the next session.
 
-Use worktree-relative paths in both artifacts. Redact secrets, tokens, customer data, and personal data.
-
 ## Workflow
 
 ### 0. Confirm ambiguous side effects
@@ -88,9 +88,7 @@ Apply these inclusion tests:
 
 ### 3. Compose the rich doc
 
-Write the doc first; it is the narrative source of truth.
-
-Core shape: frontmatter plus a single `<context>...</context>` body. Include Project, Done, State, Decisions, What didn't work, and Next only when those sections have real content.
+Write the doc first; it is the narrative source of truth. Include Project, Done, State, Decisions, What didn't work, and Next only when those sections have real content — see § Output format for the exact shape.
 
 Rules:
 
@@ -102,9 +100,7 @@ Rules:
 
 ### 4. Compose the resume prompt
 
-The prompt must be usable even if the doc is unreachable, but it should command the next agent to read the doc first.
-
-Core shape: `<context>` with Project, State, Done snapshot, Decisions, and Background; `<task>` with the next action and success criteria; `<rules>` with path, doc-read, key-file, and verification rules.
+The prompt must be usable even if the doc is unreachable, but it should command the next agent to read the doc first — see § Output format for the exact shape.
 
 Add `## Suggested skills` inside `<context>` only when a specific skill or capability would change the next agent's behavior.
 
@@ -123,19 +119,37 @@ Use paths from the gather script verbatim.
 sed '1,/^---$/d;1,/^---$/d' "$PENDING_PATH" | bash <skill-dir>/scripts/copy-clipboard.sh
 ```
 
-If clipboard copy fails, report that the files were written and clipboard copy was skipped.
+If clipboard copy fails, it's non-fatal (see § Guardrails) — continue.
 
 ### 6. Inform
 
-Return:
+Return the artifacts per § Output format.
+
+## Output format
+
+Two artifacts, always produced together:
+
+- **Rich doc** — `DOC_PATH` (e.g. `~/.craftkit/handoff/docs/<worktree-slug>.md`). Shape: frontmatter plus a single `<context>...</context>` body.
+- **Resume prompt** — `PENDING_PATH` (e.g. `~/.craftkit/handoff/pending/<timestamp>-<worktree-slug>.md`). Shape: `<context>` (Project, State, Done snapshot, Decisions, Background) / `<task>` (next action, success criteria) / `<rules>` (path, doc-read, key-file, verification).
+
+Chat return, in order:
 
 1. resume prompt in a fenced `xml` block
-2. confirmation line with prompt path, doc path, and clipboard status
+2. confirmation line — prompt path, doc path, clipboard status
 3. next-step instruction
-4. optional auto-load hook pointer when relevant
-5. optional `/goal` candidate only when the next task is durable, verifiable, and multi-turn
+4. optional auto-load hook pointer, when relevant
+5. optional `/goal` candidate, only when the next task is durable, verifiable, and multi-turn
 
-Do not paste the rich doc in chat when it was written successfully.
+Do not paste the rich doc in chat when it was written successfully. See `references/artifact-shapes.md` for the exact skeletons.
+
+## Guardrails
+
+- redact secrets, tokens, customer data, and personal data from both artifacts
+- archive the existing rich doc before overwriting it — never destroy the previous handoff
+- clipboard copy failure is non-fatal: report it and continue; the written files are the deliverable
+- never invent test status or verification results — report only what was actually run
+- the doc and prompt are a unit — never produce one without the other
+- use worktree-relative paths in both artifacts
 
 ## Failure modes
 

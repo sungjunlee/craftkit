@@ -83,7 +83,6 @@ const knownSectionDeviations = {
   "craft-harness": ["Use this when", "Guardrails", "References"],
   "craft-skill-spec": ["Use this when"],
   "craft-critique": ["References"],
-  "craft-handoff": ["Output format", "Guardrails"],
 };
 
 function fail(message) {

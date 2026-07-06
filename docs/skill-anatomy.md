@@ -115,8 +115,8 @@ Exhaustive as of this writing. Every unchecked item is something #109/#110 autom
 - [ ] `craft-critique`: no dedicated `## References` section — its 1 `references/failure-modes.md` is cited inline only; add one (decision point 5)
 - [ ] `craft-harness`, `craft-skill-spec`: missing `## Use this when` (both use `## How it differs from related skills` instead); add `## Use this when` alongside it (decision point 2)
 - [x] `craft-tune`: `## How the loop runs` renamed to `## Workflow` (decision point 3, done with #115)
-- [ ] `craft-handoff`: missing `## Guardrails` entirely (found by the #110 check, not the original doc audit)
-- [ ] `craft-handoff`: missing `## Output format` — the output shape is folded into `## Workflow` steps 3/4 prose (found by the #110 check)
+- [x] `craft-handoff`: missing `## Guardrails` entirely (found by the #110 check, not the original doc audit)
+- [x] `craft-handoff`: missing `## Output format` — the output shape is folded into `## Workflow` steps 3/4 prose (found by the #110 check)
 - [ ] `craft-harness`: missing `## Guardrails` entirely — "guardrail" appears only in unrelated prose about hook guardrails (found by the #110 check)
 
 ## References
