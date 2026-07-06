@@ -1,6 +1,6 @@
 # Grill Report Template
 
-Use this skeleton for the no-arg, ambiguous, candidate-discovery, and audit routes of `spec-grill` whenever the user has not asked for a shorter answer. The contract rules that govern when this shape applies live in `spec-grill/SKILL.md` under `## Execution Contract → ### Grill Report Contract`.
+Use this full skeleton for the candidate-discovery (`map`) and audit routes of `spec-grill`, or when the user explicitly asks for the full report. The no-arg and ambiguous routes emit a short diagnostic by default (`### Evidence Read`, `### Evidence Missing`, `### Recommended Edit`) instead of this full skeleton. The contract rules that govern when each shape applies live in `spec-grill/SKILL.md` under `## Execution Contract → ### Grill Report Contract`.
 
 ```md
 ## Grill Report

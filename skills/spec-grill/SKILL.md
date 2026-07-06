@@ -22,7 +22,7 @@ Do not require users to memorize arguments. Interpret the user's request and cho
 
 | User intent | Route | Writes? |
 |-------------|-------|---------|
-| No argument, ambiguous capability request, or "look at the capabilities" | **Grill Report**: diagnose current evidence and recommend next action. | No |
+| No argument, ambiguous capability request, or "look at the capabilities" | **Grill Report** (short diagnostic by default): diagnose current evidence and recommend next action. | No |
 | "Find capability candidates", "map repo capability boundaries", or `map` | **Candidate Boundary Report**: collect raw candidates and classify them as accepted / rejected / merged / split candidates. | No |
 | "Add the next missing capability", "fill the missing capability", "write/apply the recommended edit", "write the recommended first capability", "next safest capability 작성해줘", "문서 적을 건 적고 다음 제안해줘", or `fill` | **Next Capability Proposal**: propose exactly one missing capability and ask for confirmation before editing unless the user clearly authorized the edit. | Only after confirmation or clear edit authorization |
 | Mentions a known capability slug or natural-language capability area | **Specific Capability Review**: resolve the mention to one capability or candidate and deep-review only that block or candidate. | No by default |
@@ -52,9 +52,9 @@ End every run with a short summary:
 
 ### Grill report contract
 
-Use this report shape for no-arg, ambiguous, candidate-discovery, and audit routes unless the user asks for a shorter answer. Every report must include these sections in order: `## Grill Report`, `### Evidence Read`, `### Evidence Missing`, `### Raw Candidates`, `### Accepted / Rejected / Merged / Split Candidates`, `### Sharp Questions`, `### 3-Axis Predicate Findings`, `### Proposed Next Capability`, `### Recommended Edit`. See `references/grill-report-template.md` for the full skeleton with placeholder fields.
+**Sizing rule**: the no-arg and ambiguous routes emit a **short diagnostic** by default — three sections: `### Evidence Read`, `### Evidence Missing`, and `### Recommended Edit`. Reserve the full **Grill Report** below for the Candidate Boundary Report (`map`) and Capability Audit Report (`audit`) routes, or when the user explicitly asks for the full report. Every full report must include these sections in order: `## Grill Report`, `### Evidence Read`, `### Evidence Missing`, `### Raw Candidates`, `### Accepted / Rejected / Merged / Split Candidates`, `### Sharp Questions`, `### 3-Axis Predicate Findings`, `### Proposed Next Capability`, `### Recommended Edit`. See `references/grill-report-template.md` for the full skeleton with placeholder fields.
 
-Separate diagnosis from mutation. The report can recommend edits, but it must not edit `spec/capabilities.md` unless the user clearly asked for editing or confirms the proposed edit.
+Separate diagnosis from mutation. The report can recommend edits, but it must not edit `spec/capabilities.md` unless the user clearly asked for editing or confirms the proposed edit. This write-gating rule applies in full at every size — a short diagnostic never relaxes the "report first, edit only when authorized" discipline, it only trims what gets written down.
 
 ## Brownfield signal rules
 
