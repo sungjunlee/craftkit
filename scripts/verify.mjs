@@ -585,6 +585,21 @@ const terminologyRules = [
     forbidden: [/(?<!craft-)\bharness\b/i],
     why: 'README.md\'s Terminology note reserves "harness" for craft-harness; craft-autoresearch must say "eval runner" instead',
   },
+  {
+    // Guards the #134 neutralization (PRD-RH E2.2, commit 3bf159a): the
+    // spec-* spines used to lean on dev-backlog/dev-relay vocabulary as
+    // load-bearing terms — "relay-learning destination" as the admission-test
+    // criterion, "relay run" as the Tier-2 proof-gate citation, and sprint
+    // `component:` frontmatter as the slug consumer. All three were replaced
+    // with consumer-neutral phrasing so the spines stay usable in repos that
+    // never install dev-backlog/dev-relay. Scoped to the three spec-* spines
+    // themselves (not skills/spec-*/**), so references/ and templates/ under
+    // those skills stay exempt — integration examples there may legitimately
+    // name sprint/relay concepts as a named optional integration.
+    files: ["skills/spec-charter/SKILL.md", "skills/spec-grill/SKILL.md", "skills/spec-system-map/SKILL.md"],
+    forbidden: ["relay-learning", "relay run", "`component:` frontmatter"],
+    why: 'spec-* spines must stay standalone-usable; "relay-learning", "relay run", and "`component:` frontmatter" are dev-relay/dev-backlog vocabulary neutralized in #134 — use consumer-neutral phrasing instead',
+  },
 ];
 
 // Pure, unit-testable: minimal glob match (no dependency). `*` matches within

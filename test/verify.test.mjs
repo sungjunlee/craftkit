@@ -341,8 +341,37 @@ Output: y
   assert.equal(result.status, 0, result.stderr || result.stdout);
 });
 
-test("terminologyRules ships the two seeded rules with files/forbidden/why", () => {
-  assert.equal(terminologyRules.length, 2);
+// --- Check: spec-* spine relay/sprint vocabulary guard (#135, PRD-RH E2.2) ---
+
+function copyRealSkillDir(root, skillName) {
+  const src = path.join(repoRoot, "skills", skillName);
+  const dest = path.join(root, "skills", skillName);
+  fs.rmSync(dest, { recursive: true, force: true });
+  fs.cpSync(src, dest, { recursive: true });
+}
+
+test("passes when the real spec-grill spine (unmodified) is dropped into the fixture", () => {
+  const root = createFixture();
+  copyRealSkillDir(root, "spec-grill");
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+expectVerifyFailure("fails when a spec-* spine reintroduces the old relay-learning admission-test phrasing", (root) => {
+  copyRealSkillDir(root, "spec-grill");
+  const skillMdPath = path.join(root, "skills/spec-grill/SKILL.md");
+  const content = fs.readFileSync(skillMdPath, "utf8");
+  const updated = content.replace(
+    "- Its Goal can be stated as an observable user or operator outcome.",
+    "- It owns a primary relay-learning destination.\n- Its Goal can be stated as an observable user or operator outcome.",
+  );
+  fs.writeFileSync(skillMdPath, updated);
+}, /skills\/spec-grill\/SKILL\.md still contains "relay-learning"/);
+
+test("terminologyRules ships the three seeded rules with files/forbidden/why", () => {
+  assert.equal(terminologyRules.length, 3);
   for (const rule of terminologyRules) {
     assert.ok(Array.isArray(rule.files) && rule.files.length > 0);
     assert.ok(Array.isArray(rule.forbidden) && rule.forbidden.length > 0);
