@@ -46,7 +46,7 @@ If the user provides an `evals.json`, use it directly instead of drafting evals 
 ## Steps
 
 1. **Capture the experiment contract.** Lock in target, train/holdout split or waiver, evals, eval runner, budget, and stop condition *before* running anything. A fuzzy contract produces fuzzy gains — ambiguity at this step compounds with every experiment.
-2. **Design the eval suite.** Prefer deterministic checks (regex, section presence, parse success) over LLM-as-judge. Aim for at least half the suite at Tier 1-2 — see `references/eval-guide.md` for the full determinism hierarchy and quality checks. First-time suites skew toward Structure/Length only and saturate on baseline; see the Guardrails rule on near-100% baselines and `references/eval-guide.md` § "If your baseline scores near 100%" before locking the suite. For research, agentic, or high-impact prompts, include grounding, instruction-consistency, missing-context, or action-safety evals when those risks matter.
+2. **Design the eval suite.** Prefer deterministic checks (regex, section presence, parse success) over LLM-as-judge. Aim for at least half the suite at Tier 1-2 — see `references/eval-guide.md` for the full determinism hierarchy and quality checks; first-time suites skew toward Structure/Length only and saturate, see the Guardrails rule below before locking the suite. For research, agentic, or high-impact prompts, include grounding, instruction-consistency, missing-context, or action-safety evals when those risks matter.
 3. **Establish a baseline.** Snapshot the target artifact, run it on train and holdout (unless waived) through the eval runner, score every output, and record train and holdout totals separately in `results.tsv`. No mutation happens before baseline or the gains are unmeasurable. A near-saturated baseline (≥ 95% binary pass rate) is a signal, not a success — stop and strengthen the suite before mutating. See Guardrails below.
 4. **Run the mutation loop.** For each experiment: analyze failing train evals → form one hypothesis → make one bounded change at one mutation level → checkpoint the touched files → run the eval runner on train only → score train → KEEP or DISCARD by the rules below → log. The change may span multiple files only when those files together implement the same hypothesis. See `references/mutation-guide.md` for mutation levels and when each fits.
 5. **Respect rollback safety.** Before each mutation, commit (git-assisted mode) or snapshot (file-checkpoint mode) only the files you are about to touch. DISCARD rolls back only those files — never `git reset --hard`, which would destroy unrelated work in the repo.
@@ -56,19 +56,18 @@ If the user provides an `evals.json`, use it directly instead of drafting evals 
 
 ## When the target is a skill (vs a prompt)
 
-The loop shape is the same, but the *edit unit* differs. A prompt is a single file; a skill is a folder with `SKILL.md`, `references/`, sometimes `scripts/` and `templates/`. That changes five things:
+The loop shape is the same, but the *edit unit* differs. A prompt is a single file; a skill is a folder with `SKILL.md`, `references/`, sometimes `scripts/` and `templates/`. That changes four things (size tracking is covered in `## KEEP vs DISCARD` below):
 
 1. **Target selection.** For a prompt, the target is a single file path. For a skill, decide up front what the target covers — usually `SKILL.md` alone, but a mutation may legitimately touch `references/<file>.md` too. Write it into the experiment contract: *"mutable files: SKILL.md, references/eval-guide.md. All other files are frozen."*
 2. **Mutation locus.** Mutation levels stay the same (wording / example / structure / principle), but for skills a sixth question appears before applying them: *which file?* Prefer editing `SKILL.md` for skill-spine changes and `references/` for deep-detail changes. Adding a new reference file counts as a Level-3 (structural) mutation — it shifts the skill's shape, not just its wording.
-3. **Size metric.** For prompts, `wc -l <file>` is enough. For skills, track two numbers: `skill_lines` (SKILL.md only — the always-loaded budget) and `folder_lines` (everything including references). The primary discipline is keeping `SKILL.md` under CraftKit's 220-line release gate, with normal skills around 100-160 lines and complex loop/orchestration skills around 160-220 lines; `folder_lines` is secondary and can grow more before bloat becomes a concern.
-4. **Mutation safety.** A prompt mutation touches one file, so checkpoint and rollback are trivial. A skill mutation may touch several — record the exact file list in the experiment's checkpoint, and on DISCARD restore *only those files*. Never rollback the whole folder; unrelated files may hold accepted prior-experiment state.
-5. **Fidelity evals (multi-skill pipelines).** If the target is a skill that feeds another skill's input (e.g. `craft-skill-spec` → `craft-tune`), add fidelity evals that check stage-to-stage consistency. Not applicable for single-file prompts.
+3. **Mutation safety.** A prompt mutation touches one file, so checkpoint and rollback are trivial. A skill mutation may touch several — record the exact file list in the experiment's checkpoint, and on DISCARD restore *only those files*. Never rollback the whole folder; unrelated files may hold accepted prior-experiment state.
+4. **Fidelity evals (multi-skill pipelines).** If the target is a skill that feeds another skill's input (e.g. `craft-skill-spec` → `craft-tune`), add fidelity evals that check stage-to-stage consistency. Not applicable for single-file prompts.
 
 Everything else — experiment contract, baseline discipline, KEEP/DISCARD rules, deletion experiments, stop conditions — works identically for prompts and skills.
 
 ## KEEP vs DISCARD
 
-Record artifact size for every experiment. For prompts, `wc -l <file>` is enough. For skills, record both `skill_lines` (`SKILL.md` only) and `folder_lines` (the whole skill folder). KEEP/DISCARD uses the train score only; holdout inputs stay sealed until session acceptance. Apply these defaults unless the user defined stricter rules:
+Record artifact size for every experiment. For prompts, `wc -l <file>` is enough. For skills, record both `skill_lines` (`SKILL.md` only) and `folder_lines` (the whole skill folder) — keep `skill_lines` under CraftKit's 220-line release gate, with normal skills around 100-160 lines and complex loop/orchestration skills around 160-220; `folder_lines` is secondary and can grow more before bloat becomes a concern. KEEP/DISCARD uses the train score only; holdout inputs stay sealed until session acceptance. Apply these defaults unless the user defined stricter rules:
 
 | Score change | Artifact size change | Default decision |
 |---|---|---|
@@ -92,22 +91,18 @@ A compact record of target, inputs, train/holdout split or waiver, evals, eval r
 
 - **mutable files** — explicit list of the files the session may modify. All other files are frozen. Mandatory for skill targets; every skill has more than one file even when references are not planned to change.
 - **holdout commitment** — which inputs are held out and the session acceptance rule: final holdout score must not regress vs baseline holdout. If the suite has fewer than 6 inputs, record `holdout: waived (<reason>)` instead.
-- **evals 4th diagnostic** — for every non-shape eval (Logic, Grounding, Consistency, Missing context, Action safety, or Comparative), name a concrete output the target-skill-as-written would plausibly produce that fails the check (the 4th diagnostic question from `references/eval-guide.md`). A non-shape eval without a named plausible-failing-output is a loose eval and usually saturates.
+- **evals 4th diagnostic** — for every non-shape eval, name a plausible-failing-output the target would produce; see `references/eval-guide.md` § "Contract fields" for what qualifies and why it matters.
 - **runner design** — the named eval-runner category plus its trade-off against alternatives. A bare command string is not a runner design.
-- **first-mutation hypothesis preview** — the predicted mutation locus in the target (a specific `## Output format` subsection, a specific `## Steps` entry, or a specific reference-file section) plus a justification that either invokes the Build-step enforcement prior from `references/mutation-guide.md` by name, or explicitly argues why a non-build-step locus is warranted from the failing outputs.
+- **first-mutation hypothesis preview** — the predicted mutation locus, plus a justification invoking the Build-step enforcement prior by name or arguing why a non-build-step locus is warranted; see `references/eval-guide.md` § "Contract fields" for the full prior and when it doesn't apply.
 
 ### Baseline
 Train score and holdout score (or waiver), failing evals, 1-2 representative outputs.
-
 ### Experiment log
 One row per experiment: number, hypothesis, change, train score, KEEP/DISCARD, rationale.
-
 ### Final artifact
 Path to the accepted version, holdout gate result, and a one-line size note; if holdout regressed, report overfit instead.
-
 ### Direction shifts
 Meaningful strategy pivots during the run, one line each. Record in `research-log.json` if persisting.
-
 ### Next steps
 What to run next if the user wants more, or which evals to sharpen.
 
@@ -123,11 +118,7 @@ Run artifacts live in `~/.craftkit/`, not in the target repo. This keeps `git st
 ├── changelog.md        # mutation rationale + human insights
 ├── research-log.json   # direction shifts only, not every edit
 ├── <target>.baseline   # backup of the starting artifact at session start
-└── runs/
-    ├── inputs/
-    ├── baseline/
-    ├── exp-1/
-    └── ...
+└── runs/               # inputs/, baseline/, exp-1/, exp-2/, ... — one dir per experiment
 ```
 
 The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prevents collisions when the same skill is tuned in multiple sessions and gives each session a human-readable anchor. Treat the folder shape above as the convention, and copy findings back into the repo only when they justify a spec change, usually as an inline quote or a commit-message note rather than committed run artifacts.
@@ -162,22 +153,14 @@ Optimize `skills/craft-tune/SKILL.md` against 7 realistic "improve this prompt" 
 ### Output
 
 **Experiment contract**
-- target: `skills/craft-tune/SKILL.md`
-- inputs: 7 prompts (5 train / 2 holdout)
-- evals: 3 binary + 1 comparative
-- eval runner: manual replay procedure
+- target: `skills/craft-tune/SKILL.md`; inputs: 7 prompts (5 train / 2 holdout); evals: 3 binary + 1 comparative; eval runner: manual replay procedure; budget: 8; stop: 95% x 3 consecutive
 - mutable files: `skills/craft-tune/SKILL.md`; all other files frozen
 - holdout commitment: hold out prompts 6-7; accept session only if final holdout score is >= 5/8 baseline
 - evals 4th diagnostic: baseline plausibly returns Changelog rows without `effect`, and a longer revision that satisfies section shape but is no easier to audit
 - runner design: manual replay; slower than a command runner, but exact and valid before this repo ships a runner script
 - first-mutation hypothesis preview: `## Final output` / Convergence subsection, invoking the Build-step enforcement prior because the first failing output lacks the final-state signal that the current `craft-tune` contract requires
-- budget: 8; stop: 95% x 3 consecutive
 
-**Baseline**
-Train score: 12/20 (60%). Holdout baseline: 5/8 (62.5%). Failing: final `Convergence` block is often missing; Cumulative changelog entries often omit `effect`.
-
-Representative outputs:
-- run 1 ends after `Round 2` edits with no final `Convergence` block
+**Baseline**: Train score 12/20 (60%). Holdout baseline: 5/8 (62.5%). Failing: final `Convergence` block is often missing; Changelog entries often omit `effect`. Representative output: run 1 ends after `Round 2` edits with no final `Convergence` block.
 
 **Experiment log**
 
@@ -190,15 +173,11 @@ Representative outputs:
 | 5 | Stability check | Re-ran on the train split | 20/20 | KEEP | target hit holds |
 | 6 | Stability check | Re-ran to confirm | 20/20 | KEEP — 3 consecutive hit, STOP | stop condition satisfied |
 
-**Final artifact**
-Accepted version: `skills/craft-tune/SKILL.md`. Holdout gate: 8/8 vs 5/8 baseline; accepted. Size note: `skill_lines` stayed within the 160-220 line complex-skill band and below the 220-line release gate.
+**Final artifact**: Accepted version `skills/craft-tune/SKILL.md`. Holdout gate: 8/8 vs 5/8 baseline; accepted. Size note: `skill_lines` stayed within the 160-220 line complex-skill band and below the 220-line release gate.
 
-**Direction shifts**
-- Flipped from "softer wording" to "explicit constraints" after baseline showed missing structure.
+**Direction shifts**: Flipped from "softer wording" to "explicit constraints" after baseline showed missing structure.
 
-**Next steps**
-- Add a traceability eval for "every Changelog entry maps to a Diagnostics item."
-- For the full contract example, load `references/contract-example.md`.
+**Next steps**: Add a traceability eval for "every Changelog entry maps to a Diagnostics item." For the full contract example, load `references/contract-example.md`.
 
 ## References
 

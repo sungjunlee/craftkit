@@ -288,3 +288,15 @@ This is the false-positive scenario. The loop has optimized for the evals, not t
 False-positive tracking is part of a healthy autoresearch cycle, not a failure mode. The first eval suite is almost always incomplete; that's fine as long as you keep revising it against real outputs.
 
 **When to run the check**: after 10+ real-world outputs with performance signal, or monthly — not after every experiment. Account for external factors (seasonal changes, model upgrades).
+
+## Contract fields
+
+`SKILL.md` § "Output format" › "Experiment contract" names two quality-commitment fields whose full reasoning lives here.
+
+### evals 4th diagnostic
+
+A **plausible-failing-output** is a concrete output the target-as-written would actually produce that fails a given non-shape eval — not a hypothetical "an output could fail this in principle." Naming one for every non-shape eval (Logic, Grounding, Consistency, Missing context, Action safety, Comparative) is the fourth diagnostic question from § "If your baseline scores near 100%" above: a category test alone can pass while the eval's threshold is still loose (see the `craft-prompt` example there, where "≥1 dimension named" passed the category test but saturated because the skill always names ≥1). Recording the plausible-failing-output at contract time forces that threshold check before the suite locks, not after a saturated baseline reveals it. A non-shape eval without one is a loose eval and usually saturates.
+
+### first-mutation hypothesis preview
+
+The predicted first-mutation locus and its justification should invoke the **Build-step enforcement prior** from `references/mutation-guide.md` § "Build-step enforcement prior (skill optimizations)" by name whenever the locus is a `## Output format` subsection or a `## Steps` entry that hands off to output — five prior autoresearch sessions found their highest-yield edit exactly there. A non-build-step locus (a Guardrails rule, an Inputs field, a reference-file section) is warranted only when the failing outputs show the defect isn't enforced anywhere reachable from the build step — state that reasoning explicitly rather than defaulting to the prior out of habit.
