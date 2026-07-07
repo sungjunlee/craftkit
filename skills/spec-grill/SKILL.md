@@ -113,7 +113,7 @@ Stop at three Behaviors and two Hard Constraints per capability on the first pas
 
 ## The 3-axis predicate test
 
-Every Behavior and Hard Constraint must pass all three axes before it is committed:
+Every Behavior and Hard Constraint must pass all three axes before it is committed. The rationale and a worked example behind this test live in [`docs/methodology/predicate-test.md`](../../docs/methodology/predicate-test.md), CraftKit's standalone methodology reference.
 
 1. **Authority axis.** Would the user be unhappy if an agent satisfied this measurably but in a way that ignored their intent? If yes, encode the missing intent as a sharper Behavior or promote it to a Hard Constraint.
 2. **Distributional axis.** Does this predicate hold in unseen code areas or unseen workloads? If no, restate it as environment-independent or scope it to the conditions where it holds.

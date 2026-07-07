@@ -31,6 +31,13 @@ Reach for the other skills when the job gets more specific:
 - `craft-handoff` — end a long session with a durable doc plus a resume prompt.
 - `spec-charter`, `spec-system-map`, `spec-grill` — land a brownfield repo spec axis from direction to system shape to capability contracts.
 
+## The methodology
+
+The skills are the delivery vehicle; the durable part is two review disciplines that hold up as models get more capable — a smarter agent is exactly what finds the loophole in a loose contract or talks a loop past "good enough." Both are written up as standalone references you can apply without adopting any skill:
+
+- [`docs/methodology/predicate-test.md`](docs/methodology/predicate-test.md) — the 3-axis test (Authority / Distributional / Manipulability) for deciding whether a written contract is safe for an agent to optimize against. Applied by `spec-grill`.
+- [`docs/methodology/loop-stop-conditions.md`](docs/methodology/loop-stop-conditions.md) — falsifiable exit conditions (Self-LGTM / persistent fixpoint / no-op / hard cap) for agent improvement loops. Applied by `craft-tune` and `craft-autoresearch`.
+
 ## Install
 
 CraftKit installs as Agent Skills for Claude Code, and each skill is also a plain `SKILL.md` file that can be used by Codex and other compatible agents.

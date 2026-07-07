@@ -49,7 +49,7 @@ The loop is how craft-tune always runs — there is no separate mode and no user
 
 ## Stop conditions (in priority order)
 
-Exit the loop as soon as any of these fire:
+Exit the loop as soon as any of these fire. The rationale and a worked example behind this taxonomy live in [`docs/methodology/loop-stop-conditions.md`](../../docs/methodology/loop-stop-conditions.md), CraftKit's standalone methodology reference.
 
 1. **Self-LGTM (the primary condition).** The current round's Diagnostics contains **no `[HIGH]` or `[MED]` items** (including any `[CARRIED]` items at those severities — `[CARRIED]` does not lower a finding's severity). Remaining `[LOW]` items, or an empty list, mean the artifact is good enough by its own critique standard. State the rationale in the final output: *"Converged at Round N — no [HIGH]/[MED] findings remain."*
 2. **Persistent fixpoint.** The same `[HIGH]` or `[MED]` item appears with `[CARRIED]` tag across **two consecutive rounds**, meaning the current edit strategy isn't resolving it. Treat two Diagnostics items as the *same* when they name the same underlying defect — even if the wording shifts between rounds — and would be resolved by the same kind of edit. Stop and surface this in the final output as *"Unresolvable in this loop's vocabulary"* — the user may need to provide additional context, an example, or a different framing.
