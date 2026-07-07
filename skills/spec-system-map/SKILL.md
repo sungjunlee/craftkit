@@ -12,6 +12,13 @@ metadata:
 
 Create or amend `spec/system-map.md`, the high-level map of how the project is shaped. This is narrower than a generic `ARCHITECTURE.md`: it names project-wide structure, boundaries, flows, storage/external systems, invariants, and pointers to deeper docs.
 
+## Use this when
+
+- scoping or documenting architecture: system shape, runtime boundaries, core flows, invariants, or storage/external systems
+- `spec/system-map.md` is absent and the project wants a first system map
+- `spec/system-map.md` exists but its shape, boundaries, flows, invariants, or pointers have drifted from the repo
+- deciding whether a change belongs here versus `spec/charter.md` (why/direction) or `spec/capabilities.md` (capability contracts)
+
 ## Execution contract
 
 ### Mode router
@@ -71,6 +78,14 @@ Before finishing, verify:
 - Candidate Capability Boundaries are short handoff candidates, not a module inventory.
 - No stale module-level TODOs, endpoint inventories, or runbook commands are included.
 - Brownfield maps are not based only on README/top-level directory skimming; unsupported boundaries are labeled as assumptions.
+
+## Failure modes
+
+- drafting from README and top-level folders alone, skipping the Repo Evidence Pass, so the map reads plausibly but isn't evidence-backed
+- sections drifting into aspirational design ("will support X") instead of current, evidence-backed facts
+- endpoint or API inventories creeping into Core Flows or Storage And External Systems, turning the map into a de facto API reference
+- amend mode absorbing low-level module detail (helper functions, single endpoints, deployment commands) instead of demoting it to linked docs
+- charter-level direction changes or capability-level contract changes getting edited into the map instead of routed to `spec-charter amend` or `spec-grill`
 
 ## Verification prompts
 
