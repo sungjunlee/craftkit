@@ -57,7 +57,7 @@ Examples: is the review more actionable than baseline? is the handoff prompt eas
 
 ### Fidelity evals (multi-skill pipelines only)
 
-Pipeline-stage consistency. Same pass/fail shape as binary, applied across boundaries — e.g. craft-skill-spec output covers each required spec section before craft-tune touches it; craft-tune's Changelog entries each trace to a Diagnostics item from the same pass.
+Pipeline-stage consistency. Same pass/fail shape as binary, applied across boundaries — e.g. `spec-charter` output defines each Objective before `spec-grill` admits capabilities against them; `craft-handoff`'s resume prompt carries every signal its rich doc records as blocking.
 
 ## Scoring
 
@@ -214,39 +214,39 @@ Structure evals as JSON for reuse and potential automation:
 
 ```json
 {
-  "skill_name": "craft-tune",
+  "skill_name": "craft-handoff",
   "evals": [
     {
       "id": 1,
-      "prompt": "Improve this 50-line auth function review prompt so outputs are consistent across agents.",
-      "inputs": ["runs/inputs/auth-fn-prompt.txt"],
+      "prompt": "Wrap up this refactoring session into a handoff doc and resume prompt.",
+      "inputs": ["runs/inputs/refactor-session.txt"],
       "assertions": [
         {
-          "text": "Output contains exactly five H2 sections: Intent preserved, Diagnostics, Revised artifact, Changelog, Tradeoffs.",
+          "text": "Output contains both artifacts: the rich handoff doc and the resume prompt.",
           "type": "binary",
           "category": "structure",
           "tier": 1,
-          "pass": "All five H2 headings present in order",
-          "fail": "Missing any heading or out of order"
+          "pass": "Both artifacts present and clearly separated",
+          "fail": "Either artifact missing or merged into one undifferentiated block"
         },
         {
-          "text": "Diagnostics section contains 1-5 items, each with a severity tag (HIGH/MED/LOW).",
+          "text": "The resume prompt names the current branch, dirty or untracked files, and the exact next command to run.",
           "type": "binary",
-          "category": "length",
+          "category": "inclusion",
           "tier": 1
         },
         {
-          "text": "Every Changelog entry names all three fields (changed / why / effect).",
+          "text": "The handoff names the blocking decision or open question when the session has one.",
           "type": "binary",
           "category": "inclusion",
           "tier": 2
         },
         {
-          "text": "Is the revision more reviewable than baseline?",
+          "text": "Is the resume prompt easier to resume from than baseline?",
           "type": "comparative",
           "category": "comparative",
           "tier": 3,
-          "rubric": "A revision is 'more reviewable' when a reader can trace each Changelog entry to a specific Diagnostics item without asking clarifying questions."
+          "rubric": "A resume prompt is 'easier to resume from' when a fresh agent can continue without re-deriving state from the conversation — no missing branch, file, or next-step signals."
         }
       ]
     }

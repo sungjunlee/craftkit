@@ -3,7 +3,7 @@ name: craft-autoresearch
 description: Optimize prompts or skills with measured eval loops. Use for repeatable test inputs, eval runners, scoring, bounded mutations, or written stop conditions.
 disable-model-invocation: true
 metadata:
-  related-skills: "craft-critique, craft-tune"
+  related-skills: "craft-critique"
 ---
 
 # craft-autoresearch
@@ -14,7 +14,7 @@ Run an eval-driven autonomous optimization loop on a prompt or skill.
 
 Many prompts and skills feel "mostly fine" until the last 20-30% of failures show up. Re-reading rarely finds those gaps. You find them by running the artifact many times, scoring outputs against a rubric, mutating one thing at a time, and keeping only the changes that measurably move the score.
 
-Unlike `craft-tune` (judgment-driven autonomous diagnose-and-edit), autoresearch *measures*. Gains come from the loop, not from one clever rewrite.
+Unlike judgment-driven improvement — a `craft-critique` pass followed by edits — autoresearch *measures*. Gains come from the loop, not from one clever rewrite.
 
 ## Use this when
 
@@ -26,7 +26,7 @@ Unlike `craft-tune` (judgment-driven autonomous diagnose-and-edit), autoresearch
 
 Do not use this when:
 
-- quality is entirely subjective with no rubric even sketchable — prefer `craft-critique` (read-only findings) or `craft-tune` (the review-and-fix loop)
+- quality is entirely subjective with no rubric even sketchable — prefer `craft-critique` (read-only findings; apply fixes guided by them on request)
 - the eval runner cannot be automated at reasonable cost
 - the artifact is too new and has no rough baseline yet
 
@@ -61,7 +61,7 @@ The loop shape is the same, but the *edit unit* differs. A prompt is a single fi
 1. **Target selection.** For a prompt, the target is a single file path. For a skill, decide up front what the target covers — usually `SKILL.md` alone, but a mutation may legitimately touch `references/<file>.md` too. Write it into the experiment contract: *"mutable files: SKILL.md, references/eval-guide.md. All other files are frozen."*
 2. **Mutation locus.** Mutation levels stay the same (wording / example / structure / principle), but for skills a sixth question appears before applying them: *which file?* Prefer editing `SKILL.md` for skill-spine changes and `references/` for deep-detail changes. Adding a new reference file counts as a Level-3 (structural) mutation — it shifts the skill's shape, not just its wording.
 3. **Mutation safety.** A prompt mutation touches one file, so checkpoint and rollback are trivial. A skill mutation may touch several — record the exact file list in the experiment's checkpoint, and on DISCARD restore *only those files*. Never rollback the whole folder; unrelated files may hold accepted prior-experiment state.
-4. **Fidelity evals (multi-skill pipelines).** If the target is a skill that feeds another skill's input (e.g. `craft-skill-spec` → `craft-tune`), add fidelity evals that check stage-to-stage consistency. Not applicable for single-file prompts.
+4. **Fidelity evals (multi-skill pipelines).** If the target is a skill that feeds another skill's input (e.g. `spec-charter` → `spec-grill`, where charter Objectives must survive into capability contracts), add fidelity evals that check stage-to-stage consistency. Not applicable for single-file prompts.
 
 Everything else — experiment contract, baseline discipline, KEEP/DISCARD rules, deletion experiments, stop conditions — works identically for prompts and skills.
 
@@ -148,36 +148,34 @@ The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prev
 
 ### Input
 
-Optimize `skills/craft-tune/SKILL.md` against 7 realistic "improve this prompt" requests split 5 train / 2 holdout. Use 3 binary format/traceability evals plus 1 comparative reviewability eval. Budget: 8 experiments. Stop: 95% binary pass rate sustained for 3 consecutive kept experiments.
+Optimize `skills/craft-handoff/SKILL.md` against 7 realistic end-of-session handoff requests split 5 train / 2 holdout. Use 3 binary required-signals/format evals plus 1 comparative resumability eval. Budget: 8 experiments. Stop: 95% binary pass rate sustained for 3 consecutive kept experiments.
 
 ### Output
 
 **Experiment contract**
-- target: `skills/craft-tune/SKILL.md`; inputs: 7 prompts (5 train / 2 holdout); evals: 3 binary + 1 comparative; eval runner: manual replay procedure; budget: 8; stop: 95% x 3 consecutive
-- mutable files: `skills/craft-tune/SKILL.md`; all other files frozen
-- holdout commitment: hold out prompts 6-7; accept session only if final holdout score is >= 5/8 baseline
-- evals 4th diagnostic: baseline plausibly returns Changelog rows without `effect`, and a longer revision that satisfies section shape but is no easier to audit
+- target: `skills/craft-handoff/SKILL.md`; inputs: 7 session transcripts (5 train / 2 holdout); evals: 3 binary + 1 comparative; eval runner: manual replay procedure; budget: 8; stop: 95% x 3 consecutive
+- mutable files: `skills/craft-handoff/SKILL.md`; all other files frozen
+- holdout commitment: hold out sessions 6-7; accept session only if final holdout score is >= 5/8 baseline
+- evals 4th diagnostic: baseline plausibly emits a resume prompt that names touched files but omits branch and dirty-file state, and a fluent handoff that leaves the next command implicit
 - runner design: manual replay; slower than a command runner, but exact and valid before this repo ships a runner script
-- first-mutation hypothesis preview: `## Final output` / Convergence subsection, invoking the Build-step enforcement prior because the first failing output lacks the final-state signal that the current `craft-tune` contract requires
+- first-mutation hypothesis preview: `## Workflow` step 4 (Compose the resume prompt), invoking the Build-step enforcement prior because the failing outputs drop git-state signals the conceptual sections already demand
 
-**Baseline**: Train score 12/20 (60%). Holdout baseline: 5/8 (62.5%). Failing: final `Convergence` block is often missing; Changelog entries often omit `effect`. Representative output: run 1 ends after `Round 2` edits with no final `Convergence` block.
+**Baseline**: Train score 14/20 (70%). Holdout baseline: 5/8 (62.5%). Failing: resume prompts often omit branch and dirty-file state; the next command is left implicit. Representative output: run 2's resume prompt lists touched files but never names the branch or the command to continue with.
 
 **Experiment log**
 
 | # | Hypothesis | Change | Train score | Decision | Rationale |
 |---|---|---|---|---|---|
-| 1 | Tighten final-output spec | Added explicit `Convergence` block requirement | 15/20 | KEEP | fixes missing final-state signal without changing loop scope |
-| 2 | Enforce three-field changelog | Added table example + "changed / why / effect" rule | 20/20 | KEEP | makes accepted changes auditable |
-| 3 | Deletion check | Removed the added example | 17/20 | DISCARD | train score regressed; example carries behavior |
-| 4 | Restore example | Restored compact changelog example | 20/20 | KEEP | target hit resumes after discarded deletion |
-| 5 | Stability check | Re-ran on the train split | 20/20 | KEEP | target hit holds |
-| 6 | Stability check | Re-ran to confirm | 20/20 | KEEP — 3 consecutive hit, STOP | stop condition satisfied |
+| 1 | Enforce required signals at the build step | Compose step now lists the signals every resume prompt must carry (branch, dirty files, next command, blocking decision) | 20/20 | KEEP | one build-step edit flips every failing eval |
+| 2 | Deletion check | Removed the required-signals list | 14/20 | DISCARD | regression confirms the list carries the behavior |
+| 3 | Stability check | Re-ran on the train split | 20/20 | KEEP | target hit holds |
+| 4 | Stability check | Re-ran to confirm | 20/20 | KEEP — 3 consecutive hit, STOP | stop condition satisfied |
 
-**Final artifact**: Accepted version `skills/craft-tune/SKILL.md`. Holdout gate: 8/8 vs 5/8 baseline; accepted. Size note: `skill_lines` stayed within the 160-220 line complex-skill band and below the 220-line release gate.
+**Final artifact**: Accepted version `skills/craft-handoff/SKILL.md`. Holdout gate: 8/8 vs 5/8 baseline; accepted. Size note: `skill_lines` stayed within the 160-220 line complex-skill band and below the 220-line release gate.
 
-**Direction shifts**: Flipped from "softer wording" to "explicit constraints" after baseline showed missing structure.
+**Direction shifts**: Confirmed the Build-step enforcement prior — the whole gain came from one compose-step tightening, not from distributed wording edits.
 
-**Next steps**: Add a traceability eval for "every Changelog entry maps to a Diagnostics item." For the full contract example, load `references/contract-example.md`.
+**Next steps**: Suite saturated at 100% — add 2-3 quality-dimension assertions (doc/prompt pair consistency, resume-prompt skimmability) before mutating further. For the full contract example, load `references/contract-example.md`.
 
 ## References
 
