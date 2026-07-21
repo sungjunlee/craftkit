@@ -31,7 +31,7 @@ const guideMaxAgeDays = 120;
 // `headings` is the flat list from parseHeadings(); `hasHeadingAnyLevel` lets
 // loop-shaped skills satisfy "Output format" via their multi-part decomposition
 // (docs/skill-anatomy.md "Documented exemptions" § Loop-shaped Output format
-// decomposition) without hardcoding craft-tune/craft-autoresearch by name.
+// decomposition) without hardcoding craft-autoresearch by name.
 const CRAFT_SECTION_CONTRACT = [
   { key: "Purpose", match: (h) => hasH2(h, "purpose") },
   { key: "Use this when", match: (h) => hasH2(h, "use this when") },
@@ -41,8 +41,6 @@ const CRAFT_SECTION_CONTRACT = [
     key: "Output format",
     match: (h) =>
       hasH2(h, "output format") ||
-      (hasHeadingAnyLevel(h, "per-round output (compact trail)") && hasHeadingAnyLevel(h, "final output (after convergence)")) ||
-      (hasHeadingAnyLevel(h, "per-round output") && hasHeadingAnyLevel(h, "final output")) ||
       (hasHeadingAnyLevel(h, "experiment contract") && hasHeadingAnyLevel(h, "final artifact")),
   },
   { key: "Guardrails", match: (h) => hasH2(h, "guardrails") },
@@ -77,7 +75,7 @@ const SPEC_SECTION_CONTRACT = [
 // in sync with docs/skill-anatomy.md "Current deviations". A baselined miss
 // warns (burn-down signal); remove the entry once the section is added, or
 // verify will fail telling you the entry is stale. #111/#112/#115 cleared the
-// spec-* and craft-prompt/craft-tune entries; #126/#133 (the review-hardening
+// spec-* and early craft-* entries; #126/#133 (the review-hardening
 // pass) cleared the remaining craft-harness/craft-skill-spec/craft-critique
 // entries, so the baseline is empty. Adding an entry back is an explicit,
 // temporary act — do it only alongside a matching "Current deviations" note
@@ -411,16 +409,11 @@ function checkOpenAiInvocationPolicies() {
 }
 
 function checkMirroredReferences() {
-  const mirroredPairs = [
-    [
-      "skills/craft-critique/references/failure-modes.md",
-      "skills/craft-tune/references/failure-modes.md",
-    ],
-    [
-      "skills/craft-prompt/references/shared-principles.md",
-      "skills/craft-tune/references/shared-principles.md",
-    ],
-  ];
+  // Empty since craft-tune's removal (2026-07) left craft-critique's
+  // failure-modes.md and craft-prompt's shared-principles.md as single
+  // canonical copies. Add a pair only when two files must genuinely stay
+  // byte-identical — the repo default is one source per thing.
+  const mirroredPairs = [];
 
   for (const [first, second] of mirroredPairs) {
     const firstPath = path.join(root, first);

@@ -183,8 +183,6 @@ CraftKit skills are plain markdown with YAML frontmatter, so they port easily:
 3. For implicit skills, keep the frontmatter `description` line as context so the agent knows when to apply the skill.
 4. For explicit-only skills, keep the description in the file for menus and manual selection, but preserve the invocation policy fields above when the target agent supports them.
 
-See [`docs/examples/tune-a-prompt.md`](docs/examples/tune-a-prompt.md) for a walk-through of diagnosing and tuning an existing prompt, then optionally running a short improvement loop.
-
 ## Verify
 
 Run the repo-local smoke check before release or packaging changes:
