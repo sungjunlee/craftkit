@@ -37,7 +37,7 @@ Sentence case everywhere — H1 through H3, including the H1 title itself, both 
 | Use this when | Required | Bullet triggers. May be supplemented (not replaced) by "How it differs from related skills" for explicit-only skills confusable with a close sibling. |
 | Inputs | Required | What the skill needs from the user or repo before it runs. |
 | Steps *or* Workflow | Required | Exactly one of these two names for the core action sequence — no other name (decision point 3). |
-| Output format | Required | The shape of what the skill returns or writes. |
+| Output format | Required | The shape of what the skill returns or writes. May be a fixed template *or* a judgment contract — a statement of what the output must convey, with shape scaling to the artifact (see Documented exemptions § Output judgment contracts). |
 | Guardrails | Required | Ongoing behavioral constraints while operating; distinct from Failure modes (decision point 1). |
 | Failure modes | Required | Named recurrence scenarios — how the skill breaks, not restated Guardrails. |
 | Example | Required | At least one concrete input/output pair (CLAUDE.md DoD item 2). |
@@ -61,7 +61,7 @@ All three wrap the router under `## Execution contract` (`spec-system-map` conve
 
 ## Documented exemptions
 
-- **craft-critique "Common mistakes" vs "Failure modes."** Its own meta-section is named "Common mistakes" instead of "Failure modes" because its *output contract* (what it produces for the artifact under review) already has a `### Failure modes` subsection — reusing the name would collide with the output template. Resolved in #111 by keeping this documented split (no rename); verify encodes "Common mistakes" as satisfying the Failure modes slot.
+- **Output judgment contracts.** An `## Output format` section may state judgment requirements — what the output must *convey* (e.g. prioritized findings with evidence, strengths worth preserving, ordering rationale) — instead of prescribing a fixed section template, letting output shape scale with the artifact under review. `craft-critique` set the precedent (PRD-DP E2.1, #150) after its fixed 5-section template proved to be eval-ratchet scaffolding rather than reader value. Normalization and autoresearch passes must not re-impose a fixed template on a judgment-contract skill unless downstream tooling genuinely parses the sections. This retired the former "Common mistakes vs Failure modes" exemption: the output template's `### Failure modes` subsection is gone, so craft-critique's meta-section is now plainly `## Failure modes` and verify no longer accepts "Common mistakes" as an alternate heading.
 - **Loop-shaped Output format decomposition.** `craft-autoresearch` and `craft-tune` split "Output format" into multiple named parts (`Experiment contract`/`Baseline`/`Experiment log`/`Final artifact`; `Per-round output`/`Final output`) because a single-shot section can't describe a multi-round artifact. Satisfies the requirement in spirit; no separate top-level "Output format" heading required when the skill is loop-shaped and all parts are present.
 
 ## Decision points flagged for maintainer review
@@ -86,7 +86,7 @@ Exhaustive as of this writing. All items below are resolved as of the #126/#133 
 - [x] `spec-system-map`: rename `## Eval Prompts` to `## Verification prompts`
 - [x] `spec-grill`: rename `## Pressure Prompts` to `## Verification prompts`
 - [x] `spec-charter`: add a `## Verification prompts` section
-- [x] `craft-critique`: "Common mistakes" vs "Failure modes" collision — resolved by keeping the documented exemption above (no rename)
+- [x] `craft-critique`: "Common mistakes" vs "Failure modes" collision — resolved in #111 by a documented exemption (no rename); exemption retired in #150/#151 when the output template's `### Failure modes` subsection was removed and the meta-section renamed to `## Failure modes`
 - [x] `spec-charter`, `spec-system-map`, `spec-grill`: convert H1 from Title Case to the literal lowercase skill slug
 - [x] `spec-charter`, `spec-system-map`, `spec-grill`: convert all Title Case section headings to sentence case
 - [x] `spec-system-map`: converge onto the `## Execution contract` wrapper and rename `## Completion Output` to `### Completion contract`

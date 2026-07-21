@@ -44,11 +44,7 @@ const CRAFT_SECTION_CONTRACT = [
       (hasHeadingAnyLevel(h, "experiment contract") && hasHeadingAnyLevel(h, "final artifact")),
   },
   { key: "Guardrails", match: (h) => hasH2(h, "guardrails") },
-  // craft-critique names this "Common mistakes" instead of "Failure modes" because
-  // its own output template already has a `### Failure modes` subsection (name
-  // collision, documented exemption) — encoded as an alternate heading, not a
-  // skill-name check.
-  { key: "Failure modes", match: (h) => hasH2(h, "failure modes") || hasH2(h, "common mistakes") },
+  { key: "Failure modes", match: (h) => hasH2(h, "failure modes") },
   { key: "Example", match: (h) => hasH2(h, "example") },
 ];
 
