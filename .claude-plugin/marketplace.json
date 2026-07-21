@@ -8,7 +8,7 @@
       "name": "craftkit",
       "source": ".",
       "description": "Cross-agent toolkit for prompts and coding-agent skills — craft-* skills for prompt/skill authoring plus spec-* skills for repo charter, system map, and capability contracts",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "category": "productivity",
       "tags": ["prompt-engineering", "agent-skill", "skill-authoring"]
     }

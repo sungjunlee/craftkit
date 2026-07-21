@@ -4,6 +4,8 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-07-21
+
 ### Removed (BREAKING)
 
 - **Removed `craft-tune`.** Real-world usage was zero: current frontier models reproduce the critique-and-edit loop from a direction-level instruction ("improve this file until it's good, show what changed and why"), so the skill's 8-round protocol — per-round output templates, `[CARRIED]` tags, 3-column cumulative changelog contract — added ceremony without adding quality. The durable IP, the loop-exit taxonomy (Self-LGTM / persistent fixpoint / no-op round / hard cap), lives on skill-independent in [`docs/methodology/loop-stop-conditions.md`](docs/methodology/loop-stop-conditions.md). Read-only diagnosis stays with `craft-critique`; when the user wants fixes applied, apply them guided by the findings — no dedicated loop skill required. Eval-driven optimization stays with `craft-autoresearch`. `skills/craft-tune/` and `docs/examples/tune-a-prompt.md` deleted; the mirrored reference copies became single canonical files (`craft-critique/references/failure-modes.md`, `craft-prompt/references/shared-principles.md`). The autonomous self-converging loop redesign this section previously announced was never released and is superseded by this removal. PRD: `docs/prd-2026-07-deprescription.md`.
@@ -62,5 +64,6 @@ Initial public-ready release.
 - `docs/product.md`, `docs/roadmap.md`, `docs/migration.md`, `docs/examples/tune-a-prompt.md`.
 - MIT license.
 
+[0.2.0]: https://github.com/sungjunlee/craftkit/releases/tag/v0.2.0
 [0.1.1]: https://github.com/sungjunlee/craftkit/releases/tag/v0.1.1
 [0.1.0]: https://github.com/sungjunlee/craftkit/releases/tag/v0.1.0
