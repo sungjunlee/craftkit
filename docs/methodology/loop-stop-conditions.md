@@ -81,11 +81,14 @@ and did not resolve — not on "good enough."
 
 ## Where it is applied
 
-CraftKit's `craft-tune` skill runs exactly this taxonomy as its loop-exit
-contract, and `craft-autoresearch` uses the measured analogue (a
+CraftKit's former `craft-tune` skill ran exactly this taxonomy as its loop-exit
+contract until the skill was removed in 2026-07 — frontier models reproduce
+the improve loop itself from a direction-level instruction, but the exit
+conditions still have to be written down, which is why this document outlived
+the skill. `craft-autoresearch` uses the measured analogue (a
 baseline-saturation gate plus a held-out acceptance check) for eval-driven
-loops — see those skills' stop-condition sections for the operational rules in
-context. The discipline is not specific to them: use it for any loop where an
+loops — see its stop-condition section for the operational rules in context.
+The discipline is not specific to any skill: use it for any loop where an
 agent grades its own output.
 
 ## Related

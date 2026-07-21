@@ -48,17 +48,14 @@ function createFixture() {
   writeFile(root, "CHANGELOG.md", "# Changelog\n");
   writeFile(root, "README.md", "# Fixture\n\n## 30-second path\n\nSee docs/status.md and run npm run verify.\n");
   writeFile(root, "docs/status.md", "# Status\n\n## Public evidence\n\nMaintainer-local evidence\n\nRun npm run verify.\n");
-  writeFile(root, "docs/examples/tune-a-prompt.md", "Use an eval runner.\n");
   writeFile(root, "scripts/verify.mjs", fs.readFileSync(verifyScript, "utf8"));
   writeFile(
     root,
     "skills/example/SKILL.md",
     "---\nname: example\ndescription: Example skill for tests.\n---\n\n# Example\n",
   );
-  writeFile(root, "skills/craft-critique/references/failure-modes.md", "# Failure Modes\n\nShared fixture.\n");
-  writeFile(root, "skills/craft-tune/references/failure-modes.md", "# Failure Modes\n\nShared fixture.\n");
-  writeFile(root, "skills/craft-prompt/references/shared-principles.md", "# Shared principles\n\nShared fixture.\n");
-  writeFile(root, "skills/craft-tune/references/shared-principles.md", "# Shared principles\n\nShared fixture.\n");
+  writeFile(root, "skills/craft-critique/references/failure-modes.md", "# Failure Modes\n\nCanonical copy.\n");
+  writeFile(root, "skills/craft-prompt/references/shared-principles.md", "# Shared principles\n\nCanonical copy.\n");
   writeFile(
     root,
     radarCurrentPath,
@@ -256,18 +253,10 @@ expectVerifyFailure("fails when Codex policy omits allow_implicit_invocation", (
   writeFile(root, "skills/example/agents/openai.yaml", "policy:\n  other: false\n");
 }, /must include policy\.allow_implicit_invocation as true or false/);
 
-expectVerifyFailure("fails when mirrored references drift", (root) => {
-  writeFile(root, "skills/craft-critique/references/failure-modes.md", "# Failure Modes\n\nSame.\n");
-  writeFile(root, "skills/craft-tune/references/failure-modes.md", "# Failure Modes\n\nDifferent.\n");
-}, /mirrored references and must stay identical/);
-
-expectVerifyFailure("fails when a mirrored reference is missing", (root) => {
-  removeFile(root, "skills/craft-tune/references/failure-modes.md");
-}, /skills\/craft-tune\/references\/failure-modes\.md is missing from a mirrored reference pair/);
-
-expectVerifyFailure("fails on legacy autoresearch harness wording", (root) => {
-  writeFile(root, "docs/examples/tune-a-prompt.md", "This still says run harness.\n");
-}, /docs\/examples\/tune-a-prompt\.md still contains "run harness"/);
+// The mirrored-pair machinery is dormant: craft-tune's removal (2026-07) left
+// failure-modes.md and shared-principles.md as single canonical copies, so
+// `mirroredPairs` in verify.mjs is empty. When a real pair returns, re-add the
+// drift and missing-file failure tests alongside the new entry.
 
 // --- Check: terminology rules table (#114) ---
 
@@ -370,8 +359,10 @@ expectVerifyFailure("fails when a spec-* spine reintroduces the old relay-learni
   fs.writeFileSync(skillMdPath, updated);
 }, /skills\/spec-grill\/SKILL\.md still contains "relay-learning"/);
 
-test("terminologyRules ships the three seeded rules with files/forbidden/why", () => {
-  assert.equal(terminologyRules.length, 3);
+test("terminologyRules ships the two seeded rules with files/forbidden/why", () => {
+  // Was three until the docs/examples/tune-a-prompt.md rule left with
+  // craft-tune's removal (2026-07); the doc it guarded is deleted.
+  assert.equal(terminologyRules.length, 2);
   for (const rule of terminologyRules) {
     assert.ok(Array.isArray(rule.files) && rule.files.length > 0);
     assert.ok(Array.isArray(rule.forbidden) && rule.forbidden.length > 0);
@@ -380,8 +371,8 @@ test("terminologyRules ships the three seeded rules with files/forbidden/why", (
 });
 
 test("matchesFilePattern treats a pattern without '*' as an exact literal path", () => {
-  assert.equal(matchesFilePattern("docs/examples/tune-a-prompt.md", "docs/examples/tune-a-prompt.md"), true);
-  assert.equal(matchesFilePattern("docs/examples/tune-a-prompt.md", "docs/examples/other.md"), false);
+  assert.equal(matchesFilePattern("docs/examples/sample.md", "docs/examples/sample.md"), true);
+  assert.equal(matchesFilePattern("docs/examples/sample.md", "docs/examples/other.md"), false);
 });
 
 test("matchesFilePattern's '**/*.md' matches nested files but not sibling skills", () => {
@@ -724,9 +715,9 @@ Nothing to cite.
 
 test("warns (and still passes) on a baselined missing required section", () => {
   const root = createFixture();
-  // Note: craft-tune, craft-critique, and craft-skill-spec are avoided here
+  // Note: craft-critique, craft-prompt, and craft-skill-spec are avoided here
   // because createFixture() already seeds a references/ dir under each of them
-  // (for the mirrored-reference check and the radar-staleness check), which
+  // (canonical reference copies and the radar-staleness check), which
   // would also trip the reference-index check or the References requirement.
   // The checked-in knownSectionDeviations baseline is empty (#126/#133), so
   // inject a synthetic entry for craft-handoff and reproduce exactly those
@@ -808,24 +799,24 @@ test("sectionContractFindings requires References only when a references/ dir ex
   assert.deepEqual(sectionContractFindings("craft-x", bodyWithReferences, true), []);
 });
 
-test("sectionContractFindings exempts craft-critique's 'Common mistakes' for Failure modes", () => {
+test("sectionContractFindings flags 'Common mistakes' as a missing Failure modes section (exemption retired in #150/#151)", () => {
   const body = compliantCraftSkillBody("craft-critique").replace(
     "## Failure modes\n\n- it might fail\n\n",
     "## Common mistakes\n\n- it might fail\n\n",
   );
 
-  assert.deepEqual(sectionContractFindings("craft-critique", body, false), []);
+  assert.deepEqual(sectionContractFindings("craft-critique", body, false), ["Failure modes"]);
 });
 
 test("sectionContractFindings accepts the loop-shaped Output format decomposition", () => {
-  const body = compliantCraftSkillBody("craft-tune")
+  const body = compliantCraftSkillBody("craft-autoresearch")
     .replace("## Steps\n\n1. Do it.\n\n", "## How the loop runs\n\n1. Do it.\n\n")
     .replace(
       "## Output format\n\nA single line.\n\n",
-      "## Per-round output (compact trail)\n\nRound trail.\n\n## Final output (after convergence)\n\nFinal artifact.\n\n",
+      "## Experiment contract\n\nContract fields.\n\n## Final artifact\n\nAccepted version.\n\n",
     );
 
-  assert.deepEqual(sectionContractFindings("craft-tune", body, false), ["Steps/Workflow"]);
+  assert.deepEqual(sectionContractFindings("craft-autoresearch", body, false), ["Steps/Workflow"]);
 });
 
 test("sectionContractFindings requires Mode Router and Completion Contract nested under Execution Contract", () => {

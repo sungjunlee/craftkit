@@ -551,13 +551,6 @@ function checkFamilySectionContract() {
 //     of truth, so a future maintainer isn't left guessing.
 const terminologyRules = [
   {
-    // Original single-file check this table replaces (#114); behavior preserved
-    // exactly (same file, same two phrases).
-    files: ["docs/examples/tune-a-prompt.md"],
-    forbidden: ["run harness", "evals and a harness"],
-    why: 'craft-autoresearch renamed its loop mechanism to "eval runner"; this doc should not still say "harness"',
-  },
-  {
     // README.md's "Terminology note" (search that phrase): craft-autoresearch
     // uses an "eval runner"; "harness" is craft-harness's word for repo-local
     // agent guidance/provider surfaces — "Do not use 'harness' for both."

@@ -6,24 +6,24 @@ It is a contract, not a tutorial: read the family table, then the deviation chec
 
 ## Scope
 
-- **craft-\*** — artifact skills: `craft-prompt`, `craft-skill-spec`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`, `craft-handoff`, `craft-harness`.
+- **craft-\*** — artifact skills: `craft-prompt`, `craft-skill-spec`, `craft-critique`, `craft-survey`, `craft-autoresearch`, `craft-handoff`, `craft-harness`.
 - **spec-\*** — repo spec-pipeline skills: `spec-charter`, `spec-system-map`, `spec-grill`. Router-contract variant, not the craft-* shape.
 
 ## Frontmatter contract
 
 Required for every skill, both families: `name` (matches the skill directory exactly) and `description` (states what the skill does and when to use it; ≤50 words, enforced by `scripts/verify.mjs`).
 
-Conditionally required: `disable-model-invocation: true` for explicit-only (higher-ceremony, mutating, or side-effecting) workflows, paired with `skills/<name>/agents/openai.yaml` setting `policy.allow_implicit_invocation: false` (CLAUDE.md "Skill file conventions"; enforced by `checkOpenAiInvocationPolicies`). Already consistent across all 11 skills — no deviations found here.
+Conditionally required: `disable-model-invocation: true` for explicit-only (higher-ceremony, mutating, or side-effecting) workflows, paired with `skills/<name>/agents/openai.yaml` setting `policy.allow_implicit_invocation: false` (CLAUDE.md "Skill file conventions"; enforced by `checkOpenAiInvocationPolicies`). Already consistent across all 10 skills — no deviations found here.
 
 spec-* only, required (all three carry these identically-shaped today): `argument-hint` (e.g. `"[create|amend|reassess]"`), `compatibility: Requires git.`, `metadata.related-skills`.
 
 craft-* policy for these three fields (#113, decided): each is conditional on a real underlying need, not family-wide parity for its own sake.
 
-- `metadata.related-skills` — add only where a real cluster exists. The `craft-critique` ↔ `craft-tune` ↔ `craft-autoresearch` triangle carries it today (each lists the other two), matching spec-*'s `metadata:\n  related-skills: "a, b, c"` YAML shape exactly. Other craft-* skills without a comparably tight cluster don't get it.
+- `metadata.related-skills` — add only where a real cluster exists. The `craft-critique` ↔ `craft-autoresearch` pair carries it today (each lists the other; it was a triangle with `craft-tune` until that skill's 2026-07 removal), matching spec-*'s `metadata:\n  related-skills: "a, b, c"` YAML shape exactly. Other craft-* skills without a comparably tight cluster don't get it.
 - `argument-hint` — add only where a skill has real positional-argument structure (explicit modes like `create|amend`). No craft-* skill has this today, so no craft-* skill carries `argument-hint`.
 - `compatibility` — declare only for real requirements (spec-* skills require git). Absence means no special requirements, not an oversight. No craft-* skill has a comparable hard requirement today.
 
-**H1 rule**: the H1 is the literal skill slug in its own case, e.g. `# craft-critique`, matching `name` — not a prose title. All 11 skills follow this (spec-* converged in #111).
+**H1 rule**: the H1 is the literal skill slug in its own case, e.g. `# craft-critique`, matching `name` — not a prose title. All 10 skills follow this (spec-* converged in #111).
 
 ## Heading case rule
 
@@ -62,7 +62,7 @@ All three wrap the router under `## Execution contract` (`spec-system-map` conve
 ## Documented exemptions
 
 - **Output judgment contracts.** An `## Output format` section may state judgment requirements — what the output must *convey* (e.g. prioritized findings with evidence, strengths worth preserving, ordering rationale) — instead of prescribing a fixed section template, letting output shape scale with the artifact under review. `craft-critique` set the precedent (PRD-DP E2.1, #150) after its fixed 5-section template proved to be eval-ratchet scaffolding rather than reader value. Normalization and autoresearch passes must not re-impose a fixed template on a judgment-contract skill unless downstream tooling genuinely parses the sections. This retired the former "Common mistakes vs Failure modes" exemption: the output template's `### Failure modes` subsection is gone, so craft-critique's meta-section is now plainly `## Failure modes` and verify no longer accepts "Common mistakes" as an alternate heading.
-- **Loop-shaped Output format decomposition.** `craft-autoresearch` and `craft-tune` split "Output format" into multiple named parts (`Experiment contract`/`Baseline`/`Experiment log`/`Final artifact`; `Per-round output`/`Final output`) because a single-shot section can't describe a multi-round artifact. Satisfies the requirement in spirit; no separate top-level "Output format" heading required when the skill is loop-shaped and all parts are present.
+- **Loop-shaped Output format decomposition.** `craft-autoresearch` splits "Output format" into multiple named parts (`Experiment contract`/`Baseline`/`Experiment log`/`Final artifact`) because a single-shot section can't describe a multi-round artifact. Satisfies the requirement in spirit; no separate top-level "Output format" heading required when the skill is loop-shaped and all parts are present.
 
 ## Decision points flagged for maintainer review
 
@@ -70,7 +70,7 @@ Each choice below is already applied in this doc; flip it here and in the tables
 
 1. Guardrails and Failure modes are **both** required for craft-* (not either/or) — they serve distinct purposes. Alternative: either/or, since 3/8 craft-* skills currently have only one.
 2. "Use this when" is required for **every** craft-* skill; "How it differs from related skills" (used instead by `craft-harness`/`craft-skill-spec`) is an allowed *addition*, not a substitute. Alternative: allow substitution for explicit-only skills with a confusable sibling.
-3. The core action-sequence section must be named exactly "Steps" or "Workflow" — no other synonym. Alternative: allow descriptive renaming per mechanics (`craft-tune`'s "How the loop runs", `craft-prompt`'s "Process").
+3. The core action-sequence section must be named exactly "Steps" or "Workflow" — no other synonym. Alternative: allow descriptive renaming per mechanics (e.g. `craft-prompt`'s former "Process").
 4. Example is required for every craft-* skill unconditionally, not only user-facing ones — matches CLAUDE.md DoD item 2 as written, no carve-out for agentic/loop skills.
 5. References must be a **dedicated** `## References` section whenever `references/` exists — inline-only citation (current practice in `craft-critique`, `craft-harness`) doesn't satisfy the contract. Alternative: accept inline citation as long as every file is cited somewhere — easier to satisfy, harder for #109 to verify mechanically.
 6. spec-*'s validation section unifies to "Verification prompts" (matching `craft-harness`'s existing name), not "Eval Prompts" (`spec-system-map`) or "Pressure Prompts" (`spec-grill`). `spec-charter`, which has none, must add one rather than being exempted.
@@ -104,7 +104,7 @@ Exhaustive as of this writing. All items below are resolved as of the #126/#133 
 
 ### #113 — frontmatter parity + craft-survey invocation policy
 
-- [x] craft-* skills: `metadata.related-skills` added to the `craft-critique` ↔ `craft-tune` ↔ `craft-autoresearch` triangle (each lists the other two), matching spec-*'s YAML shape; no other craft-* skill gets it (no comparably tight cluster)
+- [x] craft-* skills: `metadata.related-skills` added to the `craft-critique` ↔ `craft-tune` ↔ `craft-autoresearch` triangle (each lists the other two), matching spec-*'s YAML shape; no other craft-* skill gets it (no comparably tight cluster) — the triangle became a critique ↔ autoresearch pair when `craft-tune` was removed (2026-07)
 - [x] craft-* skills: `argument-hint` policy decided — only for skills with real positional-argument structure (modes like `create|amend`); no craft-* skill qualifies, so none carry it
 - [x] craft-* skills: `compatibility` policy decided — declare only for real requirements (spec-* require git); no craft-* skill has a comparable requirement, so none carry it
 - [x] `craft-survey`: stays explicit-only — read-only is necessary but not sufficient; survey launches a time-consuming multi-source web research workflow, higher-ceremony than a quick read-only diagnosis like `craft-critique`, so the user opts in explicitly (documented in README "Invocation policy")
@@ -114,7 +114,7 @@ Exhaustive as of this writing. All items below are resolved as of the #126/#133 
 - [x] `craft-harness`: no dedicated `## References` section — its 5 `references/*.md` files are cited via `## Required reads` and inline mentions instead; add one indexing all 5 (decision point 5)
 - [x] `craft-critique`: no dedicated `## References` section — its 1 `references/failure-modes.md` is cited inline only; add one (decision point 5)
 - [x] `craft-harness`, `craft-skill-spec`: missing `## Use this when` (both use `## How it differs from related skills` instead); add `## Use this when` alongside it (decision point 2)
-- [x] `craft-tune`: `## How the loop runs` renamed to `## Workflow` (decision point 3, done with #115)
+- [x] `craft-tune`: `## How the loop runs` renamed to `## Workflow` (decision point 3, done with #115; skill since removed)
 - [x] `craft-handoff`: missing `## Guardrails` entirely (found by the #110 check, not the original doc audit)
 - [x] `craft-handoff`: missing `## Output format` — the output shape is folded into `## Workflow` steps 3/4 prose (found by the #110 check)
 - [x] `craft-harness`: missing `## Guardrails` entirely — "guardrail" appears only in unrelated prose about hook guardrails (found by the #110 check)

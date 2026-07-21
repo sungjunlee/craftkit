@@ -20,7 +20,7 @@ Start with the smallest skill that does the job:
 |---|---|
 | write a new prompt or reusable prompt template | `craft-prompt` |
 | review an existing prompt or skill without changing it | `craft-critique` |
-| improve an existing prompt or skill in place | `craft-tune` |
+| improve an existing prompt or skill in place | `craft-critique`, then apply its findings |
 
 Reach for the other skills when the job gets more specific:
 
@@ -36,7 +36,7 @@ Reach for the other skills when the job gets more specific:
 The skills are the delivery vehicle; the durable part is two review disciplines that hold up as models get more capable — a smarter agent is exactly what finds the loophole in a loose contract or talks a loop past "good enough." Both are written up as standalone references you can apply without adopting any skill:
 
 - [`docs/methodology/predicate-test.md`](docs/methodology/predicate-test.md) — the 3-axis test (Authority / Distributional / Manipulability) for deciding whether a written contract is safe for an agent to optimize against. Applied by `spec-grill`.
-- [`docs/methodology/loop-stop-conditions.md`](docs/methodology/loop-stop-conditions.md) — falsifiable exit conditions (Self-LGTM / persistent fixpoint / no-op / hard cap) for agent improvement loops. Applied by `craft-tune` and `craft-autoresearch`.
+- [`docs/methodology/loop-stop-conditions.md`](docs/methodology/loop-stop-conditions.md) — falsifiable exit conditions (Self-LGTM / persistent fixpoint / no-op / hard cap) for agent improvement loops. Applied by `craft-autoresearch`.
 
 ## Install
 
@@ -80,8 +80,7 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | `craft-prompt` | a new prompt is needed from scratch for any LLM or agent interface | returns copy-pasteable text |
 | `craft-skill-spec` | a new skill needs a concrete spec based on current CraftKit skill-radar judgments before writing `SKILL.md` | returns a spec; reads radar references |
 | `craft-harness` | a repo's agent guidance needs placement decisions, cleanup, sync, or a gated change plan across Codex and Claude Code | returns a repo-local plan or small markdown/skill edits; gates risky surfaces |
-| `craft-critique` | an existing prompt or skill needs a read-only review before editing or shipping | surfaces strengths, prioritized findings, recommendations, and a rewrite plan without editing |
-| `craft-tune` | an existing prompt or skill needs sharpening applied | runs an autonomous review-and-fix loop and edits the artifact |
+| `craft-critique` | an existing prompt or skill needs a review — read-only by default — before editing or shipping | surfaces strengths, prioritized findings, and fix ordering; applies the fixes only when asked |
 | `craft-survey` | a new skill should be grounded in prior art before drafting | returns read-only recommendations |
 | `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration | runs evals and may edit mutable files |
 | `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt | writes handoff files and may copy to clipboard |
@@ -89,7 +88,7 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | `spec-system-map` | a brownfield repo needs high-level system shape, runtime boundaries, flows, invariants, and candidate capability boundaries | creates or amends `spec/system-map.md` |
 | `spec-grill` | candidate repo boundaries need to become accepted capability contracts with Behaviors and Hard Constraints | creates or refines `spec/capabilities.md` after evidence review |
 
-When two skills could trigger, choose the least invasive one that answers the request: review-only wording goes to `craft-critique`; apply/fix/improve wording goes to `craft-tune`; repeated measurable failures go to `craft-autoresearch`; prior-art questions go to `craft-survey`; repo harness placement and Codex/Claude setup work goes to `craft-harness`.
+When two skills could trigger, choose the least invasive one that answers the request: review-only and apply/fix/improve wording both go to `craft-critique` (read-only by default; applies fixes when asked); repeated measurable failures go to `craft-autoresearch`; prior-art questions go to `craft-survey`; repo harness placement and Codex/Claude setup work goes to `craft-harness`.
 
 Terminology note: `craft-harness` means repo-local agent guidance and provider surfaces. `craft-autoresearch` uses an **eval runner** for replaying test inputs and scoring outputs. Do not use "harness" for both.
 
@@ -101,7 +100,7 @@ Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML 
 
 ## Maintainer status
 
-Six skills (`craft-prompt`, `craft-critique`, `craft-tune`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-skill-spec`, `craft-harness`, and the `spec-*` skills are newer and have maintainer-local or repo-local contract evidence, but have not yet been through full autoresearch passes. Publicly reproducible status and local-maintainer evidence boundaries are tracked in [`docs/status.md`](docs/status.md).
+Five skills (`craft-prompt`, `craft-critique`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-skill-spec`, `craft-harness`, and the `spec-*` skills are newer and have maintainer-local or repo-local contract evidence, but have not yet been through full autoresearch passes. Publicly reproducible status and local-maintainer evidence boundaries are tracked in [`docs/status.md`](docs/status.md).
 
 ## What belongs in CraftKit
 
@@ -168,8 +167,8 @@ Use these lightweight checks after editing skill descriptions or routing boundar
 
 | Prompt | Expected skill | Failure signal |
 |---|---|---|
-| "review this skill, don't edit" | `craft-critique` | edits the artifact or routes to `craft-tune` |
-| "improve this skill and apply changes" | `craft-tune` | stops at read-only findings |
+| "review this skill, don't edit" | `craft-critique` | edits the artifact despite the read-only default |
+| "improve this skill and apply changes" | `craft-critique` (findings, then apply) | stops at read-only findings despite the apply request |
 | "run measured iterations on failures" | `craft-autoresearch` | describes repo harness setup instead of an eval runner |
 | "set up Codex + Claude repo guidance" | `craft-harness` | installs or enables hooks/MCP/plugins without an approval gate |
 | "write a prompt for GPT" | `craft-prompt` | refuses to deliver a copy-pasteable prompt |
