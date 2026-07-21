@@ -1,6 +1,6 @@
 ---
 name: craft-critique
-description: Critique prompts or skills without editing. Use for review-only diagnosis, audit, "feels off" artifacts, or findings before a rewrite.
+description: Critique prompts or skills and surface what actually needs fixing. Use for review, audit, "feels off" artifacts, or diagnosis before a rewrite; applies fixes only when asked.
 metadata:
   related-skills: "craft-autoresearch"
 ---
@@ -9,11 +9,9 @@ metadata:
 
 ## Purpose
 
-Critique a prompt or skill and surface ambiguity, hidden assumptions, weak structure, portability issues, and likely failure modes — and stop there. craft-critique is read-only: it diagnoses and recommends, it never edits the artifact.
+Diagnose a prompt or skill — surface ambiguity, hidden assumptions, weak structure, portability issues, and likely failure modes — and say what to do about it, in priority order. The default is read-only: findings and recommendations, no edits.
 
-Critiquing before rewriting matters because most "make this better" requests would be better served by structural fixes than by new wording. A short diagnostic pass exposes what's actually broken so the next edit can be surgical.
-
-This is the `/review`-style pass: run craft-critique to *see* what's wrong before anything edits the artifact. Keeping the review separate means you can audit an artifact, decide, and only then choose whether to edit.
+Critiquing before rewriting matters because most "make this better" requests are better served by structural fixes than by new wording. A short diagnostic pass exposes what's actually broken so the next edit can be surgical.
 
 ## Use this when
 
@@ -21,9 +19,8 @@ This is the `/review`-style pass: run craft-critique to *see* what's wrong befor
 - a skill works sometimes but not consistently
 - a repo asset needs review before being generalized or shipped
 - a large rewrite is tempting and a critique should come first
-- you want findings to act on yourself, not an agent editing the file
 
-If the user wants the artifact actually edited — "fix it," "sharpen it," "make it better and apply the changes" — apply the fixes directly, guided by the findings; no separate skill is needed.
+If the user also wants the fixes applied, apply them guided by the findings — smallest diff first, preserving the artifact's intent. No separate protocol is needed; the critique is the plan.
 
 ## Inputs
 
@@ -35,77 +32,48 @@ If the user wants the artifact actually edited — "fix it," "sharpen it," "make
 ## Steps
 
 1. Identify the artifact's real job. If you can't state it in one sentence, that's already a finding.
-2. Check whether the current structure supports that job. Structural problems show up as sections that don't earn their keep.
-3. Find ambiguity, redundancy, and hidden assumptions. These are the things that silently break reuse.
-4. Check cross-agent portability. Spot provider-specific wording, tool names, or formats that won't travel.
-5. Check whether outputs are concrete and reusable. If an agent can't act on the output without guessing, the skill is leaking work onto the user.
-6. Summarize the highest-leverage fixes first. Small, ordered fixes beat a laundry list.
+2. Check whether the structure supports that job — sections that don't earn their keep are structural findings.
+3. Find ambiguity, redundancy, and hidden assumptions — the things that silently break reuse.
+4. Check cross-agent portability: provider-specific wording, tool names, or formats that won't travel.
+5. Check whether outputs are concrete enough to act on without guessing.
+6. Order the findings by leverage, not by discovery order.
 
 ## Output format
 
-### What is working
-Short list of strengths worth preserving. Name the specific element, not a generic positive.
+Shape the write-up to the artifact — a three-line prompt deserves a paragraph, a 200-line skill a structured report. Whatever the shape, a critique must convey three things:
 
-### Diagnostics
-Prioritized list, 1-5 items. Each item carries an explicit severity tag (`[HIGH]`, `[MED]`, `[LOW]`). When reviewing repo assets, prompts in files, or skills, cite concrete evidence for every `[HIGH]` and `[MED]` item — file path plus section or line when available. When failure outputs were supplied as input, each `[HIGH]` item must name the specific failure it explains. Bare position is not enough — make the priority signal visible.
-
-### Recommended changes
-Imperative commands. Prefer useful consolidation and reprioritization over mechanically mirroring Diagnostics 1:1. Consolidate where two issues share a fix; reprioritize where the cheapest or highest-leverage fix is not the first Diagnostics item. A direct 1:1 mapping is fine when that is clearest, but do not force one finding to become one recommendation just to preserve shape.
-
-### Failure modes
-Distinct recurrence scenarios — how the artifact fails under conditions not already named in Diagnostics. Do not restate Diagnostics in future tense. Each item introduces a new trigger, actor, interaction, or downstream effect (e.g. a recurrence scenario after a fix, a cross-effect with another system, a misuse pattern Diagnostics did not surface).
-
-### Minimal rewrite plan
-An ordered sequence with explicit sequencing or priority rationale — not a numbered subset of Recommended changes. State why items go in this order: dependency, reach, risk, or reversibility.
+- **Findings, prioritized, with evidence.** Severity-tag each finding (`[HIGH]`/`[MED]`/`[LOW]`); for repo assets, back every `[HIGH]` and `[MED]` with a file:line or a quoted phrase. When failure outputs were supplied, tie each `[HIGH]` to the specific failure it explains.
+- **What already works.** Name the specific elements worth preserving, so the next edit doesn't flatten them.
+- **What to do, in what order, and why that order.** Recommendations with their sequencing rationale — dependency, reach, risk, or reversibility. Consolidate where one fix covers several findings.
 
 ## Guardrails
 
-- read-only — produce findings, recommendations, and a plan; never a revised artifact
-- do not nitpick style before fixing structure
-- preserve strengths, not just list problems
-- focus on issues that affect actual reuse and execution
-- back significant repo/file findings with concrete evidence
-- keep the review actionable
+- read-only by default — edit only when the user asks for fixes
+- structure before style: don't nitpick wording while the skeleton is broken
+- every significant claim carries evidence a reader can check
+- keep it actionable: a short ordered list beats an exhaustive inventory
+
+## Failure modes
+
+- turning an unrequested critique into a rewrite
+- surfacing only negatives and losing what already works
+- a long list of low-priority nits that buries the real fix
+- severity tags assigned by position or count rather than impact
 
 ## When the review feels vague
 
-If the top-level pass keeps surfacing the same fuzzy complaint ("this just feels off"), switch to the categorized diagnostic in `references/failure-modes.md`. It splits issues into ambiguity, scope, context, portability, verification, and structure — which usually makes the real problem easier to name.
-
-## Common mistakes
-
-- turning the critique into a rewrite — produce findings, not a revised artifact
-- surfacing only negatives and losing the parts that already work
-- over-indexing on tone and wording when the real issue is missing structure
-- generating a long list of low-priority nits that buries the real fix
+If findings keep collapsing into "this just feels off," switch to the categorized diagnostic in `references/failure-modes.md` — ambiguity, scope, context, portability, verification, structure — which usually makes the real problem nameable.
 
 ## Example
 
-### Input
-A prompt that asks the agent to "make this better" without saying what better means.
+Input: a prompt that asks an agent to "make this better" with no definition of better, plus one failing sample (a longer-but-not-better rewrite).
 
-### Output
+A proportionate critique — the artifact is one sentence, so the write-up is short:
 
-**What is working**
-- intent to improve is clear
-- short enough to be edited easily
-
-**Diagnostics**
-1. `[HIGH]` success criteria are undefined — "better" is unbounded, so output varies run-to-run
-2. `[HIGH]` output format is missing — no template, so different agents return different shapes
-3. `[MED]` no instruction to preserve original intent — the agent may quietly change scope
-
-**Recommended changes**
-- define what "better" means and add an output template (covers Diagnostics 1 and 2)
-- add a constraint to preserve core intent
-
-**Failure modes**
-- agent makes the prompt longer but not better
-- agent changes tone or scope unintentionally on a later reuse
-
-**Minimal rewrite plan**
-1. add the goal — everything else depends on a defined target
-2. add intent-preservation constraint — cheap, prevents scope drift during the next two edits
-3. add the output template — highest reach, but only meaningful once the goal exists
+- `[HIGH]` "better" is undefined, so output varies run-to-run; the supplied failing sample is exactly this failure.
+- `[MED]` nothing says preserve the original intent, so scope drifts silently on reuse.
+- Working: the improve-intent is clear, and the prompt is short enough to edit safely.
+- Fix order: define "better" first (everything else depends on a target), then add an intent-preservation constraint (cheap, prevents drift while iterating). One consolidated edit covers both.
 
 ## References
 
