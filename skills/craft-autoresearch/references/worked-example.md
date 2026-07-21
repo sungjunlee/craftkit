@@ -2,7 +2,7 @@
 
 A walk-through of a full autoresearch cycle against a real CraftKit skill. **This is an illustrative example, not a record of an actual run** — numbers and outputs are plausible, but the loop has not been executed end-to-end. Use it as a concrete reference for the shape of a session and how KEEP/DISCARD judgments play out in practice.
 
-> **Note.** `craft-critique` is the read-only review skill — it surfaces findings and stops there. Its output has a fixed five-section shape, which is what makes it a clean autoresearch target here. The loop discipline the example teaches — one hypothesis per experiment, simplicity judgment on DISCARD, deletion as a real mutation level, comparative evals catching what binary misses — is what matters, not which skill happens to be the target.
+> **Note.** `craft-critique` is the read-only review skill — it surfaces findings and stops there. At the time of this example its output contract was a fixed five-section template, which made shape evals easy to write; that contract has since moved to a judgment contract (#150), so a fresh run today would score whether each required signal is conveyed rather than section shape — see `eval-guide.md` § "The prescription ratchet." The loop discipline the example teaches — one hypothesis per experiment, simplicity judgment on DISCARD, deletion as a real mutation level, comparative evals catching what binary misses — is what matters, not which skill happens to be the target.
 
 ## Setup
 

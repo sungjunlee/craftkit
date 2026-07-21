@@ -132,6 +132,7 @@ The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prev
 - Rollback touches only the files in the mutation — never broad reverts.
 - Autonomy is batch-based. Set a budget and stop condition up front, not "loop forever."
 - **If the baseline binary pass rate is ≥ 95%, do NOT start the mutation loop.** A saturated baseline means the suite only measures output shape, not quality — mutating against it produces noise. Strengthen the evals first: read 3-5 real outputs, name the quality dimensions the suite missed, add 2-3 new Tier 1-2 assertions, rebaseline. See `references/eval-guide.md` § "If your baseline scores near 100%."
+- Format and structure evals are floor checks — they guard regressions but never lead a KEEP. Let outcome/comparative evals decide KEEP/DISCARD, and when a fix would tighten the target's output format contract, prefer a judgment requirement (what the output must convey) instead. See `references/eval-guide.md` § "The prescription ratchet."
 - If eval scores rise but real outputs feel worse, treat it as a false-positive signal: review 10 real outputs and rebuild the evals before continuing.
 
 ## Failure modes

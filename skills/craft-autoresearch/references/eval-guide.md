@@ -35,9 +35,20 @@ If two or more of the first three answers are "no," or the fourth question has n
 - Failure-modes frequently restated Issues in future tense instead of naming a distinct dimension.
 - No severity or priority labels anywhere in Issues.
 
-The fix was to add four new assertions targeting those dimensions before mutating — not to celebrate the 100%. After strengthening, the same baseline dropped to 43% on the new suite and a single Level-1 mutation (tightening the Output-format subsection descriptions) flipped it to 100%, confirmed by a deletion experiment that held score while shortening the spec.
+The fix was to add four new assertions targeting those dimensions before mutating — not to celebrate the 100%. After strengthening, the same baseline dropped to 43% on the new suite and a single Level-1 mutation (tightening the Output-format subsection descriptions) flipped it to 100%, confirmed by a deletion experiment that held score while shortening the spec. (This same run seeded the fixed format rules that #150 later removed — see § The prescription ratchet below for what it teaches.)
 
 A second instance followed 2026-04-12 on `craft-prompt`: a six-assertion suite (structure + two exclusion + two logic + inclusion) saturated at 18/18 across three inputs even though the first three diagnostic questions all passed. The loose spots were two Logic evals phrased as "≥1 dimension named" and "at least one placeholder" — the skill as-written always produced ≥1 of each. The quality bars that actually mattered were proportionality (≤4 blocks for small requests, not 6) and breadth (≥2 placeholders for reusable templates, not 1). Adding E8/E9 at those stricter thresholds dropped the baseline to 22/24 (91.7%); a single Level-1+3 mutation (a new "Sizing heuristic" block in the skill's Build step) flipped both failing evals, and a deletion experiment at exp-2 confirmed the rule is lean. This second instance motivated the fourth diagnostic question above.
+
+## The prescription ratchet
+
+The saturation trap above has a mirror image on the mutation side. Format and structure evals are the cheapest to write and the cheapest to score, so suites over-sample them — and the easiest mutation that flips a failing format eval is a *tighter format rule* in the target's output contract. Run enough passes and the contract accretes fixed section lists, item caps, and anti-gaming clauses ("not a subset of…", "no future-tense restatement"). Every pass ends green; the artifact ossifies. That scaffolding once helped weaker models produce usable shape, but it constrains stronger models, which do better with judgment criteria — a statement of what the output must *convey* — than with a section template.
+
+Worked example: the craft-critique run above. Its four added assertions named real quality gaps (prioritization, ordering rationale, distinct failure dimensions, severity labels), but the winning mutations encoded them as fixed format rules in the output contract, and follow-up passes tightened those further. By 2026-07 the accumulated template was removed wholesale and replaced with a judgment contract (#150; `docs/skill-anatomy.md` § Output judgment contracts). The quality dimensions were right; freezing them into shape rules was the ratchet.
+
+Two rules keep a loop out of it:
+
+- **Format evals are floor checks.** They catch regressions — missing artifact, broken frontmatter, budget violations — but they never *lead* a KEEP. KEEP/DISCARD is led by outcome and comparative evals (is the output more actionable, more resumable, easier to review), with format checks riding along as guards.
+- **Prefer conveyance fixes over shape fixes.** When the obvious mutation is "add a format rule to the output contract," first check whether a judgment requirement — naming the signal the output must carry and letting shape scale with the artifact — flips the same failing eval. If the target already carries a judgment contract, don't score section shape at all; score whether each required signal is conveyed.
 
 ## Eval types
 
