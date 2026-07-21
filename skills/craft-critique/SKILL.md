@@ -2,7 +2,7 @@
 name: craft-critique
 description: Critique prompts or skills without editing. Use for review-only diagnosis, audit, "feels off" artifacts, or findings before a rewrite.
 metadata:
-  related-skills: "craft-tune, craft-autoresearch"
+  related-skills: "craft-autoresearch"
 ---
 
 # craft-critique
@@ -13,7 +13,7 @@ Critique a prompt or skill and surface ambiguity, hidden assumptions, weak struc
 
 Critiquing before rewriting matters because most "make this better" requests would be better served by structural fixes than by new wording. A short diagnostic pass exposes what's actually broken so the next edit can be surgical.
 
-This is the `/review`-style half of the pair: run craft-critique to *see* what's wrong; run `craft-tune` when you want the autonomous critique-and-edit loop to *fix* it. Keeping the review separate means you can audit an artifact, decide, and only then choose whether to edit.
+This is the `/review`-style pass: run craft-critique to *see* what's wrong before anything edits the artifact. Keeping the review separate means you can audit an artifact, decide, and only then choose whether to edit.
 
 ## Use this when
 
@@ -23,7 +23,7 @@ This is the `/review`-style half of the pair: run craft-critique to *see* what's
 - a large rewrite is tempting and a critique should come first
 - you want findings to act on yourself, not an agent editing the file
 
-If the user wants the artifact actually edited — "fix it," "sharpen it," "make it better and apply the changes" — use `craft-tune`, which runs the autonomous review-and-fix loop.
+If the user wants the artifact actually edited — "fix it," "sharpen it," "make it better and apply the changes" — apply the fixes directly, guided by the findings; no separate skill is needed.
 
 ## Inputs
 
@@ -73,7 +73,7 @@ If the top-level pass keeps surfacing the same fuzzy complaint ("this just feels
 
 ## Common mistakes
 
-- turning the critique into a rewrite — produce findings, not a revised artifact (that's `craft-tune`'s job)
+- turning the critique into a rewrite — produce findings, not a revised artifact
 - surfacing only negatives and losing the parts that already work
 - over-indexing on tone and wording when the real issue is missing structure
 - generating a long list of low-priority nits that buries the real fix

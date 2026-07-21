@@ -81,9 +81,9 @@ Improve a tuning skill using older prompt-builder assets and meta-skills as refe
 Strengthen the tuning skill so it produces more consistent and portable edits.
 
 **Reference patterns**
-- explicit inputs and outputs — source: `skills/craft-tune/SKILL.md` § Inputs / Final output
-- minimal-diff editing — source: `skills/craft-tune/SKILL.md` § Guardrails
-- critique before revision — source: `skills/craft-critique/SKILL.md` § Steps and `skills/craft-tune/SKILL.md` § How the loop runs
+- explicit inputs and outputs — source: `skills/craft-autoresearch/SKILL.md` § Inputs / Final artifact
+- minimal-diff editing — source: `skills/craft-prompt/references/shared-principles.md` (cut order, right-sized)
+- critique before revision — source: `skills/craft-critique/SKILL.md` § Steps
 - examples embedded in docs — source: `skills/craft-prompt/references/prompt-patterns.md` § Review prompts
 
 **Adopt**
@@ -96,9 +96,9 @@ Strengthen the tuning skill so it produces more consistent and portable edits.
 - giant all-in-one instructions — makes the always-loaded `SKILL.md` harder to inspect and maintain
 
 **Recommended edits**
-- `skills/craft-tune/SKILL.md` § Final output — tighten the changelog fields so each entry names changed / why / effect
-- `skills/craft-tune/SKILL.md` § Failure modes — add a short note about scope drift during repeated edits
-- `skills/craft-tune/SKILL.md` § Example — replace the generic example with one compact full-loop run
+- the tuning skill's § Final output — tighten the changelog fields so each entry names changed / why / effect
+- the tuning skill's § Failure modes — add a short note about scope drift during repeated edits
+- the tuning skill's § Example — replace the generic example with one compact full-loop run
 
 **Risks**
 - the surveyed sources are all CraftKit-adjacent, so the recommendations may overfit to this repo's naming conventions

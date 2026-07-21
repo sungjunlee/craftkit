@@ -66,7 +66,7 @@ Non-English prompts: write the prompt body in the requested language, but keep X
 
 ## Principles
 
-Shared with craft-tune — full statements in `references/shared-principles.md`:
+Full statements in `references/shared-principles.md`:
 
 - Context beats instruction
 - Outcome over process
@@ -111,7 +111,7 @@ Note outside the block: "Swap `{{diff}}` for the actual diff before sending."
 
 ## References (load on demand)
 
-- `references/shared-principles.md` — full statements of the four principles shared with craft-tune
+- `references/shared-principles.md` — full statements of the four principles
 - `references/components-guide.md` — Deep dive on each building block with examples and anti-patterns
 - `references/prompt-patterns.md` — 8 common patterns: research, code gen, review, writing, extraction, analysis, handoff, decision
 - `references/quality-checklist.md` — Quality checks with failure modes and fixes
