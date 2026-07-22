@@ -25,7 +25,7 @@ Start with the smallest skill that does the job:
 Reach for the other skills when the job gets more specific:
 
 - `craft-survey` — study prior art before drafting.
-- `craft-autoresearch` — run measured iterations with test inputs and an eval runner.
+- `craft-autoresearch` — deliberate, eval-backed experimentation when you bring test inputs and measurable criteria; explicit-only, never a default next step.
 - `craft-skill-spec` — decide the shape of a new skill-like artifact before writing it.
 - `craft-harness` — plan or repair repo-local agent guidance and related surfaces.
 - `craft-handoff` — end a long session with a durable doc plus a resume prompt.

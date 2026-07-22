@@ -30,7 +30,9 @@ Do not use this when:
 - the eval runner cannot be automated at reasonable cost
 - the artifact is too new and has no rough baseline yet
 
-This skill is for optimizing prompt and skill artifacts against output-quality evals, not for generic code-metric loops (test coverage, bundle size, lint errors).
+## Invocation posture
+
+Explicit-only and deliberately dormant. Invoke only when the user asks for iterative prompt/skill experimentation or brings a measurable eval problem — ordinary authoring, critique, tuning, implementation, and review never route here. The durable asset is the experiment contract and eval-design methodology; the loop executor is swappable, not a canonical runtime, and low usage is expected — it implies no expansion work. Scope is prompt/skill output quality, not generic code-metric loops (test coverage, bundle size, lint errors).
 
 ## Inputs
 
