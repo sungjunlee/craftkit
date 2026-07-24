@@ -73,18 +73,9 @@ Run the gather script or fallback commands, then scan the conversation for the s
 
 ### 2. Distill
 
-Apply these inclusion tests:
+The principle: include only what the next session cannot reconstruct from the diff alone. Every decision needs a `because <reason>`. Omit empty sections rather than padding. Put rationale, alternatives, and time order in the doc; put snapshot lines for orientation and execution in the prompt.
 
-- **Done**: include outcomes that changed code, docs, issues, branches, or project state.
-- **State**: include branch, diff status, and verified test status. Do not invent test commands.
-- **Decisions**: include only choices a future agent could not reconstruct from the diff alone; every item needs a reason.
-- **What didn't work**: include failed or abandoned approaches in the doc, not the prompt.
-- **Blockers**: include only items that actively block the next step.
-- **Next**: make each step observable, not aspirational.
-- **Existing artifacts**: link only to artifacts the next session can reach. Summarize untracked local context if a fresh worktree would miss it.
-
-- **Prompt**: snapshot lines for orientation and execution.
-- **Doc**: rationale, alternatives, time order, and failure context.
+Keep failure context and abandoned approaches in the doc, not the prompt. Make next steps observable, not aspirational. Link only to artifacts the next session can actually reach.
 
 ### 3. Compose the rich doc
 
@@ -132,15 +123,17 @@ Two artifacts, always produced together:
 - **Rich doc** — `DOC_PATH` (e.g. `~/.craftkit/handoff/docs/<worktree-slug>.md`). Shape: frontmatter plus a single `<context>...</context>` body.
 - **Resume prompt** — `PENDING_PATH` (e.g. `~/.craftkit/handoff/pending/<timestamp>-<worktree-slug>.md`). Shape: `<context>` (Project, State, Done snapshot, Decisions, Background) / `<task>` (next action, success criteria) / `<rules>` (path, doc-read, key-file, verification).
 
-Chat return, in order:
+The machine wiring — `gather-state.mjs`, the paired doc+prompt layout, archive-before-overwrite, cross-platform clipboard copy, and the optional auto-load hook — is unchanged and is the durable part of this skill. Only how the artifact's prose is shaped is in the model's judgment below.
 
-1. resume prompt in a fenced `xml` block
-2. confirmation line — prompt path, doc path, clipboard status
-3. next-step instruction
-4. optional auto-load hook pointer, when relevant
-5. optional `/goal` candidate, only when the next task is durable, verifiable, and multi-turn
+**Chat return — must-convey.** Shape the chat return at your judgment, but it must convey:
 
-Do not paste the rich doc in chat when it was written successfully. See `references/artifact-shapes.md` for the exact skeletons.
+- the **resume prompt** in a fenced block (so it can be copied directly);
+- a **confirmation line** naming the prompt path, doc path, and clipboard status;
+- a **next-step instruction**.
+
+Orientation floor (non-negotiable): the resume prompt itself must convey the branch/state, a concrete next action with success criteria, and the instruction to read the rich doc first. These hold even when the doc is unreachable.
+
+Optional, when relevant: an auto-load hook pointer, or a `/goal` candidate when the next task is durable, verifiable, and multi-turn. Do not paste the rich doc in chat when it was written successfully. See `references/artifact-shapes.md` for the exact skeletons.
 
 ## Guardrails
 
