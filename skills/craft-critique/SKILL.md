@@ -9,9 +9,9 @@ metadata:
 
 ## Purpose
 
-Diagnose a prompt or skill — surface ambiguity, hidden assumptions, weak structure, portability issues, and likely failure modes — and say what to do about it, in priority order. The default is read-only: findings and recommendations, no edits.
+Diagnose a prompt or skill — surface ambiguity, hidden assumptions, weak structure, over-specification, portability issues, and likely failure modes — and say what to do about it, in priority order. The default is read-only: findings and recommendations, no edits.
 
-Critiquing before rewriting matters because most "make this better" requests are better served by structural fixes than by new wording. A short diagnostic pass exposes what's actually broken so the next edit can be surgical.
+Critiquing before rewriting matters because most "make this better" requests are better served by structural fixes — often by cutting — than by new wording. A short diagnostic pass exposes what's actually broken, or merely bloated, so the next edit can be surgical.
 
 ## Use this when
 
@@ -20,7 +20,7 @@ Critiquing before rewriting matters because most "make this better" requests are
 - a repo asset needs review before being generalized or shipped
 - a large rewrite is tempting and a critique should come first
 
-If the user also wants the fixes applied, apply them guided by the findings — smallest diff first, preserving the artifact's intent. No separate protocol is needed; the critique is the plan.
+If the user also wants the fixes applied, apply them guided by the findings — smallest diff first, preserving the artifact's intent. No separate protocol is needed; the critique is the plan. (If the ask is purely "make this smaller," that's a simplify pass — same subtractive lens, no findings ceremony.)
 
 ## Inputs
 
@@ -32,7 +32,7 @@ If the user also wants the fixes applied, apply them guided by the findings — 
 ## Steps
 
 1. Identify the artifact's real job. If you can't state it in one sentence, that's already a finding.
-2. Check whether the structure supports that job — sections that don't earn their keep are structural findings.
+2. Check whether each part earns its place — sections, rules, or detail that don't carry weight are findings to cut, including instruction a capable model already follows without being told.
 3. Find ambiguity, redundancy, and hidden assumptions — the things that silently break reuse.
 4. Check cross-agent portability: provider-specific wording, tool names, or formats that won't travel.
 5. Check whether outputs are concrete enough to act on without guessing.
@@ -42,22 +42,22 @@ If the user also wants the fixes applied, apply them guided by the findings — 
 
 Shape the write-up to the artifact — a three-line prompt deserves a paragraph, a 200-line skill a structured report. Whatever the shape, a critique must convey three things:
 
-- **Findings, prioritized, with evidence.** Severity-tag each finding (`[HIGH]`/`[MED]`/`[LOW]`); for repo assets, back every `[HIGH]` and `[MED]` with a file:line or a quoted phrase. When failure outputs were supplied, tie each `[HIGH]` to the specific failure it explains.
+- **Findings, prioritized, with evidence — gaps and excess alike.** What should be cut (a section, rule, or detail that doesn't earn its place) is as much a finding as what's missing. Severity-tag each (`[HIGH]`/`[MED]`/`[LOW]`); for repo assets, back every `[HIGH]` and `[MED]` with a file:line or a quoted phrase. When failure outputs were supplied, tie each `[HIGH]` to the specific failure it explains.
 - **What already works.** Name the specific elements worth preserving, so the next edit doesn't flatten them.
 - **What to do, in what order, and why that order.** Recommendations with their sequencing rationale — dependency, reach, risk, or reversibility. Consolidate where one fix covers several findings.
 
 ## Guardrails
 
 - read-only by default — edit only when the user asks for fixes
-- structure before style: don't nitpick wording while the skeleton is broken
+- structure before style, and weigh subtraction before addition: don't nitpick wording while the skeleton is broken, and don't prescribe what a capable model already does well
 - every significant claim carries evidence a reader can check
 - keep it actionable: a short ordered list beats an exhaustive inventory
 
 ## Failure modes
 
 - turning an unrequested critique into a rewrite
+- only ever adding — surfacing gaps to fill while never flagging detail to cut, so applying the critique inflates the artifact
 - surfacing only negatives and losing what already works
-- a long list of low-priority nits that buries the real fix
 - severity tags assigned by position or count rather than impact
 
 ## When the review feels vague
