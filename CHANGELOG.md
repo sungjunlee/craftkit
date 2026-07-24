@@ -4,6 +4,10 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Removed (BREAKING)
+
+- **Removed `craft-survey`.** Real-world usage collapsed to near zero, the skill was reported non-functional, and it carried no scripts or references beyond a prescriptive prior-art survey workflow that search-enabled frontier models already perform natively. `skills/craft-survey/` deleted; skill-authoring prior-art needs remain served by `craft-skill-spec`'s time-aware radar at `skills/craft-skill-spec/references/radar/`.
+
 ## [0.2.0] — 2026-07-21
 
 ### Removed (BREAKING)

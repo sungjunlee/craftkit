@@ -187,4 +187,4 @@ For third-party adoption, inspect the files that will execute or steer tools. A 
 ## Open questions
 
 - Whether `craft-harness` should eventually edit files directly by default, or stay proposal-first with an explicit apply step.
-- Whether external marketplace search should live inside `craft-harness` or call `craft-survey` as a required sub-step.
+- Whether external marketplace search should live inside `craft-harness` or use `craft-skill-spec`'s radar as a required input.

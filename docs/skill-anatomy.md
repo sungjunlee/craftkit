@@ -6,14 +6,14 @@ It is a contract, not a tutorial: read the family table, then the deviation chec
 
 ## Scope
 
-- **craft-\*** — artifact skills: `craft-prompt`, `craft-skill-spec`, `craft-critique`, `craft-survey`, `craft-autoresearch`, `craft-handoff`, `craft-harness`.
+- **craft-\*** — artifact skills: `craft-prompt`, `craft-skill-spec`, `craft-critique`, `craft-autoresearch`, `craft-handoff`, `craft-harness`.
 - **spec-\*** — repo spec-pipeline skills: `spec-charter`, `spec-system-map`, `spec-grill`. Router-contract variant, not the craft-* shape.
 
 ## Frontmatter contract
 
 Required for every skill, both families: `name` (matches the skill directory exactly) and `description` (states what the skill does and when to use it; ≤50 words, enforced by `scripts/verify.mjs`).
 
-Conditionally required: `disable-model-invocation: true` for explicit-only (higher-ceremony, mutating, or side-effecting) workflows, paired with `skills/<name>/agents/openai.yaml` setting `policy.allow_implicit_invocation: false` (CLAUDE.md "Skill file conventions"; enforced by `checkOpenAiInvocationPolicies`). Already consistent across all 10 skills — no deviations found here.
+Conditionally required: `disable-model-invocation: true` for explicit-only (higher-ceremony, mutating, or side-effecting) workflows, paired with `skills/<name>/agents/openai.yaml` setting `policy.allow_implicit_invocation: false` (CLAUDE.md "Skill file conventions"; enforced by `checkOpenAiInvocationPolicies`). Already consistent across all 9 skills — no deviations found here.
 
 spec-* only, required (all three carry these identically-shaped today): `argument-hint` (e.g. `"[create|amend|reassess]"`), `compatibility: Requires git.`, `metadata.related-skills`.
 
@@ -23,7 +23,7 @@ craft-* policy for these three fields (#113, decided): each is conditional on a 
 - `argument-hint` — add only where a skill has real positional-argument structure (explicit modes like `create|amend`). No craft-* skill has this today, so no craft-* skill carries `argument-hint`.
 - `compatibility` — declare only for real requirements (spec-* skills require git). Absence means no special requirements, not an oversight. No craft-* skill has a comparable hard requirement today.
 
-**H1 rule**: the H1 is the literal skill slug in its own case, e.g. `# craft-critique`, matching `name` — not a prose title. All 10 skills follow this (spec-* converged in #111).
+**H1 rule**: the H1 is the literal skill slug in its own case, e.g. `# craft-critique`, matching `name` — not a prose title. All 9 skills follow this (spec-* converged in #111).
 
 ## Heading case rule
 
@@ -102,12 +102,11 @@ Exhaustive as of this writing. All items below are resolved as of the #126/#133 
 - [x] `craft-prompt`: rename `## Process` to `## Workflow`
 - [x] `craft-prompt`: Title Case H3s under the old `## Process` — resolved by folding the steps into a numbered list under `## Workflow` (no H3s remain)
 
-### #113 — frontmatter parity + craft-survey invocation policy
+### #113 — frontmatter parity
 
 - [x] craft-* skills: `metadata.related-skills` added to the `craft-critique` ↔ `craft-tune` ↔ `craft-autoresearch` triangle (each lists the other two), matching spec-*'s YAML shape; no other craft-* skill gets it (no comparably tight cluster) — the triangle became a critique ↔ autoresearch pair when `craft-tune` was removed (2026-07)
 - [x] craft-* skills: `argument-hint` policy decided — only for skills with real positional-argument structure (modes like `create|amend`); no craft-* skill qualifies, so none carry it
 - [x] craft-* skills: `compatibility` policy decided — declare only for real requirements (spec-* require git); no craft-* skill has a comparable requirement, so none carry it
-- [x] `craft-survey`: stays explicit-only — read-only is necessary but not sufficient; survey launches a time-consuming multi-source web research workflow, higher-ceremony than a quick read-only diagnosis like `craft-critique`, so the user opts in explicitly (documented in README "Invocation policy")
 
 ### Not yet mapped to an issue
 

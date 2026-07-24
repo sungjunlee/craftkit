@@ -31,7 +31,6 @@ This skill is not a "build every surface" workflow. Its job is placement judgmen
 ## How it differs from related skills
 
 - `craft-skill-spec` designs one reusable artifact (a skill, skill suite, subagent, or plugin); `craft-harness` decides what a repo's harness needs overall, where each piece belongs, and hands off artifact design to `craft-skill-spec` when warranted.
-- `craft-survey` studies prior art. `craft-harness` uses prior-art search as one step when buy-vs-build matters.
 - `craft-critique` reviews a prompt or skill without editing. `craft-harness` may use critique-style checks on the harness plan before applying changes.
 
 ## Inputs

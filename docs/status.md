@@ -31,7 +31,6 @@ The verify command checks:
 |---|---|---|---|
 | `craft-prompt` | `npm run verify` checks frontmatter and spine budget | autoresearch pass artifacts under `~/.craftkit/autoresearch/craft-prompt/` and commit bodies | keep volatile provider guidance in guides |
 | `craft-critique` | `npm run verify` checks frontmatter and spine budget | autoresearch pass artifacts under `~/.craftkit/autoresearch/craft-critique/` and commit bodies | re-run with conveyance evals (not section-shape evals) after the 2026-07 judgment-contract rewrite |
-| `craft-survey` | `npm run verify` checks frontmatter and spine budget | autoresearch pass artifacts under `~/.craftkit/autoresearch/craft-survey/` and commit bodies | example must keep proving provenance and edit-target rules |
 | `craft-autoresearch` | `npm run verify` checks terminology, frontmatter, and spine budget | reflexive autoresearch pass artifacts under `~/.craftkit/autoresearch/craft-autoresearch/` and commit bodies | examples must stay synchronized with the eval-runner contract fields |
 | `craft-skill-spec` | `npm run verify` checks frontmatter and spine budget | contract evidence pass at `~/.craftkit/autoresearch/craft-skill-spec/2026-06-18-first-evidence-pass/` | replay after the next radar refresh against real drafted specs |
 | `craft-harness` | `npm run verify` checks frontmatter and spine budget | contract evidence pass at `~/.craftkit/autoresearch/craft-harness/2026-06-18-first-evidence-pass/` | replay after the next substantial wording change against real agent outputs |

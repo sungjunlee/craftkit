@@ -8,7 +8,7 @@ CraftKit is a cross-agent toolkit for creating, improving, and operationalizing 
 
 Prompt assets and agent skills often become fragmented, provider-specific, and hard to reuse. CraftKit exists to keep them file-first, portable, reviewable, and easy to improve over time.
 
-CraftKit covers two wedges. The first is artifact quality: author, critique, tune, and carry forward prompts and skills (`craft-*`). The second is the repo spec axis: `spec-charter -> spec-system-map -> spec-grill` turns a brownfield repo's direction, system shape, and capability boundaries into reference contracts that other tools can consume — most directly `dev-backlog`, which measures sprints and triage against them.
+CraftKit covers two wedges. The first is artifact quality: author prompts, design skills, critique assets, run eval-backed experiments, configure repo harnesses, and carry sessions forward (`craft-*`). The second is the repo spec axis: `spec-charter -> spec-system-map -> spec-grill` turns a brownfield repo's direction, system shape, and capability boundaries into reference contracts that other tools can consume — most directly `dev-backlog`, which measures sprints and triage against them.
 
 CraftKit is not a general coding-agent workflow suite, project-management layer, deployment system, or runtime framework. The spec axis defines what good looks like — it does not manage tasks, sprints, or backlog priority; that stays with `dev-backlog`. When a workflow needs those things, CraftKit should produce clear files, specs, or handoffs that another tool can use rather than becoming the tool itself.
 
@@ -24,7 +24,6 @@ Start with the smallest skill that does the job:
 
 Reach for the other skills when the job gets more specific:
 
-- `craft-survey` — study prior art before drafting.
 - `craft-autoresearch` — deliberate, eval-backed experimentation when you bring test inputs and measurable criteria; explicit-only, never a default next step.
 - `craft-skill-spec` — decide the shape of a new skill-like artifact before writing it.
 - `craft-harness` — plan or repair repo-local agent guidance and related surfaces.
@@ -81,14 +80,13 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | `craft-skill-spec` | a new skill needs a concrete spec based on current CraftKit skill-radar judgments before writing `SKILL.md` | returns a spec; reads radar references |
 | `craft-harness` | a repo's agent guidance needs placement decisions, cleanup, sync, or a gated change plan across Codex and Claude Code | returns a repo-local plan or small markdown/skill edits; gates risky surfaces |
 | `craft-critique` | an existing prompt or skill needs a review — read-only by default — before editing or shipping | surfaces strengths, prioritized findings, and fix ordering; applies the fixes only when asked |
-| `craft-survey` | a new skill should be grounded in prior art before drafting | returns read-only recommendations |
 | `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration | runs evals and may edit mutable files |
 | `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt | writes handoff files and may copy to clipboard |
 | `spec-charter` | a repo needs a project-wide spec axis for direction, Objectives, Decisions, or stale-spec reassessment | creates or amends `spec/charter.md` |
 | `spec-system-map` | a brownfield repo needs high-level system shape, runtime boundaries, flows, invariants, and candidate capability boundaries | creates or amends `spec/system-map.md` |
 | `spec-grill` | candidate repo boundaries need to become accepted capability contracts with Behaviors and Hard Constraints | creates or refines `spec/capabilities.md` after evidence review |
 
-When two skills could trigger, choose the least invasive one that answers the request: review-only and apply/fix/improve wording both go to `craft-critique` (read-only by default; applies fixes when asked); repeated measurable failures go to `craft-autoresearch`; prior-art questions go to `craft-survey`; repo harness placement and Codex/Claude setup work goes to `craft-harness`.
+When two skills could trigger, choose the least invasive one that answers the request: review-only and apply/fix/improve wording both go to `craft-critique` (read-only by default; applies fixes when asked); repeated measurable failures go to `craft-autoresearch`; prior-art questions about skill design go to the `craft-skill-spec` radar; repo harness placement and Codex/Claude setup work goes to `craft-harness`.
 
 Terminology note: `craft-harness` means repo-local agent guidance and provider surfaces. `craft-autoresearch` uses an **eval runner** for replaying test inputs and scoring outputs. Do not use "harness" for both.
 
@@ -100,7 +98,7 @@ Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML 
 
 ## Maintainer status
 
-Five skills (`craft-prompt`, `craft-critique`, `craft-survey`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-skill-spec`, `craft-harness`, and the `spec-*` skills are newer and have maintainer-local or repo-local contract evidence, but have not yet been through full autoresearch passes. Publicly reproducible status and local-maintainer evidence boundaries are tracked in [`docs/status.md`](docs/status.md).
+Four skills (`craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-handoff`) have been optimized through `craft-autoresearch` passes against eval suites — including `craft-autoresearch` itself (reflexive meta-pass). `craft-skill-spec`, `craft-harness`, and the `spec-*` skills are newer and have maintainer-local or repo-local contract evidence, but have not yet been through full autoresearch passes. Publicly reproducible status and local-maintainer evidence boundaries are tracked in [`docs/status.md`](docs/status.md).
 
 ## What belongs in CraftKit
 
@@ -111,7 +109,7 @@ Five skills (`craft-prompt`, `craft-critique`, `craft-survey`, `craft-autoresear
 - project-specific agent harness design and maintenance
 - diagnostic review and minimal-diff editing
 - iterative improvement loops
-- survey-backed best practices
+- radar-backed best practices
 - time-aware curation of evolving skill-authoring patterns
 - copy-pasteable outputs for agent workflows
 
@@ -158,8 +156,6 @@ policy:
 ```
 
 Use explicit-only policy for skills that edit files, write artifacts, mutate clipboard state, run eval loops, create spec files, inspect repo harness surfaces, or otherwise turn a broad user request into a higher-ceremony workflow. Keep the `description` concise and useful for manual skill lists even when it is not injected for implicit routing.
-
-Read-only is necessary but not sufficient for implicit invocation: `craft-survey` is read-only yet stays explicit-only, because it launches a time-consuming multi-source web research workflow rather than a quick read-only diagnosis like `craft-critique`. That higher ceremony means the user should opt in directly instead of having it triggered implicitly.
 
 ## Routing checks
 
