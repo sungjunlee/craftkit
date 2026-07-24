@@ -121,6 +121,9 @@ Four skills (`craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-hand
 4. Cross-agent portability (core skill spines stay provider-neutral; platform-specific detail stays in guides or reference files)
 5. Eval-driven improvement when possible
 6. Copy-pasteable results over fancy abstractions
+7. Weight follows durability — as models improve, move each skill's center of gravity from "tell the model how to think" toward "give the model durable state and direction it cannot hold on its own"
+
+Principle 7 is the axis CraftKit is actively re-sized against: machinery (deterministic paths, clipboard, hooks, archiving), time-sensitive curated knowledge (radar, platform surfaces), and direction-setting judgment contracts are model-independent and stay; raw prescription erodes as models improve and gets cut. The 2026-07 right-sizing pass applied it — removing `craft-survey`, shrinking `craft-harness`, and loosening `craft-critique` and `craft-handoff` toward judgment over fixed format ([`docs/prd-2026-07-rightsizing.md`](docs/prd-2026-07-rightsizing.md)).
 
 For evolving skill-authoring guidance, the `craft-skill-spec` skill carries its own radar layer at `skills/craft-skill-spec/references/radar/` — start with `current.md` there and consult the dated snapshots only when a `watch` item needs deeper context.
 

@@ -4,9 +4,20 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-07-24
+
+The 2026-07 right-sizing pass (`docs/prd-2026-07-rightsizing.md`, PRD-RS). Separates the felt utility decline as models improve into two axes — model erosion (loosen prescription) vs usage (remove) — and moves each skill's center of gravity from "tell the model how to think" toward "give the model durable state and direction it cannot hold on its own."
+
 ### Removed (BREAKING)
 
 - **Removed `craft-survey`.** Real-world usage collapsed to near zero, the skill was reported non-functional, and it carried no scripts or references beyond a prescriptive prior-art survey workflow that search-enabled frontier models already perform natively. `skills/craft-survey/` deleted; skill-authoring prior-art needs remain served by `craft-skill-spec`'s time-aware radar at `skills/craft-skill-spec/references/radar/`.
+
+### Changed
+
+- **Right-sized `craft-harness`.** Dropped the 7-mode lifecycle taxonomy and the 8-subsection fixed `## Output format`; the spine (218 → 151 lines) now states a single job — decide where agent guidance belongs and make or propose the smallest useful harness change — with a judgment-contract output. Risk gates, placement rules, and the five curated references are preserved. A completion vision (feed the harness from the `spec-*` axis) and a dated use-or-delete checkpoint are recorded in `docs/craft-harness-completion-vision.md`.
+- **Re-aimed `craft-critique` toward subtraction.** Findings now convey gaps and excess alike — what should be cut is a first-class finding, including instruction a capable model already follows without being told — plus a guardrail against prescribing what a capable model already does well. The judgment-contract spine stays at 80 lines.
+- **Loosened `craft-handoff`'s content contract.** The per-section distill tests and the fixed ordered chat-return became must-convey judgment requirements. The machinery (`gather-state.mjs`, paired doc+prompt layout, archive-before-overwrite, clipboard, auto-load hook) is unchanged, and a non-negotiable orientation floor (branch/state, next action with success criteria, read-the-doc-first) is preserved.
+- Recorded the center-of-gravity design principle (README § Design principles #7; `docs/skill-anatomy.md` § Documented exemptions): machinery, curated knowledge, and judgment contracts are model-independent and stay; raw prescription erodes and is cut.
 
 ## [0.2.0] — 2026-07-21
 
@@ -68,6 +79,7 @@ Initial public-ready release.
 - `docs/product.md`, `docs/roadmap.md`, `docs/migration.md`, `docs/examples/tune-a-prompt.md`.
 - MIT license.
 
+[0.3.0]: https://github.com/sungjunlee/craftkit/releases/tag/v0.3.0
 [0.2.0]: https://github.com/sungjunlee/craftkit/releases/tag/v0.2.0
 [0.1.1]: https://github.com/sungjunlee/craftkit/releases/tag/v0.1.1
 [0.1.0]: https://github.com/sungjunlee/craftkit/releases/tag/v0.1.0
