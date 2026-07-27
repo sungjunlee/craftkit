@@ -179,7 +179,7 @@ describe("readCharterObjectives", () => {
     assert.deepEqual(readCharterObjectives(repo), []);
   });
 
-  it("parses validated/active/deferred objectives from spec/charter.md", () => {
+  it("parses every Tier-2 status from spec/charter.md", () => {
     const charter = `---
 revision: 1
 ---
@@ -190,13 +190,18 @@ revision: 1
 - O1 [validated] outcome one · src: user
 - O2 [active]    outcome two · src: user
 - O3 [deferred]  outcome three deferred to follow-up
+- O4 [implemented] outcome four · src: user
 `;
     write(repo, "spec/charter.md", charter);
     const objectives = readCharterObjectives(repo);
-    assert.equal(objectives.length, 3);
+    assert.equal(objectives.length, 4);
     assert.equal(objectives[0].id, "O1");
     assert.equal(objectives[0].status, "validated");
     assert.match(objectives[0].predicate, /outcome one/);
+    // An implemented objective must survive the read: dropping it silently would hide
+    // built-but-unadopted work from the charter count and capability hints.
+    assert.equal(objectives[3].status, "implemented");
+    assert.match(objectives[3].predicate, /outcome four/);
   });
 
   it("falls back to legacy root CHARTER.md", () => {
