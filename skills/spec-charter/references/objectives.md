@@ -10,7 +10,7 @@ The predicate should map to a verification path you could write down today: a co
 
 ## ✅ Good Predicates
 
-Each example pairs a predicate with the concrete check that would advance its status to `validated`.
+Each example pairs a predicate with the concrete check that would advance its status to `implemented`. A predicate whose check is only producer-observable can never exceed `implemented`; adoption proof for `validated` is defined in [`amendment.md`](amendment.md).
 
 1. **"A user can pull open GitHub issues into `backlog/tasks/` without API tokens beyond `gh auth`"**
    *Verification:* run `node scripts/sync-pull.js` against a fresh repo; assert `backlog/tasks/*.md` exists and no token was prompted. A scenario predicate with a runnable check.
