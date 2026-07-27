@@ -62,7 +62,7 @@ Absence is supported. Projects opt in by creating the file; other skills degrade
 | Tier | Sections | Mutation discipline | Rationale |
 |------|----------|---------------------|-----------|
 | **1 · Direction** | Problem, Approach, Non-Goals | Human-gated: propose -> confirm -> apply. Slowest-moving: the core that survives if scope shrinks. | A stable core is what makes the moving parts meaningful. |
-| **2 · Predicates** | Objectives | Status advances through `implemented` then `validated` require **proof** (implementation, then adoption — see `references/amendment.md`). Deferral requires a cited parking or scope-change rationale. Adding/removing an objective is human-gated. | You cannot evolve the axis to declare victory; you must prove it. |
+| **2 · Predicates** | Objectives | Statuses run `active` → `implemented` → `validated`, plus `deferred`; each advance requires **proof** under the gate in `references/amendment.md`. Adding/removing an objective is human-gated. | You cannot evolve the axis to declare victory; you must prove it. |
 | **3 · History** | Decisions | **Append-only.** Never edit or delete a row; reverse via a new `supersedes` row. | Provenance is immutable. |
 
 This tiering prevents the axis from self-evolving into a rubber-stamp: direction changes are gated, objective status requires proof, and history is frozen.
@@ -101,7 +101,7 @@ First re-read `spec/charter.md`. If it is absent but root `CHARTER.md` exists, a
 Apply the 3-tier discipline:
 
 - Tier 1 plus objective add/remove: surface stale or weak items, challenge them, propose concrete diffs, confirm with the user, then apply. Do not rubber-stamp.
-- Tier 2 status advance: apply the proof gate in `references/amendment.md` (`active` → `implemented` on producer-side proof; `implemented` → `validated` on cited adoption). For `active` → `deferred`, require a cited parking or scope-change rationale. Without the required evidence or rationale, refuse the advance and flag it.
+- Tier 2 status advance: apply the proof gate in `references/amendment.md`; it is the sole authority for which evidence each advance requires. Without the required evidence or rationale, refuse the advance and flag it.
 - Tier 3 Decisions: append only. Never edit or delete an existing row; a reversal is a new row with `supersedes`.
 
 After applying an accepted amendment, bump `last_amended` to today and increment `revision`. Re-read the result and protect the ~5-minute-read property by collapsing long `deferred` lists, oversized Decisions rationale, or operational HOW-knowledge.

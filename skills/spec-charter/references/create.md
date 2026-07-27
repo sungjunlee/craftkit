@@ -71,7 +71,7 @@ Both questions surface real Non-Goals (intentional rejections with rationale) ra
 
 > "Name 2–3 outcomes a user could observe today, and mark status by current shipped reality."
 
-Use the shape `O<n> [status]    <verifiable predicate> · src: user`. Default new objectives to `active` unless the user has shipped evidence (then `implemented`; `validated` only with cited adoption — see [`amendment.md`](amendment.md)) or deliberately parked them (then `deferred`).
+Use the shape `O<n> [status]    <verifiable predicate> · src: user`. Default new objectives to `active` unless the user has shipped evidence or deliberately parked them (then `deferred`); for a shipped objective, pick the status the proof gate in [`amendment.md`](amendment.md) allows.
 
 For predicate quality, follow [`objectives.md`](objectives.md): five good and five bad worked examples, common rewrite patterns, and the 30-second test. Run any draft objective through the 30-second test before committing it.
 
