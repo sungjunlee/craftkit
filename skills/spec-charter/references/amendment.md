@@ -29,15 +29,21 @@ Non-Goals:
 
 ## Tier 2 Proof Gate
 
-Objective status advances are gated. Advancing `active` to `validated` requires cited evidence that matches the objective predicate. Advancing `active` to `deferred` requires a cited rationale for parking, scope reduction, or sequencing change.
+Objective statuses progress `active` → `implemented` → `validated`, plus `deferred` (parked). This section is the sole authority for the implementation/adoption boundary; other surfaces link here.
 
-Acceptable proof includes:
+**`active` → `implemented`** requires cited producer-side proof that matches the predicate. Acceptable proof (unchanged):
 
 - A merged PR that closes or visibly satisfies the predicate.
 - A passing check, test, or smoke run that demonstrates the predicate.
 - A relay run whose Done Criteria match the predicate and completed successfully.
 
-If proof is absent or does not match a `validated` predicate, refuse the status advance and flag the missing evidence. If deferral rationale is absent, refuse the deferral and ask what changed. Do not weaken the objective so the proof appears sufficient.
+**`implemented` → `validated`** requires cited use by a consumer other than the authoring repo (a second repo, a real user session, or an external adopter). A repo that is legitimately its own only consumer states that explicitly rather than passing silently. Producer-side proof alone advances only to `implemented`; refuse `validated` and name the missing adoption evidence.
+
+**`active` → `deferred`** requires a cited rationale for parking, scope reduction, or sequencing change.
+
+If the required proof or rationale is absent, refuse the advance and flag the missing evidence. Do not weaken the objective so the proof appears sufficient.
+
+Migration: no bulk rewrite of existing charters. Re-evaluate statuses at the next amend or reassess pass; vocabulary alone does not invalidate a charter.
 
 Adding or removing objectives is human-gated, not proof-gated. Removed objective IDs are never reused.
 

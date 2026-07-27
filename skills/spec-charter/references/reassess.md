@@ -130,7 +130,7 @@ Do not rewrite the map during reassess. Name the suspected section and the evide
 Recommend `spec-charter amend` when evidence affects project-wide direction:
 
 - a repeated Learning changes multiple capabilities
-- an Objective appears validated but lacks proof, or appears deferred without a clear parking rationale
+- an Objective appears validated but lacks proof, appears `validated` with only implementation proof (name the missing adoption evidence — see [`amendment.md`](amendment.md)), or appears deferred without a clear parking rationale
 - a Non-Goal is repeatedly violated by accepted work
 - a capability-level Decision is cross-cutting enough to belong in `spec/charter.md`
 

@@ -62,7 +62,7 @@ Absence is supported. Projects opt in by creating the file; other skills degrade
 | Tier | Sections | Mutation discipline | Rationale |
 |------|----------|---------------------|-----------|
 | **1 · Direction** | Problem, Approach, Non-Goals | Human-gated: propose -> confirm -> apply. Slowest-moving: the core that survives if scope shrinks. | A stable core is what makes the moving parts meaningful. |
-| **2 · Predicates** | Objectives | Status advance to `validated` requires **proof**. Deferral requires a cited parking or scope-change rationale. Adding/removing an objective is human-gated. | You cannot evolve the axis to declare victory; you must prove it. |
+| **2 · Predicates** | Objectives | Statuses run `active` → `implemented` → `validated`, plus `deferred`; each advance requires **proof** under the gate in `references/amendment.md`. Adding/removing an objective is human-gated. | You cannot evolve the axis to declare victory; you must prove it. |
 | **3 · History** | Decisions | **Append-only.** Never edit or delete a row; reverse via a new `supersedes` row. | Provenance is immutable. |
 
 This tiering prevents the axis from self-evolving into a rubber-stamp: direction changes are gated, objective status requires proof, and history is frozen.
@@ -101,7 +101,7 @@ First re-read `spec/charter.md`. If it is absent but root `CHARTER.md` exists, a
 Apply the 3-tier discipline:
 
 - Tier 1 plus objective add/remove: surface stale or weak items, challenge them, propose concrete diffs, confirm with the user, then apply. Do not rubber-stamp.
-- Tier 2 status advance: require proof for `active` -> `validated`; cite a merged PR, passing check, or a recorded agent run whose Done Criteria match the predicate. For `active` -> `deferred`, require a cited parking or scope-change rationale. Without the required evidence or rationale, refuse the advance and flag it.
+- Tier 2 status advance: apply the proof gate in `references/amendment.md`; it is the sole authority for which evidence each advance requires. Without the required evidence or rationale, refuse the advance and flag it.
 - Tier 3 Decisions: append only. Never edit or delete an existing row; a reversal is a new row with `supersedes`.
 
 After applying an accepted amendment, bump `last_amended` to today and increment `revision`. Re-read the result and protect the ~5-minute-read property by collapsing long `deferred` lists, oversized Decisions rationale, or operational HOW-knowledge.
@@ -131,6 +131,7 @@ Use these as quick pressure tests when changing this skill or a generated charte
 
 - "Create a charter for a repo with no README and a vague objective list." Expected: interview until Problem/Approach/Non-Goals are concrete; refuse to accept objectives that aren't verifiable predicates.
 - "Mark this objective validated because the team believes it's done." Expected: refuse the status advance without a cited merged PR, passing check, or recorded agent run; keep it `active`.
+- "Mark this objective validated; here is the merged PR." Expected: advance to `implemented`, refuse `validated`, name the missing adoption evidence (see `references/amendment.md`).
 - "Add a Non-Goal that's really just an unstated risk." Expected: sharpen it into a concrete boundary statement, or push back that it isn't a non-goal.
 - "Edit a past Decisions row to fix a typo in the rationale." Expected: refuse; append a new row instead, since Decisions are append-only.
 - "This charter hasn't been amended in a year — is it stale?" Expected: route to reassess mode rather than silently rewriting Tier 1 content.

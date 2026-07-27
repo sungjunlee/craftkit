@@ -14,7 +14,7 @@ revision: 1
 ## Non-Goals          <!-- Tier 1 · Direction (human-gated) -->
 - <something deliberately not done> — <reason>
 
-## Objectives         <!-- Tier 2 · Predicates (add/remove human-gated; status proof-gated) -->
+## Objectives         <!-- Tier 2 · Predicates (add/remove human-gated; status: active → implemented → validated, proof-gated — see references/amendment.md) -->
 - O1 [active] <verifiable predicate, e.g. "a user can log in with Google"> · src: user
 
 ## Decisions          <!-- Tier 3 · History (immutable, append-only) -->

@@ -646,7 +646,7 @@ function readCharterObjectives(repoRoot, deps = {}) {
   if (!charter.content) return [];
   const objectives = [];
   for (const line of charter.content.split("\n")) {
-    const match = line.match(/^- (O\d+) \[(validated|active|deferred)\]\s+(.*?)(?:\s+·\s+src:|\s*$)/);
+    const match = line.match(/^- (O\d+) \[(validated|implemented|active|deferred)\]\s+(.*?)(?:\s+·\s+src:|\s*$)/);
     if (match) {
       objectives.push({ id: match[1], status: match[2], predicate: match[3].trim() });
     }
