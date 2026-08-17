@@ -6,7 +6,7 @@ Use this reference when mapping backlog work to charter Objectives. Read `spec/c
 
 For every open issue or epic:
 
-1. Read the objective predicates, especially `active` objectives.
+1. Read the objective predicates.
 2. Infer whether the issue advances zero, one, or many objective IDs.
 3. Use issue title, body, acceptance criteria, linked PRs, and epic context as evidence.
 4. Treat explicit objective IDs in an issue body as hints, not commands.
@@ -20,7 +20,7 @@ Report these findings when present:
 | Finding | Severity | Rule |
 |---------|----------|------|
 | `orphan work` | medium | An open issue maps to no objective. Ask whether to add an objective, defer the issue, or drop it. |
-| `neglected objective` | medium | An `active` objective has no open issue advancing it. Ask whether to plan work, defer the objective, or amend it. |
+| `uncovered objective` | medium | An objective has no open issue advancing it. Report coverage. |
 | `contradiction` | high | An open issue violates a Non-Goal. Resolution requires dropping the issue or amending the Non-Goal through `spec-charter` amend. |
 
 Contradictions are highest severity because they mean execution is crossing an explicit boundary.
@@ -33,7 +33,7 @@ Start the Alignment report with a compact coverage line:
 7/9 open issues → objectives ✓ · O3 has no work ⚠
 ```
 
-Use the first count for open issues that map to at least one objective. Mention neglected objectives or contradictions after the separator.
+Use the first count for open issues that map to at least one objective. Mention uncovered objectives or contradictions after the separator.
 
 ## Proposed Charter Changes
 

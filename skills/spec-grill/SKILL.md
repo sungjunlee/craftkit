@@ -12,7 +12,7 @@ metadata:
 
 Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and day-to-day execution work. `spec-grill` is not a file generator; it pressure-tests existing repo signals into durable capability contracts.
 
-Use this after `spec-charter create` on existing/brownfield repos, or whenever the user asks to define capability boundaries, component contracts, Behaviors, or Hard Constraints.
+Use this after `spec-charter` has landed a charter and, on brownfield repos, a system map; or whenever the user asks to define capability boundaries, component contracts, Behaviors, or Hard Constraints.
 
 ## Execution contract
 
@@ -143,4 +143,4 @@ See `references/capabilities.md` for additional grill heuristics and [`../spec-c
 
 - `references/capabilities.md` — grill heuristics (naming, goal rewrites, 3-axis examples, admission patterns) used after the interview flow.
 - `references/grill-report-template.md` — the full Grill Report skeleton.
-- `references/spec-pipeline-ready.md` — lightweight ready-to-commit checklist for the full `spec-charter -> spec-system-map -> spec-grill` flow.
+- `references/spec-pipeline-ready.md` — lightweight ready-to-commit checklist for the `spec-charter` then `spec-grill` flow.

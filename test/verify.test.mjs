@@ -6,7 +6,6 @@ import test from "node:test";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import {
-  radarStaleness,
   sectionContractFindings,
   matchesFilePattern,
   terminologyFindings,
@@ -15,14 +14,6 @@ import {
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const verifyScript = path.join(repoRoot, "scripts/verify.mjs");
-const radarCurrentPath = "skills/craft-skill-spec/references/radar/current.md";
-const craftPromptGuidesPath = "skills/craft-prompt/guides";
-
-function isoDateDaysAgo(days) {
-  const date = new Date();
-  date.setUTCDate(date.getUTCDate() - days);
-  return date.toISOString().slice(0, 10);
-}
 
 function writeFile(root, filePath, content) {
   const fullPath = path.join(root, filePath);
@@ -56,11 +47,6 @@ function createFixture() {
   );
   writeFile(root, "skills/craft-critique/references/failure-modes.md", "# Failure Modes\n\nCanonical copy.\n");
   writeFile(root, "skills/craft-prompt/references/shared-principles.md", "# Shared principles\n\nCanonical copy.\n");
-  writeFile(
-    root,
-    radarCurrentPath,
-    `# Skill Radar: Current Canonical View\n\n- last reviewed: \`${isoDateDaysAgo(0)}\`\n`,
-  );
   writeFile(
     root,
     "package.json",
@@ -442,125 +428,6 @@ expectVerifyFailure("fails when npm package includes skill script jsx/tsx specs"
   writeFile(root, "skills/example/scripts/helper.spec.tsx", "export {};\n");
 }, /npm package must not include skills\/example\/scripts\/helper\.spec\.tsx/, { skipPackDryRun: false });
 
-test("passes without a radar staleness warning when current.md was reviewed recently", () => {
-  const root = createFixture();
-
-  const result = runVerify(root, { skipPackDryRun: true });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /warning:/);
-});
-
-test("warns but still passes when radar current.md is stale", () => {
-  const root = createFixture();
-  writeFile(
-    root,
-    radarCurrentPath,
-    `# Skill Radar: Current Canonical View\n\n- last reviewed: \`${isoDateDaysAgo(100)}\`\n`,
-  );
-
-  const result = runVerify(root, { skipPackDryRun: true });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.match(`${result.stdout}\n${result.stderr}`, /past the 75-day staleness threshold/);
-});
-
-test("warns but still passes when radar current.md is missing a last reviewed line", () => {
-  const root = createFixture();
-  writeFile(root, radarCurrentPath, "# Skill Radar: Current Canonical View\n\nNo review metadata here.\n");
-
-  const result = runVerify(root, { skipPackDryRun: true });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.match(`${result.stdout}\n${result.stderr}`, /missing a parseable "last reviewed" date/);
-});
-
-test("warns but still passes when radar current.md has an unparseable last reviewed date", () => {
-  const root = createFixture();
-  writeFile(root, radarCurrentPath, "# Skill Radar: Current Canonical View\n\n- last reviewed: `not-a-date`\n");
-
-  const result = runVerify(root, { skipPackDryRun: true });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.match(`${result.stdout}\n${result.stderr}`, /unparseable "last reviewed" date: not-a-date/);
-});
-
-// --- Check: craft-prompt guide staleness (#119) ---
-
-test("skips the craft-prompt guide staleness check when the guides directory is absent", () => {
-  const root = createFixture();
-
-  const result = runVerify(root, { skipPackDryRun: true });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /warning:/);
-});
-
-test("passes without a warning when a craft-prompt guide was reviewed recently", () => {
-  const root = createFixture();
-  writeFile(
-    root,
-    `${craftPromptGuidesPath}/example-guide.md`,
-    `# Example Guide\n\n- last reviewed: \`${isoDateDaysAgo(0)}\`\n`,
-  );
-
-  const result = runVerify(root, { skipPackDryRun: true });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /warning:/);
-});
-
-test("warns but still passes when a craft-prompt guide is stale", () => {
-  const root = createFixture();
-  writeFile(
-    root,
-    `${craftPromptGuidesPath}/example-guide.md`,
-    `# Example Guide\n\n- last reviewed: \`${isoDateDaysAgo(150)}\`\n`,
-  );
-
-  const result = runVerify(root, { skipPackDryRun: true });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /guides\/example-guide\.md:.*past the 120-day staleness threshold/,
-  );
-});
-
-test("warns but still passes when a craft-prompt guide is missing a last reviewed line", () => {
-  const root = createFixture();
-  writeFile(root, `${craftPromptGuidesPath}/example-guide.md`, "# Example Guide\n\nNo review metadata here.\n");
-
-  const result = runVerify(root, { skipPackDryRun: true });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /guides\/example-guide\.md:.*missing a parseable "last reviewed" date/,
-  );
-});
-
-test("checks every craft-prompt guide file independently, not just the first", () => {
-  const root = createFixture();
-  writeFile(
-    root,
-    `${craftPromptGuidesPath}/fresh-guide.md`,
-    `# Fresh Guide\n\n- last reviewed: \`${isoDateDaysAgo(0)}\`\n`,
-  );
-  writeFile(
-    root,
-    `${craftPromptGuidesPath}/stale-guide.md`,
-    `# Stale Guide\n\n- last reviewed: \`${isoDateDaysAgo(150)}\`\n`,
-  );
-
-  const result = runVerify(root, { skipPackDryRun: true });
-  const output = `${result.stdout}\n${result.stderr}`;
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.match(output, /stale-guide\.md:.*past the 120-day staleness threshold/);
-  assert.doesNotMatch(output, /fresh-guide\.md:/);
-});
-
 // --- Check: reference-index completeness (#109) ---
 
 test("passes when every top-level references/*.md file is cited", () => {
@@ -715,10 +582,10 @@ Nothing to cite.
 
 test("warns (and still passes) on a baselined missing required section", () => {
   const root = createFixture();
-  // Note: craft-critique, craft-prompt, and craft-skill-spec are avoided here
-  // because createFixture() already seeds a references/ dir under each of them
-  // (canonical reference copies and the radar-staleness check), which
-  // would also trip the reference-index check or the References requirement.
+  // Note: craft-critique and craft-prompt are avoided here because
+  // createFixture() already seeds a references/ dir under each of them
+  // (canonical reference copies), which would also trip the reference-index
+  // check or the References requirement.
   // The checked-in knownSectionDeviations baseline is empty (#126/#133), so
   // inject a synthetic entry for craft-handoff and reproduce exactly those
   // two gaps to exercise the warn (not fail) branch.
@@ -880,42 +747,4 @@ Nested.
 
 test("sectionContractFindings returns no requirements for a skill outside both families", () => {
   assert.deepEqual(sectionContractFindings("example", "# example\n\nNo required sections.\n", true), []);
-});
-
-test("radarStaleness returns null for a fresh review date", () => {
-  const now = new Date("2026-07-04T00:00:00Z");
-
-  assert.equal(radarStaleness("- last reviewed: `2026-07-04`\n", now), null);
-});
-
-test("radarStaleness warns for a review date past the threshold", () => {
-  const now = new Date("2026-07-04T00:00:00Z");
-
-  assert.match(
-    radarStaleness("- last reviewed: `2026-03-01`\n", now),
-    /past the 75-day staleness threshold/,
-  );
-});
-
-test("radarStaleness warns when the last reviewed line is missing", () => {
-  const now = new Date("2026-07-04T00:00:00Z");
-
-  assert.match(radarStaleness("no metadata here\n", now), /missing a parseable "last reviewed" date/);
-});
-
-test("radarStaleness warns when the last reviewed date is unparseable", () => {
-  const now = new Date("2026-07-04T00:00:00Z");
-
-  assert.match(
-    radarStaleness("- last reviewed: `soon`\n", now),
-    /unparseable "last reviewed" date: soon/,
-  );
-});
-
-test("radarStaleness honors a custom max age", () => {
-  const now = new Date("2026-07-04T00:00:00Z");
-  const content = "- last reviewed: `2026-06-01`\n";
-
-  assert.equal(radarStaleness(content, now, 90), null);
-  assert.match(radarStaleness(content, now, 20), /past the 20-day staleness threshold/);
 });

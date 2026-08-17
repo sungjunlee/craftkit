@@ -1,6 +1,6 @@
 # Reassess-Mode Heuristics
 
-Use this reference in `spec-charter reassess` after reading the Reassess Mode section in `SKILL.md`. The mode is a report-only stale-spec review. It helps the user decide whether to run `spec-charter amend`, `spec-system-map amend`, `spec-grill <capability>`, or a separate user-approved Learning Action.
+Use this reference in `spec-charter reassess` after reading the Reassess Mode section in `SKILL.md`. The mode is a report-only stale-spec review. It helps the user decide whether to run `spec-charter amend`, `spec-charter map`, `spec-grill`, or a separate user-approved Learning Action.
 
 ## Policy Ownership
 
@@ -14,7 +14,7 @@ Reassess is the controller review, not the writer.
 
 - Sensors: `## Learnings`, sprint `component:` handles, doctor/lint output, recent sprint context.
 - Diagnosis: the reassess report.
-- Controller action: user-approved `amend`, `system-map`, `grill`, or Learning Action.
+- Controller action: user-approved `amend`, `map`, `grill`, or Learning Action.
 - Forbidden shortcut: silently editing accepted charter direction or capability contracts during reassess.
 
 The default answer can be "no change." Do not manufacture churn just because the user asked for a reassessment.
@@ -45,7 +45,7 @@ If an optional script is missing, say it was skipped and continue with file read
 
 ## Report Shape
 
-**Sizing rule**: default to a quick reassess for a narrow staleness question about one file or section — three sections: **Evidence**, **No Change**, **Recommended Next Step**. A quick-reassess finding that would need System Map Candidates, Grill Candidates, Amend Candidates, Learning Actions, or Missing Evidence gets one line under Recommended Next Step pointing to a full reassess instead of full sections. Reserve the full reassess report below for periodic health checks, multi-file drift review, or when the user explicitly asks for the full report. Reassess discipline applies in full at every size: quick reassess is still report-only (never edits) and still routes accepted fixes through `spec-charter amend`, `spec-system-map amend`, or `spec-grill`; it only trims what gets written down.
+**Sizing rule**: default to a quick reassess for a narrow staleness question about one file or section — three sections: **Evidence**, **No Change**, **Recommended Next Step**. A quick-reassess finding that would need System Map Candidates, Grill Candidates, Amend Candidates, Learning Actions, or Missing Evidence gets one line under Recommended Next Step pointing to a full reassess instead of full sections. Reserve the full reassess report below for periodic health checks, multi-file drift review, or when the user explicitly asks for the full report. Reassess discipline applies in full at every size: quick reassess is still report-only (never edits) and still routes accepted fixes through `spec-charter amend`, `spec-charter map`, or `spec-grill`; it only trims what gets written down.
 
 Full reassess report:
 
@@ -59,7 +59,7 @@ Full reassess report:
 - <area that still matches current evidence>
 
 ### System Map Candidates
-- <area> — evidence: <signal>; suspected change: <shape/boundary/flow/invariant/pointer>; next: `spec-system-map amend`
+- <area> — evidence: <signal>; suspected change: <shape/boundary/flow/invariant/pointer>; next: `spec-charter map`
 
 ### Grill Candidates
 - <capability> — evidence: <signal>; suspected change: <contract area>; next: `spec-grill <capability>`
@@ -116,7 +116,7 @@ Do not rewrite the capability during reassess. Name the block and the suspected 
 
 ### System Map Candidate
 
-Recommend `spec-system-map amend` when evidence affects project-wide structure without changing why/good-state:
+Recommend `spec-charter map` when evidence affects project-wide structure without changing why/good-state:
 
 - runtime boundaries changed across capabilities
 - a core flow has a new step, owner, or external system
@@ -130,7 +130,7 @@ Do not rewrite the map during reassess. Name the suspected section and the evide
 Recommend `spec-charter amend` when evidence affects project-wide direction:
 
 - a repeated Learning changes multiple capabilities
-- an Objective appears validated but lacks proof, appears `validated` with only implementation proof (name the missing adoption evidence — see [`amendment.md`](amendment.md)), or appears deferred without a clear parking rationale
+- an Objective no longer holds, or is no longer directive, or (on an opt-in ladder charter) appears `validated` with only implementation proof
 - a Non-Goal is repeatedly violated by accepted work
 - a capability-level Decision is cross-cutting enough to belong in `spec/charter.md`
 
@@ -156,4 +156,4 @@ Archive older Learnings when they are useful history but no longer startup conte
 
 ## Reserved Names
 
-Today the callable spec-series skills are `spec-charter`, `spec-system-map`, and `spec-grill`. The names `spec-reassess` and `spec-learn` are reserved/non-callable future split candidates. Mention them only when discussing naming policy or split triggers, not as commands the user can run.
+Today the callable spec-series skills are `spec-charter` and `spec-grill`. The names `spec-reassess` and `spec-learn` are reserved/non-callable future split candidates. Mention them only when discussing naming policy or split triggers, not as commands the user can run. `spec-system-map` was absorbed into `spec-charter` `map` mode.

@@ -213,6 +213,18 @@ revision: 1
     assert.equal(objectives.length, 1);
     assert.equal(objectives[0].id, "O1");
   });
+
+  it("parses status-free lean objectives", () => {
+    write(repo, "spec/charter.md", "- O1 — a user can log in with Google · src: user\n- O2 — agents resume from _context.md\n");
+    const objectives = readCharterObjectives(repo);
+    assert.equal(objectives.length, 2);
+    assert.equal(objectives[0].id, "O1");
+    assert.equal(objectives[0].status, null);
+    assert.match(objectives[0].predicate, /log in with Google/);
+    assert.equal(objectives[1].id, "O2");
+    assert.equal(objectives[1].status, null);
+    assert.equal(objectives[1].predicate, "agents resume from _context.md");
+  });
 });
 
 describe("summarizeReadme", () => {

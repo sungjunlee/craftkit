@@ -1,6 +1,6 @@
 # Charter Amendment Guidance
 
-Use this reference in `spec-charter` amend mode after re-reading `spec/charter.md`, or legacy root `CHARTER.md` only as a fallback. The default bias is stability: no change unless concrete evidence shows the charter is stale, weak, or newly validated.
+Use this reference in `spec-charter` amend mode after re-reading `spec/charter.md`, or legacy root `CHARTER.md` only as a fallback. The default bias is stability: no change unless concrete evidence shows the charter is stale or weak. Status promotion is not a reason to edit a lean charter.
 
 ## Tier 1 Challenge Checklist
 
@@ -27,25 +27,18 @@ Non-Goals:
 - Should a violated Non-Goal become an accepted direction change, or should the violating work be dropped?
 - Are any Non-Goals stale because the project scope has legitimately moved?
 
-## Tier 2 Proof Gate
+## Tier 2 — lean default, opt-in ladder
 
-Objective statuses progress `active` → `implemented` → `validated`, plus `deferred` (parked). This section is the sole authority for the implementation/adoption boundary; other surfaces link here.
+Default charters are status-free. Adding or removing objectives is human-gated. Retired objective IDs are never reused; move the retired line to `docs/spec-history.md`.
 
-**`active` → `implemented`** requires cited producer-side proof that matches the predicate. Acceptable proof (unchanged):
+If — and only if — the live charter already uses `[active]` / `[implemented]` / `[validated]` / `[deferred]`, apply the proof gate:
 
-- A merged PR that closes or visibly satisfies the predicate.
-- A passing check, test, or smoke run that demonstrates the predicate.
-- A relay run whose Done Criteria match the predicate and completed successfully.
+- `active` → `implemented` requires cited producer-side proof (merged PR, passing check, or a recorded agent run whose Done Criteria match).
+- `implemented` → `validated` requires cited use by a consumer other than the authoring repo. Producer-side proof alone stays at `implemented`.
+- `active` or `implemented` → `deferred` requires a cited parking or scope-change rationale.
+- If proof or rationale is missing, refuse the advance. Do not weaken the objective so the proof appears sufficient.
 
-**`implemented` → `validated`** requires cited use by a consumer other than the authoring repo (a second repo, a real user session, or an external adopter). A repo that is legitimately its own only consumer states that explicitly rather than passing silently. Producer-side proof alone advances only to `implemented`; refuse `validated` and name the missing adoption evidence.
-
-**`active` → `deferred`** requires a cited rationale for parking, scope reduction, or sequencing change.
-
-If the required proof or rationale is absent, refuse the advance and flag the missing evidence. Do not weaken the objective so the proof appears sufficient.
-
-Migration: no bulk rewrite of existing charters. Re-evaluate statuses at the next amend or reassess pass; vocabulary alone does not invalidate a charter.
-
-Adding or removing objectives is human-gated, not proof-gated. Removed objective IDs are never reused.
+Do not introduce status tokens onto a lean charter during amend.
 
 ## No Rubber-Stamp Rule
 
@@ -61,6 +54,6 @@ Re-apply pushback on every amend. Treat requested changes as proposals, not inst
 Protect the ~5-minute-read property on every amendment.
 
 - Challenge additions that duplicate `README.md`, `CLAUDE.md`, or `_context.md`.
-- Collapse long `deferred` objective lists when they no longer guide active work.
+- Collapse long retired-objective lists; they belong in `docs/spec-history.md`, not the live charter.
 - Move operational HOW-knowledge to `_context.md`.
 - Keep Decisions append-only, but avoid recording trivia as decisions.
