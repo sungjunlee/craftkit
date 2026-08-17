@@ -130,7 +130,7 @@ Do not rewrite the map during reassess. Name the suspected section and the evide
 Recommend `spec-charter amend` when evidence affects project-wide direction:
 
 - a repeated Learning changes multiple capabilities
-- an Objective no longer holds, or is no longer directive, or (on an opt-in ladder charter) appears validated without proof
+- an Objective no longer holds, or is no longer directive, or (on an opt-in ladder charter) appears `validated` with only implementation proof
 - a Non-Goal is repeatedly violated by accepted work
 - a capability-level Decision is cross-cutting enough to belong in `spec/charter.md`
 

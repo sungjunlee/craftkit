@@ -71,7 +71,7 @@ Both questions surface real Non-Goals (intentional rejections with rationale) ra
 
 > "Name 2–3 outcomes a user could observe today."
 
-Use the shape `O<n> — <verifiable predicate> · src: user`. Do not add `[active]` / `[validated]` status tokens unless the user explicitly wants the opt-in proof ladder (repos with external adopters to count).
+Use the shape `O<n> — <verifiable predicate> · src: user`. Do not add `[active]` / `[implemented]` / `[validated]` status tokens unless the user explicitly wants the opt-in proof ladder (repos with external adopters to count).
 
 For predicate quality, follow [`objectives.md`](objectives.md): five good and five bad worked examples, common rewrite patterns, and the 30-second test. Run any draft objective through the 30-second test before committing it.
 

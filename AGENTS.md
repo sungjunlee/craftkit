@@ -87,6 +87,7 @@ These conventions apply across every CraftKit skill and example, so they live he
 - **XML tags travel best.** When a prompt or skill has multiple sections, XML tags (`<context>`, `<task>`, `<rules>`) parse reliably across Claude, GPT, and Gemini. Plain markdown is fine for simple, single-section artifacts.
 - **Tag names stay in English.** If the artifact body is non-English, keep tag names and structural labels in English — all major providers parse English tags regardless of content language.
 - **No provider-specific tool names in the skill spine.** Describe the capability, not the tool. Provider-specific wording can live in examples or in templates, but not in the main body of a skill.
+- **Capability-based portability.** CraftKit targets five engines — Claude Code, Codex, OpenCode, Cursor, and Pi — under one conceptual contract. Write the skill spine in terms of capabilities and artifacts, never tool names or host-specific syntax. Name five things in the spine whenever they are real: **capabilities** (what the skill can do), **artifacts** (what it reads and writes), **authority** (which mutations it may or may not make), **degradation** (how it behaves when a host lacks a capability or fails), and **completion** (what "done" means and what it reports). Isolate host-specific syntax through progressive disclosure: keep the platform-neutral core in the spine and defer engine-specific syntax to examples, never to the main body.
 
 ## craft-autoresearch workflow
 

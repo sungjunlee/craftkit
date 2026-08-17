@@ -33,9 +33,9 @@ Default charters are status-free. Adding or removing objectives is human-gated. 
 
 If — and only if — the live charter already uses `[active]` / `[implemented]` / `[validated]` / `[deferred]`, apply the proof gate:
 
-- `active` or `implemented` → `validated` requires cited evidence that matches the predicate (merged PR, passing check, or a recorded agent run whose Done Criteria match).
+- `active` → `implemented` requires cited producer-side proof (merged PR, passing check, or a recorded agent run whose Done Criteria match).
+- `implemented` → `validated` requires cited use by a consumer other than the authoring repo. Producer-side proof alone stays at `implemented`.
 - `active` or `implemented` → `deferred` requires a cited parking or scope-change rationale.
-- Treat `implemented` as a live mid-ladder token already on the charter, not a new status to introduce. Do not invent extra gated hops.
 - If proof or rationale is missing, refuse the advance. Do not weaken the objective so the proof appears sufficient.
 
 Do not introduce status tokens onto a lean charter during amend.

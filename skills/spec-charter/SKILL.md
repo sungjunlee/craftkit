@@ -80,7 +80,7 @@ Use when a charter exists or when invoked as `amend`. If only root `CHARTER.md` 
 
 - Tier 1 plus objective add/remove: challenge, propose diffs, confirm, then apply.
 - Lean Tier 2: no status advances. Retire by moving the line to `docs/spec-history.md`.
-- Opt-in ladder: proof for `active`/`implemented` → `validated`; cited rationale for `active`/`implemented` → `deferred`; refuse otherwise.
+- Opt-in ladder: producer proof for `active` → `implemented`; adoption proof for `implemented` → `validated`; cited rationale for `deferred`. Details in `references/amendment.md`.
 - Tier 3: append only.
 
 After an accepted amendment, bump `last_amended` and `revision`. Protect the ~5-minute-read property. A `backlog-triage` Alignment Check may seed proposals; this skill applies the gates. See `references/amendment.md`.
@@ -114,6 +114,7 @@ If the system map is missing on a brownfield repo, recommend `map` before grilli
 
 - "Create a charter for a repo with no README and a vague objective list." Expected: interview until Problem/Approach/Non-Goals are concrete; refuse objectives that aren't verifiable predicates; write status-free `O<n> — <predicate>` lines.
 - "Mark this objective validated because the team believes it's done." Expected: on a lean charter, refuse status tokens; on an opt-in ladder charter, refuse the advance without cited proof.
+- "Mark this objective validated; here is the merged PR." Expected: on an opt-in ladder, advance to `implemented` and refuse `validated` until adoption evidence exists.
 - "Edit a past Decisions row to fix a typo." Expected: refuse; append a new row.
 - "Create a system map after reading only README and top-level folders." Expected: continue the Repo Evidence Pass or label the map as under-evidenced.
 - "Update this map with a new helper function and endpoint." Expected: refuse or demote unless it changes a project-wide flow or invariant.

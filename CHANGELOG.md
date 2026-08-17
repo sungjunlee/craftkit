@@ -17,7 +17,7 @@ Second lightening pass (#169). Public shape is six skills: `craft-prompt`, `craf
 
 ### Changed
 
-- **`spec-charter` lean default.** Objectives are status-free `O<n> — <predicate>` lines. The `[active]→[validated]` proof ladder is opt-in for charters that already use status tokens (#168).
+- **`spec-charter` lean default.** Objectives are status-free `O<n> — <predicate>` lines. The `[active]` → `[implemented]` → `[validated]` proof ladder is opt-in for charters that already use status tokens (#168, #165).
 - **`craft-prompt` no longer owns session continuity.** That job is `craft-handoff` only.
 - Slimmed `docs/skill-anatomy.md` to the live family contracts and `docs/status.md` to public vs maintainer-local evidence.
 
