@@ -1,61 +1,59 @@
 # Objective Predicates: Good vs. Bad
 
-Use this reference in `spec-charter` create mode (or amend, when adding objectives) to write Tier 2 entries that survive their own proof gate. An Objective is a **verifiable predicate** — a statement that can be checked true or false against the world, not a task to do or an aspiration to feel good about.
+Use this reference in `spec-charter` create mode (or amend, when adding objectives) to write Tier 2 entries. An Objective is a **verifiable predicate** — a statement that can be checked true or false against the world, not a task to do or an aspiration to feel good about.
 
-The shape:
+The default shape (lean, status-free):
 
-> `O<n> [status]    <verifiable predicate> · src: <user|inferred|execution>`
+> `O<n> — <verifiable predicate> · src: <user|inferred|execution>`
 
 The predicate should map to a verification path you could write down today: a command to run, a scenario to walk through, a count to take. If you cannot name the verification, the predicate is not yet verifiable — sharpen it before committing it to the charter.
 
+Do not add `[active]` / `[implemented]` / `[validated]` / `[deferred]` unless the user asked for the opt-in status ladder.
+
 ## ✅ Good Predicates
 
-Each example pairs a predicate with the concrete check that would advance its status to `validated`.
+Each example pairs a predicate with a concrete check. On a lean charter the check is how you *know* the predicate still holds — not a status to stamp on the line.
 
 1. **"A user can pull open GitHub issues into `backlog/tasks/` without API tokens beyond `gh auth`"**
-   *Verification:* run `node scripts/sync-pull.js` against a fresh repo; assert `backlog/tasks/*.md` exists and no token was prompted. A scenario predicate with a runnable check.
+   *Check:* run `node scripts/sync-pull.js` against a fresh repo; assert `backlog/tasks/*.md` exists and no token was prompted.
 
 2. **"An agent resuming a sprint mid-session sees in-flight `[~]` items it did not author and can act on them without re-asking the user"**
-   *Verification:* open the active sprint file in a fresh session; confirm `[~]` markers + PR refs are readable. A continuity predicate verified by a single observation.
+   *Check:* open the active sprint file in a fresh session; confirm `[~]` markers + PR refs are readable.
 
 3. **"A user can answer 'is this project still on track?' in under 5 minutes against `spec/charter.md`"**
-   *Verification:* timed read + answer against the live charter. Mixed-rigor: not a script, but a timed scenario with a binary outcome. (This is dev-backlog's own O3.)
+   *Check:* timed read + answer against the live charter.
 
-4. **"Every open Issue maps to an active or deferred Objective without manual triage"**
-   *Verification:* `backlog-triage` Alignment Check report shows 0 orphans on the current backlog. A drift predicate with an existing tool as the check.
+4. **"Every open Issue maps to an Objective without manual triage"**
+   *Check:* `backlog-triage` Alignment Check report shows 0 orphans on the current backlog.
 
 5. **"A new contributor reads `spec/charter.md` in under 5 minutes and can name one explicitly rejected scope"**
-   *Verification:* word count + Non-Goals section non-empty + onboarding scenario. Cheap to observe; sharper than "charter is short."
+   *Check:* word count + Non-Goals section non-empty + onboarding scenario.
 
 Notice the shape: each one names **who** does **what** with a **measurable outcome**. None of them say "improve" or "implement."
 
 ## ❌ Bad Predicates (and How to Rewrite Them)
 
-Each failure mode appears regularly. The rewrite shows the move that fixes it.
-
 1. **"Improve sync performance"**
    *Failure:* vague aspiration — no threshold, no observation point.
-   *Rewrite:* "`sync-pull` of 100 open issues completes in under 5s on a warm cache." Add a threshold + a fixture.
+   *Rewrite:* "`sync-pull` of 100 open issues completes in under 5s on a warm cache."
 
 2. **"Implement OAuth"**
-   *Failure:* a task, not an outcome. Closes when shipped, not when verified.
-   *Rewrite:* "A user signs in with Google and reaches their dashboard within one click of the login button." Move from build-it to user-observes-it.
+   *Failure:* a task, not an outcome.
+   *Rewrite:* "A user signs in with Google and reaches their dashboard within one click of the login button."
 
 3. **"Better DX"**
-   *Failure:* unfalsifiable opinion. Whose DX, doing what, judged how?
-   *Rewrite:* "An agent dispatches a relay run with one command and no manual edits to manifest files." Name the actor, the action, the observable.
+   *Failure:* unfalsifiable opinion.
+   *Rewrite:* "An agent dispatches a relay run with one command and no manual edits to manifest files."
 
 4. **"Adopt charter everywhere"**
-   *Failure:* process declaration, not a user-facing outcome. Confuses the project's internal habit with what the project produces.
-   *Rewrite:* "Every active project in this workspace has a committed `spec/charter.md`." Make it a count, not a vibe.
+   *Failure:* process declaration, not a user-facing outcome.
+   *Rewrite:* "Every active project in this workspace has a committed `spec/charter.md`."
 
 5. **"Reduce context loss across sessions"**
-   *Failure:* direction without verification — true when? observed by whom?
-   *Rewrite:* "An agent reading only `_context.md` + the active sprint file resumes the previous session's in-flight work without asking the user." Bind the claim to a single scenario with a binary outcome.
+   *Failure:* direction without verification.
+   *Rewrite:* "An agent reading only `_context.md` + the active sprint file resumes the previous session's in-flight work without asking the user."
 
 ## Common Rewrite Patterns
-
-When a draft objective feels off, ask which pattern applies:
 
 | If the draft is... | The fix is... |
 |--------------------|---------------|

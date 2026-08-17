@@ -438,13 +438,9 @@ function checkMirroredReferences() {
 // `skills/craft-prompt/references/prompt-patterns.md` are captured whole rather
 // than truncated at the literal "references/" token.
 //
-// templates/...md and guides/...md are deliberately NOT in scope here (issue
-// #109 globs references/ only): craft-handoff/SKILL.md has an existing
-// `craft-prompt/templates/session-handoff.md` mention that is missing a `../`
-// or `skills/` prefix and would dangle under this same regex — extending scope
-// to templates/guides is not "trivially the same code path" once that citation
-// style exists, so it's left unenforced rather than papered over with more
-// special-casing. See the verify report for this finding.
+// templates/...md are deliberately NOT in scope here (issue #109 globs
+// references/ only). Cross-skill template citations are left to the skill
+// author; extending this regex to templates/ is a separate change.
 const referenceCitationPattern = /(?:[\w.-]+\/)*references\/[\w.\-/]+\.md/g;
 
 function resolveCitation(skillDir, citation) {
@@ -552,20 +548,14 @@ function checkFamilySectionContract() {
 const terminologyRules = [
   {
     // README.md's "Terminology note" (search that phrase): craft-autoresearch
-    // uses an "eval runner"; "harness" is craft-harness's word for repo-local
-    // agent guidance/provider surfaces — "Do not use 'harness' for both."
-    // Scoped to craft-autoresearch's own docs (not the whole repo) because
-    // other skills — most obviously craft-harness itself, and any skill that
-    // cross-references it by name — legitimately say "craft-harness". The
-    // forbidden pattern is a word-boundary match on "harness" with a negative
-    // lookbehind for the "craft-" prefix, so "craft-harness" mentions are
-    // exempt but a bare "harness" (the word this rule actually bans here) is
-    // still caught. As of this writing skills/craft-autoresearch/** contains
-    // zero occurrences of "harness" in any form, so this passes the existing
-    // tree cleanly; it exists to catch future regressions.
+    // uses an "eval runner". Do not call that runner a "harness".
+    // Scoped to craft-autoresearch's own docs. The forbidden pattern is a
+    // word-boundary match on "harness" with a negative lookbehind for the
+    // "craft-" prefix, so a leftover "craft-harness" mention would be exempt
+    // but a bare "harness" is still caught.
     files: ["skills/craft-autoresearch/**/*.md"],
     forbidden: [/(?<!craft-)\bharness\b/i],
-    why: 'README.md\'s Terminology note reserves "harness" for craft-harness; craft-autoresearch must say "eval runner" instead',
+    why: 'README.md\'s Terminology note: craft-autoresearch must say "eval runner", not "harness"',
   },
   {
     // Guards the #134 neutralization (PRD-RH E2.2, commit 3bf159a): the
@@ -574,11 +564,11 @@ const terminologyRules = [
     // criterion, "relay run" as the Tier-2 proof-gate citation, and sprint
     // `component:` frontmatter as the slug consumer. All three were replaced
     // with consumer-neutral phrasing so the spines stay usable in repos that
-    // never install dev-backlog/dev-relay. Scoped to the three spec-* spines
+    // never install dev-backlog/dev-relay. Scoped to the spec-* spines
     // themselves (not skills/spec-*/**), so references/ and templates/ under
     // those skills stay exempt — integration examples there may legitimately
     // name sprint/relay concepts as a named optional integration.
-    files: ["skills/spec-charter/SKILL.md", "skills/spec-grill/SKILL.md", "skills/spec-system-map/SKILL.md"],
+    files: ["skills/spec-charter/SKILL.md", "skills/spec-grill/SKILL.md"],
     forbidden: ["relay-learning", "relay run", "`component:` frontmatter"],
     why: 'spec-* spines must stay standalone-usable; "relay-learning", "relay run", and "`component:` frontmatter" are dev-relay/dev-backlog vocabulary neutralized in #134 — use consumer-neutral phrasing instead',
   },

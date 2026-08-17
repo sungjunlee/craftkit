@@ -4,6 +4,29 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-08-17
+
+Second-beginning lightening pass (#169). Public shape is six skills: `craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-handoff`, `spec-charter`, `spec-grill`.
+
+### Removed (BREAKING)
+
+- **Removed `craft-harness`.** Wanted as a capability, unused as a skill after the 2026-07 shrink. The 2026-10-24 use-or-delete checkpoint is pulled forward. `skills/craft-harness/` (spine, platform surfaces, hook asset pack) deleted.
+- **Removed `craft-skill-spec`.** Radar upkeep (1,420 lines for one consumer) exceeded usage. Skill-authoring stays with `craft-prompt` (new text) and `craft-critique` (in-place improvement). `skills/craft-skill-spec/` including `references/radar/` deleted.
+- **Removed `spec-system-map` as a separate skill.** `spec/system-map.md` remains the artifact; `spec-charter` now owns create/amend via `map` mode. Leftover `spec-system-map` invocations route there.
+- Dropped landed 2026-07 process docs (`docs/prd-2026-07-*.md`), stranded `docs/spec-system-research.md`, the `craft-harness` use-or-delete note, `craft-prompt/guides/`, and `craft-prompt/templates/session-handoff.md`.
+
+### Changed
+
+- **`spec-charter` lean default.** Objectives are status-free `O<n> — <predicate>` lines. The `[active]→[validated]` proof ladder is opt-in for charters that already use status tokens (#168).
+- **`craft-prompt` no longer owns session continuity.** That job is `craft-handoff` only.
+- Slimmed `docs/skill-anatomy.md` to the live family contracts and `docs/status.md` to public vs maintainer-local evidence.
+
+### Migration
+
+- Invoking `spec-system-map` → `spec-charter` with a system-map / architecture request (`map` mode).
+- Skill-shape / radar questions → `craft-critique` on an existing skill, or `craft-prompt` for a new prompt; there is no CraftKit skill-spec radar anymore.
+- Repo harness placement is unscripted; CraftKit does not ship a replacement skill.
+
 ## [0.3.0] — 2026-07-24
 
 The 2026-07 right-sizing pass (`docs/prd-2026-07-rightsizing.md`, PRD-RS). Separates the felt utility decline as models improve into two axes — model erosion (loosen prescription) vs usage (remove) — and moves each skill's center of gravity from "tell the model how to think" toward "give the model durable state and direction it cannot hold on its own."
@@ -79,6 +102,7 @@ Initial public-ready release.
 - `docs/product.md`, `docs/roadmap.md`, `docs/migration.md`, `docs/examples/tune-a-prompt.md`.
 - MIT license.
 
+[0.4.0]: https://github.com/sungjunlee/craftkit/releases/tag/v0.4.0
 [0.3.0]: https://github.com/sungjunlee/craftkit/releases/tag/v0.3.0
 [0.2.0]: https://github.com/sungjunlee/craftkit/releases/tag/v0.2.0
 [0.1.1]: https://github.com/sungjunlee/craftkit/releases/tag/v0.1.1

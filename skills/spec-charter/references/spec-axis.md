@@ -1,13 +1,13 @@
 # Spec axis boundary
 
-Use this as the shared boundary reference for `spec-charter`, `spec-system-map`, and `spec-grill`.
+Use this as the shared boundary reference for `spec-charter` and `spec-grill`.
 
 ## Files
 
 | File | Role | Owned by |
 | --- | --- | --- |
 | `spec/charter.md` | Why the project exists, what good looks like, Non-Goals, Objectives, and project-wide Decisions. | `spec-charter` |
-| `spec/system-map.md` | High-level system shape: runtime boundaries, core flows, storage/external systems, invariants, and pointers. | `spec-system-map` |
+| `spec/system-map.md` | High-level system shape: runtime boundaries, core flows, storage/external systems, invariants, and pointers. | `spec-charter` (`map` mode) |
 | `spec/capabilities.md` | Capability contracts: Goal, Scope, Expected Behaviors, Hard Constraints, Learnings, and Decisions. | `spec-grill` |
 | `CLAUDE.md` / `AGENTS.md` | Agent harness instructions and local development guardrails. | Repository maintainers |
 | `README.md` | Outward-facing introduction and user-facing entrypoints. | Repository maintainers |

@@ -1,6 +1,6 @@
 # Charter Create Mode: Signals, Interview, Seed Decisions
 
-Use this reference in `spec-charter` create mode after confirming neither `spec/charter.md` nor legacy root `CHARTER.md` exists. The goal is a defensible first revision that survives its own proof gate — not a perfect axis on day one. Stability comes from amend mode; create mode just has to set a credible starting point.
+Use this reference in `spec-charter` create mode after confirming neither `spec/charter.md` nor legacy root `CHARTER.md` exists. The goal is a defensible first revision — not a perfect axis on day one. Stability comes from amend mode; create mode just has to set a credible starting point.
 
 ## 1. Signal Collection (Priority + Conflict)
 
@@ -69,9 +69,9 @@ Both questions surface real Non-Goals (intentional rejections with rationale) ra
 
 ### Initial Objectives
 
-> "Name 2–3 outcomes a user could observe today, and mark status by current shipped reality."
+> "Name 2–3 outcomes a user could observe today."
 
-Use the shape `O<n> [status]    <verifiable predicate> · src: user`. Default new objectives to `active` unless the user has shipped evidence (then `validated`) or deliberately parked them (then `deferred`).
+Use the shape `O<n> — <verifiable predicate> · src: user`. Do not add `[active]` / `[validated]` status tokens unless the user explicitly wants the opt-in proof ladder (repos with external adopters to count).
 
 For predicate quality, follow [`objectives.md`](objectives.md): five good and five bad worked examples, common rewrite patterns, and the 30-second test. Run any draft objective through the 30-second test before committing it.
 

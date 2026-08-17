@@ -170,19 +170,7 @@ Text:
 
 ---
 
-## 7. Session Handoff (Agent CLI)
-
-**When**: "make a prompt to continue in a new session", "hand off to a new session"
-
-Hand off context from one AI coding session to another. The key is compressing what was done, what's next, and what state the code is in — all in under 800 tokens.
-
-Two variants: **Continuation** (pick up where you left off) and **Debug** (hand off a problem).
-
-See `templates/session-handoff.md` for ready-to-use templates and tips.
-
----
-
-## 8. Decision / Analysis
+## 7. Decision / Analysis
 
 **When**: "analyze this", "should I use X or Y?", "pros and cons of..."
 

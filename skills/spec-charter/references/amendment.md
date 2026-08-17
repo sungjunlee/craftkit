@@ -27,19 +27,17 @@ Non-Goals:
 - Should a violated Non-Goal become an accepted direction change, or should the violating work be dropped?
 - Are any Non-Goals stale because the project scope has legitimately moved?
 
-## Tier 2 Proof Gate
+## Tier 2 — lean default, opt-in ladder
 
-Objective status advances are gated. Advancing `active` to `validated` requires cited evidence that matches the objective predicate. Advancing `active` to `deferred` requires a cited rationale for parking, scope reduction, or sequencing change.
+Default charters are status-free. Adding or removing objectives is human-gated. Retired objective IDs are never reused; move the retired line to `docs/spec-history.md`.
 
-Acceptable proof includes:
+If — and only if — the live charter already uses `[active]` / `[implemented]` / `[validated]` / `[deferred]`, apply the proof gate:
 
-- A merged PR that closes or visibly satisfies the predicate.
-- A passing check, test, or smoke run that demonstrates the predicate.
-- A relay run whose Done Criteria match the predicate and completed successfully.
+- `active` → `validated` requires cited evidence that matches the predicate (merged PR, passing check, or a recorded agent run whose Done Criteria match).
+- `active` → `deferred` requires a cited parking or scope-change rationale.
+- If proof or rationale is missing, refuse the advance. Do not weaken the objective so the proof appears sufficient.
 
-If proof is absent or does not match a `validated` predicate, refuse the status advance and flag the missing evidence. If deferral rationale is absent, refuse the deferral and ask what changed. Do not weaken the objective so the proof appears sufficient.
-
-Adding or removing objectives is human-gated, not proof-gated. Removed objective IDs are never reused.
+Do not introduce status tokens onto a lean charter during amend.
 
 ## No Rubber-Stamp Rule
 
@@ -55,6 +53,6 @@ Re-apply pushback on every amend. Treat requested changes as proposals, not inst
 Protect the ~5-minute-read property on every amendment.
 
 - Challenge additions that duplicate `README.md`, `CLAUDE.md`, or `_context.md`.
-- Collapse long `deferred` objective lists when they no longer guide active work.
+- Collapse long retired-objective lists; they belong in `docs/spec-history.md`, not the live charter.
 - Move operational HOW-knowledge to `_context.md`.
 - Keep Decisions append-only, but avoid recording trivia as decisions.

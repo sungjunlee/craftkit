@@ -646,9 +646,14 @@ function readCharterObjectives(repoRoot, deps = {}) {
   if (!charter.content) return [];
   const objectives = [];
   for (const line of charter.content.split("\n")) {
-    const match = line.match(/^- (O\d+) \[(validated|active|deferred)\]\s+(.*?)(?:\s+·\s+src:|\s*$)/);
-    if (match) {
-      objectives.push({ id: match[1], status: match[2], predicate: match[3].trim() });
+    const statusMatch = line.match(/^- (O\d+) \[(validated|active|deferred|implemented)\]\s+(.*?)(?:\s+·\s+src:|\s*$)/);
+    if (statusMatch) {
+      objectives.push({ id: statusMatch[1], status: statusMatch[2], predicate: statusMatch[3].trim() });
+      continue;
+    }
+    const leanMatch = line.match(/^- (O\d+)\s+[—–-]\s+(.*?)(?:\s+·\s+src:|\s*$)/);
+    if (leanMatch) {
+      objectives.push({ id: leanMatch[1], status: null, predicate: leanMatch[2].trim() });
     }
   }
   return objectives;
