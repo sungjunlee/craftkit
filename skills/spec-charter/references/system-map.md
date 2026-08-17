@@ -1,4 +1,4 @@
-# System map create and amend
+# System map heuristics
 
 Use this reference when `spec-charter` is writing or updating `spec/system-map.md`. The spine owns the operating path; this file carries heuristics and failure modes.
 
@@ -14,27 +14,11 @@ Use this reference when `spec-charter` is writing or updating `spec/system-map.m
 
 Do not turn `system-map.md` into exhaustive module documentation, API reference, runbook, ADR log, or implementation notes. Demote subsystem detail to linked docs; promote only project-wide structure or invariants.
 
-## Create
+Candidate lines that `spec-grill` can parse:
 
-Use when `spec/system-map.md` is absent or the user asks for a first system map.
-
-1. Read bounded signals: `spec/charter.md` if present, `README.md`, `AGENTS.md`/`CLAUDE.md`, top-level directories, package/config files, and existing architecture-related docs.
-2. Run a Repo Evidence Pass before drafting. Inspect entrypoints and command surfaces, package/config scripts, runtime boundaries, storage/state, external systems, tests that reveal intended behavior, and recent commit history. Execution logs (e.g. sprint files) when available.
-3. Draft from `templates/system-map.md`; keep sections short and link out instead of expanding subsystem detail.
-4. Include: System Shape, Runtime Boundaries, Core Flows, Storage And External Systems, Project-Wide Invariants, Candidate Capability Boundaries, Where To Go Next.
-5. If the repo is brownfield, mark uncertain boundaries as assumptions rather than inventing detail.
-6. Use Candidate Capability Boundaries to hand off concrete, short candidates to `spec-grill`. Each candidate should name evidence, the contract surface it appears to own, and the uncertainty `spec-grill` must resolve.
-7. Recommend asking `spec-grill` to review those candidates when the map reveals durable boundaries that are not yet in `spec/capabilities.md`.
-8. If the user is landing the full spec axis, point them to `../spec-grill/references/spec-pipeline-ready.md` after the map and at least one accepted capability exist.
-
-The Repo Evidence Pass is an agent checklist, not a new script. Report evidence in the conversation, not as inventory inside `spec/system-map.md`.
-
-## Amend
-
-1. Re-read `spec/system-map.md` and the concrete change evidence.
-2. Update only project-wide shape, boundaries, flows, storage/external systems, invariants, or pointers.
-3. Move low-level module details, endpoint lists, deployment commands, and temporary implementation notes out of the map.
-4. If a change is really a capability contract, route it to `spec-grill`. If it changes why/good-state, route it to charter amend.
+```text
+- `<slug>` - evidence: <flow/boundary/invariant>; owns <contract surface>; uncertainty: <what needs grill>
+```
 
 ## Quality checks
 

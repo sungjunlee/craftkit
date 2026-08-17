@@ -1,6 +1,6 @@
 # Charter Amendment Guidance
 
-Use this reference in `spec-charter` amend mode after re-reading `spec/charter.md`, or legacy root `CHARTER.md` only as a fallback. The default bias is stability: no change unless concrete evidence shows the charter is stale, weak, or newly validated.
+Use this reference in `spec-charter` amend mode after re-reading `spec/charter.md`, or legacy root `CHARTER.md` only as a fallback. The default bias is stability: no change unless concrete evidence shows the charter is stale or weak. Status promotion is not a reason to edit a lean charter.
 
 ## Tier 1 Challenge Checklist
 

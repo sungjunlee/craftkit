@@ -20,7 +20,7 @@ Report these findings when present:
 | Finding | Severity | Rule |
 |---------|----------|------|
 | `orphan work` | medium | An open issue maps to no objective. Ask whether to add an objective, defer the issue, or drop it. |
-| `uncovered objective` | medium | An objective has no open issue advancing it. Report coverage and ask whether to plan work. Do not treat missing work as predicate drift; retirement still goes through amend with evidence the predicate is false or no longer directive. |
+| `uncovered objective` | medium | An objective has no open issue advancing it. Report coverage. |
 | `contradiction` | high | An open issue violates a Non-Goal. Resolution requires dropping the issue or amending the Non-Goal through `spec-charter` amend. |
 
 Contradictions are highest severity because they mean execution is crossing an explicit boundary.

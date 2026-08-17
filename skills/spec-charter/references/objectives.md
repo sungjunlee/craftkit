@@ -12,7 +12,7 @@ Do not add `[active]` / `[implemented]` / `[validated]` / `[deferred]` unless th
 
 ## ✅ Good Predicates
 
-Each example pairs a predicate with a concrete check. On a lean charter the check is how you *know* the predicate still holds — not a status to stamp on the line. Prefer predicates a consumer can observe.
+Each example pairs a predicate with a concrete check. On a lean charter the check is how you *know* the predicate still holds — not a status to stamp on the line.
 
 1. **"A user can pull open GitHub issues into `backlog/tasks/` without API tokens beyond `gh auth`"**
    *Check:* run `node scripts/sync-pull.js` against a fresh repo; assert `backlog/tasks/*.md` exists and no token was prompted.

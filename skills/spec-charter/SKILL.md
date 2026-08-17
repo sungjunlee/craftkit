@@ -34,7 +34,7 @@ Do not rely on bundled helper scripts. Inspect the target repo directly and keep
 ### Completion contract
 
 - `create`: created files, unresolved assumptions, and a next natural-language action. On brownfield repos, if `spec/system-map.md` is absent, continue into `map` mode (do not draft the map from README and folders alone); recommend `spec-grill` only when capability candidates are evidence-backed.
-- `amend`: accepted changes, refused/parked changes, and a charter length check (flag when it exceeds a ~5-minute read, roughly 150 lines). Cite proof only when the charter uses the opt-in status ladder.
+- `amend`: accepted changes, refused/parked changes, and a charter length check (flag when it exceeds a ~5-minute read, roughly 150 lines). Cite proof only when the charter uses the opt-in status ladder. After migrating a brownfield root `CHARTER.md`, if `spec/system-map.md` is absent, continue into `map` mode.
 - `map`: `Evidence Read` and `Evidence Missing` bullets. Done when the map is evidence-backed, low-level detail has been demoted, and charter/capability changes have been routed out.
 - `reassess`: required report sections from the dispatch contract, with one recommended next action.
 
@@ -61,26 +61,26 @@ Absence is supported. Projects opt in by creating the files; other tools degrade
 | **2 · Predicates** | Objectives | Status-free by default. Add/remove is human-gated. IDs are stable and never reused. Retire by moving the line to `docs/spec-history.md`. |
 | **3 · History** | Decisions | Append-only. Reverse via a new `supersedes` row. |
 
-**Opt-in status ladder.** If a charter already uses `[active]` / `[implemented]` / `[validated]` / `[deferred]`, keep that vocabulary and apply the proof gate in `references/amendment.md`. Do not introduce status tokens on a lean charter. Reassess on a lean charter judges predicate drift (still true? still directive?), not status promotion.
+**Opt-in status ladder.** If a charter already uses status tokens, keep them and apply `references/amendment.md`. Do not add tokens to a lean charter. Reassess on a lean charter judges predicate drift (still true? still directive?), not status promotion.
 
 ## Create mode
 
-Use when neither `spec/charter.md` nor legacy root `CHARTER.md` exists. If only root `CHARTER.md` exists, use Amend mode and migrate via `references/spec-axis.md` rather than writing a second charter.
+Use when neither `spec/charter.md` nor legacy root `CHARTER.md` exists. If only root `CHARTER.md` exists, use Amend mode and migrate via `references/spec-axis.md` rather than writing a second charter; then if the repo is brownfield and `spec/system-map.md` is absent, continue into Map mode.
 
 1. Draft from repo signals: product/user-facing (`README.md`, open issues, `CHANGELOG.md`) before harness files (`CLAUDE.md`, `AGENTS.md`). Harness files may inform workflow; they do not override README, issues, or code for product authority unless they explicitly describe product boundaries. Surface conflicts in the interview rather than picking silently.
 2. Interview to sharpen Problem, Approach, Non-Goals, and initial Objectives. Follow `references/create.md`. Non-interactive create is allowed when the user asked for autonomous progress and evidence is strong; mark inferred claims `src: inferred` and list unresolved assumptions.
 3. Create `spec/` if needed, then write `spec/charter.md` from `templates/charter.md` with `revision: 1` and today's `last_amended`. Seed Decisions only from existing ADRs or notable merged PRs; whatever lands is immutable from revision 2.
 4. On brownfield repos, if `spec/system-map.md` is absent, continue into Map mode instead of writing a stub map.
 
-Objectives are verifiable predicates, not tasks. Mixed rigor is allowed. Use `O<n>` IDs; never reuse a removed ID. Write lean objectives as `O<n> — <predicate> · src: …`. Record provenance with `src:` (`user`, `inferred`, or `execution`). Default to the language signaled by README and the user; keep structural labels in English. See `references/objectives.md`.
+Objectives are verifiable predicates, not tasks. Mixed rigor is allowed. Use `O<n>` IDs; never reuse a removed ID. Write lean objectives as `- O1 — <predicate> · src: user`. Record provenance with `src:` (`user`, `inferred`, or `execution`). Default to the language signaled by README and the user; keep structural labels in English. See `references/objectives.md`.
 
 ## Amend mode
 
-Use when a charter exists or when invoked as `amend`. If only root `CHARTER.md` exists, apply the fallback in `references/spec-axis.md` and migrate deliberately.
+Use when a charter exists or when invoked as `amend`. If only root `CHARTER.md` exists, apply the fallback in `references/spec-axis.md` and migrate deliberately; then if the repo is brownfield and `spec/system-map.md` is absent, continue into Map mode.
 
 - Tier 1 plus objective add/remove: challenge, propose diffs, confirm, then apply.
 - Lean Tier 2: no status advances. Retire by moving the line to `docs/spec-history.md`.
-- Opt-in ladder: producer proof for `active` → `implemented`; adoption proof for `implemented` → `validated`; cited rationale for `deferred`. Details in `references/amendment.md`.
+- If the live charter already uses status tokens, apply `references/amendment.md`. Do not add tokens to a lean charter.
 - Tier 3: append only.
 
 After an accepted amendment, bump `last_amended` and `revision`. Protect the ~5-minute-read property. A `backlog-triage` Alignment Check may seed proposals; this skill applies the gates. See `references/amendment.md`.
@@ -94,7 +94,7 @@ Create:
 1. Read bounded signals: `spec/charter.md` if present, `README.md`, `AGENTS.md`/`CLAUDE.md`, top-level directories, package/config files, and architecture-related docs.
 2. Repo Evidence Pass before drafting: entrypoints, command/script surfaces, runtime boundaries, storage/state, external systems, tests that reveal intended behavior, recent commits. Report evidence in the conversation, not as inventory inside the map.
 3. Keep sections short: System Shape, Runtime Boundaries, Core Flows, Storage And External Systems, Project-Wide Invariants, Candidate Capability Boundaries, Where To Go Next. Link out instead of expanding subsystem detail.
-4. Label brownfield uncertainty as assumptions. Hand short candidates to `spec-grill`; do not turn the map into an API reference, runbook, or module inventory.
+4. Label brownfield uncertainty as assumptions. Hand short candidates to `spec-grill` as `- \`<slug>\` - evidence: …; owns: …; uncertainty: …`. Do not turn the map into an API reference, runbook, or module inventory.
 
 Amend: update only project-wide shape, boundaries, flows, storage/externals, invariants, or pointers. Demote helpers, single endpoints, and deployment commands. Route why/good-state changes to charter amend; route capability contracts to `spec-grill`.
 
@@ -112,9 +112,8 @@ If the system map is missing on a brownfield repo, recommend `map` before grilli
 
 ## Verification prompts
 
-- "Create a charter for a repo with no README and a vague objective list." Expected: interview until Problem/Approach/Non-Goals are concrete; refuse objectives that aren't verifiable predicates; write status-free `O<n> — <predicate>` lines.
+- "Create a charter for a repo with no README and a vague objective list." Expected: interview until Problem/Approach/Non-Goals are concrete; refuse objectives that aren't verifiable predicates; write status-free `- O1 — <predicate>` lines.
 - "Mark this objective validated because the team believes it's done." Expected: on a lean charter, refuse status tokens; on an opt-in ladder charter, refuse the advance without cited proof.
-- "Mark this objective validated; here is the merged PR." Expected: on an opt-in ladder, advance to `implemented` and refuse `validated` until adoption evidence exists.
 - "Edit a past Decisions row to fix a typo." Expected: refuse; append a new row.
 - "Create a system map after reading only README and top-level folders." Expected: continue the Repo Evidence Pass or label the map as under-evidenced.
 - "Update this map with a new helper function and endpoint." Expected: refuse or demote unless it changes a project-wide flow or invariant.
