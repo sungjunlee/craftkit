@@ -114,7 +114,7 @@ Four skills (`craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-hand
 6. Copy-pasteable results over fancy abstractions
 7. Weight follows durability — as models improve, move each skill's center of gravity from "tell the model how to think" toward "give the model durable state and direction it cannot hold on its own"
 
-Principle 7 is the axis CraftKit is actively re-sized against: machinery (deterministic paths, clipboard, hooks, archiving), time-sensitive curated knowledge, and direction-setting judgment contracts are model-independent and stay; raw prescription erodes as models improve and gets cut.
+Principle 7 is the axis CraftKit is actively re-sized against: machinery (deterministic paths, clipboard, archiving), time-sensitive curated knowledge, and direction-setting judgment contracts are model-independent and stay; raw prescription erodes as models improve and gets cut.
 
 ## Skill spine budget
 
@@ -157,7 +157,7 @@ Use these lightweight checks after editing skill descriptions or routing boundar
 | "improve this skill and apply changes" | `craft-critique` (findings, then apply) | stops at read-only findings despite the apply request |
 | "run measured iterations on failures" | `craft-autoresearch` | describes a generic improve loop instead of an eval runner |
 | "write a prompt for GPT" | `craft-prompt` | refuses to deliver a copy-pasteable prompt |
-| "create a system map for this repo" | `spec-charter` (`map`) | looks for a separate `spec-system-map` skill |
+| "create a system map for this repo" | `spec-charter` (`map`) | looks for a dedicated map skill instead of routing here |
 
 ## Use in other agents
 
@@ -180,7 +180,7 @@ It checks JSON syntax, package boundaries, skill frontmatter, `SKILL.md` line bu
 
 ## Prior art
 
-- [`sungjunlee/prompt-builder`](https://github.com/sungjunlee/prompt-builder) — predecessor project. Its mature prompt-authoring asset (5-step process, 6 building blocks, platform guides, templates) was absorbed wholesale into `craft-prompt`. Kept on GitHub for reference; new work happens here.
+- [`sungjunlee/prompt-builder`](https://github.com/sungjunlee/prompt-builder) — predecessor project. Its mature prompt-authoring asset (5-step process, 6 building blocks, templates) was absorbed into `craft-prompt`. Kept on GitHub for reference; new work happens here.
 - [`karpathy/autoresearch`](https://github.com/karpathy/autoresearch) — Andrej Karpathy's ML training-loop project that introduced the autoresearch methodology (give an agent a baseline, let it experiment overnight, keep what improves, discard what doesn't). `craft-autoresearch` adapts that loop discipline to prompt and skill artifacts instead of model training code.
 - [`byungjunjang/jangpm-meta-skills`](https://github.com/byungjunjang/jangpm-meta-skills) — four-skill meta toolkit for Claude Code and Codex (`blueprint`, `deep-dive`, `reflect`, `autoresearch`). Its `autoresearch` skill contributed implementation patterns — experiment contract shape, the three-eval-type taxonomy (binary / comparative / fidelity), deletion discipline — that `craft-autoresearch` builds on.
 

@@ -6,7 +6,7 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ## [0.4.0] — 2026-08-17
 
-Second-beginning lightening pass (#169). Public shape is six skills: `craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-handoff`, `spec-charter`, `spec-grill`.
+Second lightening pass (#169). Public shape is six skills: `craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-handoff`, `spec-charter`, `spec-grill`.
 
 ### Removed (BREAKING)
 

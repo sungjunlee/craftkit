@@ -20,7 +20,7 @@ Report these findings when present:
 | Finding | Severity | Rule |
 |---------|----------|------|
 | `orphan work` | medium | An open issue maps to no objective. Ask whether to add an objective, defer the issue, or drop it. |
-| `neglected objective` | medium | An objective has no open issue advancing it. Ask whether to plan work, retire the objective, or amend it. |
+| `uncovered objective` | medium | An objective has no open issue advancing it. Report coverage and ask whether to plan work. Do not treat missing work as predicate drift; retirement still goes through amend with evidence the predicate is false or no longer directive. |
 | `contradiction` | high | An open issue violates a Non-Goal. Resolution requires dropping the issue or amending the Non-Goal through `spec-charter` amend. |
 
 Contradictions are highest severity because they mean execution is crossing an explicit boundary.
@@ -33,7 +33,7 @@ Start the Alignment report with a compact coverage line:
 7/9 open issues → objectives ✓ · O3 has no work ⚠
 ```
 
-Use the first count for open issues that map to at least one objective. Mention neglected objectives or contradictions after the separator.
+Use the first count for open issues that map to at least one objective. Mention uncovered objectives or contradictions after the separator.
 
 ## Proposed Charter Changes
 

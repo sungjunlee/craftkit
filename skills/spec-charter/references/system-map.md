@@ -1,6 +1,6 @@
 # System map create and amend
 
-Use this reference when `spec-charter` is writing or updating `spec/system-map.md`. The spine owns routing; this file owns the map workflow.
+Use this reference when `spec-charter` is writing or updating `spec/system-map.md`. The spine owns the operating path; this file carries heuristics and failure modes.
 
 `spec/system-map.md` is narrower than a generic `ARCHITECTURE.md`: it names project-wide structure, boundaries, flows, storage/external systems, invariants, and pointers to deeper docs.
 

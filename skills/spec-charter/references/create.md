@@ -105,4 +105,4 @@ A first-revision charter produced via this checklist should:
 - Carry Problem / Approach / Non-Goals that survived a challenge round, not first-draft acceptance.
 - List 2–3 Objectives, each one the 30-second test would pass.
 - Have an empty or lightly-seeded Decisions table.
-- Match in shape (not content) the charter dev-backlog created for itself on 2026-05-23.
+- Match in shape (not content) `templates/charter.md`: lean `O<n> — <predicate>` objectives, no status tokens unless the user asked for the opt-in ladder.

@@ -12,7 +12,7 @@ metadata:
 
 Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and day-to-day execution work. `spec-grill` is not a file generator; it pressure-tests existing repo signals into durable capability contracts.
 
-Use this after `spec-charter create` on existing/brownfield repos, or whenever the user asks to define capability boundaries, component contracts, Behaviors, or Hard Constraints.
+Use this after `spec-charter` has landed a charter and, on brownfield repos, a system map; or whenever the user asks to define capability boundaries, component contracts, Behaviors, or Hard Constraints.
 
 ## Execution contract
 

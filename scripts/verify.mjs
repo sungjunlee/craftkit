@@ -11,18 +11,6 @@ const warnings = [];
 const skipPackDryRunForTests = process.env.CRAFTKIT_VERIFY_TEST_SKIP_PACK_DRY_RUN === "1";
 const maxSkillSoftLines = 220;
 const maxDescriptionWords = 50;
-const radarCurrentPath = "skills/craft-skill-spec/references/radar/current.md";
-// radar/policy.md sets a 2-month (~60 day) review cadence for current.md; 75 days
-// adds slack before this becomes a warning.
-const radarMaxAgeDays = 75;
-const craftPromptGuidesPath = "skills/craft-prompt/guides";
-// craft-prompt's guides/*.md track vendor prompting behavior (Claude, GPT,
-// Gemini, Perplexity, local models), which drifts slower than the radar's
-// single-skill classification snapshot. 120 days gives each guide a longer
-// horizon than the radar's 75-day cadence while still forcing a periodic
-// look — a guide that hasn't been reviewed in four months can easily be
-// citing a superseded model or API shape.
-const guideMaxAgeDays = 120;
 
 // Family section contract, derived from docs/skill-anatomy.md ("craft-* family
 // contract" and "spec-* family contract" tables, plus "Documented exemptions").
@@ -468,9 +456,9 @@ function checkReferenceIndex() {
     const body = readText(skillMdPath);
 
     // Direction (a): every top-level references/*.md file must be cited
-    // somewhere in this skill's own SKILL.md. Subdirectories (e.g.
-    // craft-skill-spec/references/radar/) are out of scope for this direction —
-    // the issue globs one level only.
+    // somewhere in this skill's own SKILL.md. Subdirectories under
+    // references/ are out of scope for this direction — the issue globs one
+    // level only.
     const referencesDir = path.join(skillDir, "references");
     if (fs.existsSync(referencesDir)) {
       const topLevelFiles = fs.readdirSync(referencesDir, { withFileTypes: true })
@@ -485,9 +473,9 @@ function checkReferenceIndex() {
       }
     }
 
-    // Direction (b): every references/templates/guides path-like citation must
-    // resolve to a real file, relative to the skill dir (or the repo root for
-    // citations spelled out from `skills/...`).
+    // Direction (b): every references/...md path-like citation must resolve to
+    // a real file, relative to the skill dir (or the repo root for citations
+    // spelled out from `skills/...`).
     const citations = new Set(body.match(referenceCitationPattern) ?? []);
     for (const citation of citations) {
       const resolvedPath = resolveCitation(skillDir, citation);
@@ -675,58 +663,6 @@ function checkDocumentationPaths() {
   }
 }
 
-// Shared review-date staleness helper (radar current.md, craft-prompt guides).
-// The caller prefixes its own file path, so messages stay file-agnostic;
-// cadenceHint names where the refresh rule lives, when there is one.
-function radarStaleness(content, now, maxAgeDays = radarMaxAgeDays, cadenceHint = "see radar/policy.md for the refresh cadence") {
-  const match = content.match(/^- last reviewed:\s*`([^`]*)`/m);
-  if (!match) {
-    return 'missing a parseable "last reviewed" date';
-  }
-
-  const reviewedDate = new Date(`${match[1]}T00:00:00Z`);
-  if (Number.isNaN(reviewedDate.getTime())) {
-    return `unparseable "last reviewed" date: ${match[1]}`;
-  }
-
-  const ageDays = Math.floor((now.getTime() - reviewedDate.getTime()) / 86_400_000);
-  if (ageDays > maxAgeDays) {
-    return `last reviewed ${match[1]} (${ageDays} days ago), past the ${maxAgeDays}-day staleness threshold${cadenceHint ? ` — ${cadenceHint}` : ""}`;
-  }
-
-  return null;
-}
-
-function checkRadarStaleness() {
-  const filePath = path.join(root, radarCurrentPath);
-  if (!fs.existsSync(filePath)) {
-    return;
-  }
-
-  const message = radarStaleness(readText(filePath), new Date());
-  if (message) {
-    warn(`${relative(filePath)}: ${message}`);
-  }
-}
-
-function checkGuideStaleness() {
-  const guidesDir = path.join(root, craftPromptGuidesPath);
-  if (!fs.existsSync(guidesDir)) {
-    return;
-  }
-
-  const guideFiles = fs.readdirSync(guidesDir, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
-    .map((entry) => path.join(guidesDir, entry.name));
-
-  for (const filePath of guideFiles) {
-    const message = radarStaleness(readText(filePath), new Date(), guideMaxAgeDays, "platform guides are reviewed on a 120-day horizon");
-    if (message) {
-      warn(`${relative(filePath)}: ${message}`);
-    }
-  }
-}
-
 function checkPackDryRun() {
   if (skipPackDryRunForTests) {
     return;
@@ -795,8 +731,6 @@ function main() {
   checkFamilySectionContract();
   checkTerminology();
   checkDocumentationPaths();
-  checkRadarStaleness();
-  checkGuideStaleness();
   checkPackDryRun();
 
   for (const warning of warnings) {
@@ -818,4 +752,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   main();
 }
 
-export { radarStaleness, sectionContractFindings, matchesFilePattern, terminologyFindings, terminologyRules };
+export { sectionContractFindings, matchesFilePattern, terminologyFindings, terminologyRules };

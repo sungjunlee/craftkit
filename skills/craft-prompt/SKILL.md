@@ -16,8 +16,6 @@ Turn a goal, scattered notes, or a raw ask into a clear, well-structured prompt 
 - a `/goal` condition or other reusable prompt template is needed
 - Korean prompt requests appear, such as "프롬프트 만들어" or "프롬프트 작성"
 
-Session continuity (paired doc + resume prompt) is `craft-handoff`, not this skill.
-
 ## Inputs
 
 - **Goal** — what the prompt should make the LLM do
@@ -111,6 +109,12 @@ Report only issues you're confident about, one per line: `file:line — issue �
 
 Note outside the block: "Swap `{{diff}}` for the actual diff before sending."
 
+## Templates (special cases where a well-crafted template adds real value)
+
+- `templates/image-gen.md` — Image generation (photo, illustration, icon, per-platform notes)
+- `templates/video-gen.md` — Video generation (text-to-video, image-to-video, camera keywords, per-platform notes)
+- `templates/system-prompt.md` — Chatbot/agent system prompts (layered architecture)
+
 ## References (load on demand)
 
 - `references/shared-principles.md` — full statements of the four principles
@@ -118,9 +122,3 @@ Note outside the block: "Swap `{{diff}}` for the actual diff before sending."
 - `references/prompt-patterns.md` — common patterns: research, code gen, review, writing, extraction, analysis, decision
 - `references/quality-checklist.md` — Quality checks with failure modes and fixes
 - `references/goal-conditions.md` — Writing `/goal` completion conditions and reviewable goal specs for Claude Code and Codex autonomous loops (transcript-visible evidence, cross-platform differences, and caveats)
-
-## Templates (special cases where a well-crafted template adds real value)
-
-- `templates/image-gen.md` — Image generation (photo, illustration, icon, per-platform notes)
-- `templates/video-gen.md` — Video generation (text-to-video, image-to-video, camera keywords, per-platform notes)
-- `templates/system-prompt.md` — Chatbot/agent system prompts (layered architecture)

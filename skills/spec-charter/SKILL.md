@@ -10,7 +10,7 @@ metadata:
 
 # spec-charter
 
-Create and amend the spec-axis files this skill owns: `spec/charter.md` (direction) and `spec/system-map.md` (system shape). `spec-grill` owns `spec/capabilities.md`. This skill is rerunnable. Invocations of the retired `spec-system-map` skill route here as `map`.
+Create and amend the spec-axis files this skill owns: `spec/charter.md` (direction) and `spec/system-map.md` (system shape). `spec-grill` owns `spec/capabilities.md`. This skill is rerunnable.
 
 ## Execution contract
 
@@ -33,7 +33,7 @@ Do not rely on bundled helper scripts. Inspect the target repo directly and keep
 
 ### Completion contract
 
-- `create`: created files, unresolved assumptions, and a next natural-language action. On brownfield repos, create `spec/system-map.md` when absent; recommend `spec-grill` only when capability candidates are evidence-backed.
+- `create`: created files, unresolved assumptions, and a next natural-language action. On brownfield repos, if `spec/system-map.md` is absent, continue into `map` mode (do not draft the map from README and folders alone); recommend `spec-grill` only when capability candidates are evidence-backed.
 - `amend`: accepted changes, refused/parked changes, and a charter length check (flag when it exceeds a ~5-minute read, roughly 150 lines). Cite proof only when the charter uses the opt-in status ladder.
 - `map`: `Evidence Read` and `Evidence Missing` bullets. Done when the map is evidence-backed, low-level detail has been demoted, and charter/capability changes have been routed out.
 - `reassess`: required report sections from the dispatch contract, with one recommended next action.
@@ -65,14 +65,14 @@ Absence is supported. Projects opt in by creating the files; other tools degrade
 
 ## Create mode
 
-Use when neither `spec/charter.md` nor legacy root `CHARTER.md` exists, or when invoked as `create` and no charter exists.
+Use when neither `spec/charter.md` nor legacy root `CHARTER.md` exists. If only root `CHARTER.md` exists, use Amend mode and migrate via `references/spec-axis.md` rather than writing a second charter.
 
 1. Draft from repo signals: product/user-facing (`README.md`, open issues, `CHANGELOG.md`) before harness files (`CLAUDE.md`, `AGENTS.md`). Harness files may inform workflow; they do not override README, issues, or code for product authority unless they explicitly describe product boundaries. Surface conflicts in the interview rather than picking silently.
 2. Interview to sharpen Problem, Approach, Non-Goals, and initial Objectives. Follow `references/create.md`. Non-interactive create is allowed when the user asked for autonomous progress and evidence is strong; mark inferred claims `src: inferred` and list unresolved assumptions.
 3. Create `spec/` if needed, then write `spec/charter.md` from `templates/charter.md` with `revision: 1` and today's `last_amended`. Seed Decisions only from existing ADRs or notable merged PRs; whatever lands is immutable from revision 2.
-4. On brownfield repos, use the completion contract to choose the next spec-axis action.
+4. On brownfield repos, if `spec/system-map.md` is absent, continue into Map mode instead of writing a stub map.
 
-Objectives are verifiable predicates, not tasks. Mixed rigor is allowed. Use `O<n>` IDs; never reuse a removed ID. Record provenance with `src:` (`user`, `inferred`, or `execution`). Default to the language signaled by README and the user; keep structural labels in English. See `references/objectives.md`.
+Objectives are verifiable predicates, not tasks. Mixed rigor is allowed. Use `O<n>` IDs; never reuse a removed ID. Write lean objectives as `O<n> — <predicate> · src: …`. Record provenance with `src:` (`user`, `inferred`, or `execution`). Default to the language signaled by README and the user; keep structural labels in English. See `references/objectives.md`.
 
 ## Amend mode
 
@@ -80,16 +80,23 @@ Use when a charter exists or when invoked as `amend`. If only root `CHARTER.md` 
 
 - Tier 1 plus objective add/remove: challenge, propose diffs, confirm, then apply.
 - Lean Tier 2: no status advances. Retire by moving the line to `docs/spec-history.md`.
-- Opt-in ladder: proof for `active` → `validated`; cited rationale for `active` → `deferred`; refuse otherwise.
+- Opt-in ladder: proof for `active`/`implemented` → `validated`; cited rationale for `active`/`implemented` → `deferred`; refuse otherwise.
 - Tier 3: append only.
 
 After an accepted amendment, bump `last_amended` and `revision`. Protect the ~5-minute-read property. A `backlog-triage` Alignment Check may seed proposals; this skill applies the gates. See `references/amendment.md`.
 
 ## Map mode
 
-Use when the user asks for system shape, architecture scope, runtime boundaries, flows, invariants, `SYSTEM_MAP`, or `spec/system-map.md` — including leftover `spec-system-map` invocations.
+Use when the user asks for system shape, architecture scope, runtime boundaries, flows, invariants, or `spec/system-map.md`. Create when the file is absent; amend when it exists. Draft from `templates/system-map.md`. Heuristics and failure modes: `references/system-map.md`.
 
-Create when the file is absent; amend when it exists and has drifted. Workflow, quality checks, and failure modes live in `references/system-map.md`. Draft from `templates/system-map.md`.
+Create:
+
+1. Read bounded signals: `spec/charter.md` if present, `README.md`, `AGENTS.md`/`CLAUDE.md`, top-level directories, package/config files, and architecture-related docs.
+2. Repo Evidence Pass before drafting: entrypoints, command/script surfaces, runtime boundaries, storage/state, external systems, tests that reveal intended behavior, recent commits. Report evidence in the conversation, not as inventory inside the map.
+3. Keep sections short: System Shape, Runtime Boundaries, Core Flows, Storage And External Systems, Project-Wide Invariants, Candidate Capability Boundaries, Where To Go Next. Link out instead of expanding subsystem detail.
+4. Label brownfield uncertainty as assumptions. Hand short candidates to `spec-grill`; do not turn the map into an API reference, runbook, or module inventory.
+
+Amend: update only project-wide shape, boundaries, flows, storage/externals, invariants, or pointers. Demote helpers, single endpoints, and deployment commands. Route why/good-state changes to charter amend; route capability contracts to `spec-grill`.
 
 ## Reassess mode
 
@@ -105,7 +112,7 @@ If the system map is missing on a brownfield repo, recommend `map` before grilli
 
 ## Verification prompts
 
-- "Create a charter for a repo with no README and a vague objective list." Expected: interview until Problem/Approach/Non-Goals are concrete; refuse objectives that aren't verifiable predicates; write status-free `O<n>` lines.
+- "Create a charter for a repo with no README and a vague objective list." Expected: interview until Problem/Approach/Non-Goals are concrete; refuse objectives that aren't verifiable predicates; write status-free `O<n> — <predicate>` lines.
 - "Mark this objective validated because the team believes it's done." Expected: on a lean charter, refuse status tokens; on an opt-in ladder charter, refuse the advance without cited proof.
 - "Edit a past Decisions row to fix a typo." Expected: refuse; append a new row.
 - "Create a system map after reading only README and top-level folders." Expected: continue the Repo Evidence Pass or label the map as under-evidenced.
@@ -120,7 +127,7 @@ If the system map is missing on a brownfield repo, recommend `map` before grilli
 - `references/objectives.md` — predicate examples, rewrite patterns, 30-second test.
 - `references/reassess.md` — report-only stale-spec review.
 - `references/spec-axis.md` — file boundaries and legacy `CHARTER.md` fallback.
-- `references/system-map.md` — map create/amend workflow, quality checks, failure modes.
+- `references/system-map.md` — map heuristics, quality checks, failure modes.
 - `templates/system-map.md` — starting shape for `spec/system-map.md`.
 - [`../spec-grill/SKILL.md`](../spec-grill/SKILL.md) — companion skill for `spec/capabilities.md`.
 - [`../spec-grill/references/spec-pipeline-ready.md`](../spec-grill/references/spec-pipeline-ready.md) — landing checklist for the full spec axis.

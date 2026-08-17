@@ -217,6 +217,8 @@ revision: 1
     assert.equal(objectives[0].status, null);
     assert.match(objectives[0].predicate, /log in with Google/);
     assert.equal(objectives[1].id, "O2");
+    assert.equal(objectives[1].status, null);
+    assert.equal(objectives[1].predicate, "agents resume from _context.md");
   });
 });
 
