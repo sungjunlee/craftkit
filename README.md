@@ -86,7 +86,7 @@ When two skills could trigger, choose the least invasive one that answers the re
 
 Terminology note: `craft-autoresearch` uses an **eval runner** for replaying test inputs and scoring outputs. Do not call that runner a "harness."
 
-The `spec-*` skills land a spec axis: `spec-charter` (charter + system map) is the default; `spec-grill` is an optional second step. Use them when a brownfield repo needs a compact spec axis grounded in real repo evidence instead of a generic architecture document. Monorepo vs sibling-git vs type-1 topology is stated once in [`skills/spec-charter/references/spec-axis.md`](skills/spec-charter/references/spec-axis.md).
+The `spec-*` skills land a spec axis: `spec-charter` (charter + system map) is the default; `spec-grill` is optional. Use them when a brownfield repo needs a compact spec axis grounded in real repo evidence instead of a generic architecture document. Monorepo vs sibling-git vs type-1 topology is stated once in [`skills/spec-charter/references/spec-axis.md`](skills/spec-charter/references/spec-axis.md).
 
 The spec axis supersedes `dev-backlog`'s retired `backlog-charter` skill (dev-backlog split that surface into the spec-series in its 0.6.0): `spec/charter.md` is the successor home for the project reference axis, and `spec-charter`'s amend mode reads a legacy root `CHARTER.md` as a fallback and migrates it deliberately rather than silently. `dev-backlog` consumes the axis — it measures sprints and triage against `spec/charter.md` — but does not own it.
 

@@ -11,6 +11,8 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 - README and marketplace: `spec-charter` is the default spec-axis landing; `spec-grill` is optional when a consumer (`component:`), a cross-tree contract, or a 3-axis audit is present (#180).
 - Spec-axis topology (monorepo vs sibling-git vs type-1) and harness-projection authority live in `skills/spec-charter/references/spec-axis.md` instead of being restated per skill (#177).
 - `docs/skill-anatomy.md` names spec-* as spec-axis skills, not a required pipeline.
+- `spec-charter` map fills Runtime Boundaries from existing nested instruction files; missing files are Evidence Missing, not invented. Nested files hold how plus a Non-Goals pointer; Hard Constraints stay in `spec/capabilities.md` when that file exists (#181).
+- `spec-grill` names keep conditions on the skill spine; the shared rule and fold condition live in `spec-axis.md`. Fold is documented, not executed (#182).
 
 ## [0.4.0] — 2026-08-17
 
