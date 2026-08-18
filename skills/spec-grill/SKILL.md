@@ -10,7 +10,7 @@ metadata:
 
 # spec-grill
 
-Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and day-to-day execution work. Pressure-test repo signals into durable contracts only when a keep condition holds. Not a file generator from directory names, and not the second step of a required pipeline.
+Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and day-to-day execution work. Create the file only when a keep condition holds; amend it if it already exists. Not a file generator from directory names, and not the second step of a required pipeline.
 
 ## Execution contract
 
@@ -26,7 +26,7 @@ Do not require users to memorize arguments. Interpret the user's request and cho
 | Mentions a known capability slug or natural-language capability area | **Specific Capability Review**: resolve the mention to one capability or candidate and deep-review only that block or candidate. | No by default |
 | "Audit capabilities", "find overlap", "find stale contracts", "find weak predicates", or `audit` | **Capability Audit Report**: report stale, overlapping, weak, or unsupported capability predicates. | No |
 
-If intent is unclear, prefer report-only. Treat natural-language requests to write or apply the recommended next capability as edit intent, not as no-arg ambiguity. Creating `spec/capabilities.md` requires a keep condition. If the file already exists, edit routes may proceed. Report-only routes still run when the file is absent and none hold; emit the report first and do not create the file.
+If intent is unclear, prefer report-only. Treat natural-language requests to write or apply the recommended next capability as edit intent, not as no-arg ambiguity. If evidence is weak, emit the report first and do not create the file. Keep conditions below gate creation.
 
 Capability slugs are strict routing handles; downstream tools (e.g. sprint tooling) may use them to route work and learnings. Keep them lowercase and singular, then put nuance in Goal/Scope prose.
 
@@ -47,11 +47,10 @@ End every run with a short summary:
 - behaviors promoted to constraints
 - missing proof or evidence
 - follow-up Learning Actions if any
-- if the file is absent and no keep condition holds: recommend stopping after charter (plus map on brownfield) and do not create `spec/capabilities.md`
 
 ### Grill report contract
 
-**Sizing rule**: the no-arg and ambiguous routes emit a **short diagnostic** by default — three sections: `### Evidence Read`, `### Evidence Missing`, and `### Recommended Edit`. Reserve the full **Grill Report** below for the Candidate Boundary Report (`map`) and Capability Audit Report (`audit`) routes, or when the user explicitly asks for the full report. Every full report must include these sections in order: `## Grill Report`, `### Evidence Read`, `### Evidence Missing`, `### Raw Candidates`, `### Accepted / Rejected / Merged / Split Candidates`, `### Sharp Questions`, `### 3-Axis Predicate Findings`, `### Proposed Next Capability`, `### Recommended Edit`. See `references/grill-report-template.md` for the full skeleton with placeholder fields. When the file is absent and no keep condition holds, set Proposed Next Capability to none and Recommended Edit to stop after charter (plus map on brownfield); do not create the file.
+**Sizing rule**: the no-arg and ambiguous routes emit a **short diagnostic** by default — three sections: `### Evidence Read`, `### Evidence Missing`, and `### Recommended Edit`. Reserve the full **Grill Report** below for the Candidate Boundary Report (`map`) and Capability Audit Report (`audit`) routes, or when the user explicitly asks for the full report. Every full report must include these sections in order: `## Grill Report`, `### Evidence Read`, `### Evidence Missing`, `### Raw Candidates`, `### Accepted / Rejected / Merged / Split Candidates`, `### Sharp Questions`, `### 3-Axis Predicate Findings`, `### Proposed Next Capability`, `### Recommended Edit`. See `references/grill-report-template.md` for the full skeleton. Apply Keep conditions when filling Proposed Next Capability and Recommended Edit.
 
 Separate diagnosis from mutation. The report can recommend edits, but it must not edit `spec/capabilities.md` unless the user clearly asked for editing or confirms the proposed edit. This write-gating rule applies in full at every size — a short diagnostic never relaxes the "report first, edit only when authorized" discipline, it only trims what gets written down.
 
@@ -142,8 +141,7 @@ See `references/capabilities.md` for additional grill heuristics and [`../spec-c
 
 ## Verification prompts
 
-- "Create capabilities from a repo where only top-level directories are known." Expected: use directories as raw signals only; directory names are not a keep condition; do not write the file.
-- "We finished charter and map; write capabilities from the folder list." Expected: refuse; same gate.
+- "We finished charter and map; write capabilities from the folder list." Expected: refuse; directory names are not a keep condition; do not create the file.
 - "A commit scope appears often but has no docs, tests, or distinct behavior." Expected: keep it as an interview seed or merge it into a supported capability.
 - "User says this weakly evidenced surface is important." Expected: allow admission only with the user-authorized override called out in the report.
 - "문서 적을 건 적고 다음 제안해줘." Expected: if the file is absent and no keep condition holds, stop without a create proposal; otherwise route to Next Capability Proposal, propose one supported next capability, and ask before writing unless edit authorization is explicit.

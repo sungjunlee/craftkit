@@ -24,7 +24,7 @@ Absence is supported. Pick the smallest axis that matches the git topology.
 | True monorepo (one git, many trees) | Umbrella `spec/charter.md` + `spec/system-map.md` as the router: tree → local instruction file. |
 | Sibling git workspace (many repos, one editor folder) | Each repo bootstraps itself. No workspace-umbrella charter. |
 
-`spec-grill` stays optional. Keep it when a consumer exists, the contract is cross-tree, or the user asked for a 3-axis audit. A bare invocation may still report; it does not by itself authorize creating `spec/capabilities.md`. Once that file exists, `spec-grill` may amend it. Otherwise stop after charter, plus map on brownfield. Directory names alone are not a reason to generate the file.
+**Keep conditions:** a consumer exists, the contract is cross-tree, or the user asked for a 3-axis audit. `spec-grill` stays optional. A bare invocation may still report; it does not by itself authorize creating `spec/capabilities.md`. Once that file exists, `spec-grill` may amend it. Directory names alone are not a reason to generate the file.
 
 **Fold condition (document only):** if almost no installed consumers still need `spec/capabilities.md`, `spec-grill` may later become a `spec-charter` mode. Leave it a separate skill until that fold condition holds.
 

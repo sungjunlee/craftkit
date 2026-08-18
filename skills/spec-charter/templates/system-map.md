@@ -24,10 +24,6 @@
 - <Invariant that multiple capabilities must preserve.>
 - <Invariant that constrains design or execution.>
 
-## Candidate Capability Boundaries
-
-- `<slug>` - evidence: <flow/boundary/invariant>; owns <contract surface>; uncertainty: <what needs grill>.
-
 ## Where To Go Next
 
 - Product direction: [`charter.md`](charter.md)

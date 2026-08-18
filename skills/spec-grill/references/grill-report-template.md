@@ -30,8 +30,7 @@ Use this full skeleton for the candidate-discovery (`map`) and audit routes of `
 - Missing proof/evidence: <predicate> - needs <test/doc/runtime invariant/receipt>
 
 ### Proposed Next Capability
-- <slug> - <why this is the next safest contract to write or revise>
-- none — file absent and no keep condition
+- <slug and why, or none>
 
 ### Recommended Edit
 - <specific edit command, "no edit yet", or "stop after charter (plus map on brownfield)">

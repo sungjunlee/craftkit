@@ -26,8 +26,8 @@ Candidate lines that `spec-grill` can parse:
 - Every section names current project-wide facts, not aspirational design.
 - The map links to deeper docs instead of copying them.
 - No subsystem gets more detail than the whole-system flow needs.
-- Candidate Capability Boundaries are short handoff candidates, not a module inventory. Prefer handing a candidate to `spec-grill` when it has at least two evidence classes, a distinct contract surface, and Behaviors/Hard Constraints that would differ from neighbors — and only when a keep condition holds.
-- Link `capabilities.md` from Where To Go Next when that file exists or a keep condition holds.
+- Candidate Capability Boundaries are short handoff candidates, not a module inventory. Include the section only when a consumer, a cross-tree contract, or a 3-axis audit is in play. Prefer handing a candidate to `spec-grill` when it has at least two evidence classes, a distinct contract surface, and Behaviors/Hard Constraints that would differ from neighbors.
+- Link `capabilities.md` from Where To Go Next only when that file exists or a keep condition holds.
 - No stale module-level TODOs, endpoint inventories, or runbook commands.
 - Brownfield maps are not based only on README/top-level directory skimming; unsupported boundaries are labeled as assumptions.
 - Brownfield map create/amend fills the Runtime Boundaries table (`tree | owns | local instructions | do not`) from repo evidence: existing nested `AGENTS.md` / `CLAUDE.md` per tree. Greenfield or single-tree maps may still use it; one row is enough.

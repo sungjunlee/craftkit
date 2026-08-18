@@ -33,7 +33,7 @@ Do not rely on bundled helper scripts. Inspect the target repo directly and keep
 
 ### Completion contract
 
-- `create`: created files, unresolved assumptions, refused/parked items, and a next natural-language action. Propose the charter write plus a Direction trigger pointer and marker-bounded Mission+Non-Goals projection as one package (`references/spec-axis.md`); write files only after confirm or explicit autonomous authorization. On brownfield repos, if `spec/system-map.md` is absent, continue into `map` mode (do not draft the map from README and folders alone); recommend `spec-grill` only when a keep condition in `references/spec-axis.md` holds.
+- `create`: created files, unresolved assumptions, refused/parked items, and a next natural-language action. Propose the charter write plus a Direction trigger pointer and marker-bounded Mission+Non-Goals projection as one package (`references/spec-axis.md`); write files only after confirm or explicit autonomous authorization. On brownfield repos, if `spec/system-map.md` is absent, continue into `map` mode (do not draft the map from README and folders alone); recommend `spec-grill` only when a consumer, a cross-tree contract, or a 3-axis audit is in play.
 - `amend`: accepted changes, refused/parked changes, and a charter length check (flag when it exceeds a ~5-minute read, roughly 150 lines). Cite proof only when the charter uses the opt-in status ladder. Propose the charter diff and harness projection change as one package (`references/spec-axis.md`). After migrating a brownfield root `CHARTER.md`, if `spec/system-map.md` is absent, continue into `map` mode.
 - `map`: `Evidence Read` and `Evidence Missing` bullets. Done when the map is evidence-backed, low-level detail has been demoted, and charter/capability changes have been routed out. Brownfield maps fill Runtime Boundaries from repo evidence (`references/spec-axis.md`).
 - `reassess`: required report sections from the dispatch contract, with one recommended next action.
@@ -93,8 +93,8 @@ Create:
 
 1. Read bounded signals: `spec/charter.md` if present, else root `CHARTER.md`; then `README.md`, `AGENTS.md`/`CLAUDE.md`, top-level directories, package/config files, and architecture-related docs.
 2. Repo Evidence Pass before drafting: entrypoints, command/script surfaces, runtime boundaries, storage/state, external systems, tests that reveal intended behavior, recent commits. Report evidence in the conversation, not as inventory inside the map.
-3. Keep sections short: System Shape, Runtime Boundaries, Core Flows, Storage And External Systems, Project-Wide Invariants, Candidate Capability Boundaries, Where To Go Next. Link out instead of expanding subsystem detail. Fill Runtime Boundaries from existing nested instruction files (`references/spec-axis.md`). Do not invent nested files unless the user asked.
-4. Label brownfield uncertainty as assumptions. Hand short candidates to `spec-grill` as `- \`<slug>\` - evidence: …; owns: …; uncertainty: …` only when a keep condition in `references/spec-axis.md` holds. Do not turn the map into an API reference, runbook, or module inventory.
+3. Keep sections short: System Shape, Runtime Boundaries, Core Flows, Storage And External Systems, Project-Wide Invariants, Where To Go Next. Add Candidate Capability Boundaries only when a consumer, a cross-tree contract, or a 3-axis audit is in play. Link out instead of expanding subsystem detail. Fill Runtime Boundaries from existing nested instruction files (`references/spec-axis.md`). Do not invent nested files unless the user asked.
+4. Label brownfield uncertainty as assumptions. When that section is in play, hand short candidates to `spec-grill` as `- \`<slug>\` - evidence: …; owns: …; uncertainty: …`. Do not turn the map into an API reference, runbook, or module inventory.
 
 Amend: update only project-wide shape, boundaries, flows, storage/externals, invariants, or pointers. Refresh Runtime Boundaries from current nested instruction files. Demote helpers, single endpoints, and deployment commands. Route why/good-state changes to charter amend; route capability contracts to `spec-grill`.
 
@@ -108,7 +108,7 @@ Dispatch:
 2. Repo-local helpers such as `capabilities-doctor.js --json` only when they exist in the *target* repo. Otherwise list them under **Missing Evidence**.
 3. **Sizing rule**: default to **Evidence**, **No Change**, **Recommended Next Step**. Reserve the full report in `references/reassess.md` for periodic health checks or an explicit full-report ask. Discipline is unchanged at every size: report-only; route fixes through `amend`, `map`, or `spec-grill`.
 
-If the system map is missing on a brownfield repo, recommend `map` before grilling. If the map exists and capabilities are missing or thin, recommend `spec-grill` only when a keep condition in `references/spec-axis.md` holds. If a harness projection block is present, compare its `revision=` and excerpted Non-Goals to the live charter; name drift, do not refresh it here (`references/reassess.md`).
+If the system map is missing on a brownfield repo, recommend `map` before grilling. If the map exists and capabilities are missing or thin, recommend `spec-grill` only when a consumer, a cross-tree contract, or a 3-axis audit is in play. If a harness projection block is present, compare its `revision=` and excerpted Non-Goals to the live charter; name drift, do not refresh it here (`references/reassess.md`).
 
 ## Verification prompts
 
