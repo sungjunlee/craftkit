@@ -99,9 +99,9 @@ Whatever lands in Decisions on revision 1 — including seeded entries — is im
 
 ## 4. Harness Projection
 
-After the interview, propose the charter draft, a trigger pointer, and a marker-bounded projection as **one package**. Do not write `spec/charter.md` or harness files until that confirm. Marker syntax, file XOR, dual-file import, and the no-harness-file case live in [`spec-axis.md`](spec-axis.md) § Harness projection.
+After the interview, propose the charter draft, a trigger pointer, and a marker-bounded projection as **one package**. Do not write `spec/charter.md` or harness files until that confirm. Marker syntax, adapters, and the no-harness-file case live in [`spec-axis.md`](spec-axis.md) § Harness projection.
 
-Non-interactive create still proposes the pointer and projection. Write the charter when create is authorized; still do not edit harness files unless harness edits were authorized. If the charter lands without the projection, record the harness half under refused/parked.
+Non-interactive create is still one package. When create is authorized (confirm or explicit autonomous create), apply charter and harness together. Write charter without harness only if the user explicitly refused the harness half.
 
 Pointer example (not sacred wording):
 

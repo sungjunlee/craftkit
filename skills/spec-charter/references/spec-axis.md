@@ -36,13 +36,13 @@ Absence is supported. Pick the smallest axis that matches the git topology.
 <!-- spec-charter-projection:end -->
 ```
 
-`<n>` matches charter frontmatter `revision:`. Every accepted charter revision bump stamps the same integer into existing markers in the same confirm (excerpt text changes only when Tier 1 changed). Charter remains the mutation home. If the cache and live Non-Goals disagree, the charter wins; reassess names the drift.
+`<n>` matches charter frontmatter `revision:`. Every accepted charter revision bump stamps the same integer into existing markers in the same confirm. Refresh excerpt text when Tier 1 changed **or** when the existing excerpt no longer matches live Tier 1. If no projection exists, propose adding one rather than requiring it. Charter remains the mutation home. If the cache and live Non-Goals disagree, the charter wins; reassess names the drift.
 
-Propose the charter write, the pointer, the marker block, and any dual-file import as **one package** before writing. Apply them together after confirm. If the user confirms the charter and refuses the harness half, record harness under refused/parked — do not invent an "AFK inactive" label. A refused harness after a revision bump is expected drift; reassess will name it.
+Propose the charter write, the pointer, the marker block, and any load adapter as **one package** before writing. Apply them together after confirm. Write charter without harness only when the user **explicitly refused** the harness half; record that under refused/parked. Do not treat a silent skip as a refusal. A refused harness after a revision bump is expected drift; reassess will name it.
 
-- One harness file: `AGENTS.md` if present, else `CLAUDE.md`. Never both.
-- If both exist as separate files, include an `@AGENTS.md` import or a symlink in that same package rather than duplicating the block. Refusal leaves an unresolved load path for hosts that only read the other file.
-- If neither file exists, propose creating `AGENTS.md` in the same package. Do not invent `CLAUDE.md`.
+- One **projection block**: `AGENTS.md` if present, else `CLAUDE.md`. Never duplicate the block.
+- If the block lands in `AGENTS.md`, include a Claude load adapter in the same package when `CLAUDE.md` is missing or does not already import/symlink `AGENTS.md`. Prefer adding `@AGENTS.md` (a new import-only `CLAUDE.md`, or one import line in an existing file). Do not symlink-over a file that has unique instructions; symlink only when the two files are already equivalent.
+- If neither file exists, propose creating `AGENTS.md` as the projection home plus an import-only `CLAUDE.md` adapter.
 - Pointers must carry trigger conditions, not only paths.
 - A projection block without a live charter is stale cache, not product authority — do not reconstruct the charter from it.
 - Nested instruction files are not a portable “closest wins” contract — hosts differ (Claude `CLAUDE.md` chains, Codex git-root→cwd, Cursor path-scoped). `spec/system-map.md` is an index the agent is told to Read, not an engine guarantee.

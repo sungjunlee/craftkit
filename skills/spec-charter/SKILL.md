@@ -34,7 +34,7 @@ Do not rely on bundled helper scripts. Inspect the target repo directly and keep
 ### Completion contract
 
 - `create`: created files, unresolved assumptions, refused/parked items, and a next natural-language action. Propose the charter write plus a Direction trigger pointer and marker-bounded Mission+Non-Goals projection as one package (`references/spec-axis.md`); write files only after that confirm. On brownfield repos, if `spec/system-map.md` is absent, continue into `map` mode (do not draft the map from README and folders alone); recommend `spec-grill` only when a consumer, a cross-tree contract, or an explicit 3-axis audit is in play.
-- `amend`: accepted changes, refused/parked changes, and a charter length check (flag when it exceeds a ~5-minute read, roughly 150 lines). Cite proof only when the charter uses the opt-in status ladder. Propose the charter diff and any harness projection stamp or add as one package; if a projection exists, stamp `revision=` to the new charter revision in that confirm. After migrating a brownfield root `CHARTER.md`, if `spec/system-map.md` is absent, continue into `map` mode.
+- `amend`: accepted changes, refused/parked changes, and a charter length check (flag when it exceeds a ~5-minute read, roughly 150 lines). Cite proof only when the charter uses the opt-in status ladder. Propose the charter diff and harness projection change as one package (`references/spec-axis.md`). After migrating a brownfield root `CHARTER.md`, if `spec/system-map.md` is absent, continue into `map` mode.
 - `map`: `Evidence Read` and `Evidence Missing` bullets. Done when the map is evidence-backed, low-level detail has been demoted, and charter/capability changes have been routed out. Brownfield maps require the Runtime Boundaries table (`tree | owns | local instructions | do not`).
 - `reassess`: required report sections from the dispatch contract, with one recommended next action.
 
@@ -68,7 +68,7 @@ Absence is supported. Projects opt in by creating the files; other tools degrade
 Use when neither `spec/charter.md` nor legacy root `CHARTER.md` exists. If only root `CHARTER.md` exists, use Amend mode and migrate via `references/spec-axis.md` rather than writing a second charter; then if the repo is brownfield and `spec/system-map.md` is absent, continue into Map mode.
 
 1. Draft from repo signals: product/user-facing (`README.md`, open issues, `CHANGELOG.md`) before harness files (`CLAUDE.md`, `AGENTS.md`). Harness files may inform workflow; they do not override README, issues, or code for product authority unless they explicitly describe product boundaries. Surface conflicts in the interview rather than picking silently.
-2. Interview to sharpen Problem, Approach, Non-Goals, and initial Objectives. Follow `references/create.md`. Non-interactive create is allowed when the user asked for autonomous progress and evidence is strong; mark inferred claims `src: inferred` and list unresolved assumptions.
+2. Interview to sharpen Problem, Approach, Non-Goals, and initial Objectives. Follow `references/create.md`. Non-interactive create is allowed when the user asked for autonomous progress and evidence is strong; mark inferred claims `src: inferred` and list unresolved assumptions. Autonomous authorization covers the harness package unless the user explicitly refused it.
 3. Create `spec/` if needed. Propose `spec/charter.md` (from `templates/charter.md`, `revision: 1`, today's `last_amended`) plus the trigger pointer and marker projection as one package (`references/create.md`); write only after confirm. Seed Decisions only from existing ADRs or notable merged PRs; whatever lands is immutable from revision 2.
 4. On brownfield repos, if `spec/system-map.md` is absent, continue into Map mode instead of writing a stub map.
 
@@ -83,7 +83,7 @@ Use when a charter exists or when invoked as `amend`. If only root `CHARTER.md` 
 - If the live charter already uses status tokens, apply `references/amendment.md`. Do not add tokens to a lean charter.
 - Tier 3: append only.
 
-After an accepted amendment, bump `last_amended` and `revision`. Propose that bump together with a projection `revision=` stamp when a block exists, an excerpt refresh when Tier 1 changed, or a first projection when none exists (`references/amendment.md`). Protect the ~5-minute-read property. A `backlog-triage` Alignment Check may seed proposals; this skill applies the gates.
+After an accepted amendment, bump `last_amended` and `revision`. Propose that bump together with the projection stamp, excerpt-refresh, or first-add rules in `references/spec-axis.md`. Protect the ~5-minute-read property. A `backlog-triage` Alignment Check may seed proposals; this skill applies the gates.
 
 ## Map mode
 

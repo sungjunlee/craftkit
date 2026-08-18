@@ -38,7 +38,7 @@ Prefer bounded evidence before broad reading:
 2. `spec/system-map.md` when evidence points to stale project-wide structure, boundaries, flows, or invariants.
 3. `spec/capabilities.md` capability blocks named by the evidence.
 4. Repo-local helper scripts when present, such as `capabilities-doctor.js --json` for marker health or `component-lint.js --json` for sprint `component:` routing drift.
-5. `CLAUDE.md` / `AGENTS.md` only when the reassess question involves harness behavior, local commands, agent context loading, or projection staleness. Prefer existing `AGENTS.md`; else `CLAUDE.md`.
+5. `CLAUDE.md` / `AGENTS.md` only when the reassess question involves harness behavior, local commands, agent context loading, or projection staleness. Inspect **both** files when they exist: the projection home and whether the other file imports or symlinks it.
 6. Latest five completed sprint files, plus the active sprint when it exists.
 
 If an optional script is missing, say it was skipped and continue with file reads. Missing `spec/charter.md`, `spec/system-map.md`, or `spec/capabilities.md` is not an error; it is an opt-in state with a next-step recommendation.
@@ -52,6 +52,7 @@ If `spec-charter-projection` markers exist, compare them to the live charter. Do
 - Stale revision **or** drifted Non-Goals: name it. On a full reassess, use **Amend Candidates**. On a quick reassess, name it under **Evidence** (or one line under Recommended Next Step pointing to a full reassess). Do not silently refresh.
 - Missing projection is not an error. If the question is the AFK load path, recommend proposing a trigger pointer plus marker block via `spec-charter amend`.
 - A pointer-only line (a path with no trigger to read Non-Goals) may be noted as a weak load path.
+- If `AGENTS.md` holds the block and `CLAUDE.md` exists (or Claude is in play) without an `@AGENTS.md` import or equivalent symlink, name a weak load path. Do not treat that as product drift.
 - A refused harness write after a later charter revision is expected drift — name it, do not treat it as a new kind of failure.
 
 Do not recommend `spec-grill` as the default next step for projection drift. The inner block is generated cache, not product authority.

@@ -28,10 +28,8 @@
 
 - `<slug>` - evidence: <flow/boundary/invariant>; owns <contract surface>; uncertainty: <what needs grill>.
 
-Promotion criteria for `spec-grill`: prefer candidates with at least two evidence classes, a distinct contract surface, and Behaviors/Hard Constraints that would differ from neighboring candidates.
-
 ## Where To Go Next
 
 - Product direction: [`charter.md`](charter.md)
-- Capability contracts: [`capabilities.md`](capabilities.md)
+- Capability contracts: [`capabilities.md`](capabilities.md) — omit this line unless `spec/capabilities.md` exists or grill is in scope
 - <Deeper doc>: [<path>](<path>)
