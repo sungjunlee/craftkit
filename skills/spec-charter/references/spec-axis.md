@@ -30,7 +30,7 @@ Absence is supported. Pick the smallest axis that matches the git topology.
 
 `spec-charter` create/amend may propose a **trigger pointer** (always-loaded, with conditions, not a path-only line) and a **marker-bounded generated cache** of Mission + Non-Goals:
 
-```
+```text
 <!-- spec-charter-projection:start revision=<n> -->
 <5–8 lines: Mission + Non-Goals excerpt>
 <!-- spec-charter-projection:end -->
@@ -38,12 +38,11 @@ Absence is supported. Pick the smallest axis that matches the git topology.
 
 `<n>` matches charter frontmatter `revision:`. Every accepted **charter** revision bump stamps the same integer into existing markers in the same confirm. Refresh excerpt text when Tier 1 changed **or** when the existing excerpt no longer matches live Tier 1. If the only accepted change is aligning a drifted excerpt, do not bump charter `revision:`; keep marker `revision=` and replace the inner text. If no projection exists, propose adding one rather than requiring it. Charter remains the mutation home. If the cache and live Non-Goals disagree, the charter wins; reassess names the drift.
 
-Propose the charter write, the pointer, the marker block, and any load adapter as **one package** before writing. Apply them together after confirm or explicit autonomous authorization. Write charter without harness only when the user **explicitly refused** the harness half; record that under refused/parked. Do not treat a silent skip as a refusal. A refused harness after a revision bump is expected drift; reassess will name it.
+Propose the charter write, the pointer, the marker block, and any load adapter as **one package** before writing. Apply them together after confirm or explicit autonomous authorization. If a write fails, report the failure and do not treat a partial package as success. Write charter without harness only when the user **explicitly refused** the harness half; record that under refused/parked. Do not treat a silent skip or a write failure as a refusal. A refused harness after a revision bump is expected drift; reassess will name it.
 
-- One **projection block**: `AGENTS.md` if present, else `CLAUDE.md`. Never duplicate the block.
-- If the block lands in `AGENTS.md`, include a Claude load adapter in the same package when `CLAUDE.md` is missing or does not already import/symlink `AGENTS.md`. Prefer adding `@AGENTS.md` (a new import-only `CLAUDE.md`, or one import line in an existing file). Do not symlink-over a file that has unique instructions; symlink only when the two files are already equivalent.
-- If neither file exists, propose creating `AGENTS.md` as the projection home plus an import-only `CLAUDE.md` adapter.
-- Pointers must carry trigger conditions, not only paths.
+- One **projection block**, home always `AGENTS.md` (create it if absent). Never duplicate the block.
+- Include a Claude load adapter in the same package when `CLAUDE.md` is missing or does not already import/symlink `AGENTS.md`. Prefer `@AGENTS.md` (a new import-only `CLAUDE.md`, or one import line in an existing file that already has unique instructions). If only `CLAUDE.md` exists, create `AGENTS.md` as the home and add that import line — do not move unique `CLAUDE.md` content. Do not symlink-over a file that has unique instructions; symlink only when the two files are already equivalent.
+- Pointers must carry trigger conditions, not only paths. The always-loaded block is a cache of `spec/charter.md`; the charter wins if they disagree.
 - A projection block without a live charter is stale cache, not product authority — do not reconstruct the charter from it.
 - Nested instruction files are not a portable “closest wins” contract — hosts differ (Claude `CLAUDE.md` chains, Codex git-root→cwd, Cursor path-scoped). `spec/system-map.md` is an index the agent is told to Read, not an engine guarantee.
 

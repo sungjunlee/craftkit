@@ -101,11 +101,11 @@ Whatever lands in Decisions on revision 1 — including seeded entries — is im
 
 After the interview, propose the charter draft, a trigger pointer, and a marker-bounded projection as **one package**. Do not write `spec/charter.md` or harness files until confirm or explicit autonomous authorization. Marker syntax, adapters, and the no-harness-file case live in [`spec-axis.md`](spec-axis.md) § Harness projection.
 
-When create is authorized (confirm or explicit autonomous create), apply charter and harness together. Write charter without harness only if the user explicitly refused the harness half.
+When create is authorized (confirm or explicit autonomous create), apply charter and harness together. If a write fails, report it and do not treat a partial package as success. Write charter without harness only if the user explicitly refused the harness half.
 
 Pointer example (not sacred wording):
 
-> Before adding scope, read Non-Goals in `spec/charter.md` (or the generated block below).
+> Before adding scope, read Non-Goals in the generated block below (cache of `spec/charter.md`; charter wins if they disagree).
 > Before cross-package work, read `spec/system-map.md`, then Read the local instruction file named for each affected tree.
 
 Compress Problem and Approach into a short Mission, then excerpt live Non-Goals. Keep the inner block 5–8 lines. Pointer text lives **outside** the markers.
