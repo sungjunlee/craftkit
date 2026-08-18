@@ -26,12 +26,13 @@ Candidate lines that `spec-grill` can parse:
 - Every section names current project-wide facts, not aspirational design.
 - The map links to deeper docs instead of copying them.
 - No subsystem gets more detail than the whole-system flow needs.
-- Candidate Capability Boundaries are short handoff candidates, not a module inventory. Prefer handing a candidate to `spec-grill` when it has at least two evidence classes, a distinct contract surface, and Behaviors/Hard Constraints that would differ from neighbors — and only when grill is in scope.
-- Link `capabilities.md` from Where To Go Next only when that file exists or grill is in scope.
+- Candidate Capability Boundaries are short handoff candidates, not a module inventory. Include the section only when a consumer, a cross-tree contract, or a 3-axis audit is in play. Prefer handing a candidate to `spec-grill` when it has at least two evidence classes, a distinct contract surface, and Behaviors/Hard Constraints that would differ from neighbors.
+- Link `capabilities.md` from Where To Go Next only when that file exists or a keep condition holds.
 - No stale module-level TODOs, endpoint inventories, or runbook commands.
 - Brownfield maps are not based only on README/top-level directory skimming; unsupported boundaries are labeled as assumptions.
-- Brownfield maps require the Runtime Boundaries table (`tree | owns | local instructions | do not`). Greenfield or single-tree maps may still use it; one row is enough.
-- Multi-tree brownfield maps without named local instruction files in Runtime Boundaries are under-evidenced. A tree with no instruction file may show `none`.
+- Brownfield map create/amend fills the Runtime Boundaries table (`tree | owns | local instructions | do not`) from repo evidence: existing nested `AGENTS.md` / `CLAUDE.md` per tree. Greenfield or single-tree maps may still use it; one row is enough.
+- A tree with no instruction file shows `none` and is listed under Evidence Missing — do not invent the file unless the user asked. Multi-tree brownfield maps that name no local instruction files are under-evidenced.
+- If the user asked to write or propose a nested instruction file, follow `spec-axis.md`.
 
 ## Failure modes
 
@@ -40,6 +41,8 @@ Candidate lines that `spec-grill` can parse:
 - endpoint or API inventories creeping into Core Flows or Storage And External Systems
 - amend mode absorbing helper functions, single endpoints, or deployment commands
 - charter-level or capability-level changes getting edited into the map instead of routed out
-- omitting the Runtime Boundaries table on a brownfield map
+- omitting the Runtime Boundaries table on a brownfield map, or filling it from folder names instead of existing nested instruction files
+- silently creating nested instruction files the user did not ask for
+- forking a Hard Constraint from `spec/capabilities.md` into a package `AGENTS.md`
 - treating nested harness closest-wins as portable — hosts differ; the map is an index to Read, not a load-order guarantee
 - inventing CONTEXT-MAP.md or a new instruction-file format

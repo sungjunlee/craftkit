@@ -8,7 +8,7 @@ Use this as the shared boundary reference for `spec-charter` and `spec-grill`. T
 | --- | --- | --- |
 | `spec/charter.md` | Why the project exists, what good looks like, Non-Goals, Objectives, and project-wide Decisions. | `spec-charter` |
 | `spec/system-map.md` | High-level system shape: runtime boundaries, core flows, storage/external systems, invariants, and pointers. Router: tree → local instruction file. | `spec-charter` (`map` mode) |
-| `spec/capabilities.md` | Optional capability contracts: Goal, Scope, Expected Behaviors, Hard Constraints, Learnings, and Decisions. Write only when a consumer exists, the contract is cross-tree, or the user asked for a 3-axis audit. | `spec-grill` |
+| `spec/capabilities.md` | Optional capability contracts: Goal, Scope, Expected Behaviors, Hard Constraints, Learnings, and Decisions. | `spec-grill` |
 | `CLAUDE.md` / `AGENTS.md` | Agent harness instructions and local development guardrails. May carry a generated Direction projection; that cache is not independent product authority. | Repository maintainers; `spec-charter` proposes projection and writes only after confirm or explicit autonomous authorization |
 | `README.md` | Outward-facing introduction and user-facing entrypoints. | Repository maintainers |
 
@@ -24,9 +24,9 @@ Absence is supported. Pick the smallest axis that matches the git topology.
 | True monorepo (one git, many trees) | Umbrella `spec/charter.md` + `spec/system-map.md` as the router: tree → local instruction file. |
 | Sibling git workspace (many repos, one editor folder) | Each repo bootstraps itself. No workspace-umbrella charter. |
 
-`spec-grill` stays optional. Directory names alone are not a reason to generate `spec/capabilities.md`.
+**Keep conditions:** a consumer exists, the contract is cross-tree, or the user asked for a 3-axis audit. `spec-grill` stays optional. A bare invocation may still report; it does not by itself authorize creating `spec/capabilities.md`. Once that file exists, `spec-grill` may amend it. Directory names alone are not a reason to generate the file.
 
-Fold condition (not this wave): if almost no installed consumers need `spec/capabilities.md`, `spec-grill` may later become a `spec-charter` mode. Do not fold or rename the skill until that is true.
+**Fold condition (document only):** if almost no installed consumers still need `spec/capabilities.md`, `spec-grill` may later become a `spec-charter` mode. Leave it a separate skill until that fold condition holds.
 
 ## Harness projection
 
@@ -47,6 +47,15 @@ Propose the charter write, the pointer, the marker block, and any load adapter a
 - Pointers must carry trigger conditions, not only paths. The always-loaded block is a cache of `spec/charter.md`; the charter wins if they disagree.
 - A projection block without a live charter is stale cache, not product authority — do not reconstruct the charter from it.
 - Nested instruction files are not a portable “closest wins” contract — hosts differ (Claude `CLAUDE.md` chains, Codex git-root→cwd, Cursor path-scoped). `spec/system-map.md` is an index the agent is told to Read, not an engine guarantee.
+
+## Nested local instruction files
+
+`spec-charter` map mode records existing nested `AGENTS.md` / `CLAUDE.md` in the Runtime Boundaries table from repo evidence. A tree with no instruction file shows `none` and is listed under Evidence Missing. Do not invent a nested file unless the user asked.
+
+When a nested instruction file is proposed or written:
+
+- First line declares scope, e.g. `Scope: packages/foo/**`.
+- The file holds **how** (commands, local convention) plus a pointer at umbrella Non-Goals in `spec/charter.md` (or the generated projection cache). Do not copy Non-Goals into the nested file.
 
 ## Rules
 

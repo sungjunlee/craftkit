@@ -12,6 +12,7 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 - `spec-grill` spine no longer treats grill as the step after every charter; readiness names the three keep conditions, and the later fold-into-charter condition is documented only (#182).
 - Spec-axis topology (monorepo vs sibling-git vs type-1) and harness-projection authority live in `skills/spec-charter/references/spec-axis.md` instead of being restated per skill (#177).
 - `docs/skill-anatomy.md` names spec-* as spec-axis skills, not a required pipeline.
+- `spec-charter` map fills Runtime Boundaries from existing nested instruction files; missing files are Evidence Missing, not invented. Nested files hold how plus a Non-Goals pointer; Hard Constraints stay in `spec/capabilities.md` when that file exists (#181).
 
 ## [0.4.0] — 2026-08-17
 
