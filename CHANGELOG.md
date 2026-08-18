@@ -4,6 +4,14 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Changed
+
+- `spec-charter` create/amend proposes a Direction trigger pointer and a marker-bounded Mission+Non-Goals projection into one harness file; writes only after confirm. Reassess names stale projection vs live Non-Goals (#178).
+- System map Runtime Boundaries is a `tree | owns | local instructions | do not` table; multi-tree maps without named local instruction files are under-evidenced (#179).
+- README and marketplace: `spec-charter` is the default spec-axis landing; `spec-grill` is optional when a consumer (`component:`), a cross-tree contract, or a 3-axis audit is present (#180).
+- Spec-axis topology (monorepo vs sibling-git vs type-1) and harness-projection authority live in `skills/spec-charter/references/spec-axis.md` instead of being restated per skill (#177).
+- `docs/skill-anatomy.md` names spec-* as spec-axis skills, not a required pipeline.
+
 ## [0.4.0] — 2026-08-17
 
 Second lightening pass (#169). Public shape is six skills: `craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-handoff`, `spec-charter`, `spec-grill`.
