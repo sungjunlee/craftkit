@@ -24,7 +24,7 @@ Stop at the first three signals that produce a coherent draft. More signals beyo
 
 ### Conflict handling
 
-`CLAUDE.md` / `AGENTS.md` can explain how to work in the repo, but they are not product authority by default. Use them to seed questions about conventions and workflow; do not let them override README, issues, shipped behavior, or user answers unless they explicitly describe product boundaries.
+`CLAUDE.md` / `AGENTS.md` can explain how to work in the repo, but they are not product authority by default. Use them to seed questions about conventions and workflow; do not let them override README, issues, shipped behavior, or user answers unless they explicitly describe product boundaries. A `spec-charter-projection` marker block without a live charter is stale cache — do not reconstruct Problem / Approach / Non-Goals from it.
 
 When signals disagree (e.g., README says "CLI tool," CLAUDE.md says "web app," commits show both), do not pick silently.
 
@@ -77,7 +77,7 @@ For predicate quality, follow [`objectives.md`](objectives.md): five good and fi
 
 ## 3. Seed Decisions
 
-Create mode step 3 writes the file from `templates/charter.md`. The Decisions table may be left empty.
+Create mode step 3 drafts the file from `templates/charter.md`. The Decisions table may be left empty. Do not write the file until the §4 package is confirmed.
 
 ### Default: empty is fine
 
@@ -97,6 +97,19 @@ Pull three to five entries, no more. Each row needs `date`, `decision`, `rationa
 
 Whatever lands in Decisions on revision 1 — including seeded entries — is immutable from revision 2 onward. A reversal is a new row with `supersedes`, never an edit or delete. Mention this to the user before seeding so they do not overpopulate optimistically.
 
+## 4. Harness Projection
+
+After the interview, propose the charter draft, a trigger pointer, and a marker-bounded projection as **one package**. Do not write `spec/charter.md` or harness files until that confirm. Marker syntax, file XOR, dual-file import, and the no-harness-file case live in [`spec-axis.md`](spec-axis.md) § Harness projection.
+
+Non-interactive create still proposes the pointer and projection. Write the charter when create is authorized; still do not edit harness files unless harness edits were authorized. If the charter lands without the projection, record the harness half under refused/parked.
+
+Pointer example (not sacred wording):
+
+> Before adding scope, read Non-Goals in `spec/charter.md` (or the generated block below).
+> Before cross-package work, read `spec/system-map.md`, then Read the local instruction file named for each affected tree.
+
+Compress Problem and Approach into a short Mission, then excerpt live Non-Goals. Keep the inner block 5–8 lines. Pointer text lives **outside** the markers.
+
 ## Outcome
 
 A first-revision charter produced via this checklist should:
@@ -106,3 +119,4 @@ A first-revision charter produced via this checklist should:
 - List 2–3 Objectives, each one the 30-second test would pass.
 - Have an empty or lightly-seeded Decisions table.
 - Match in shape (not content) `templates/charter.md`: lean `O<n> — <predicate>` objectives, no status tokens unless the user asked for the opt-in ladder.
+- Land with a proposed trigger pointer and marker projection (`references/spec-axis.md`); harness files are unchanged until confirm.

@@ -29,6 +29,8 @@ Candidate lines that `spec-grill` can parse:
 - Candidate Capability Boundaries are short handoff candidates, not a module inventory.
 - No stale module-level TODOs, endpoint inventories, or runbook commands.
 - Brownfield maps are not based only on README/top-level directory skimming; unsupported boundaries are labeled as assumptions.
+- Brownfield maps require the Runtime Boundaries table (`tree | owns | local instructions | do not`). Greenfield or single-tree maps may still use it; one row is enough.
+- Multi-tree brownfield maps without named local instruction files in Runtime Boundaries are under-evidenced. A tree with no instruction file may show `none`.
 
 ## Failure modes
 
@@ -37,3 +39,6 @@ Candidate lines that `spec-grill` can parse:
 - endpoint or API inventories creeping into Core Flows or Storage And External Systems
 - amend mode absorbing helper functions, single endpoints, or deployment commands
 - charter-level or capability-level changes getting edited into the map instead of routed out
+- omitting the Runtime Boundaries table on a brownfield map
+- treating nested harness closest-wins as portable — hosts differ; the map is an index to Read, not a load-order guarantee
+- inventing CONTEXT-MAP.md or a new instruction-file format

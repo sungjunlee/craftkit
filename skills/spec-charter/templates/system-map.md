@@ -6,8 +6,9 @@
 
 ## Runtime Boundaries
 
-- `<boundary>` owns <responsibility>.
-- `<boundary>` does not own <adjacent concern>.
+| tree | owns | local instructions | do not |
+| --- | --- | --- | --- |
+| `<path/>` | `<responsibility>` | `<AGENTS.md / CLAUDE.md path, or none>` | `<adjacent concern>` |
 
 ## Core Flows
 
