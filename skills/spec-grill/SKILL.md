@@ -1,7 +1,7 @@
 ---
 name: spec-grill
 argument-hint: "[natural-language request]"
-description: "Create or refine spec/capabilities.md from repo signals. Use after spec-charter or for capability specs, component contracts, middle-layer specs, repo boundaries, 능력 명세, or grill."
+description: "Create or refine spec/capabilities.md from repo signals when a consumer, a cross-tree contract, or a 3-axis audit needs it. Use for capability specs, component contracts, middle-layer specs, repo boundaries, 능력 명세, or grill."
 disable-model-invocation: true
 compatibility: Requires git.
 metadata:
@@ -10,9 +10,17 @@ metadata:
 
 # spec-grill
 
-Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and day-to-day execution work. `spec-grill` is not a file generator; it pressure-tests existing repo signals into durable capability contracts.
+Author `spec/capabilities.md` when a keep condition below is met. `spec-grill` is not a file generator and not the default next step after charter; it pressure-tests existing repo signals into durable capability contracts.
 
-Use this after `spec-charter` has landed a charter and, on brownfield repos, a system map; or whenever the user asks to define capability boundaries, component contracts, Behaviors, or Hard Constraints.
+## Readiness
+
+Write `spec/capabilities.md` only when any of these keep conditions is true:
+
+1. A consumer exists (for example a `component:` handle).
+2. The contract is cross-tree, not the same as a directory.
+3. The user asked for a 3-axis audit.
+
+If none apply, stay report-only even when the user asked to write or fill: recommend stopping after charter (plus the system map on brownfield). Do not generate `spec/capabilities.md` from directory names alone.
 
 ## Execution contract
 
@@ -84,7 +92,7 @@ The file's mutation discipline:
 
 ## Capability admission test
 
-Before interviewing a candidate capability, decide whether it deserves to exist. Raw extraction signals are not accepted specs.
+Before interviewing a candidate capability, the file-level keep conditions in Readiness must already apply. Then decide whether the candidate deserves to exist. Raw extraction signals are not accepted specs.
 
 Admit a capability only when most of these are true:
 
@@ -133,6 +141,7 @@ See `references/capabilities.md` for additional grill heuristics and [`../spec-c
 
 ## Verification prompts
 
+- "We finished charter and the system map; write capabilities from the top-level directories." Expected: if no consumer, cross-tree contract, or 3-axis audit is in play, stay report-only and recommend stopping; do not write `spec/capabilities.md`.
 - "Create capabilities from a repo where only top-level directories are known." Expected: use directories as raw signals only; require supporting evidence before admission.
 - "A commit scope appears often but has no docs, tests, or distinct behavior." Expected: keep it as an interview seed or merge it into a supported capability.
 - "User says this weakly evidenced surface is important." Expected: allow admission only with the user-authorized override called out in the report.

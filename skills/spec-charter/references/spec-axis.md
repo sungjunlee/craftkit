@@ -26,6 +26,8 @@ Absence is supported. Pick the smallest axis that matches the git topology.
 
 `spec-grill` stays optional. Directory names alone are not a reason to generate `spec/capabilities.md`.
 
+Fold condition (not this wave): if almost no installed consumers need `spec/capabilities.md`, `spec-grill` may later become a `spec-charter` mode. Do not fold or rename the skill until that is true.
+
 ## Harness projection
 
 `spec-charter` create/amend may propose a **trigger pointer** (always-loaded, with conditions, not a path-only line) and a **marker-bounded generated cache** of Mission + Non-Goals:
