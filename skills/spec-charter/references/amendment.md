@@ -64,4 +64,4 @@ Propose the charter diff and any harness projection change as **one package** be
 
 If a projection already exists, stamp its `revision=` to the new charter `revision:` in that same confirm. Refresh the inner excerpt when Tier 1 changed **or** when the existing excerpt no longer matches live Tier 1. If the only accepted change is aligning a drifted excerpt, do not bump charter `revision:`. If no projection exists yet, propose adding a trigger pointer and marker block rather than requiring one.
 
-A refused harness half uses refused/parked. Do not silently update a stale marker block.
+A refused harness half uses refused/parked. A write failure is not a refusal — report it and do not treat a partial package as success. Do not silently update a stale marker block.
