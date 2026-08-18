@@ -31,7 +31,8 @@ Use this full skeleton for the candidate-discovery (`map`) and audit routes of `
 
 ### Proposed Next Capability
 - <slug> - <why this is the next safest contract to write or revise>
+- none — file absent and no keep condition
 
 ### Recommended Edit
-- <specific edit command or "no edit yet">
+- <specific edit command, "no edit yet", or "stop after charter (plus map on brownfield)">
 ```

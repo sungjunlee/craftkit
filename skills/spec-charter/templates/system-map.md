@@ -8,7 +8,7 @@
 
 | tree | owns | local instructions | do not |
 | --- | --- | --- | --- |
-| `<path/>` | `<responsibility>` | `<AGENTS.md / CLAUDE.md path, or none>` | `<adjacent concern>` |
+| `<path/>` | `<responsibility>` | `<existing AGENTS.md / CLAUDE.md path, or none>` | `<adjacent concern>` |
 
 ## Core Flows
 
@@ -31,5 +31,4 @@
 ## Where To Go Next
 
 - Product direction: [`charter.md`](charter.md)
-- Capability contracts: [`capabilities.md`](capabilities.md) <!-- omit this line unless spec/capabilities.md exists or grill is in scope -->
 - <Deeper doc>: [<path>](<path>)

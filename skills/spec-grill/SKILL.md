@@ -1,7 +1,7 @@
 ---
 name: spec-grill
 argument-hint: "[natural-language request]"
-description: "Create or refine spec/capabilities.md from repo signals. Use after spec-charter or for capability specs, component contracts, middle-layer specs, repo boundaries, 능력 명세, or grill."
+description: "Create or refine spec/capabilities.md when a consumer, a cross-tree contract, or a 3-axis audit is in play. Use for capability specs, component contracts, 능력 명세, or grill."
 disable-model-invocation: true
 compatibility: Requires git.
 metadata:
@@ -10,9 +10,7 @@ metadata:
 
 # spec-grill
 
-Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and day-to-day execution work. `spec-grill` is not a file generator; it pressure-tests existing repo signals into durable capability contracts.
-
-Use this after `spec-charter` has landed a charter and, on brownfield repos, a system map; or whenever the user asks to define capability boundaries, component contracts, Behaviors, or Hard Constraints.
+Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and day-to-day execution work. Pressure-test repo signals into durable contracts only when a keep condition holds. Not a file generator from directory names, and not the second step of a required pipeline.
 
 ## Execution contract
 
@@ -28,7 +26,7 @@ Do not require users to memorize arguments. Interpret the user's request and cho
 | Mentions a known capability slug or natural-language capability area | **Specific Capability Review**: resolve the mention to one capability or candidate and deep-review only that block or candidate. | No by default |
 | "Audit capabilities", "find overlap", "find stale contracts", "find weak predicates", or `audit` | **Capability Audit Report**: report stale, overlapping, weak, or unsupported capability predicates. | No |
 
-If intent is unclear, prefer report-only. Treat natural-language requests to write or apply the recommended next capability as edit intent, not as no-arg ambiguity. If the user asks for an edit while evidence is weak, emit the report first, identify the missing evidence, and ask before writing.
+If intent is unclear, prefer report-only. Treat natural-language requests to write or apply the recommended next capability as edit intent, not as no-arg ambiguity. Creating `spec/capabilities.md` requires a keep condition. If the file already exists, edit routes may proceed. Report-only routes still run when the file is absent and none hold; emit the report first and do not create the file.
 
 Capability slugs are strict routing handles; downstream tools (e.g. sprint tooling) may use them to route work and learnings. Keep them lowercase and singular, then put nuance in Goal/Scope prose.
 
@@ -49,10 +47,11 @@ End every run with a short summary:
 - behaviors promoted to constraints
 - missing proof or evidence
 - follow-up Learning Actions if any
+- if the file is absent and no keep condition holds: recommend stopping after charter (plus map on brownfield) and do not create `spec/capabilities.md`
 
 ### Grill report contract
 
-**Sizing rule**: the no-arg and ambiguous routes emit a **short diagnostic** by default — three sections: `### Evidence Read`, `### Evidence Missing`, and `### Recommended Edit`. Reserve the full **Grill Report** below for the Candidate Boundary Report (`map`) and Capability Audit Report (`audit`) routes, or when the user explicitly asks for the full report. Every full report must include these sections in order: `## Grill Report`, `### Evidence Read`, `### Evidence Missing`, `### Raw Candidates`, `### Accepted / Rejected / Merged / Split Candidates`, `### Sharp Questions`, `### 3-Axis Predicate Findings`, `### Proposed Next Capability`, `### Recommended Edit`. See `references/grill-report-template.md` for the full skeleton with placeholder fields.
+**Sizing rule**: the no-arg and ambiguous routes emit a **short diagnostic** by default — three sections: `### Evidence Read`, `### Evidence Missing`, and `### Recommended Edit`. Reserve the full **Grill Report** below for the Candidate Boundary Report (`map`) and Capability Audit Report (`audit`) routes, or when the user explicitly asks for the full report. Every full report must include these sections in order: `## Grill Report`, `### Evidence Read`, `### Evidence Missing`, `### Raw Candidates`, `### Accepted / Rejected / Merged / Split Candidates`, `### Sharp Questions`, `### 3-Axis Predicate Findings`, `### Proposed Next Capability`, `### Recommended Edit`. See `references/grill-report-template.md` for the full skeleton with placeholder fields. When the file is absent and no keep condition holds, set Proposed Next Capability to none and Recommended Edit to stop after charter (plus map on brownfield); do not create the file.
 
 Separate diagnosis from mutation. The report can recommend edits, but it must not edit `spec/capabilities.md` unless the user clearly asked for editing or confirms the proposed edit. This write-gating rule applies in full at every size — a short diagnostic never relaxes the "report first, edit only when authorized" discipline, it only trims what gets written down.
 
@@ -81,6 +80,16 @@ The file's mutation discipline:
 - Expected Behaviors / Hard Constraints: human-gated and must pass the 3-axis predicate test.
 - `## Learnings`: not an interview target. If a bounded Learnings writer exists, only that writer appends between magic markers. Until then, Learnings changes require a human-approved Learning Action.
 - `## Decisions`: append-only by convention; promote cross-cutting decisions to `spec/charter.md` through `spec-charter amend`.
+
+## Keep conditions
+
+Create `spec/capabilities.md` only when at least one holds:
+
+- a consumer exists
+- the contract is cross-tree, not the same as a directory
+- the user asked for a 3-axis audit
+
+If the file already exists, this skill may amend it. A bare invocation may still emit a report. If the file is absent and none hold, Recommended Edit is stop after charter (plus map on brownfield); do not create the file. Directory names alone are not a keep condition.
 
 ## Capability admission test
 
@@ -125,7 +134,7 @@ Classify positive normal outcomes as Expected Behaviors. Classify bright-line ne
 
 ## Writing rules
 
-When the user accepts a first capability edit and `spec/capabilities.md` is absent, copy `templates/capabilities.md` to `spec/capabilities.md` at the repo root, then write only the accepted capability. On rerun, edit only the named capability block and leave the rest of the file untouched.
+When the user accepts a first capability edit and `spec/capabilities.md` is absent, copy `templates/capabilities.md` to `spec/capabilities.md` at the repo root only if a keep condition holds, then write only the accepted capability. On rerun, edit only the named capability block and leave the rest of the file untouched.
 
 After applying an accepted change, do not bump a revision number on `spec/capabilities.md`; `git blame` is the source of truth. Note in the conversation which capability was edited. Echo charter Decisions at capability level only when they explain a Behavior or Hard Constraint; promote cross-cutting capability Decisions through `spec-charter amend`.
 
@@ -133,10 +142,11 @@ See `references/capabilities.md` for additional grill heuristics and [`../spec-c
 
 ## Verification prompts
 
-- "Create capabilities from a repo where only top-level directories are known." Expected: use directories as raw signals only; require supporting evidence before admission.
+- "Create capabilities from a repo where only top-level directories are known." Expected: use directories as raw signals only; directory names are not a keep condition; do not write the file.
+- "We finished charter and map; write capabilities from the folder list." Expected: refuse; same gate.
 - "A commit scope appears often but has no docs, tests, or distinct behavior." Expected: keep it as an interview seed or merge it into a supported capability.
 - "User says this weakly evidenced surface is important." Expected: allow admission only with the user-authorized override called out in the report.
-- "문서 적을 건 적고 다음 제안해줘." Expected: route to Next Capability Proposal, propose one supported next capability, and ask before writing unless edit authorization is explicit.
+- "문서 적을 건 적고 다음 제안해줘." Expected: if the file is absent and no keep condition holds, stop without a create proposal; otherwise route to Next Capability Proposal, propose one supported next capability, and ask before writing unless edit authorization is explicit.
 - "We finished charter, system map, and first capability; is this ready to commit?" Expected: use the ready-to-commit checklist in `references/spec-pipeline-ready.md`.
 
 ## References
