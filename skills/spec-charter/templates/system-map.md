@@ -31,5 +31,5 @@
 ## Where To Go Next
 
 - Product direction: [`charter.md`](charter.md)
-- Capability contracts: [`capabilities.md`](capabilities.md) — omit this line unless `spec/capabilities.md` exists or grill is in scope
+- Capability contracts: [`capabilities.md`](capabilities.md) <!-- omit this line unless spec/capabilities.md exists or grill is in scope -->
 - <Deeper doc>: [<path>](<path>)

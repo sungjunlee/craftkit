@@ -62,6 +62,6 @@ Protect the ~5-minute-read property on every amendment.
 
 Propose the charter diff and any harness projection change as **one package** before writing. Marker syntax, file XOR, dual-file import, and the no-harness-file case live in [`spec-axis.md`](spec-axis.md) § Harness projection.
 
-If a projection already exists, stamp its `revision=` to the new charter `revision:` in that same confirm. Refresh the inner excerpt when Tier 1 changed **or** when the existing excerpt no longer matches live Tier 1. If no projection exists yet, propose adding a trigger pointer and marker block rather than requiring one.
+If a projection already exists, stamp its `revision=` to the new charter `revision:` in that same confirm. Refresh the inner excerpt when Tier 1 changed **or** when the existing excerpt no longer matches live Tier 1. If the only accepted change is aligning a drifted excerpt, do not bump charter `revision:`. If no projection exists yet, propose adding a trigger pointer and marker block rather than requiring one.
 
 A refused harness half uses refused/parked. Do not silently update a stale marker block.

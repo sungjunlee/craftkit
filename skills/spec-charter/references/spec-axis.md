@@ -9,7 +9,7 @@ Use this as the shared boundary reference for `spec-charter` and `spec-grill`. T
 | `spec/charter.md` | Why the project exists, what good looks like, Non-Goals, Objectives, and project-wide Decisions. | `spec-charter` |
 | `spec/system-map.md` | High-level system shape: runtime boundaries, core flows, storage/external systems, invariants, and pointers. Router: tree → local instruction file. | `spec-charter` (`map` mode) |
 | `spec/capabilities.md` | Optional capability contracts: Goal, Scope, Expected Behaviors, Hard Constraints, Learnings, and Decisions. Write only when a consumer exists, the contract is cross-tree, or the user asked for a 3-axis audit. | `spec-grill` |
-| `CLAUDE.md` / `AGENTS.md` | Agent harness instructions and local development guardrails. May carry a generated Direction projection; that cache is not independent product authority. | Repository maintainers; `spec-charter` proposes projection and writes only after confirm |
+| `CLAUDE.md` / `AGENTS.md` | Agent harness instructions and local development guardrails. May carry a generated Direction projection; that cache is not independent product authority. | Repository maintainers; `spec-charter` proposes projection and writes only after confirm or explicit autonomous authorization |
 | `README.md` | Outward-facing introduction and user-facing entrypoints. | Repository maintainers |
 
 Downstream tools (for example dev-backlog's sprint and triage skills) consume `spec/*` files as read-only yardsticks and document their own file boundaries; they may propose spec changes but must not mutate spec files themselves.
@@ -36,9 +36,9 @@ Absence is supported. Pick the smallest axis that matches the git topology.
 <!-- spec-charter-projection:end -->
 ```
 
-`<n>` matches charter frontmatter `revision:`. Every accepted charter revision bump stamps the same integer into existing markers in the same confirm. Refresh excerpt text when Tier 1 changed **or** when the existing excerpt no longer matches live Tier 1. If no projection exists, propose adding one rather than requiring it. Charter remains the mutation home. If the cache and live Non-Goals disagree, the charter wins; reassess names the drift.
+`<n>` matches charter frontmatter `revision:`. Every accepted **charter** revision bump stamps the same integer into existing markers in the same confirm. Refresh excerpt text when Tier 1 changed **or** when the existing excerpt no longer matches live Tier 1. If the only accepted change is aligning a drifted excerpt, do not bump charter `revision:`; keep marker `revision=` and replace the inner text. If no projection exists, propose adding one rather than requiring it. Charter remains the mutation home. If the cache and live Non-Goals disagree, the charter wins; reassess names the drift.
 
-Propose the charter write, the pointer, the marker block, and any load adapter as **one package** before writing. Apply them together after confirm. Write charter without harness only when the user **explicitly refused** the harness half; record that under refused/parked. Do not treat a silent skip as a refusal. A refused harness after a revision bump is expected drift; reassess will name it.
+Propose the charter write, the pointer, the marker block, and any load adapter as **one package** before writing. Apply them together after confirm or explicit autonomous authorization. Write charter without harness only when the user **explicitly refused** the harness half; record that under refused/parked. Do not treat a silent skip as a refusal. A refused harness after a revision bump is expected drift; reassess will name it.
 
 - One **projection block**: `AGENTS.md` if present, else `CLAUDE.md`. Never duplicate the block.
 - If the block lands in `AGENTS.md`, include a Claude load adapter in the same package when `CLAUDE.md` is missing or does not already import/symlink `AGENTS.md`. Prefer adding `@AGENTS.md` (a new import-only `CLAUDE.md`, or one import line in an existing file). Do not symlink-over a file that has unique instructions; symlink only when the two files are already equivalent.
