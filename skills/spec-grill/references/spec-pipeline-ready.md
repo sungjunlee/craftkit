@@ -1,6 +1,6 @@
-# Spec Pipeline Ready-To-Commit Checklist
+# Spec ready-to-commit checklist
 
-Use this when capability contracts are in scope and the user wants to land charter, system map, and `spec/capabilities.md` in git. Charter plus map can land without this checklist.
+Use this when capability contracts are in scope and the user wants to land `spec/capabilities.md` in git. Charter plus map can land without this checklist; grill is not a required follow-on after every charter.
 
 This is a quality gate, not a runtime system. It does not authorize edits by itself; it tells the agent what to verify before committing or opening a PR.
 
