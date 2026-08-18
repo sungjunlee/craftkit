@@ -8,7 +8,7 @@ CraftKit is a cross-agent toolkit for creating, improving, and operationalizing 
 
 Prompt assets and agent skills often become fragmented, provider-specific, and hard to reuse. CraftKit exists to keep them file-first, portable, reviewable, and easy to improve over time.
 
-CraftKit covers two wedges. The first is artifact quality: author prompts, critique assets, run eval-backed experiments, and carry sessions forward (`craft-*`). The second is the repo spec axis: `spec-charter` then `spec-grill` turns a brownfield repo's direction, system shape, and capability boundaries into reference contracts that other tools can consume — most directly `dev-backlog`, which measures sprints and triage against them.
+CraftKit covers two wedges. The first is artifact quality: author prompts, critique assets, run eval-backed experiments, and carry sessions forward (`craft-*`). The second is the repo spec axis: `spec-charter` lands direction and system shape; `spec-grill` is optional. Those files are reference contracts that other tools can consume — most directly `dev-backlog`, which measures sprints and triage against them.
 
 CraftKit is not a general coding-agent workflow suite, project-management layer, deployment system, or runtime framework. The spec axis defines what good looks like — it does not manage tasks, sprints, or backlog priority; that stays with `dev-backlog`. When a workflow needs those things, CraftKit should produce clear files, specs, or handoffs that another tool can use rather than becoming the tool itself.
 
@@ -26,7 +26,8 @@ Reach for the other skills when the job gets more specific:
 
 - `craft-autoresearch` — deliberate, eval-backed experimentation when you bring test inputs and measurable criteria; explicit-only, never a default next step.
 - `craft-handoff` — end a long session with a durable doc plus a resume prompt.
-- `spec-charter`, `spec-grill` — land a brownfield repo spec axis from direction and system shape to capability contracts.
+- `spec-charter` — land a brownfield repo's direction and system shape.
+- `spec-grill` — optional capability contracts.
 
 ## The methodology
 
@@ -79,13 +80,13 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | `craft-autoresearch` | a prompt or skill works "sometimes" and needs eval-driven iteration | runs evals and may edit mutable files |
 | `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt | writes handoff files and may copy to clipboard |
 | `spec-charter` | a repo needs direction, Objectives, Decisions, system shape, or stale-spec reassessment | creates or amends `spec/charter.md` and `spec/system-map.md` |
-| `spec-grill` | candidate repo boundaries need to become accepted capability contracts with Behaviors and Hard Constraints | creates or refines `spec/capabilities.md` after evidence review |
+| `spec-grill` | a consumer needs a capability handle (`component:`), a contract is cross-tree, or the user asked for a 3-axis audit — not a required follow-on to charter | creates or refines `spec/capabilities.md` after evidence review |
 
 When two skills could trigger, choose the least invasive one that answers the request: review-only and apply/fix/improve wording both go to `craft-critique` (read-only by default; applies fixes when asked); repeated measurable failures go to `craft-autoresearch`; session wrap-up goes to `craft-handoff`.
 
 Terminology note: `craft-autoresearch` uses an **eval runner** for replaying test inputs and scoring outputs. Do not call that runner a "harness."
 
-The `spec-*` skills form a pipeline: `spec-charter` (charter + system map) then `spec-grill`. Use them when a brownfield repo needs a compact spec axis grounded in real repo evidence instead of a generic architecture document.
+The `spec-*` skills land a spec axis: `spec-charter` (charter + system map) is the default; `spec-grill` is an optional second step. Use them when a brownfield repo needs a compact spec axis grounded in real repo evidence instead of a generic architecture document. Monorepo vs sibling-git vs type-1 topology is stated once in [`skills/spec-charter/references/spec-axis.md`](skills/spec-charter/references/spec-axis.md).
 
 The spec axis supersedes `dev-backlog`'s retired `backlog-charter` skill (dev-backlog split that surface into the spec-series in its 0.6.0): `spec/charter.md` is the successor home for the project reference axis, and `spec-charter`'s amend mode reads a legacy root `CHARTER.md` as a fallback and migrates it deliberately rather than silently. `dev-backlog` consumes the axis — it measures sprints and triage against `spec/charter.md` — but does not own it.
 
@@ -99,7 +100,7 @@ Four skills (`craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-hand
 
 - generating new prompts from scratch (task, research, templates)
 - prompt design and restructuring
-- repo spec-axis creation for charter, system map, and capability contracts
+- repo spec-axis creation for charter, system map, and optional capability contracts
 - diagnostic review and minimal-diff editing
 - iterative improvement loops
 - copy-pasteable outputs for agent workflows

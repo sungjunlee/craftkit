@@ -143,4 +143,4 @@ See `references/capabilities.md` for additional grill heuristics and [`../spec-c
 
 - `references/capabilities.md` — grill heuristics (naming, goal rewrites, 3-axis examples, admission patterns) used after the interview flow.
 - `references/grill-report-template.md` — the full Grill Report skeleton.
-- `references/spec-pipeline-ready.md` — lightweight ready-to-commit checklist for the `spec-charter` then `spec-grill` flow.
+- `references/spec-pipeline-ready.md` — lightweight ready-to-commit checklist when capability contracts are in scope.

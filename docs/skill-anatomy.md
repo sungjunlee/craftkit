@@ -5,7 +5,7 @@ Status: normative. Canonical section contract for every `SKILL.md` in CraftKit. 
 ## Scope
 
 - **craft-\*** — artifact skills: `craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-handoff`.
-- **spec-\*** — repo spec-pipeline skills: `spec-charter`, `spec-grill`. Router-contract variant, not the craft-* shape.
+- **spec-\*** — spec-axis skills: `spec-charter`, `spec-grill`. Router-contract variant, not the craft-* shape.
 
 ## Frontmatter contract
 
