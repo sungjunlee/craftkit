@@ -1,7 +1,7 @@
 ---
 name: spec-grill
 argument-hint: "[natural-language request]"
-description: "Create or refine spec/capabilities.md when a consumer, a cross-tree contract, or a 3-axis audit is in play. Use for capability specs, component contracts, 능력 명세, or grill."
+description: "Create or refine spec/capabilities.md from repo signals when a consumer, a cross-tree contract, or a 3-axis audit needs it. Use for capability specs, component contracts, middle-layer specs, repo boundaries, 능력 명세, or grill."
 disable-model-invocation: true
 compatibility: Requires git.
 metadata:
