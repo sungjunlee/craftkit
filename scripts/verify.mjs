@@ -486,6 +486,44 @@ function checkReferenceIndex() {
   }
 }
 
+// Required spec-charter load path (#186): checkReferenceIndex only catches
+// uncited-on-disk files and dangling citations. Deleting a required file AND
+// its citation would still pass. This list is the explicit lock. Skip when
+// skills/spec-charter is absent so fixtures without it stay valid.
+const SPEC_CHARTER_REQUIRED_REFERENCES = [
+  "references/create.md",
+  "references/amendment.md",
+  "references/alignment.md",
+  "references/objectives.md",
+  "references/reassess.md",
+  "references/spec-axis.md",
+  "references/system-map.md",
+];
+
+function checkSpecCharterRequiredReferences() {
+  const skillDir = path.join(root, "skills", "spec-charter");
+  const skillMdPath = path.join(skillDir, "SKILL.md");
+
+  if (!fs.existsSync(skillMdPath)) {
+    return;
+  }
+
+  const body = readText(skillMdPath);
+
+  for (const citation of SPEC_CHARTER_REQUIRED_REFERENCES) {
+    const requiredPath = path.join(skillDir, citation);
+
+    if (!fs.existsSync(requiredPath)) {
+      fail(`${relative(requiredPath)} is a required spec-charter reference and is missing`);
+      continue;
+    }
+
+    if (!body.includes(citation)) {
+      fail(`${relative(skillMdPath)} does not cite ${citation}, which is a required spec-charter reference`);
+    }
+  }
+}
+
 function checkFamilySectionContract() {
   const skillsRoot = path.join(root, "skills");
   const skillDirNames = fs.readdirSync(skillsRoot, { withFileTypes: true })
@@ -728,6 +766,7 @@ function main() {
   checkOpenAiInvocationPolicies();
   checkMirroredReferences();
   checkReferenceIndex();
+  checkSpecCharterRequiredReferences();
   checkFamilySectionContract();
   checkTerminology();
   checkDocumentationPaths();

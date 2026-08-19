@@ -497,6 +497,97 @@ test("resolves a cross-skill ../sibling/references/ citation instead of flagging
   assert.equal(result.status, 0, result.stderr || result.stdout);
 });
 
+// --- Check: spec-charter required reference load path (#186) ---
+
+const specCharterRequiredReferences = [
+  "references/create.md",
+  "references/amendment.md",
+  "references/alignment.md",
+  "references/objectives.md",
+  "references/reassess.md",
+  "references/spec-axis.md",
+  "references/system-map.md",
+];
+
+function seedSpecCharter(root, { omitFiles = [], omitCitations = [] } = {}) {
+  const omitFileSet = new Set(omitFiles);
+  const omitCitationSet = new Set(omitCitations);
+  const citations = specCharterRequiredReferences
+    .filter((citation) => !omitCitationSet.has(citation))
+    .map((citation) => `- \`${citation}\``)
+    .join("\n");
+
+  writeFile(
+    root,
+    "skills/spec-charter/SKILL.md",
+    `---
+name: spec-charter
+description: Example spec-charter skill for required-reference tests.
+---
+
+# spec-charter
+
+Intro paragraph.
+
+## Execution Contract
+
+### Mode Router
+
+Routes intent to a mode.
+
+### Completion Contract
+
+Reports what changed.
+
+## Verification prompts
+
+- "A pressure-test prompt." Expected: do the right thing.
+
+## References
+
+${citations}
+`,
+  );
+
+  for (const citation of specCharterRequiredReferences) {
+    if (omitFileSet.has(citation)) {
+      continue;
+    }
+
+    writeFile(root, path.join("skills/spec-charter", citation), `# ${path.basename(citation, ".md")}\n`);
+  }
+}
+
+test("passes when spec-charter cites every required reference that exists on disk", () => {
+  const root = createFixture();
+  seedSpecCharter(root);
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+expectVerifyFailure(
+  "fails when a required spec-charter reference file is missing even if SKILL.md does not cite it",
+  (root) => {
+    seedSpecCharter(root, {
+      omitFiles: ["references/create.md"],
+      omitCitations: ["references/create.md"],
+    });
+  },
+  /skills\/spec-charter\/references\/create\.md is a required spec-charter reference and is missing/,
+);
+
+expectVerifyFailure(
+  "fails when a required spec-charter reference exists but SKILL.md does not cite it",
+  (root) => {
+    seedSpecCharter(root, {
+      omitCitations: ["references/create.md"],
+    });
+  },
+  /skills\/spec-charter\/SKILL\.md does not cite references\/create\.md, which is a required spec-charter reference/,
+);
+
 // --- Check: family section contract (#110) ---
 
 const compliantCraftSkillBody = (name) => `---
