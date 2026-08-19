@@ -13,6 +13,7 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 - Spec-axis topology (monorepo vs sibling-git vs type-1) and harness-projection authority live in `skills/spec-charter/references/spec-axis.md` instead of being restated per skill (#177).
 - `docs/skill-anatomy.md` names spec-* as spec-axis skills, not a required pipeline.
 - `spec-charter` map fills Runtime Boundaries from existing nested instruction files; missing files are Evidence Missing, not invented. Nested files hold how plus a Non-Goals pointer; Hard Constraints stay in `spec/capabilities.md` when that file exists (#181).
+- `AGENTS.md` keeps only repo-specific invariants (Node tooling, explicit-only pairing, artifact path, commit prefixes). Generic writing advice moved out.
 
 ## [0.4.0] — 2026-08-17
 
