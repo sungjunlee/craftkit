@@ -524,6 +524,40 @@ function checkSpecCharterRequiredReferences() {
   }
 }
 
+// Required spec-grill load path (#188): checkReferenceIndex only catches
+// uncited-on-disk files and dangling citations. Deleting a required file AND
+// its citation would still pass. This list is the explicit lock. Skip when
+// skills/spec-grill is absent so fixtures without it stay valid.
+const SPEC_GRILL_REQUIRED_REFERENCES = [
+  "references/capabilities.md",
+  "references/grill-report-template.md",
+  "references/spec-pipeline-ready.md",
+];
+
+function checkSpecGrillRequiredReferences() {
+  const skillDir = path.join(root, "skills", "spec-grill");
+  const skillMdPath = path.join(skillDir, "SKILL.md");
+
+  if (!fs.existsSync(skillMdPath)) {
+    return;
+  }
+
+  const body = readText(skillMdPath);
+
+  for (const citation of SPEC_GRILL_REQUIRED_REFERENCES) {
+    const requiredPath = path.join(skillDir, citation);
+
+    if (!fs.existsSync(requiredPath)) {
+      fail(`${relative(requiredPath)} is a required spec-grill reference and is missing`);
+      continue;
+    }
+
+    if (!body.includes(citation)) {
+      fail(`${relative(skillMdPath)} does not cite ${citation}, which is a required spec-grill reference`);
+    }
+  }
+}
+
 function checkFamilySectionContract() {
   const skillsRoot = path.join(root, "skills");
   const skillDirNames = fs.readdirSync(skillsRoot, { withFileTypes: true })
@@ -767,6 +801,7 @@ function main() {
   checkMirroredReferences();
   checkReferenceIndex();
   checkSpecCharterRequiredReferences();
+  checkSpecGrillRequiredReferences();
   checkFamilySectionContract();
   checkTerminology();
   checkDocumentationPaths();
