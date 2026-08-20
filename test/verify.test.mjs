@@ -588,6 +588,93 @@ expectVerifyFailure(
   /skills\/spec-charter\/SKILL\.md does not cite references\/create\.md, which is a required spec-charter reference/,
 );
 
+// --- Check: spec-grill required reference load path (#188) ---
+
+const specGrillRequiredReferences = [
+  "references/capabilities.md",
+  "references/grill-report-template.md",
+  "references/spec-pipeline-ready.md",
+];
+
+function seedSpecGrill(root, { omitFiles = [], omitCitations = [] } = {}) {
+  const omitFileSet = new Set(omitFiles);
+  const omitCitationSet = new Set(omitCitations);
+  const citations = specGrillRequiredReferences
+    .filter((citation) => !omitCitationSet.has(citation))
+    .map((citation) => `- \`${citation}\``)
+    .join("\n");
+
+  writeFile(
+    root,
+    "skills/spec-grill/SKILL.md",
+    `---
+name: spec-grill
+description: Example spec-grill skill for required-reference tests.
+---
+
+# spec-grill
+
+Intro paragraph.
+
+## Execution Contract
+
+### Mode Router
+
+Routes intent to a mode.
+
+### Completion Contract
+
+Reports what changed.
+
+## Verification prompts
+
+- "A pressure-test prompt." Expected: do the right thing.
+
+## References
+
+${citations}
+`,
+  );
+
+  for (const citation of specGrillRequiredReferences) {
+    if (omitFileSet.has(citation)) {
+      continue;
+    }
+
+    writeFile(root, path.join("skills/spec-grill", citation), `# ${path.basename(citation, ".md")}\n`);
+  }
+}
+
+test("passes when spec-grill cites every required reference that exists on disk", () => {
+  const root = createFixture();
+  seedSpecGrill(root);
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+expectVerifyFailure(
+  "fails when a required spec-grill reference file is missing even if SKILL.md does not cite it",
+  (root) => {
+    seedSpecGrill(root, {
+      omitFiles: ["references/capabilities.md"],
+      omitCitations: ["references/capabilities.md"],
+    });
+  },
+  /skills\/spec-grill\/references\/capabilities\.md is a required spec-grill reference and is missing/,
+);
+
+expectVerifyFailure(
+  "fails when a required spec-grill reference exists but SKILL.md does not cite it",
+  (root) => {
+    seedSpecGrill(root, {
+      omitCitations: ["references/capabilities.md"],
+    });
+  },
+  /skills\/spec-grill\/SKILL\.md does not cite references\/capabilities\.md, which is a required spec-grill reference/,
+);
+
 // --- Check: family section contract (#110) ---
 
 const compliantCraftSkillBody = (name) => `---
