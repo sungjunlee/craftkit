@@ -303,12 +303,30 @@ Output: y
 ## References
 
 - \`references/eval-guide.md\`
+- \`references/mutation-guide.md\`
+- \`references/worked-example.md\`
+- \`references/contract-example.md\`
 `,
   );
   writeFile(
     root,
     "skills/craft-autoresearch/references/eval-guide.md",
     "# Eval guide\n\nAn eval runner replays test inputs and scores outputs.\n",
+  );
+  writeFile(
+    root,
+    "skills/craft-autoresearch/references/mutation-guide.md",
+    "# Mutation guide\n\nAn eval runner mutation note.\n",
+  );
+  writeFile(
+    root,
+    "skills/craft-autoresearch/references/worked-example.md",
+    "# Worked example\n\nAn eval runner cycle.\n",
+  );
+  writeFile(
+    root,
+    "skills/craft-autoresearch/references/contract-example.md",
+    "# Contract example\n\nAn eval runner contract.\n",
   );
 
   const result = runVerify(root, { skipPackDryRun: true });
@@ -673,6 +691,111 @@ expectVerifyFailure(
     });
   },
   /skills\/spec-grill\/SKILL\.md does not cite references\/capabilities\.md, which is a required spec-grill reference/,
+);
+
+// --- Check: craft-autoresearch required reference load path (#190) ---
+
+const craftAutoresearchRequiredReferences = [
+  "references/mutation-guide.md",
+  "references/worked-example.md",
+  "references/contract-example.md",
+  "references/eval-guide.md",
+];
+
+function seedCraftAutoresearch(root, { omitFiles = [], omitCitations = [] } = {}) {
+  const omitFileSet = new Set(omitFiles);
+  const omitCitationSet = new Set(omitCitations);
+  const citations = craftAutoresearchRequiredReferences
+    .filter((citation) => !omitCitationSet.has(citation))
+    .map((citation) => `- \`${citation}\``)
+    .join("\n");
+
+  writeFile(
+    root,
+    "skills/craft-autoresearch/SKILL.md",
+    `---
+name: craft-autoresearch
+description: Example craft-autoresearch skill for required-reference tests.
+---
+
+# craft-autoresearch
+
+## Purpose
+
+Runs measured iterations against an eval runner.
+
+## Use this when
+
+- always
+
+## Inputs
+
+- none
+
+## Steps
+
+1. Do it.
+
+## Output format
+
+A single line.
+
+## Guardrails
+
+- stay safe
+
+## Failure modes
+
+- it might fail
+
+## Example
+
+Input: x
+Output: y
+
+## References
+
+${citations}
+`,
+  );
+
+  for (const citation of craftAutoresearchRequiredReferences) {
+    if (omitFileSet.has(citation)) {
+      continue;
+    }
+
+    writeFile(root, path.join("skills/craft-autoresearch", citation), `# ${path.basename(citation, ".md")}\n`);
+  }
+}
+
+test("passes when craft-autoresearch cites every required reference that exists on disk", () => {
+  const root = createFixture();
+  seedCraftAutoresearch(root);
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+expectVerifyFailure(
+  "fails when a required craft-autoresearch reference file is missing even if SKILL.md does not cite it",
+  (root) => {
+    seedCraftAutoresearch(root, {
+      omitFiles: ["references/mutation-guide.md"],
+      omitCitations: ["references/mutation-guide.md"],
+    });
+  },
+  /skills\/craft-autoresearch\/references\/mutation-guide\.md is a required craft-autoresearch reference and is missing/,
+);
+
+expectVerifyFailure(
+  "fails when a required craft-autoresearch reference exists but SKILL.md does not cite it",
+  (root) => {
+    seedCraftAutoresearch(root, {
+      omitCitations: ["references/mutation-guide.md"],
+    });
+  },
+  /skills\/craft-autoresearch\/SKILL\.md does not cite references\/mutation-guide\.md, which is a required craft-autoresearch reference/,
 );
 
 // --- Check: family section contract (#110) ---

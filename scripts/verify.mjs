@@ -558,6 +558,40 @@ function checkSpecGrillRequiredReferences() {
   }
 }
 
+// Required craft-autoresearch load path (#190): same lock as spec-charter
+// (#186) and spec-grill (#188). Skip when skills/craft-autoresearch is absent
+// so fixtures without it stay valid.
+const CRAFT_AUTORESEARCH_REQUIRED_REFERENCES = [
+  "references/mutation-guide.md",
+  "references/worked-example.md",
+  "references/contract-example.md",
+  "references/eval-guide.md",
+];
+
+function checkCraftAutoresearchRequiredReferences() {
+  const skillDir = path.join(root, "skills", "craft-autoresearch");
+  const skillMdPath = path.join(skillDir, "SKILL.md");
+
+  if (!fs.existsSync(skillMdPath)) {
+    return;
+  }
+
+  const body = readText(skillMdPath);
+
+  for (const citation of CRAFT_AUTORESEARCH_REQUIRED_REFERENCES) {
+    const requiredPath = path.join(skillDir, citation);
+
+    if (!fs.existsSync(requiredPath)) {
+      fail(`${relative(requiredPath)} is a required craft-autoresearch reference and is missing`);
+      continue;
+    }
+
+    if (!body.includes(citation)) {
+      fail(`${relative(skillMdPath)} does not cite ${citation}, which is a required craft-autoresearch reference`);
+    }
+  }
+}
+
 function checkFamilySectionContract() {
   const skillsRoot = path.join(root, "skills");
   const skillDirNames = fs.readdirSync(skillsRoot, { withFileTypes: true })
@@ -802,6 +836,7 @@ function main() {
   checkReferenceIndex();
   checkSpecCharterRequiredReferences();
   checkSpecGrillRequiredReferences();
+  checkCraftAutoresearchRequiredReferences();
   checkFamilySectionContract();
   checkTerminology();
   checkDocumentationPaths();
