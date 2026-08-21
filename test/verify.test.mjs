@@ -10,6 +10,7 @@ import {
   matchesFilePattern,
   terminologyFindings,
   terminologyRules,
+  REQUIRED_SKILL_REFERENCES,
 } from "../scripts/verify.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -517,20 +518,18 @@ test("resolves a cross-skill ../sibling/references/ citation instead of flagging
 
 // --- Check: spec-charter required reference load path (#186) ---
 
-const specCharterRequiredReferences = [
-  "references/create.md",
-  "references/amendment.md",
-  "references/alignment.md",
-  "references/objectives.md",
-  "references/reassess.md",
-  "references/spec-axis.md",
-  "references/system-map.md",
-];
+function requiredCitations(skill) {
+  const entry = REQUIRED_SKILL_REFERENCES.find((item) => item.skill === skill);
+  if (!entry) {
+    throw new Error(`missing REQUIRED_SKILL_REFERENCES entry for ${skill}`);
+  }
+  return entry.citations;
+}
 
 function seedSpecCharter(root, { omitFiles = [], omitCitations = [] } = {}) {
   const omitFileSet = new Set(omitFiles);
   const omitCitationSet = new Set(omitCitations);
-  const citations = specCharterRequiredReferences
+  const citations = requiredCitations("spec-charter")
     .filter((citation) => !omitCitationSet.has(citation))
     .map((citation) => `- \`${citation}\``)
     .join("\n");
@@ -567,7 +566,7 @@ ${citations}
 `,
   );
 
-  for (const citation of specCharterRequiredReferences) {
+  for (const citation of requiredCitations("spec-charter")) {
     if (omitFileSet.has(citation)) {
       continue;
     }
@@ -576,48 +575,10 @@ ${citations}
   }
 }
 
-test("passes when spec-charter cites every required reference that exists on disk", () => {
-  const root = createFixture();
-  seedSpecCharter(root);
-
-  const result = runVerify(root, { skipPackDryRun: true });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-});
-
-expectVerifyFailure(
-  "fails when a required spec-charter reference file is missing even if SKILL.md does not cite it",
-  (root) => {
-    seedSpecCharter(root, {
-      omitFiles: ["references/create.md"],
-      omitCitations: ["references/create.md"],
-    });
-  },
-  /skills\/spec-charter\/references\/create\.md is a required spec-charter reference and is missing/,
-);
-
-expectVerifyFailure(
-  "fails when a required spec-charter reference exists but SKILL.md does not cite it",
-  (root) => {
-    seedSpecCharter(root, {
-      omitCitations: ["references/create.md"],
-    });
-  },
-  /skills\/spec-charter\/SKILL\.md does not cite references\/create\.md, which is a required spec-charter reference/,
-);
-
-// --- Check: spec-grill required reference load path (#188) ---
-
-const specGrillRequiredReferences = [
-  "references/capabilities.md",
-  "references/grill-report-template.md",
-  "references/spec-pipeline-ready.md",
-];
-
 function seedSpecGrill(root, { omitFiles = [], omitCitations = [] } = {}) {
   const omitFileSet = new Set(omitFiles);
   const omitCitationSet = new Set(omitCitations);
-  const citations = specGrillRequiredReferences
+  const citations = requiredCitations("spec-grill")
     .filter((citation) => !omitCitationSet.has(citation))
     .map((citation) => `- \`${citation}\``)
     .join("\n");
@@ -654,7 +615,7 @@ ${citations}
 `,
   );
 
-  for (const citation of specGrillRequiredReferences) {
+  for (const citation of requiredCitations("spec-grill")) {
     if (omitFileSet.has(citation)) {
       continue;
     }
@@ -663,49 +624,10 @@ ${citations}
   }
 }
 
-test("passes when spec-grill cites every required reference that exists on disk", () => {
-  const root = createFixture();
-  seedSpecGrill(root);
-
-  const result = runVerify(root, { skipPackDryRun: true });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-});
-
-expectVerifyFailure(
-  "fails when a required spec-grill reference file is missing even if SKILL.md does not cite it",
-  (root) => {
-    seedSpecGrill(root, {
-      omitFiles: ["references/capabilities.md"],
-      omitCitations: ["references/capabilities.md"],
-    });
-  },
-  /skills\/spec-grill\/references\/capabilities\.md is a required spec-grill reference and is missing/,
-);
-
-expectVerifyFailure(
-  "fails when a required spec-grill reference exists but SKILL.md does not cite it",
-  (root) => {
-    seedSpecGrill(root, {
-      omitCitations: ["references/capabilities.md"],
-    });
-  },
-  /skills\/spec-grill\/SKILL\.md does not cite references\/capabilities\.md, which is a required spec-grill reference/,
-);
-
-// --- Check: craft-autoresearch required reference load path (#190) ---
-
-const craftAutoresearchRequiredReferences = [
-  "references/mutation-guide.md",
-  "references/worked-example.md",
-  "references/contract-example.md",
-  "references/eval-guide.md",
-];
-
 function seedCraftAutoresearch(root, { omitFiles = [], omitCitations = [] } = {}) {
   const omitFileSet = new Set(omitFiles);
   const omitCitationSet = new Set(omitCitations);
-  const citations = craftAutoresearchRequiredReferences
+  const citations = requiredCitations("craft-autoresearch")
     .filter((citation) => !omitCitationSet.has(citation))
     .map((citation) => `- \`${citation}\``)
     .join("\n");
@@ -759,7 +681,7 @@ ${citations}
 `,
   );
 
-  for (const citation of craftAutoresearchRequiredReferences) {
+  for (const citation of requiredCitations("craft-autoresearch")) {
     if (omitFileSet.has(citation)) {
       continue;
     }
@@ -768,35 +690,48 @@ ${citations}
   }
 }
 
-test("passes when craft-autoresearch cites every required reference that exists on disk", () => {
-  const root = createFixture();
-  seedCraftAutoresearch(root);
+const requiredReferenceSeeders = {
+  "spec-charter": seedSpecCharter,
+  "spec-grill": seedSpecGrill,
+  "craft-autoresearch": seedCraftAutoresearch,
+};
 
-  const result = runVerify(root, { skipPackDryRun: true });
+for (const { skill, citations } of REQUIRED_SKILL_REFERENCES) {
+  const seed = requiredReferenceSeeders[skill];
 
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-});
+  test(`passes when ${skill} cites every required reference that exists on disk`, () => {
+    const root = createFixture();
+    seed(root);
 
-expectVerifyFailure(
-  "fails when a required craft-autoresearch reference file is missing even if SKILL.md does not cite it",
-  (root) => {
-    seedCraftAutoresearch(root, {
-      omitFiles: ["references/mutation-guide.md"],
-      omitCitations: ["references/mutation-guide.md"],
-    });
-  },
-  /skills\/craft-autoresearch\/references\/mutation-guide\.md is a required craft-autoresearch reference and is missing/,
-);
+    const result = runVerify(root, { skipPackDryRun: true });
 
-expectVerifyFailure(
-  "fails when a required craft-autoresearch reference exists but SKILL.md does not cite it",
-  (root) => {
-    seedCraftAutoresearch(root, {
-      omitCitations: ["references/mutation-guide.md"],
-    });
-  },
-  /skills\/craft-autoresearch\/SKILL\.md does not cite references\/mutation-guide\.md, which is a required craft-autoresearch reference/,
-);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+  });
+
+  for (const citation of citations) {
+    const escaped = citation.replaceAll(".", "\\.");
+    expectVerifyFailure(
+      `fails when a required ${skill} reference file is missing even if SKILL.md does not cite it (${citation})`,
+      (root) => {
+        seed(root, {
+          omitFiles: [citation],
+          omitCitations: [citation],
+        });
+      },
+      new RegExp(`skills/${skill}/${escaped} is a required ${skill} reference and is missing`),
+    );
+
+    expectVerifyFailure(
+      `fails when a required ${skill} reference exists but SKILL.md does not cite it (${citation})`,
+      (root) => {
+        seed(root, {
+          omitCitations: [citation],
+        });
+      },
+      new RegExp(`skills/${skill}/SKILL\\.md does not cite ${escaped}, which is a required ${skill} reference`),
+    );
+  }
+}
 
 // --- Check: family section contract (#110) ---
 

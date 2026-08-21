@@ -486,108 +486,64 @@ function checkReferenceIndex() {
   }
 }
 
-// Required spec-charter load path (#186): checkReferenceIndex only catches
-// uncited-on-disk files and dangling citations. Deleting a required file AND
-// its citation would still pass. This list is the explicit lock. Skip when
-// skills/spec-charter is absent so fixtures without it stay valid.
-const SPEC_CHARTER_REQUIRED_REFERENCES = [
-  "references/create.md",
-  "references/amendment.md",
-  "references/alignment.md",
-  "references/objectives.md",
-  "references/reassess.md",
-  "references/spec-axis.md",
-  "references/system-map.md",
+// Required skill reference load path (#186/#188/#190): checkReferenceIndex
+// only catches uncited-on-disk files and dangling citations. Deleting a
+// required file AND its citation would still pass. This table is the explicit
+// lock. Skip a skill when its SKILL.md is absent so fixtures without it stay valid.
+const REQUIRED_SKILL_REFERENCES = [
+  {
+    skill: "spec-charter",
+    citations: [
+      "references/create.md",
+      "references/amendment.md",
+      "references/alignment.md",
+      "references/objectives.md",
+      "references/reassess.md",
+      "references/spec-axis.md",
+      "references/system-map.md",
+    ],
+  },
+  {
+    skill: "spec-grill",
+    citations: [
+      "references/capabilities.md",
+      "references/grill-report-template.md",
+      "references/spec-pipeline-ready.md",
+    ],
+  },
+  {
+    skill: "craft-autoresearch",
+    citations: [
+      "references/mutation-guide.md",
+      "references/worked-example.md",
+      "references/contract-example.md",
+      "references/eval-guide.md",
+    ],
+  },
 ];
 
-function checkSpecCharterRequiredReferences() {
-  const skillDir = path.join(root, "skills", "spec-charter");
-  const skillMdPath = path.join(skillDir, "SKILL.md");
+function checkRequiredSkillReferences() {
+  for (const { skill, citations } of REQUIRED_SKILL_REFERENCES) {
+    const skillDir = path.join(root, "skills", skill);
+    const skillMdPath = path.join(skillDir, "SKILL.md");
 
-  if (!fs.existsSync(skillMdPath)) {
-    return;
-  }
-
-  const body = readText(skillMdPath);
-
-  for (const citation of SPEC_CHARTER_REQUIRED_REFERENCES) {
-    const requiredPath = path.join(skillDir, citation);
-
-    if (!fs.existsSync(requiredPath)) {
-      fail(`${relative(requiredPath)} is a required spec-charter reference and is missing`);
+    if (!fs.existsSync(skillMdPath)) {
       continue;
     }
 
-    if (!body.includes(citation)) {
-      fail(`${relative(skillMdPath)} does not cite ${citation}, which is a required spec-charter reference`);
-    }
-  }
-}
+    const body = readText(skillMdPath);
 
-// Required spec-grill load path (#188): checkReferenceIndex only catches
-// uncited-on-disk files and dangling citations. Deleting a required file AND
-// its citation would still pass. This list is the explicit lock. Skip when
-// skills/spec-grill is absent so fixtures without it stay valid.
-const SPEC_GRILL_REQUIRED_REFERENCES = [
-  "references/capabilities.md",
-  "references/grill-report-template.md",
-  "references/spec-pipeline-ready.md",
-];
+    for (const citation of citations) {
+      const requiredPath = path.join(skillDir, citation);
 
-function checkSpecGrillRequiredReferences() {
-  const skillDir = path.join(root, "skills", "spec-grill");
-  const skillMdPath = path.join(skillDir, "SKILL.md");
+      if (!fs.existsSync(requiredPath)) {
+        fail(`${relative(requiredPath)} is a required ${skill} reference and is missing`);
+        continue;
+      }
 
-  if (!fs.existsSync(skillMdPath)) {
-    return;
-  }
-
-  const body = readText(skillMdPath);
-
-  for (const citation of SPEC_GRILL_REQUIRED_REFERENCES) {
-    const requiredPath = path.join(skillDir, citation);
-
-    if (!fs.existsSync(requiredPath)) {
-      fail(`${relative(requiredPath)} is a required spec-grill reference and is missing`);
-      continue;
-    }
-
-    if (!body.includes(citation)) {
-      fail(`${relative(skillMdPath)} does not cite ${citation}, which is a required spec-grill reference`);
-    }
-  }
-}
-
-// Required craft-autoresearch load path (#190): same lock as spec-charter
-// (#186) and spec-grill (#188). Skip when skills/craft-autoresearch is absent
-// so fixtures without it stay valid.
-const CRAFT_AUTORESEARCH_REQUIRED_REFERENCES = [
-  "references/mutation-guide.md",
-  "references/worked-example.md",
-  "references/contract-example.md",
-  "references/eval-guide.md",
-];
-
-function checkCraftAutoresearchRequiredReferences() {
-  const skillDir = path.join(root, "skills", "craft-autoresearch");
-  const skillMdPath = path.join(skillDir, "SKILL.md");
-
-  if (!fs.existsSync(skillMdPath)) {
-    return;
-  }
-
-  const body = readText(skillMdPath);
-
-  for (const citation of CRAFT_AUTORESEARCH_REQUIRED_REFERENCES) {
-    const requiredPath = path.join(skillDir, citation);
-
-    if (!fs.existsSync(requiredPath)) {
-      fail(`${relative(requiredPath)} is a required craft-autoresearch reference and is missing`);
-      continue;
-    }
-
-    if (!body.includes(citation)) {
-      fail(`${relative(skillMdPath)} does not cite ${citation}, which is a required craft-autoresearch reference`);
+      if (!body.includes(citation)) {
+        fail(`${relative(skillMdPath)} does not cite ${citation}, which is a required ${skill} reference`);
+      }
     }
   }
 }
@@ -834,9 +790,7 @@ function main() {
   checkOpenAiInvocationPolicies();
   checkMirroredReferences();
   checkReferenceIndex();
-  checkSpecCharterRequiredReferences();
-  checkSpecGrillRequiredReferences();
-  checkCraftAutoresearchRequiredReferences();
+  checkRequiredSkillReferences();
   checkFamilySectionContract();
   checkTerminology();
   checkDocumentationPaths();
@@ -861,4 +815,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   main();
 }
 
-export { sectionContractFindings, matchesFilePattern, terminologyFindings, terminologyRules };
+export { sectionContractFindings, matchesFilePattern, terminologyFindings, terminologyRules, REQUIRED_SKILL_REFERENCES };
