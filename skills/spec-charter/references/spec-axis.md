@@ -60,6 +60,7 @@ When a nested instruction file is proposed or written:
 ## Rules
 
 - `spec/*` files are durable project, system, and capability contracts.
+- Objectives live only in spec-charter skill/templates (`spec/charter.md`). Expected Behaviors and Hard Constraints live only in spec-grill skill/templates (`spec/capabilities.md`). Do not copy those sections into the other skill.
 - Agent harness files can inform workflow and guardrails, but they are not product authority unless they explicitly describe product boundaries. A generated projection does not change that.
 - `spec/charter.md` is the canonical charter path. A legacy root `CHARTER.md` may be read only when `spec/charter.md` is absent, as a compatibility fallback for older repos; never edit or create new root charters. Migrate from root `CHARTER.md` to `spec/charter.md` deliberately, as an explicit accepted change rather than a silent side effect.
 - Spec skills may read consumer evidence (task acceptance criteria, sprint notes, tests, docs, and commit history) to understand reality, but they must not copy tool-specific or issue-specific acceptance criteria into durable specs.
