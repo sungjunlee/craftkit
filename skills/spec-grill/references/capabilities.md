@@ -177,7 +177,7 @@ dev-backlog has four skill directories, but six capabilities:
 - `sprint-execution` owns the active sprint as the execution hub.
 - `backlog-sync` owns the GitHub Issues to task-file mirror.
 - `spec-charter` owns charter lifecycle and report-only reassess.
-- `spec-grill` owns `spec/capabilities.md` authoring and capability-contract pressure tests.
+- `spec-grill` owns `spec/capabilities.md` authoring and capability-contract pressure tests. Section ownership (Objectives vs Behaviors/Hard Constraints) lives once in [`spec-axis.md`](../../spec-charter/references/spec-axis.md).
 - `triage-grooming` owns backlog classification and relationship reports.
 - `task-progress-reporting` owns monthly progress issue synchronization.
 

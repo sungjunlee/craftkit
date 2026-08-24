@@ -10,7 +10,7 @@ metadata:
 
 # spec-charter
 
-Create and amend the spec-axis files this skill owns: `spec/charter.md` (direction) and `spec/system-map.md` (system shape). `spec-grill` owns `spec/capabilities.md`. This skill is rerunnable.
+Create and amend the spec-axis files this skill owns: `spec/charter.md` (direction) and `spec/system-map.md` (system shape). This skill is rerunnable. The single Objectives-vs-Behaviors/Hard-Constraints ownership rule lives in `references/spec-axis.md`.
 
 ## Execution contract
 

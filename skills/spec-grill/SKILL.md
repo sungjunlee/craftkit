@@ -137,7 +137,7 @@ When the user accepts a first capability edit and `spec/capabilities.md` is abse
 
 After applying an accepted change, do not bump a revision number on `spec/capabilities.md`; `git blame` is the source of truth. Note in the conversation which capability was edited. Echo charter Decisions at capability level only when they explain a Behavior or Hard Constraint; promote cross-cutting capability Decisions through `spec-charter amend`.
 
-See `references/capabilities.md` for additional grill heuristics and [`../spec-charter/SKILL.md`](../spec-charter/SKILL.md) for the project-wide charter layer.
+See `references/capabilities.md` for additional grill heuristics and [`../spec-charter/SKILL.md`](../spec-charter/SKILL.md) for the project-wide charter layer; the single Objectives-vs-Behaviors/Hard-Constraints ownership rule lives in [`../spec-charter/references/spec-axis.md`](../spec-charter/references/spec-axis.md).
 
 ## Verification prompts
 
