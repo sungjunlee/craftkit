@@ -222,6 +222,10 @@ test("spineProviderFindings reports provider terms with case preserved and dedup
     spineProviderFindings("Build with Claude Code, then run Claude again."),
     ["Claude"],
   );
+  assert.deepEqual(
+    spineProviderFindings("Use Claude or ChatGPT to draft"),
+    ["Claude", "ChatGPT"],
+  );
   assert.deepEqual(spineProviderFindings("Critique any prompt, any skill."), []);
 });
 
@@ -231,6 +235,13 @@ test("spineProviderFindings matches terms on word boundaries, not mid-word", () 
   // A hyphen is a word boundary, so provider product names separated that way
   // are still caught.
   assert.deepEqual(spineProviderFindings("Noble-chatgpt-adjacent."), ["chatgpt"]);
+});
+
+test("spineProviderFindings ignores ordinary English that collides with product names", () => {
+  assert.deepEqual(
+    spineProviderFindings("Move the cursor between fields. Grok the repo."),
+    [],
+  );
 });
 
 test("passes when explicit-only skills include paired Codex policy", () => {

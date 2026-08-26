@@ -702,23 +702,25 @@ function checkTerminology() {
   }
 }
 
-// Spine provider-neutrality invariant (#...): AGENTS.md's "Spine text names the
-// capability, not a provider's tool" (also recorded in CHANGELOG "no
-// provider-specific tool names in skill descriptions" and README § cross-agent
-// portability). docs/skill-anatomy.md "Frontmatter contract" governs
-// `description` as the spine's identity label. Scope is the frontmatter
-// `description` only: AGENTS.md explicitly lets Examples and `guides/` (and, per
-// README, templates/references) name tools, so the body is not scanned. Terms
-// are matched on word boundaries, so "claude" does not match inside, e.g.,
-// "claude-like" and a future `description` that only *names* a provider is
-// caught without over-matching body prose.
-const providerSpinePattern = /\b(?:claude|anthropic|chatgpt|openai|codex|copilot|cursor|gemini|grok|mistral|llama)\b/i;
+// Spine provider-neutrality invariant: AGENTS.md's "Spine text names the
+// capability, not a provider's tool" (CHANGELOG: "no provider-specific tool
+// names in skill spines"; README § cross-agent portability).
+// docs/skill-anatomy.md "Frontmatter contract" governs `description` as the
+// spine's identity label. Scope is the frontmatter `description` only:
+// AGENTS.md lets Examples and `guides/` name tools, so the body is not scanned.
+// Unambiguous provider/product names only — not ordinary English (cursor, grok,
+// copilot, llama, mistral). Word boundaries: "claude" does not match inside
+// "claudecode"; a hyphen is a boundary, so "chatgpt" matches in
+// "Noble-chatgpt-adjacent". Regex is constructed per call so /g lastIndex
+// cannot leak across descriptions.
+const providerSpinePatternSource = String.raw`\b(?:claude|anthropic|chatgpt|openai|codex|gemini)\b`;
 
 // Pure, unit-testable: returns the provider terms found in a skill `description`,
 // as their matched literal text (case preserved), so failure messages quote what
 // was actually written rather than a canned list.
 function spineProviderFindings(description) {
-  return [...new Set(description.match(providerSpinePattern) ?? [])];
+  const matches = description.match(new RegExp(providerSpinePatternSource, "gi")) ?? [];
+  return [...new Set(matches)];
 }
 
 function checkDocumentationPaths() {
