@@ -4,13 +4,20 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
+import {
+  root,
+  failures,
+  warnings,
+  fail,
+  warn,
+  listFiles,
+  relative,
+  readText,
+  parseFrontmatter,
+} from "./verify-shared.mjs";
+import { checkSkillFiles, spineProviderFindings } from "./verify-skill-files.mjs";
 
-const root = process.cwd();
-const failures = [];
-const warnings = [];
 const skipPackDryRunForTests = process.env.CRAFTKIT_VERIFY_TEST_SKIP_PACK_DRY_RUN === "1";
-const maxSkillSoftLines = 220;
-const maxDescriptionWords = 50;
 
 // Family section contract, derived from docs/skill-anatomy.md ("craft-* family
 // contract" and "spec-* family contract" tables, plus "Documented exemptions").
@@ -66,46 +73,6 @@ const SPEC_SECTION_CONTRACT = [
 // in docs/skill-anatomy.md, and remove both together once the section lands.
 const knownSectionDeviations = {};
 
-function fail(message) {
-  failures.push(message);
-}
-
-function warn(message) {
-  warnings.push(message);
-}
-
-function listFiles(dir, predicate) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  const files = [];
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      if (entry.name === ".git" || entry.name === "node_modules") {
-        continue;
-      }
-
-      files.push(...listFiles(fullPath, predicate));
-      continue;
-    }
-
-    if (entry.isFile() && predicate(fullPath)) {
-      files.push(fullPath);
-    }
-  }
-
-  return files;
-}
-
-function relative(filePath) {
-  return path.relative(root, filePath);
-}
-
-function readText(filePath) {
-  return fs.readFileSync(filePath, "utf8");
-}
-
 function checkJsonFiles() {
   for (const filePath of listFiles(root, (item) => item.endsWith(".json"))) {
     try {
@@ -130,48 +97,6 @@ function checkPackageBoundary() {
   if (packageJson.scripts?.test !== "node --test") {
     fail("package.json scripts.test must run node --test");
   }
-}
-
-function parseFrontmatter(text) {
-  if (!text.startsWith("---\n")) {
-    return null;
-  }
-
-  const endIndex = text.indexOf("\n---\n", 4);
-  if (endIndex === -1) {
-    return null;
-  }
-
-  return text.slice(4, endIndex);
-}
-
-function parseDescription(frontmatter) {
-  const lines = frontmatter.split("\n");
-  const descriptionIndex = lines.findIndex((line) => line.startsWith("description:"));
-
-  if (descriptionIndex === -1) {
-    return "";
-  }
-
-  const rawDescription = lines[descriptionIndex].replace(/^description:\s*/, "").trim();
-  if (!["|-", "|", ">-", ">"].includes(rawDescription)) {
-    return rawDescription.replace(/^["']|["']$/g, "");
-  }
-
-  const descriptionLines = [];
-  for (const line of lines.slice(descriptionIndex + 1)) {
-    if (!/^\s+/.test(line)) {
-      break;
-    }
-
-    descriptionLines.push(line.trim());
-  }
-
-  return descriptionLines.join(" ");
-}
-
-function countWords(text) {
-  return text.split(/\s+/).filter(Boolean).length;
 }
 
 function normalizeHeading(text) {
@@ -282,47 +207,6 @@ function sectionContractFindings(skillName, body, hasReferencesDir) {
   }
 
   return findings;
-}
-
-function checkSkillFiles() {
-  const skillFiles = listFiles(path.join(root, "skills"), (item) => path.basename(item) === "SKILL.md");
-
-  for (const filePath of skillFiles) {
-    const text = readText(filePath);
-    const frontmatter = parseFrontmatter(text);
-    const lineCount = text.trimEnd().split("\n").length;
-
-    if (!frontmatter) {
-      fail(`${relative(filePath)} must start with YAML frontmatter`);
-      continue;
-    }
-
-    if (!/^name:\s*\S+/m.test(frontmatter)) {
-      fail(`${relative(filePath)} frontmatter must include name`);
-    }
-
-    const description = parseDescription(frontmatter);
-    if (!description) {
-      fail(`${relative(filePath)} frontmatter must include description`);
-    }
-
-    const descriptionWords = countWords(description);
-    if (descriptionWords > maxDescriptionWords) {
-      fail(`${relative(filePath)} description has ${descriptionWords} words, over the ${maxDescriptionWords}-word trigger budget`);
-    }
-
-    for (const term of spineProviderFindings(description)) {
-      fail(`${relative(filePath)} description names a provider's tool ("${term}"); spine text must name the capability, not a provider's tool (AGENTS.md spine rule; docs/skill-anatomy.md "Frontmatter contract")`);
-    }
-
-    if (lineCount > maxSkillSoftLines) {
-      fail(`${relative(filePath)} has ${lineCount} lines, over the ${maxSkillSoftLines}-line soft budget; move deep detail into references or split the skill`);
-    }
-
-    if (lineCount > 500) {
-      fail(`${relative(filePath)} has ${lineCount} lines, over the 500-line hard ceiling`);
-    }
-  }
 }
 
 function parseOpenAiInvocationPolicy(text) {
@@ -700,27 +584,6 @@ function checkTerminology() {
       }
     }
   }
-}
-
-// Spine provider-neutrality invariant: AGENTS.md's "Spine text names the
-// capability, not a provider's tool" (CHANGELOG: "no provider-specific tool
-// names in skill spines"; README § cross-agent portability).
-// docs/skill-anatomy.md "Frontmatter contract" governs `description` as the
-// spine's identity label. Scope is the frontmatter `description` only:
-// AGENTS.md lets Examples and `guides/` name tools, so the body is not scanned.
-// Unambiguous provider/product names only — not ordinary English (cursor, grok,
-// copilot, llama, mistral). Word boundaries: "claude" does not match inside
-// "claudecode"; a hyphen is a boundary, so "chatgpt" matches in
-// "Noble-chatgpt-adjacent". Regex is constructed per call so /g lastIndex
-// cannot leak across descriptions.
-const providerSpinePatternSource = String.raw`\b(?:claude|anthropic|chatgpt|openai|codex|gemini)\b`;
-
-// Pure, unit-testable: returns the provider terms found in a skill `description`,
-// as their matched literal text (case preserved), so failure messages quote what
-// was actually written rather than a canned list.
-function spineProviderFindings(description) {
-  const matches = description.match(new RegExp(providerSpinePatternSource, "gi")) ?? [];
-  return [...new Set(matches)];
 }
 
 function checkDocumentationPaths() {

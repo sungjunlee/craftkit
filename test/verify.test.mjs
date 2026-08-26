@@ -15,7 +15,6 @@ import {
 } from "../scripts/verify.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const verifyScript = path.join(repoRoot, "scripts/verify.mjs");
 
 function writeFile(root, filePath, content) {
   const fullPath = path.join(root, filePath);
@@ -41,7 +40,7 @@ function createFixture() {
   writeFile(root, "CHANGELOG.md", "# Changelog\n");
   writeFile(root, "README.md", "# Fixture\n\n## 30-second path\n\nSee docs/status.md and run npm run verify.\n");
   writeFile(root, "docs/status.md", "# Status\n\n## Public evidence\n\nMaintainer-local evidence\n\nRun npm run verify.\n");
-  writeFile(root, "scripts/verify.mjs", fs.readFileSync(verifyScript, "utf8"));
+  fs.cpSync(path.join(repoRoot, "scripts"), path.join(root, "scripts"), { recursive: true });
   writeFile(
     root,
     "skills/example/SKILL.md",
