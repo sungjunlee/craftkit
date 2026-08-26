@@ -311,6 +311,10 @@ function checkSkillFiles() {
       fail(`${relative(filePath)} description has ${descriptionWords} words, over the ${maxDescriptionWords}-word trigger budget`);
     }
 
+    for (const term of spineProviderFindings(description)) {
+      fail(`${relative(filePath)} description names a provider's tool ("${term}"); spine text must name the capability, not a provider's tool (AGENTS.md spine rule; docs/skill-anatomy.md "Frontmatter contract")`);
+    }
+
     if (lineCount > maxSkillSoftLines) {
       fail(`${relative(filePath)} has ${lineCount} lines, over the ${maxSkillSoftLines}-line soft budget; move deep detail into references or split the skill`);
     }
@@ -698,6 +702,27 @@ function checkTerminology() {
   }
 }
 
+// Spine provider-neutrality invariant: AGENTS.md's "Spine text names the
+// capability, not a provider's tool" (CHANGELOG: "no provider-specific tool
+// names in skill spines"; README § cross-agent portability).
+// docs/skill-anatomy.md "Frontmatter contract" governs `description` as the
+// spine's identity label. Scope is the frontmatter `description` only:
+// AGENTS.md lets Examples and `guides/` name tools, so the body is not scanned.
+// Unambiguous provider/product names only — not ordinary English (cursor, grok,
+// copilot, llama, mistral). Word boundaries: "claude" does not match inside
+// "claudecode"; a hyphen is a boundary, so "chatgpt" matches in
+// "Noble-chatgpt-adjacent". Regex is constructed per call so /g lastIndex
+// cannot leak across descriptions.
+const providerSpinePatternSource = String.raw`\b(?:claude|anthropic|chatgpt|openai|codex|gemini)\b`;
+
+// Pure, unit-testable: returns the provider terms found in a skill `description`,
+// as their matched literal text (case preserved), so failure messages quote what
+// was actually written rather than a canned list.
+function spineProviderFindings(description) {
+  const matches = description.match(new RegExp(providerSpinePatternSource, "gi")) ?? [];
+  return [...new Set(matches)];
+}
+
 function checkDocumentationPaths() {
   const text = readText(path.join(root, "README.md"));
   const statusPath = path.join(root, "docs/status.md");
@@ -815,4 +840,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   main();
 }
 
-export { sectionContractFindings, matchesFilePattern, terminologyFindings, terminologyRules, REQUIRED_SKILL_REFERENCES };
+export { sectionContractFindings, matchesFilePattern, terminologyFindings, terminologyRules, spineProviderFindings, REQUIRED_SKILL_REFERENCES };

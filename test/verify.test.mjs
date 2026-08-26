@@ -10,6 +10,7 @@ import {
   matchesFilePattern,
   terminologyFindings,
   terminologyRules,
+  spineProviderFindings,
   REQUIRED_SKILL_REFERENCES,
 } from "../scripts/verify.mjs";
 
@@ -181,6 +182,67 @@ expectVerifyFailure("fails when a skill description exceeds the trigger budget",
   const words = Array.from({ length: 51 }, (_, index) => `word${index + 1}`).join(" ");
   writeFile(root, "skills/example/SKILL.md", `---\nname: example\ndescription: ${words}\n---\n\n# Example\n`);
 }, /over the 50-word trigger budget/);
+
+// --- Check: spine provider-neutrality invariant (AGENTS.md "Spine text names
+// the capability, not a provider's tool"; docs/skill-anatomy.md "Frontmatter
+// contract"). Scope is the frontmatter `description` only — Examples/guides may
+// name tools. ---
+
+test("passes when a capability-neutral description is used even if the Example body names a provider tool", () => {
+  const root = createFixture();
+  writeFile(
+    root,
+    "skills/example/SKILL.md",
+    "---\nname: example\ndescription: Critique a prompt or skill and surface what needs fixing.\n---\n\n# Example\n\n## Purpose\n\nDoes a thing.\n\n## Example\n\nInput: a Claude Code prompt\nOutput: findings\n",
+  );
+
+  const result = runVerify(root, { skipPackDryRun: true });
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+expectVerifyFailure("fails when a skill description names a provider's tool", (root) => {
+  writeFile(
+    root,
+    "skills/example/SKILL.md",
+    "---\nname: example\ndescription: Build outputs using Claude Code for evaluation.\n---\n\n# Example\n",
+  );
+}, /description names a provider's tool \("Claude"\)/);
+
+expectVerifyFailure("fails when a skill description names an OpenAI model by product name", (root) => {
+  writeFile(
+    root,
+    "skills/example/SKILL.md",
+    "---\nname: example\ndescription: Use ChatGPT to draft the response for tests.\n---\n\n# Example\n",
+  );
+}, /description names a provider's tool \("ChatGPT"\)/);
+
+test("spineProviderFindings reports provider terms with case preserved and deduped", () => {
+  assert.deepEqual(
+    spineProviderFindings("Build with Claude Code, then run Claude again."),
+    ["Claude"],
+  );
+  assert.deepEqual(
+    spineProviderFindings("Use Claude or ChatGPT to draft"),
+    ["Claude", "ChatGPT"],
+  );
+  assert.deepEqual(spineProviderFindings("Critique any prompt, any skill."), []);
+});
+
+test("spineProviderFindings matches terms on word boundaries, not mid-word", () => {
+  assert.deepEqual(spineProviderFindings("Tune llamafine output."), []);
+  assert.deepEqual(spineProviderFindings("Build a claudecode helper."), []);
+  // A hyphen is a word boundary, so provider product names separated that way
+  // are still caught.
+  assert.deepEqual(spineProviderFindings("Noble-chatgpt-adjacent."), ["chatgpt"]);
+});
+
+test("spineProviderFindings ignores ordinary English that collides with product names", () => {
+  assert.deepEqual(
+    spineProviderFindings("Move the cursor between fields. Grok the repo."),
+    [],
+  );
+});
 
 test("passes when explicit-only skills include paired Codex policy", () => {
   const root = createFixture();

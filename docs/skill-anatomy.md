@@ -11,6 +11,8 @@ Status: normative. Canonical section contract for every `SKILL.md` in CraftKit. 
 
 Required for every skill: `name` (matches the skill directory) and `description` (what it does and when to use it; ≤50 words, enforced by `scripts/verify.mjs`).
 
+Provider-neutral spine: `description` names the *capability*, not a provider's tool — no `claude`, `openai`, `chatgpt`, `codex`, etc. (AGENTS.md "Spine text names the capability, not a provider's tool"; enforced by `scripts/verify.mjs`). Examples and `guides/` may name tools, so this scope is the frontmatter `description` only.
+
 Conditionally required: `disable-model-invocation: true` for explicit-only workflows, paired with `skills/<name>/agents/openai.yaml` setting `policy.allow_implicit_invocation: false`.
 
 spec-* only: `argument-hint`, `compatibility: Requires git.`, `metadata.related-skills`.
