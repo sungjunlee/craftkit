@@ -311,6 +311,10 @@ function checkSkillFiles() {
       fail(`${relative(filePath)} description has ${descriptionWords} words, over the ${maxDescriptionWords}-word trigger budget`);
     }
 
+    for (const term of spineProviderFindings(description)) {
+      fail(`${relative(filePath)} description names a provider's tool ("${term}"); spine text must name the capability, not a provider's tool (AGENTS.md spine rule; docs/skill-anatomy.md "Frontmatter contract")`);
+    }
+
     if (lineCount > maxSkillSoftLines) {
       fail(`${relative(filePath)} has ${lineCount} lines, over the ${maxSkillSoftLines}-line soft budget; move deep detail into references or split the skill`);
     }
@@ -698,6 +702,25 @@ function checkTerminology() {
   }
 }
 
+// Spine provider-neutrality invariant (#...): AGENTS.md's "Spine text names the
+// capability, not a provider's tool" (also recorded in CHANGELOG "no
+// provider-specific tool names in skill descriptions" and README § cross-agent
+// portability). docs/skill-anatomy.md "Frontmatter contract" governs
+// `description` as the spine's identity label. Scope is the frontmatter
+// `description` only: AGENTS.md explicitly lets Examples and `guides/` (and, per
+// README, templates/references) name tools, so the body is not scanned. Terms
+// are matched on word boundaries, so "claude" does not match inside, e.g.,
+// "claude-like" and a future `description` that only *names* a provider is
+// caught without over-matching body prose.
+const providerSpinePattern = /\b(?:claude|anthropic|chatgpt|openai|codex|copilot|cursor|gemini|grok|mistral|llama)\b/i;
+
+// Pure, unit-testable: returns the provider terms found in a skill `description`,
+// as their matched literal text (case preserved), so failure messages quote what
+// was actually written rather than a canned list.
+function spineProviderFindings(description) {
+  return [...new Set(description.match(providerSpinePattern) ?? [])];
+}
+
 function checkDocumentationPaths() {
   const text = readText(path.join(root, "README.md"));
   const statusPath = path.join(root, "docs/status.md");
@@ -815,4 +838,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   main();
 }
 
-export { sectionContractFindings, matchesFilePattern, terminologyFindings, terminologyRules, REQUIRED_SKILL_REFERENCES };
+export { sectionContractFindings, matchesFilePattern, terminologyFindings, terminologyRules, spineProviderFindings, REQUIRED_SKILL_REFERENCES };
