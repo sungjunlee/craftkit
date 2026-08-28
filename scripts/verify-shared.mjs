@@ -1,6 +1,6 @@
 /**
- * Tiny helpers shared between verify.mjs and verify-skill-files.mjs.
- * Kept in a third module so neither side needs to import the other
+ * Tiny helpers shared between verify.mjs and the verify-* check modules.
+ * Kept in this module so check families do not import each other
  * (no import cycles).
  */
 
