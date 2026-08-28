@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { spawnSync } from "node:child_process";
-import { repoRoot, writeFile } from "../test-support/verify-fixture.mjs";
+import { createFixture, removeFile, repoRoot, runCheck, writeFile } from "../test-support/verify-fixture.mjs";
 
 const CHECK_MODULES = [
   { file: "verify-json.mjs", exports: ["checkJsonFiles"] },
@@ -135,4 +135,82 @@ test("orchestrator source registers checks and does not contain rule-body budget
   }
 
   assert.doesNotMatch(source, /maxSkillSoftLines|maxDescriptionWords|220-line|50-word|disable-model-invocation/);
+});
+
+const CHECK_FAMILY_FAILURES = /220-line|50-word|hard ceiling|invalid JSON|files allowlist|disable-model-invocation|YAML frontmatter/;
+const IMPORT_OR_CONTRACT_ABSENCE = /ERR_MODULE_NOT_FOUND|Cannot find module|does not provide an export named/;
+
+function plantCheckFamilyBait(root) {
+  writeFile(root, "bad.json", "{ nope");
+  const body = Array.from({ length: 221 }, (_, index) => `line ${index + 1}`).join("\n");
+  writeFile(
+    root,
+    "skills/example/SKILL.md",
+    `---\nname: example\ndescription: Example skill.\ndisable-model-invocation: true\n---\n${body}\n`,
+  );
+}
+
+function assertImportOrContractAbsence(result) {
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, IMPORT_OR_CONTRACT_ABSENCE);
+  assert.doesNotMatch(output, CHECK_FAMILY_FAILURES);
+  assert.doesNotMatch(result.stdout, /verify passed/);
+}
+
+for (const { name, mutate } of [
+  {
+    name: "removing",
+    mutate: (root) => removeFile(root, "scripts/verify-shared.mjs"),
+  },
+  {
+    name: "emptying",
+    mutate: (root) => writeFile(root, "scripts/verify-shared.mjs", ""),
+  },
+]) {
+  test(`${name} verify-shared.mjs fails only as import/contract absence`, () => {
+    const root = createFixture();
+    plantCheckFamilyBait(root);
+    mutate(root);
+
+    assertImportOrContractAbsence(runOrchestrator(root));
+    assertImportOrContractAbsence(runCheck(root, "verify-skill-files.mjs", "checkSkillFiles"));
+  });
+}
+
+test("removing verify-skill-files.mjs drops only skill-file checks; pairing still runs", () => {
+  const root = createFixture();
+  plantCheckFamilyBait(root);
+  removeFile(root, "scripts/verify-skill-files.mjs");
+
+  const pairing = runCheck(root, "verify-explicit-only.mjs", "checkOpenAiInvocationPolicies");
+  const pairingOut = `${pairing.stdout}\n${pairing.stderr}`;
+  assert.notEqual(pairing.status, 0);
+  assert.match(pairingOut, /disable-model-invocation/);
+  assert.doesNotMatch(pairingOut, /220-line|50-word|hard ceiling|YAML frontmatter/);
+
+  const json = runCheck(root, "verify-json.mjs", "checkJsonFiles");
+  const jsonOut = `${json.stdout}\n${json.stderr}`;
+  assert.notEqual(json.status, 0);
+  assert.match(jsonOut, /invalid JSON/);
+  assert.doesNotMatch(jsonOut, /220-line|50-word|hard ceiling/);
+
+  const skillFiles = runCheck(root, "verify-skill-files.mjs", "checkSkillFiles");
+  const skillOut = `${skillFiles.stdout}\n${skillFiles.stderr}`;
+  assert.notEqual(skillFiles.status, 0);
+  assert.match(skillOut, IMPORT_OR_CONTRACT_ABSENCE);
+  assert.doesNotMatch(skillOut, /220-line|50-word|hard ceiling|YAML frontmatter/);
+});
+
+test("verify-shared has no skill-files-only rules; rule bodies live in skill-files", () => {
+  const shared = fs.readFileSync(path.join(repoRoot, "scripts/verify-shared.mjs"), "utf8");
+  const skillFiles = fs.readFileSync(path.join(repoRoot, "scripts/verify-skill-files.mjs"), "utf8");
+
+  assert.doesNotMatch(
+    shared,
+    /maxSkillSoftLines|maxDescriptionWords|checkSkillFiles|spineProviderFindings|220-line|50-word|500-line/,
+  );
+  assert.match(skillFiles, /export function checkSkillFiles/);
+  assert.match(skillFiles, /maxSkillSoftLines/);
+  assert.match(skillFiles, /maxDescriptionWords/);
 });
