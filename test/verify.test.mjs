@@ -74,19 +74,20 @@ function withInjectedBaseline(root, baseline) {
   // The checked-in knownSectionDeviations baseline is empty (#126/#133 cleared
   // the last entries), so mechanism tests for the warn-vs-fail/stale-entry
   // branches inject a synthetic baseline into the fixture's copy of
-  // scripts/verify.mjs rather than relying on real (now nonexistent) entries.
-  const verifyPath = path.join(root, "scripts/verify.mjs");
-  const content = fs.readFileSync(verifyPath, "utf8");
+  // scripts/verify-section-contract.mjs rather than relying on real (now
+  // nonexistent) entries.
+  const contractPath = path.join(root, "scripts/verify-section-contract.mjs");
+  const content = fs.readFileSync(contractPath, "utf8");
   const updated = content.replace(
     "const knownSectionDeviations = {};",
     `const knownSectionDeviations = ${JSON.stringify(baseline)};`,
   );
 
   if (updated === content) {
-    throw new Error("expected to find `const knownSectionDeviations = {};` in the fixture's scripts/verify.mjs");
+    throw new Error("expected to find `const knownSectionDeviations = {};` in the fixture's scripts/verify-section-contract.mjs");
   }
 
-  fs.writeFileSync(verifyPath, updated);
+  fs.writeFileSync(contractPath, updated);
 }
 
 function runVerify(root, options = {}) {
@@ -303,8 +304,9 @@ expectVerifyFailure("fails when Codex policy omits allow_implicit_invocation", (
 
 // The mirrored-pair machinery is dormant: craft-tune's removal (2026-07) left
 // failure-modes.md and shared-principles.md as single canonical copies, so
-// `mirroredPairs` in verify.mjs is empty. When a real pair returns, re-add the
-// drift and missing-file failure tests alongside the new entry.
+// `mirroredPairs` in verify-mirrored-refs.mjs is empty. When a real pair
+// returns, re-add the drift and missing-file failure tests alongside the new
+// entry.
 
 // --- Check: terminology rules table (#114) ---
 
