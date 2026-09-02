@@ -14,27 +14,14 @@ The second sentence may be omitted when the purpose is sufficient. A generic ass
 
 ## Optional clauses
 
-Choose only what earns its place:
+Add only a clause that earns its place:
 
-```markdown
-# Scope
-Handle {{in_scope}}. For {{out_of_scope}}, {{redirect_or_report_action}}.
-
-# Action boundary
-{{safe_in_scope_actions}} may proceed without another confirmation. Confirm before {{external_destructive_costly_or_scope_expanding_actions}}.
-
-# Grounding
-Use {{authoritative_sources_or_available_tools}} for {{claims_that_require_grounding}}. If evidence is unavailable, {{ask_or_label_uncertainty}}.
-
-# Completion
-A request is complete when {{observable_success_condition}}. Before finalizing, verify {{load_bearing_checks}}.
-
-# Communication
-{{specific_writing_choices_or_required_shape}}
-
-# Escalation
-When {{hard_escalation_condition}}, {{handoff_action_and_required_context}}.
-```
+- **Scope:** `Handle {{in_scope}}. For {{out_of_scope}}, {{redirect_or_report_action}}.`
+- **Action boundary:** `{{safe_in_scope_actions}} may proceed without another confirmation. Confirm before {{external_destructive_costly_or_scope_expanding_actions}}.`
+- **Grounding:** `Use {{authoritative_sources_or_available_tools}} for {{claims_that_require_grounding}}. If evidence is unavailable, {{ask_or_label_uncertainty}}.`
+- **Completion:** `A request is complete when {{observable_success_condition}}. Before finalizing, verify {{load_bearing_checks}}.`
+- **Communication:** `{{specific_writing_choices_or_required_shape}}`
+- **Escalation:** `When {{hard_escalation_condition}}, {{handoff_action_and_required_context}}.`
 
 Keep related policy in one clause. Do not repeat "ask first," "do not mutate," or "be concise" across sections.
 
