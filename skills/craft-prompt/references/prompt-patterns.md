@@ -38,25 +38,14 @@ Verify material claims to the degree their risk and uncertainty warrant.
 **When**: "build this feature", "write a function that...", "build an API for..."
 
 ```markdown
-# Context
-{{tech_stack, existing code patterns, dependencies}}
-
-# Task
-Write {{what}} that {{does_what}}.
-
-Success means {{observable_behavior_or_check}}.
-
-Preserve {{load_bearing_constraint}}.
-
-# Output
-Deliver {{code_or_worktree_change}} and report how it was verified.
+Create {{code_or_change}} so that {{observable_outcome}}.
+{{load_bearing_context_or_constraint_if_any}}
 ```
 
 **Tips**:
 - Point to existing code patterns only when the agent cannot discover them efficiently itself
-- For chat targets, make `{{code_or_worktree_change}}` the requested code; for coding agents, make it an implementation in the current worktree
 - "No explanations" saves tokens if you just want code returned in chat
-- For coding agents: reference file paths they can read
+- For coding agents, ask for implementation in the current worktree and relevant verification; reference file paths they can read
 - For worktree-based coding prompts: use paths relative to the current worktree root, not absolute machine paths
 - Add tests, tool-use, or delegation rules only when the task or repository requires them; broad persistence instructions can create overwork
 
