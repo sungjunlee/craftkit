@@ -181,7 +181,7 @@ It checks JSON syntax, package boundaries, skill frontmatter, `SKILL.md` line bu
 
 ## Prior art
 
-- [`sungjunlee/prompt-builder`](https://github.com/sungjunlee/prompt-builder) — predecessor project. Its mature prompt-authoring asset (5-step process, 6 building blocks, templates) was absorbed into `craft-prompt`. Kept on GitHub for reference; new work happens here.
+- [`sungjunlee/prompt-builder`](https://github.com/sungjunlee/prompt-builder) — predecessor project. Its templates and prompt-authoring lessons were absorbed into `craft-prompt`; the original 5-step, 6-block method has since been replaced by a lean outcome-and-boundary approach. Kept on GitHub for reference; new work happens here.
 - [`karpathy/autoresearch`](https://github.com/karpathy/autoresearch) — Andrej Karpathy's ML training-loop project that introduced the autoresearch methodology (give an agent a baseline, let it experiment overnight, keep what improves, discard what doesn't). `craft-autoresearch` adapts that loop discipline to prompt and skill artifacts instead of model training code.
 - [`byungjunjang/jangpm-meta-skills`](https://github.com/byungjunjang/jangpm-meta-skills) — four-skill meta toolkit for Claude Code and Codex (`blueprint`, `deep-dive`, `reflect`, `autoresearch`). Its `autoresearch` skill contributed implementation patterns — experiment contract shape, the three-eval-type taxonomy (binary / comparative / fidelity), deletion discipline — that `craft-autoresearch` builds on.
 

@@ -9,7 +9,7 @@ Patterns for the most frequent prompt types. Each shows the structure, an exampl
 **When**: "research this for me", "compare X vs Y", "find best practices for..."
 
 ```markdown
-Research {{topic}} as of {{date/year}}.
+Research {{topic}}.
 
 Focus on:
 1. {{question_1}}
@@ -21,15 +21,14 @@ For each, provide:
 - Sources (with URLs if available)
 - Confidence level and what would change the answer
 
-Prioritize {{source_preference}} (e.g., recent, production-focused, academic).
-Ignore results older than {{cutoff_year}}.
-Verify important claims across more than one source when possible.
+Prioritize {{source_preference}}. For claims that may have changed, establish their status as of {{date}}.
+Verify material claims to the degree their risk and uncertainty warrant.
 ```
 
 **Tips**:
-- Always specify recency — LLMs default to training data
+- Specify recency when the answer can change; do not add a date ritual to timeless questions
 - "Compare in a table" works great for multi-option research
-- For Perplexity: add "cite sources with URLs"
+- If the target does not cite sources by default, require citations in the needed shape
 - For complex research: define success criteria and ask for source verification, not just citations
 
 ---
@@ -39,32 +38,16 @@ Verify important claims across more than one source when possible.
 **When**: "build this feature", "write a function that...", "build an API for..."
 
 ```markdown
-# Context
-{{tech_stack, existing code patterns, dependencies}}
-
-# Task
-Write {{what}} that {{does_what}}.
-
-# Requirements
-- {{requirement_1}}
-- {{requirement_2}}
-
-# Constraints
-- Match the existing code style in {{reference_file}}
-- Handle errors: {{error_handling_approach}}
-- Include tests
-- Before finalizing, verify requirements, error paths, and formatting
-
-# Output
-{{language}} code. No explanations unless the logic is non-obvious.
+Create {{code_or_change}} so that {{observable_outcome}}.
+{{load_bearing_context_or_constraint_if_any}}
 ```
 
 **Tips**:
-- Include existing code patterns — LLMs match style better with examples
-- "No explanations" saves tokens if you just want code
-- For Claude Code: reference file paths, it can read them
+- Point to existing code patterns only when the agent cannot discover them efficiently itself
+- "No explanations" saves tokens if you just want code returned in chat
+- For coding agents, ask for implementation in the current worktree and relevant verification; reference file paths they can read
 - For worktree-based coding prompts: use paths relative to the current worktree root, not absolute machine paths
-- Add tool-use or delegation rules only when the task genuinely needs them; broad persistence instructions can create overwork on newer models
+- Add tests, tool-use, or delegation rules only when the task or repository requires them; broad persistence instructions can create overwork
 
 ---
 
@@ -136,9 +119,9 @@ Write a {{content_type}} about {{topic}}.
 
 **When**: "create a chatbot system prompt", "create a custom GPT instruction", "build a persona..."
 
-System prompts have a well-established layered architecture. See `templates/system-prompt.md` for the full template (Identity → Capabilities → Behavior → Boundaries → Verification → Escalation → Output format) with both full and minimal versions.
+Start with a minimal durable purpose and add only the boundaries or behavior that must hold across requests. See `templates/system-prompt.md` for optional scope, action, grounding, completion, communication, and escalation clauses.
 
-**Key insight**: "You cannot" is as important as "You can" — without explicit limits, LLMs scope-creep. For chatbots with human fallback, the Escalation layer is critical.
+For action-taking agents, authorization and external-action boundaries are usually more valuable than long capability lists. For chatbots with human fallback, state the actual escalation trigger and required handoff context.
 
 ---
 
