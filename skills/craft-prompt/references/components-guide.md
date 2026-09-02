@@ -16,7 +16,7 @@ Skip generic personas, prestige claims, role stacks, and roles already supplied 
 
 Include facts the target cannot reliably infer or retrieve: current state, why a constraint exists, relevant decisions, versions, source material, and exact paths. Prefer concrete evidence such as "47 tests pass; 3 are skipped" over summaries such as "tests pass."
 
-Do not paste background that is already available through the conversation, attached files, or tools unless the prompt must travel without them.
+The delivered prompt usually travels without the current conversation. Include what the target surface will not have; omit only what that surface already provides through files, tools, or attachments.
 
 ## Boundaries
 

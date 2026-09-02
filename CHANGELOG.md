@@ -6,6 +6,7 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ### Changed
 
+- `craft-prompt` replaces the six-block assembly method with outcome, context, boundaries, and evidence; roles, XML, examples, and process instructions become optional controls for a concrete need or observed failure (#210).
 - `spec-charter` create/amend proposes a Direction trigger pointer and a marker-bounded Mission+Non-Goals projection into one harness file; writes only after confirm. Reassess names stale projection vs live Non-Goals (#178).
 - System map Runtime Boundaries is a `tree | owns | local instructions | do not` table; multi-tree maps without named local instruction files are under-evidenced (#179).
 - README and marketplace: `spec-charter` is the default spec-axis landing; `spec-grill` is optional when a consumer (`component:`), a cross-tree contract, or a 3-axis audit is present (#180).

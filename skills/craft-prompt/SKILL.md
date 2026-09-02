@@ -29,10 +29,10 @@ Don't over-ask. Infer what the request or available context already establishes,
 ## Workflow
 
 1. **Resolve the outcome.** State what should be true or delivered at the end. Preserve a shape, length, tone, or language only when the user named it or the consumer requires it.
-2. **Gather only load-bearing context.** Include facts the target cannot reliably infer or retrieve. For a `/goal`, gather outcome, evidence, constraints, scope, budget, and stop condition. For a reusable template, identify values that genuinely vary and turn only those into `{{placeholders}}`.
+2. **Gather only load-bearing context.** The delivered prompt usually travels without the current conversation, so include facts the target cannot reliably infer or retrieve; omit only what its surface already provides through files, tools, or attachments. For a `/goal`, read `references/goal-conditions.md`, then gather outcome, transcript-visible evidence, constraints, scope, budget, and stop condition — the evaluator's stated check is part of the completion contract, not process prescription. For a reusable template, identify values that genuinely vary, turn each into a `{{placeholder}}`, and do not hardcode recurring values.
 3. **Draw the boundary.** Add scope, non-goals, approval limits, compatibility requirements, or irreversible-action rules only where violating them would matter. Keep related authorization in one compact policy rather than repeating it.
 4. **Add evidence when warranted.** For research, coding-agent, or other high-impact prompts, say what should be checked before finalizing: requirements, grounding, tests, format, or side effects. Prefer observable checks over generic caution.
-5. **Repair known failure modes.** Start with the lean prompt above. Add a role, explicit format, example, XML boundary, process step, or tool rule only when the request requires it or it corrects a likely or observed failure. Use `references/components-guide.md` as the repair menu and `references/quality-checklist.md` for complex prompts.
+5. **Repair known failure modes.** Start with the lean prompt above. Add a role, explicit format, example, XML boundary, process step, or tool rule only when the request requires it or it corrects a likely or observed failure. Use `references/components-guide.md` as the repair menu and `references/quality-checklist.md` for complex prompts. If the user names an image or video generator, load the matching template in `templates/`.
 6. **Sharpen and deliver.** State each instruction once, remove prose that does not change behavior, resolve conflicts, and keep missing-context handling proportionate: retrieve when available, ask when the answer changes the work, otherwise proceed with a labeled assumption. Then follow Output format.
 
 ## Output format
@@ -100,7 +100,7 @@ Note outside the block: "Swap `{{diff}}` for the actual diff before sending."
 
 - `templates/image-gen.md` — Image generation (photo, illustration, icon, per-platform notes)
 - `templates/video-gen.md` — Video generation (text-to-video, image-to-video, camera keywords, per-platform notes)
-- `templates/system-prompt.md` — Chatbot/agent system prompts (layered architecture)
+- `templates/system-prompt.md` — Chatbot/agent system prompts (minimal contract plus optional clauses)
 
 ## References (load on demand)
 

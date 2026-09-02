@@ -49,13 +49,14 @@ Success means {{observable_behavior_or_check}}.
 Preserve {{load_bearing_constraint}}.
 
 # Output
-Implement the change in the current worktree and report the result and verification.
+Deliver {{code_or_worktree_change}} and report how it was verified.
 ```
 
 **Tips**:
 - Point to existing code patterns only when the agent cannot discover them efficiently itself
-- "No explanations" saves tokens if you just want code
-- For Claude Code: reference file paths, it can read them
+- For chat targets, make `{{code_or_worktree_change}}` the requested code; for coding agents, make it an implementation in the current worktree
+- "No explanations" saves tokens if you just want code returned in chat
+- For coding agents: reference file paths they can read
 - For worktree-based coding prompts: use paths relative to the current worktree root, not absolute machine paths
 - Add tests, tool-use, or delegation rules only when the task or repository requires them; broad persistence instructions can create overwork
 
