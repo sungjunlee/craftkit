@@ -1,73 +1,43 @@
-# Prompt Quality Checklist
+# Prompt quality check
 
-## Quick Check (8 items)
+Use this for prompts whose risk, ambiguity, reuse, or downstream parsing justifies a deeper pass. A short ordinary request does not need checklist ceremony.
 
-- [ ] **Self-contained** — Can the LLM execute this without asking clarifying questions?
-- [ ] **Actionable** — Is there a clear deliverable, not just context?
-- [ ] **Right-sized** — No unnecessary scaffolding or over-specification?
-- [ ] **Testable** — Are success criteria concrete and verifiable?
-- [ ] **Grounded** — Are factual claims tied to provided context, source requirements, or a lookup step?
-- [ ] **Conflict-free** — Do rules, examples, and edge-case instructions agree with each other?
-- [ ] **LLM-appropriate** — Formatted for the target LLM's strengths?
-- [ ] **Path-safe** — File paths use the right base directory (usually the current worktree root) and avoid unnecessary absolute paths
+## Core check
 
-## Deep Check (by failure mode)
+- **Outcome** — Is the requested end state or deliverable clear?
+- **Context** — Does the prompt include only facts the target cannot reliably infer or retrieve?
+- **Boundaries** — Are material scope, authorization, compatibility, and non-goals explicit without repetition?
+- **Evidence** — Is success observable where correctness or completion matters?
+- **Consumer fit** — Are language, shape, and reuse appropriate for the person, agent, or parser receiving the result?
+- **Conflict-free** — Do instructions, examples, and source material agree?
+- **Right-sized** — Does every control prevent a real failure or preserve a real requirement?
+- **Portable enough** — Are paths and provider-specific assumptions correct for where the prompt will run?
 
-### Ambiguity Failures
+## Repair by symptom
 
-| Symptom | Fix |
-|---------|-----|
-| LLM asks "did you mean X or Y?" | Add specificity to the Task block |
-| Output format varies between runs | Add explicit Format block with example |
-| LLM makes wrong assumptions | Add Context with the correct background |
-| Different LLMs interpret differently | Remove idioms, use explicit structure |
-| Rules or examples conflict | State the instruction hierarchy; rewrite the lower-priority rule or example |
+| Symptom | Smallest likely repair |
+|---|---|
+| The target asks which interpretation was intended | Clarify the outcome or add the missing fact; ask the user only if the choice materially changes the work |
+| The target invents facts or paths | Supply the source, require retrieval, or label assumptions; use paths relative to the stated root |
+| The target does too much | Add one scope or non-goal boundary; name how to report useful out-of-scope findings |
+| The target stops too early | State the complete end condition and required evidence |
+| The target keeps asking permission | Clarify what the request already authorizes and which actions still require confirmation |
+| The output shape varies | Add a compact format contract; add an example only if the contract remains ambiguous |
+| The output is too short or long | Use a native verbosity control when available; otherwise state what must be preserved and what may be omitted |
+| Research answers from memory | Require current retrieval, source quality, dates, and citations appropriate to the claim |
+| Tool calls are wasteful or serial | Add a tool rule only if the surface does not already handle selection or parallelism well |
+| Reasoning is rigid or meandering | Remove hand-written thinking steps; adjust the target's effort control before adding more process prose |
+| Formatting looks dated or unnatural | Remove inherited formatting rules; describe the actual readability failure, not a provider stereotype |
+| A reusable prompt grows after every incident | Remove controls whose motivating failure is no longer reproducible; keep the regression case in evals instead |
 
-### Scope Failures
+## Final subtraction pass
 
-| Symptom | Fix |
-|---------|-----|
-| LLM does too much (adds features) | Add Constraints: "Only do X, nothing else" |
-| LLM does too little (stops early) | Add success criteria listing all deliverables |
-| Output is too verbose | Add Format: word/token limit |
-| Output is too terse | Add Format: "include reasoning" or add examples |
-| Agent overuses tools or delegates trivial work | Add criteria for when tools or subagents are warranted |
+Remove, in order:
 
-### Context Failures
+1. generic roles, praise, and exhortations
+2. repeated rules and context already available to the target
+3. speculative edge-case instructions
+4. formatting and model workarounds without a current failure
+5. examples that no longer teach a distinct behavior
 
-| Symptom | Fix |
-|---------|-----|
-| LLM hallucinates file paths | Include actual file list in Context |
-| Prompt uses machine-specific absolute paths | Rewrite paths relative to the current worktree root; state the base once if needed |
-| LLM uses wrong library version | Specify version in Context |
-| LLM ignores project conventions | Add Constraints with convention references |
-| Handoff session starts from scratch | Include git log / diff summary in Context |
-| LLM guesses missing facts | Add missing-context handling: look up if possible, ask if needed, otherwise label assumptions |
-
-### Verification Failures
-
-| Symptom | Fix |
-|---------|-----|
-| Answer satisfies the shape but misses a requirement | Add a final requirements check |
-| Research cites weak or stale claims | Require source verification and recency criteria |
-| Output drifts from the requested schema | Add a format check before finalizing |
-| Agent takes a hard-to-reverse action too quickly | Add an action-safety check for destructive, published, or shared-system changes |
-
-### Target LLM Failures
-
-| Symptom | Fix |
-|---------|-----|
-| Claude ignores structure | Use XML tags instead of markdown |
-| GPT output is messy | Use XML tags or markdown headers; add "Be concise" |
-| Perplexity doesn't cite sources | Ask explicitly: "Cite sources with URLs" |
-| Gemini gives shallow analysis | Prompt: "Think carefully, consider multiple approaches." Also suggest setting thinking_budget high when delivering |
-
-## Token Budget Guide
-
-| Prompt Size | Typical Use | Warning |
-|-------------|-------------|---------|
-| < 200 tokens | Simple tasks | Fine for most LLMs |
-| 200-500 tokens | Standard tasks with context | Sweet spot |
-| 500-1000 tokens | Complex handoffs, rich context | Watch limits on smaller models |
-| 1000-2000 tokens | Context + examples | Ensure each token earns its place |
-| > 2000 tokens | Probably over-engineered | Split into multiple prompts or use file references |
+Keep required outcomes, hard boundaries, consumer contracts, and evidence. If removing a line would not change a competent target's decision or output, the line has not earned its place.

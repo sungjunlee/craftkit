@@ -18,51 +18,38 @@ Turn a goal, scattered notes, or a raw ask into a clear, well-structured prompt 
 
 ## Inputs
 
-- **Goal** — what the prompt should make the LLM do
-- **Target** — which model, product surface, or agent interface
-- **Audience** — who will use the prompt (the user, a team, non-technical users)
+- **Outcome** — what the target should accomplish or return
+- **Target** — the model, product surface, or agent interface when it changes the prompt
+- **Context** — facts the target cannot reliably infer or retrieve itself
 - **Reuse** — one-shot use, or a reusable template with placeholders
 - For coding-agent or worktree prompts: the execution context — default to paths relative to the current worktree root unless the user explicitly needs machine-specific absolute paths
 
-Don't over-ask — infer whatever the request already makes clear. "Write me a code review prompt for GPT" already gives goal and target.
+Don't over-ask. Infer what the request or available context already establishes, and ask only when the answer would materially change the prompt.
 
 ## Workflow
 
-1. **Confirm inputs.** Ask only what Inputs doesn't already make clear.
-2. **Gather the raw material.** Collect what the prompt's purpose needs — task instructions and constraints; research questions and recency needs; for a `/goal` condition, outcome/evidence/constraints/non-goals/scope/budget/stop condition; for a system prompt, persona/capabilities/boundaries/tone; for a template, variable placeholders and usage notes. Distill rough notes or a conversation dump rather than repeating them verbatim.
-3. **Build the prompt**, using only the blocks it needs:
-
-   | Block | When to include |
-   |-------|----------------|
-   | Role | A specific expertise improves the output (one sentence) |
-   | Context | The LLM needs background to reason correctly |
-   | Task | Always — the core instruction |
-   | Rules / Constraints | There are important do's/don'ts |
-   | Output format | The default output structure won't work (see Output format) |
-   | Examples | Desired behavior is hard to describe but easy to show |
-
-   **Sizing heuristic**: a small request (under ~20 words of user specification) stops at Role + Task + Rules; add Output format only if the user names a shape, Examples only if behavior is hard to describe. A reusable template turns every value that varies week-to-week into a `{{placeholder}}` — hardcoding more than one varying value under-templates.
-
-   For research, coding-agent, or other high-impact prompts, add a small verification contract — what to check before finalizing: requirements, grounding, format, irreversible side effects — instead of generic "be careful" prose.
-
-   XML tags work across major LLMs; use them for complex or multi-section prompts, plain text/markdown for simple ones. If the user names an image or video generator, load the matching template (below) and keep volatile target-specific behavior out of this portable spine.
-4. **Sharpen.** Cut fluff (no sentence that fails to change LLM behavior); be specific (numbers beat adjectives); keep it self-contained (no dangling "this conversation" references); resolve hidden conflicts between rules, examples, and edge cases; state how missing context should be handled (look up, ask, or proceed with labeled assumptions). Weigh every cut against Principles — especially Cut in this order and Right-sized. For complex prompts, run through `references/quality-checklist.md` for deeper failure-mode analysis.
-5. **Deliver.** See Output format.
+1. **Resolve the outcome.** State what should be true or delivered at the end. Preserve a shape, length, tone, or language only when the user named it or the consumer requires it.
+2. **Gather only load-bearing context.** Include facts the target cannot reliably infer or retrieve. For a `/goal`, gather outcome, evidence, constraints, scope, budget, and stop condition. For a reusable template, identify values that genuinely vary and turn only those into `{{placeholders}}`.
+3. **Draw the boundary.** Add scope, non-goals, approval limits, compatibility requirements, or irreversible-action rules only where violating them would matter. Keep related authorization in one compact policy rather than repeating it.
+4. **Add evidence when warranted.** For research, coding-agent, or other high-impact prompts, say what should be checked before finalizing: requirements, grounding, tests, format, or side effects. Prefer observable checks over generic caution.
+5. **Repair known failure modes.** Start with the lean prompt above. Add a role, explicit format, example, XML boundary, process step, or tool rule only when the request requires it or it corrects a likely or observed failure. Use `references/components-guide.md` as the repair menu and `references/quality-checklist.md` for complex prompts.
+6. **Sharpen and deliver.** State each instruction once, remove prose that does not change behavior, resolve conflicts, and keep missing-context handling proportionate: retrieve when available, ask when the answer changes the work, otherwise proceed with a labeled assumption. Then follow Output format.
 
 ## Output format
 
 A fenced code block, ready to copy-paste — always, when the user explicitly asked for a prompt or clearly invoked this skill. Never replace the prompt with direct task execution.
 
-If relevant, add a brief note outside the code block: how to customize placeholders, which parts to adjust if results aren't ideal, and recommended target-platform settings (model choice, search focus mode). Ask if the user wants adjustments; refine tone, blocks, or target LLM based on feedback.
+If relevant, add a brief note outside the code block explaining placeholders or a target setting that materially changes results. Do not append generic prompting advice.
 
-Non-English prompts: write the prompt body in the requested language, but keep XML tag names in English (`<context>`, `<task>`) — all major LLMs parse English tags regardless of content language.
+Non-English prompts: write the prompt body in the requested language. If XML is actually useful, keep tag names in English (`<context>`, `<task>`) for portability.
 
 ## Guardrails
 
 - always deliver the prompt when one was asked for, even if the underlying task looks simple enough to do directly
-- keep target-specific formatting quirks in `templates/`, not in this spine
+- keep volatile target-specific behavior out of this portable spine
 - default to worktree-relative paths in coding/worktree prompts; state the base once if it could be ambiguous
 - don't inflate a simple prompt to look thorough — see Principles
+- don't encode reasoning steps the target can choose better itself unless order or completeness is part of the contract
 
 ## Principles
 
@@ -70,13 +57,14 @@ Full statements in `references/shared-principles.md`:
 
 - Context beats instruction
 - Outcome over process
-- Cut in this order
+- Boundaries over workarounds
+- Earn every control
 - Right-sized beats thorough-looking
 
 Prompt-specific:
 
 1. **The prompt is the product.** Deliver polished text the user copies as-is, not a meta-discussion about prompting.
-2. **Respect the target LLM.** XML tags work broadly; keep interface-specific quirks out of this portable spine.
+2. **Respect the target.** Use its native controls for effort, verbosity, search, or structured output when available; don't reproduce those controls as prompt prose without a reason.
 3. **Reusability when asked.** Use `{{placeholder}}` syntax with clear labels for templates; bake in specifics for one-shot prompts.
 4. **Verification beats vague caution.** For complex or high-impact prompts, say what to verify before finalizing instead of piling on broad "be thorough" instructions.
 5. **Know when to skip.** Skip prompt-building only when the user didn't ask for a prompt and direct execution is clearly better; if they explicitly asked for a prompt, deliver it even when the underlying task is simple.
@@ -84,6 +72,7 @@ Prompt-specific:
 ## Failure modes
 
 - **process worship** — listing every step to reach the outcome instead of stating the outcome and letting the target LLM find its own path
+- **control accumulation** — keeping old roles, examples, formatting rules, and workarounds after the behavior they corrected has disappeared
 - **template worship** — templating a one-shot request nobody will reuse, or the reverse: hardcoding a value that actually varies week to week
 - **missing output contract** — delivering prose about the prompt instead of a copy-pasteable fenced block, or dropping a shape constraint the user named
 - **fluff inflation** — padding with generic "be helpful/thorough" language that doesn't change behavior
@@ -96,8 +85,6 @@ Input: "write me a code review prompt for GPT, keep it short"
 Delivered prompt:
 
 ```
-You are a senior code reviewer.
-
 Review the diff below for correctness bugs, security issues, and unnecessary complexity. Skip style nits.
 
 Report only issues you're confident about, one per line: `file:line — issue — suggested fix`.
@@ -117,8 +104,8 @@ Note outside the block: "Swap `{{diff}}` for the actual diff before sending."
 
 ## References (load on demand)
 
-- `references/shared-principles.md` — full statements of the four principles
-- `references/components-guide.md` — Deep dive on each building block with examples and anti-patterns
+- `references/shared-principles.md` — full statements of the five principles
+- `references/components-guide.md` — optional controls to add in response to task needs or concrete failures
 - `references/prompt-patterns.md` — common patterns: research, code gen, review, writing, extraction, analysis, decision
 - `references/quality-checklist.md` — Quality checks with failure modes and fixes
 - `references/goal-conditions.md` — Writing `/goal` completion conditions and reviewable goal specs for Claude Code and Codex autonomous loops (transcript-visible evidence, cross-platform differences, and caveats)
