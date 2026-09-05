@@ -1,7 +1,7 @@
 /**
- * Tiny helpers shared between extract-signals.js and
- * extract-signals-collectors.js. Kept in a third module so neither
- * side needs to import the other (no import cycles).
+ * Tiny helpers shared across extract-signals modules.
+ * Kept in a third module so siblings need not import each other
+ * (no import cycles).
  */
 
 import fs from "node:fs";
