@@ -84,7 +84,6 @@ Output: y
 - \`references/eval-guide.md\`
 - \`references/mutation-guide.md\`
 - \`references/worked-example.md\`
-- \`references/contract-example.md\`
 `,
   );
   writeFile(
@@ -101,11 +100,6 @@ Output: y
     root,
     "skills/craft-autoresearch/references/worked-example.md",
     "# Worked example\n\nAn eval runner cycle.\n",
-  );
-  writeFile(
-    root,
-    "skills/craft-autoresearch/references/contract-example.md",
-    "# Contract example\n\nAn eval runner contract.\n",
   );
 
   const result = runCheck(root, moduleFile, fn);

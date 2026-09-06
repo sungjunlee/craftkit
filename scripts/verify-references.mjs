@@ -105,7 +105,6 @@ export const REQUIRED_SKILL_REFERENCES = [
     citations: [
       "references/mutation-guide.md",
       "references/worked-example.md",
-      "references/contract-example.md",
       "references/eval-guide.md",
     ],
   },

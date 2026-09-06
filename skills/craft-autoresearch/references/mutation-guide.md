@@ -1,4 +1,4 @@
-# Mutation Guide
+# Mutation guide
 
 A mutation is one bounded change to the target artifact between experiments. The loop's signal comes from attributing score changes to specific mutations — so mutations must be small, labeled, and at a single level.
 
@@ -29,7 +29,7 @@ Examples:
 
 When to use: binary evals fail on form, or outputs vary wildly between runs.
 
-### Example → Rule progression:
+### Example → rule progression
 If the same kind of failure keeps appearing, promote a successful example pattern into an explicit rule at Level 3.
 
 ### Level 3 — Structure
@@ -61,11 +61,9 @@ Multi-level mutations make outcomes unattributable. If a 3-line change alters wo
 
 ## Deletion experiments
 
-Every fifth experiment (or sooner if the artifact has grown noticeably), try a deletion: remove a recently added rule, example, or section. If the score holds, keep the deletion — that piece was not pulling its weight.
+A deletion experiment removes a recently added rule, example, or section. If the score holds, keep the deletion — that piece was not pulling its weight.
 
-Deletion experiments are the single most effective guard against prompt bloat. Without them, autoresearch reliably produces artifacts that grow monotonically because "adding" is an easier heuristic than "removing."
-
-Bloat alert: if the target artifact passes 200% of baseline size, stop and run three deletion experiments in a row before resuming normal mutations.
+Deletion is the most effective guard against prompt bloat, because "adding" is an easier heuristic than "removing" and an unchecked loop grows the artifact monotonically. Reach for it when the artifact has grown noticeably, when a recent KEEP bundled more than its rule, or when you want evidence that an accepted change is what carries the score.
 
 ## Picking the next mutation
 
@@ -77,11 +75,11 @@ Use this rough order when choosing:
 4. Write down the hypothesis before making the change. "Adding an imperative verb requirement will fix the 3 outputs where recommendations were phrased as questions."
 5. After running, check whether the hypothesis held. A score rise that doesn't match the hypothesis is information — log it.
 
-### Build-step enforcement prior (skill optimizations)
+### Where past skill optimizations landed (historical, non-normative)
 
-For skill optimizations, the highest-yield Level-1 edit is frequently at the section of `SKILL.md` where the agent actually produces output — the `## Output format` subsection, or the `## Steps` entry that hands off to output. Agents execute the build step and re-read it each invocation; they do not reliably re-activate rules stated in distant conceptual prose.
+The notes below record what five CraftKit sessions found; they are single-session observations, not a rule to invoke and not a prediction about the next run. Nothing in the loop requires citing them.
 
-Five autoresearch sessions against CraftKit skills resolved their dominant failure modes with a single edit at this location:
+Those sessions kept resolving their dominant failure mode with one edit at the section of `SKILL.md` where the agent actually produces output — the `## Output format` subsection, or the `## Steps` entry that hands off to output. The offered explanation was that agents re-read the build step each invocation and do not reliably re-activate rules stated in distant conceptual prose.
 
 - `craft-critique` — rewrote every subsection under `## Output format` to demand the specific signal it should carry (severity tags, consolidation, ordering, distinct-dimension failure modes) instead of just the shape. (That fixed-template contract was later replaced by a judgment contract in #150 — the signals survived, the section template didn't; see `eval-guide.md` § "The prescription ratchet.")
 - `craft-prompt` — added a "Sizing heuristic" block to Step 3 "Build the Prompt" converting two conceptual principles (right-size structure to request, list all varying values as placeholders) into concrete structural rules. (#210 later removed the block with the six-block method; the proportionality and placeholder-breadth signals survive in the outcome-driven workflow.)
@@ -89,21 +87,19 @@ Five autoresearch sessions against CraftKit skills resolved their dominant failu
 - `craft-tune` (since removed) — tightened `## Output format` §Changelog to require the three explicit `changed / why / expected effect` fields per entry, resolving a silent spec-vs-Example contradiction where the `## Example` block showed bare bullets. Flipped 5 failing evals with a single Level-1 edit.
 - `craft-survey` (since removed) — tightened all six `## Output format` subsections to demand per-item provenance (Reference patterns), per-item rationale (Adopt/Avoid), file-plus-section-plus-verb concreteness (Recommended edits), and non-portable survey-specific risks (Risks). Flipped 13 failing evals across three inputs with a single Level-1 edit.
 
-So before mutating elsewhere, scan the build-step section(s) and ask: *does this section enforce every quality rule the conceptual sections state?* The answer is frequently no. A single tightening edit there can flip multiple failing evals at once, and the mutations tend to be small and lean.
+Worth a look, then, when a conceptual rule isn't showing up in outputs: does the section that produces output say anything about it? Let the failing evals and failing outputs pick the locus — this is one place they often point, not a default to justify away from.
 
-This is a prior, not a law — always let the failing evals and failing outputs lead. But when deciding *where* in `SKILL.md` to intervene, start at the build step.
+### Bundled companion material in past build-step tightenings (historical)
 
-### Build-step tightenings should state only NEW demands
-
-When the exp-1 tightening is a spec rewrite at `## Output format`, the declarative prose rule of the new demand is what carries the score. Companion material bundled into the same rewrite is demonstrated redundant across three sessions — inline illustrative examples (`"e.g., minimal-diff discipline — craft-tune/SKILL.md §Principles"`, quoted from the since-removed craft-tune's session), fail/pass exemplar pairs inside the subsection paragraph, `## Example`-block alignment edits that repeat what the new spec already demands, and bullets that re-declare elements already canonicalized in sibling sections of the same skill:
+When a tightening was a spec rewrite at `## Output format`, the declarative rule of the new demand is what moved the score in these three sessions; the material bundled alongside it did not — inline illustrative examples (`"e.g., minimal-diff discipline — craft-tune/SKILL.md §Principles"`, quoted from the since-removed craft-tune's session), fail/pass exemplar pairs inside the subsection paragraph, `## Example`-block alignment edits that repeat what the new spec already demands, and bullets that re-declare elements already canonicalized in sibling sections of the same skill:
 
 - `craft-tune` (2026-04-12, since removed) exp-2 reverted the `## Example`-block changelog-table alignment bundled into exp-1. The spec-level tightening had flipped 5 evals; the Example-block alignment was the cosmetic companion. Deletion held score at 18/18.
 - `craft-survey` (2026-04-12, since removed) exp-2 stripped the inline illustrative examples (`"e.g., ..."` fragments and fail/pass exemplar pairs) from four tightened subsections while leaving the declarative prose rules intact. Deletion held score at 18/18.
-- `craft-autoresearch` (2026-04-12) exp-2 stripped 4 of 8 bullets in the `## Output format § Experiment contract` rewrite — the bullets that re-declared target / test inputs / budget / stop-condition, elements already canonicalized in Step 1 and § Inputs. Only the 4 NEW quality-commitment bullets (mutable files, evals 4th diagnostic, runner design, first-mutation hypothesis preview) remained. Deletion held score at 18/18.
+- `craft-autoresearch` (2026-04-12) exp-2 stripped 4 of 8 bullets in the `## Output format § Experiment contract` rewrite — the bullets that re-declared target / test inputs / budget / stop-condition, elements already canonicalized in Step 1 and § Inputs. Only the 4 NEW quality-commitment bullets (mutable files, evals 4th diagnostic, runner design, first-mutation hypothesis preview) remained. (Two of those four — the 4th diagnostic and the hypothesis preview — have since been retired from the contract; that is a later change, not what this run kept.) Deletion held score at 18/18.
 
-Practical guidance: first-cut `## Output format` tightenings should write only the NEW declarative rule. If the rule feels like it needs an inline example, an Example-block alignment, or a bullet re-listing elements already named in Step 1 / Inputs / a sibling subsection to be understood, the rule is under-specified — sharpen its category-level naming of what passes and what fails, rather than appending supporting material. This keeps the exp-1 edit lean and makes the mandatory deletion experiment cheap.
+What to take from it: when a tightening writes a new declarative rule, the supporting material around it is a separate hypothesis and deserves its own experiment rather than a free ride. If the rule seems to need an inline example to be understood, that may mean the rule is under-specified — sharpening what passes and what fails is cheaper to test than appending material.
 
-Scope of claim: specific to build-step `## Output format` tightenings for prompt/skill-shaping skills. Does not generalize to all mutation types — Level-2 example mutations are about adding examples, and this observation is about tightenings that already state a rule, not about Example mutations themselves.
+Scope: three sessions, all build-step `## Output format` tightenings on prompt/skill-shaping skills. It says nothing about Level-2 example mutations, where adding the example *is* the hypothesis.
 
 ## Anti-patterns
 
@@ -115,6 +111,6 @@ Scope of claim: specific to build-step `## Output format` tightenings for prompt
 
 ## Stuck? Try a direction shift
 
-Three consecutive DISCARDs at the same level means that level is exhausted. Move up one level. Three consecutive DISCARDs at Level 4 means the eval suite is probably wrong — revisit the evals instead of mutating further.
+Repeated DISCARDs at one level are a signal that the level is exhausted — the fix probably isn't reachable by rephrasing if rephrasing keeps failing. Move up a level, or, when even principle-level changes stop moving anything, suspect the eval suite rather than the artifact and go re-read real outputs.
 
 Direction shifts belong in `research-log.json`, not `changelog.md`. They are the high-signal entries a human or future loop re-reads when resuming.

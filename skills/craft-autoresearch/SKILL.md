@@ -37,7 +37,7 @@ Explicit-only and deliberately dormant. Invoke only when the user asks for itera
 ## Inputs
 
 - **Target artifact** — path to the prompt or skill file to optimize
-- **Test inputs** — 6-10 realistic prompts or scenarios, split roughly 70/30 into train and holdout; holdout has at least 2 inputs. If fewer than 6 inputs are possible, record a holdout waiver.
+- **Test inputs** — realistic prompts or scenarios, ideally 6-10, split roughly 70/30 into train and holdout with at least 2 held out. When a split genuinely isn't possible, record a holdout waiver and treat the run's result as limited evidence.
 - **Eval criteria** — 3-6 binary checks plus 0-2 comparative quality checks
 - **Eval runner** — the exact repeatable command or procedure that runs the artifact on a test input
 - **Budget** — max experiments per session (default: 10)
@@ -48,13 +48,16 @@ If the user provides an `evals.json`, use it directly instead of drafting evals 
 ## Steps
 
 1. **Capture the experiment contract.** Lock in target, train/holdout split or waiver, evals, eval runner, budget, and stop condition *before* running anything. A fuzzy contract produces fuzzy gains — ambiguity at this step compounds with every experiment.
-2. **Design the eval suite.** Prefer deterministic checks (regex, section presence, parse success) over LLM-as-judge. Aim for at least half the suite at Tier 1-2 — see `references/eval-guide.md` for the full determinism hierarchy and quality checks; first-time suites skew toward Structure/Length only and saturate, see the Guardrails rule below before locking the suite. For research, agentic, or high-impact prompts, include grounding, instruction-consistency, missing-context, or action-safety evals when those risks matter.
-3. **Establish a baseline.** Snapshot the target artifact, run it on train and holdout (unless waived) through the eval runner, score every output, and record train and holdout totals separately in `results.tsv`. No mutation happens before baseline or the gains are unmeasurable. A near-saturated baseline (≥ 95% binary pass rate) is a signal, not a success — stop and strengthen the suite before mutating. See Guardrails below.
-4. **Run the mutation loop.** For each experiment: analyze failing train evals → form one hypothesis → make one bounded change at one mutation level → checkpoint the touched files → run the eval runner on train only → score train → KEEP or DISCARD by the rules below → log. The change may span multiple files only when those files together implement the same hypothesis. See `references/mutation-guide.md` for mutation levels and when each fits.
+2. **Design the eval suite.** Prefer deterministic checks (regex, section presence, parse success) over LLM-as-judge, and make sure at least one eval measures the outcome the user cares about rather than output shape — see `references/eval-guide.md` for the determinism hierarchy, assertion categories, and the eval quality check. For research, agentic, or high-impact prompts, include grounding, instruction-consistency, missing-context, or action-safety evals when those risks matter.
+3. **Establish a baseline.** Snapshot the target artifact, run it on train and holdout (unless waived) through the eval runner, score every output, and record train and holdout totals separately in `results.tsv`. No mutation happens before baseline or the gains are unmeasurable. If the baseline already satisfies the stop condition, "no change needed" is a valid outcome — report it instead of mutating for a delta.
+4. **Run the mutation loop.** For each experiment: analyze failing train evals → form one hypothesis → checkpoint the files the change will touch → make one bounded change at one mutation level → run the eval runner on train only → score train → KEEP or DISCARD by the rules below → log. Checkpoint before the edit, never after — a checkpoint taken after mutating captures the mutation. The change may span multiple files only when those files together implement the same hypothesis. See `references/mutation-guide.md` for mutation levels and when each fits.
 5. **Respect rollback safety.** Before each mutation, commit (git-assisted mode) or snapshot (file-checkpoint mode) only the files you are about to touch. DISCARD rolls back only those files — never `git reset --hard`, which would destroy unrelated work in the repo.
-6. **Try deletion every 5th experiment.** Remove recently added rules or examples. If the score holds, keep the deletion. Artifacts that only grow are a smell — bloat hides the real drivers.
-7. **Stop on condition, not on vibes.** Stop when the budget is hit, when the stop condition is met (e.g. 95%+ binary pass rate sustained for 3 consecutive kept experiments), when the user interrupts, or when the eval runner is no longer trustworthy. Running out of ideas is not a stop condition — change mutation level first.
-8. **Report back.** Before reporting, run the final accepted artifact on holdout unless waived. Report an improvement only if holdout does not regress vs baseline; if train improved but holdout regressed, report an overfit finding, keep the log, and recommend strengthening the suite.
+6. **Treat deletion as a real experiment.** Removing a recently added rule or example is a mutation like any other: if the score holds, keep the deletion. Reach for it when the artifact has grown, or when you want evidence that an accepted rule is what carries the score.
+7. **Stop on condition, not on vibes.** Stop when the stop condition is met, when the budget is hit, when the user interrupts, or when the eval runner is no longer trustworthy. The stop condition being satisfied at baseline counts — meeting the target is a legitimate way to finish. What the loop leaves behind at this point is a *candidate*: every KEEP is provisional on the holdout gate in Step 8, and only what clears that gate is the session's accepted artifact.
+8. **Accept or reject on holdout.** Before reporting, run a changed candidate on holdout unless waived. A train improvement or simplification becomes accepted only if holdout does not regress vs baseline; an unchanged baseline is not an improvement. If holdout regresses, reject the mutations regardless of the train result — rejection is physical, not just a label:
+   - Restore the session's mutable files from the baseline checkpoint taken in Step 3. Restore *only* those files: unrelated edits made in the worktree during the session stay untouched, and no `git reset --hard` or history rewrite.
+   - Log the rejection in the experiment log — which mutations were rolled back, the train and holdout numbers that rejected them, and the overfit reading.
+   - Report an overfit finding. Never present rejected mutations as accepted ones.
 
 ## When the target is a skill (vs a prompt)
 
@@ -89,13 +92,11 @@ Additional guardrails:
 
 ### Experiment contract
 
-A compact record of target, inputs, train/holdout split or waiver, evals, eval runner, budget, stop condition. In addition, state these quality commitments explicitly, not just as labels:
+A compact record of target, inputs, train/holdout split or waiver, evals, eval runner, budget, and stop condition. Three commitments have to be concrete enough for someone else to act on, not just labelled:
 
-- **mutable files** — explicit list of the files the session may modify. All other files are frozen. Mandatory for skill targets; every skill has more than one file even when references are not planned to change.
-- **holdout commitment** — which inputs are held out and the session acceptance rule: final holdout score must not regress vs baseline holdout. If the suite has fewer than 6 inputs, record `holdout: waived (<reason>)` instead.
-- **evals 4th diagnostic** — for every non-shape eval, name a plausible-failing-output the target would produce; see `references/eval-guide.md` § "Contract fields" for what qualifies and why it matters.
-- **runner design** — the named eval-runner category plus its trade-off against alternatives. A bare command string is not a runner design.
-- **first-mutation hypothesis preview** — the predicted mutation locus, plus a justification invoking the Build-step enforcement prior by name or arguing why a non-build-step locus is warranted; see `references/eval-guide.md` § "Contract fields" for the full prior and when it doesn't apply.
+- **mutable files** — explicit list of the files the session may modify. All other files are frozen. This list is the mutation unit: it is what gets checkpointed before each edit, what a DISCARD restores, and what a holdout rejection restores from baseline. Mandatory whenever the target is a folder rather than a single file.
+- **holdout commitment** — which inputs are held out and the session acceptance rule: final holdout score must not regress vs baseline holdout. When a split is not possible, record `holdout: waived (<reason>)` and treat the session's result as limited evidence.
+- **runner design** — enough for someone who wasn't in the session to reproduce a run: the exact command or replay procedure, what executes it (model and the settings that affect output, such as temperature or reasoning effort), and which instructions, files, or tools are loaded when that matters to the result. State the cost per run; if it isn't knowable, say so and give an estimate with its basis rather than inventing a figure. A bare command string is not a runner design. The runner is frozen alongside the eval criteria — changing it mid-session invalidates every comparison, so a change means rebaselining.
 
 ### Baseline
 Train score and holdout score (or waiver), failing evals, 1-2 representative outputs.
@@ -110,7 +111,7 @@ What to run next if the user wants more, or which evals to sharpen.
 
 ## Artifact layout
 
-Run artifacts live in `~/.craftkit/`, not in the target repo. This keeps `git status` clean, makes runs worktree-agnostic, and avoids accumulating audit dirs in the project being tuned. Findings that justify a spec change belong in the commit message body, not in committed run artifacts.
+Run artifacts live in `~/.craftkit/`, not in the target repo. This keeps run records out of `git status`, makes runs worktree-agnostic, and avoids accumulating audit dirs in the project being tuned. Findings that justify a spec change belong in the commit message body, not in committed run artifacts.
 
 ```text
 ~/.craftkit/autoresearch/<skill-name>/<YYYY-MM-DD-slug>/
@@ -129,13 +130,14 @@ The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prev
 
 - One hypothesis per experiment. The accepted change may touch more than one file only when those files implement the same mutation and are checkpointed as a unit.
 - Always run the eval runner and record the score; never KEEP on "this feels better."
-- Keep holdout inputs sealed during the mutation loop; they are for session acceptance, not experiment selection.
+- Keep holdout inputs sealed during the mutation loop; they are for session acceptance, not experiment selection. That includes the baseline holdout run: record its score, and keep its failing outputs out of what picks the next mutation. If holdout outputs are read to diagnose a further iteration, that holdout is spent — stop calling it sealed, and either draw a fresh holdout for later acceptance or report the acceptance as made against an exposed holdout.
 - Deterministic evals first; LLM-as-judge only with a rubric explicit enough that two reviewers would agree.
 - Rollback touches only the files in the mutation — never broad reverts.
 - Autonomy is batch-based. Set a budget and stop condition up front, not "loop forever."
-- **If the baseline binary pass rate is ≥ 95%, do NOT start the mutation loop.** A saturated baseline means the suite only measures output shape, not quality — mutating against it produces noise. Strengthen the evals first: read 3-5 real outputs, name the quality dimensions the suite missed, add 2-3 new Tier 1-2 assertions, rebaseline. See `references/eval-guide.md` § "If your baseline scores near 100%."
-- Format and structure evals are floor checks — they guard regressions but never lead a KEEP. Let outcome/comparative evals decide KEEP/DISCARD, and when a fix would tighten the target's output format contract, prefer a judgment requirement (what the output must convey) instead. See `references/eval-guide.md` § "The prescription ratchet."
-- If eval scores rise but real outputs feel worse, treat it as a false-positive signal: review 10 real outputs and rebuild the evals before continuing.
+- A score at or near ceiling is information, not a mandate. It can mean the artifact already meets the bar — a legitimate stop — or that the suite only measures shape. Read real outputs to tell the two apart, and strengthen the suite only when they show a requirement the suite misses. Once you strengthen it, freeze the criteria and rebaseline; criteria that shift mid-loop make every comparison meaningless. See `references/eval-guide.md` § "When the baseline scores near the ceiling."
+- Small suites make small deltas noisy. Record numerator and denominator, and do not call a one- or two-point move on a handful of runs significant.
+- A format check leads a KEEP only when a real consumer requires that format — a parser, a schema, a downstream stage that breaks without it. Then the format *is* the outcome. Stylistic proxies with no consumer behind them (section counts, phrasing conventions, item caps) stay floor checks: they guard regressions, and outcome/comparative evals decide KEEP/DISCARD. When a fix would tighten the target's output contract with no consumer asking for it, prefer a judgment requirement (what the output must convey). See `references/eval-guide.md` § "The prescription ratchet."
+- If eval scores rise but real outputs feel worse, treat it as a false-positive signal: review real outputs and rebuild the evals before continuing.
 
 ## Failure modes
 
@@ -145,44 +147,39 @@ The `<YYYY-MM-DD-slug>` naming (e.g. `2026-04-12-output-format-tightening`) prev
 - Using `git reset --hard` for rollback — destroys the user's unrelated work.
 - Running until "looks good" without a written stop condition or holdout gate — produces prompts that overfit the train split.
 - Declaring victory when score rises but real outputs feel worse — the evals are the problem, not the artifact.
-- Treating the 1-week re-run as the overfit defense — holdout is the structural gate; the re-run catches drift and becomes mandatory when holdout was waived.
+- Presenting rejected mutations as accepted — when the final holdout regresses, the session's result is an overfit finding, not an improved artifact.
 
 ## Example
 
 ### Input
 
-Optimize `skills/craft-handoff/SKILL.md` against 7 realistic end-of-session handoff requests split 5 train / 2 holdout. Use 3 binary required-signals/format evals plus 1 comparative resumability eval. Budget: 8 experiments. Stop: 95% binary pass rate sustained for 3 consecutive kept experiments.
+Optimize `skills/craft-handoff/SKILL.md` against 7 realistic end-of-session handoff requests, split 5 train / 2 holdout. Evals: 3 binary required-signals checks plus 1 comparative resumability check. Budget: 8 experiments. Stop: all 3 binary evals pass on all 5 train inputs.
 
 ### Output
 
+Illustrative figures — the shape of a session report, not a record of one. For a full mutation session end to end, load `references/worked-example.md`.
+
 **Experiment contract**
-- target: `skills/craft-handoff/SKILL.md`; inputs: 7 session transcripts (5 train / 2 holdout); evals: 3 binary + 1 comparative; eval runner: manual replay procedure; budget: 8; stop: 95% x 3 consecutive
-- mutable files: `skills/craft-handoff/SKILL.md`; all other files frozen
-- holdout commitment: hold out sessions 6-7; accept session only if final holdout score is >= 5/8 baseline
-- evals 4th diagnostic: baseline plausibly emits a resume prompt that names touched files but omits branch and dirty-file state, and a fluent handoff that leaves the next command implicit
-- runner design: manual replay; slower than a command runner, but exact and valid before this repo ships a runner script
-- first-mutation hypothesis preview: `## Workflow` step 4 (Compose the resume prompt), invoking the Build-step enforcement prior because the failing outputs drop git-state signals the conceptual sections already demand
+- target: `skills/craft-handoff/SKILL.md`; mutable files: that file alone, everything else frozen
+- inputs: 7 transcripts, 5 train / 2 holdout; sessions 6-7 stay sealed through the loop
+- evals: 3 binary + 1 comparative, so train max = 3 × 5 + 5 = **20** and holdout max = 3 × 2 + 2 = **8**
+- runner design: manual replay — fresh agent session per input, `SKILL.md` pasted in as the operating instruction with no other project files loaded, transcript pasted, response saved under the session's run directory; scored by a second pass with the rubric pasted in. Executor: the agent the skill ships against, default settings. No separate API charge on this plan, so cost is wall clock: ~4 minutes per input, ~20 minutes per train pass.
+- budget: 8; stop: all 3 binary evals pass on all 5 train inputs; accept only if the final holdout does not regress below baseline holdout
 
-**Baseline**: Train score 14/20 (70%). Holdout baseline: 5/8 (62.5%). Failing: resume prompts often omit branch and dirty-file state; the next command is left implicit. Representative output: run 2's resume prompt lists touched files but never names the branch or the command to continue with.
+**Baseline**: train **17.5/20** — binary 15/15, comparative 2.5/5 (the baseline compared against itself is five ties by definition, which is why the stop condition is stated on the binary checks alone). Holdout **7/8** — binary 6/6, comparative 1/2.
 
-**Experiment log**
+The stop condition is satisfied at baseline. Inspection of the train outputs confirms that their state matches the transcripts and the next actions address the pending work. No missed requirement is found, so no mutation is warranted.
 
-| # | Hypothesis | Change | Train score | Decision | Rationale |
-|---|---|---|---|---|---|
-| 1 | Enforce required signals at the build step | Compose step now lists the signals every resume prompt must carry (branch, dirty files, next command, blocking decision) | 20/20 | KEEP | one build-step edit flips every failing eval |
-| 2 | Deletion check | Removed the required-signals list | 14/20 | DISCARD | regression confirms the list carries the behavior |
-| 3 | Stability check | Re-ran on the train split | 20/20 | KEEP | target hit holds |
-| 4 | Stability check | Re-ran to confirm | 20/20 | KEEP — 3 consecutive hit, STOP | stop condition satisfied |
+**Experiment log**: empty — no mutation was run. Budget used 0/8.
 
-**Final artifact**: Accepted version `skills/craft-handoff/SKILL.md`. Holdout gate: 8/8 vs 5/8 baseline; accepted. Size note: `skill_lines` stayed within the 160-220 line complex-skill band and below the 220-line release gate.
+**Final artifact**: `skills/craft-handoff/SKILL.md`, unchanged. No candidate was produced, so there is nothing to accept or reject; holdout 7/8 is recorded as the next session's baseline.
 
-**Direction shifts**: Confirmed the Build-step enforcement prior — the whole gain came from one compose-step tightening, not from distributed wording edits.
+**Direction shifts**: none.
 
-**Next steps**: Suite saturated at 100% — add 2-3 quality-dimension assertions (doc/prompt pair consistency, resume-prompt skimmability) before mutating further. For the full contract example, load `references/contract-example.md`.
+**Next steps**: this is a stop, not a ceiling to attack. If a later batch of real outputs shows a dimension these three checks miss — resume prompts that carry every signal but bury the next command, say — add evals for that dimension, freeze the criteria, and rebaseline before any mutation.
 
 ## References
 
 - `references/eval-guide.md` — Binary, comparative, and fidelity evals; the determinism hierarchy; assertion categories; subjective-to-binary decomposition; eval quality check; a prompt template for drafting evals with an agent; `evals.json` schema; false-positive recovery.
 - `references/mutation-guide.md` — Mutation levels (wording, example, structure, principle), when each fits, and the deletion discipline.
-- `references/contract-example.md` — Full experiment contract example with baseline, train-only experiments, holdout acceptance, one DISCARD, and final next steps.
-- `references/worked-example.md` — A full illustrative cycle showing baseline, five experiments (including a DISCARD and a deletion), stop condition, and the simplicity judgment behind each KEEP/DISCARD. The original target was `craft-critique`; the loop discipline the example teaches is identical.
+- `references/worked-example.md` — One illustrative session end to end: experiment contract, baseline, experiments including a DISCARD and a deletion, checkpoint/rollback commands, holdout acceptance, and what the run reported.

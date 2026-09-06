@@ -1,4 +1,4 @@
-# Eval Guide
+# Eval guide
 
 An autoresearch loop is only as good as its evals. If the evals don't measure what you actually care about, the loop will optimize the wrong thing and produce a prompt that scores 100% but feels worse in real use.
 
@@ -8,36 +8,36 @@ Every eval must have a stable scoring rule. Not a 1-7 vibe scale. Not an ungroun
 
 Preferred order: binary pass/fail > comparative win/tie/loss > fidelity pass/fail between pipeline stages.
 
-## If your baseline scores near 100%, your suite is probably too loose
+## When the baseline scores near the ceiling
 
-First-time eval suites skew toward *shape* — required sections, item counts, imperative phrasing — because those are the easiest checks to write. The agent following the target skill trivially produces that shape, so the binary suite saturates on the first run. A 100% baseline feels like success; it is almost always a warning that the suite doesn't measure the quality dimensions a real reviewer cares about. Mutating against a saturated suite optimizes noise — the loop cannot learn when every signal sits at ceiling.
+A high baseline has two very different causes, and what to do next depends on which one it is.
 
-**Quick diagnostic — before locking the suite, check:**
+**The artifact may already meet the bar.** The stop condition is a target, not an obstacle. If the baseline satisfies it, the honest report is "already meets the criteria — no change needed," with the numbers behind it. Mutating anyway to manufacture a delta optimizes the suite rather than the artifact.
 
-- Does the suite have any category beyond Structure and Length, such as Logic, Grounding, Consistency, or Action safety?
-- Is there at least one non-shape assertion (Logic, Grounding, Consistency, Missing context, Action safety, or Comparative)?
-- Is there any severity or priority signal anywhere (e.g. ordering, labels, ranked items)?
-- For each non-shape eval you drafted, can you name a concrete output the skill-as-written would plausibly produce that *fails* this check? Not "an output could fail" in principle — an output you actually expect the agent to generate from the baseline spec.
+**Or the suite may only measure shape.** First-time suites skew toward required sections, item counts, and imperative phrasing, because those are the easiest checks to write — and they are exactly the checks the target trivially satisfies. A suite like that cannot separate a good output from a better one, so a ceiling score says nothing about quality.
 
-If two or more of the first three answers are "no," or the fourth question has no plausible failing output for any non-shape eval you wrote, assume the suite is shape-only and will saturate. The first three catch missing categories; the fourth catches loose thresholds inside the right category. A Logic or Grounding eval phrased as "≥1 dimension named" passes all category tests but still saturates if the skill always names ≥1 — the real quality bar might have been "≥2," or a different dimension entirely.
+Real outputs are what tell the two apart. Read a handful side by side and ask whether the ones you prefer are actually scoring higher. If they are, the score is real. If good and mediocre outputs score identically, the suite is measuring form.
 
-**Recovery path** (also applies if baseline already came back near 100%):
+**Questions worth asking before locking a suite:**
 
-1. Read 3-5 real outputs from the saturated baseline side-by-side.
-2. Name the quality dimensions the binary evals missed — the things that make one output genuinely better than another even though both "pass."
-3. Add 2-3 new evals targeting those dimensions, at Tier 1-2 where possible (ordering checks, cross-section consistency, presence of severity labels, distinct-dimension checks).
-4. Rebaseline. Proceed to the mutation loop only if the new baseline leaves real room to improve.
+- Does at least one eval measure the outcome the user cares about, rather than the form of the answer?
+- Is there any category beyond Structure and Length — Logic, Grounding, Consistency, Action safety, Comparative?
+- For each non-shape eval, can you name a concrete output the target-as-written would plausibly produce that *fails* it? Not "an output could fail in principle" — one you actually expect. A Logic eval phrased as "≥1 dimension named" passes every category test but still sits at ceiling if the target always names ≥1; the real bar may have been "≥2," or a different dimension entirely.
 
-**Real example.** A first-pass autoresearch run against `craft-critique` scored 9/9 (100%) on a four-assertion binary suite (five-section structure, ≤5 Issues items, imperative-lead Recommended changes, comparative actionability). Qualitative inspection of the three outputs surfaced four quality gaps the suite missed:
+**Strengthening the suite** — when real outputs show a requirement the evals miss:
 
-- Recommended-changes items mapped 1:1 to Issues items — no prioritization or consolidation.
-- Minimal-rewrite-plan was a subset of Recommended-changes, not an ordered, prioritized sequence.
-- Failure-modes frequently restated Issues in future tense instead of naming a distinct dimension.
-- No severity or priority labels anywhere in Issues.
+1. Name the dimension the evals missed: the thing that makes one output genuinely better than another even though both pass.
+2. Add evals for that dimension, as deterministic as the dimension allows.
+3. Freeze the criteria and rebaseline. From there the suite stays fixed for the rest of the session.
 
-The fix was to add four new assertions targeting those dimensions before mutating — not to celebrate the 100%. After strengthening, the same baseline dropped to 43% on the new suite and a single Level-1 mutation (tightening the Output-format subsection descriptions) flipped it to 100%, confirmed by a deletion experiment that held score while shortening the spec. (This same run seeded the fixed format rules that #150 later removed — see § The prescription ratchet below for what it teaches.)
+Two rules keep this honest. **Strengthen on evidence, not on the score** — a ceiling score is not itself evidence that the suite is wrong; an output someone can point at is. And **freeze after strengthening** — criteria that keep moving while the loop runs make every before/after comparison meaningless, and make it easy to keep raising the bar until some mutation looks necessary.
 
-A second instance followed 2026-04-12 on `craft-prompt`: a six-assertion suite (structure + two exclusion + two logic + inclusion) saturated at 18/18 across three inputs even though the first three diagnostic questions all passed. The loose spots were two Logic evals phrased as "≥1 dimension named" and "at least one placeholder" — the skill as-written always produced ≥1 of each. The quality bars that actually mattered were proportionality (≤4 blocks for small requests, not 6) and breadth (≥2 placeholders for reusable templates, not 1). Adding E8/E9 at those stricter thresholds dropped the baseline to 22/24 (91.7%); a single Level-1+3 mutation (a new "Sizing heuristic" block in the skill's Build step) flipped both failing evals, and a deletion experiment at exp-2 confirmed the rule is lean. #210 later removed that block with the six-block method while preserving the proportionality and placeholder-breadth signals in an outcome-driven workflow. This second instance motivated the fourth diagnostic question above.
+### Historical observations (non-normative)
+
+Two past CraftKit runs, kept as a record of what saturation looked like in practice. They are observations from single sessions, not rules and not evidence about what the next run will find.
+
+- **`craft-critique`, first pass.** A four-assertion binary suite (five-section structure, ≤5 Issues items, imperative-lead Recommended changes, comparative actionability) scored 9/9. Reading the three outputs surfaced dimensions the suite did not touch: recommendations mapped 1:1 to issues with no prioritization or consolidation; the rewrite plan was a subset of the recommendations rather than an ordered sequence; failure modes restated issues in future tense; no severity labels anywhere. Assertions for those dimensions dropped the same baseline to 43%, and a Level-1 mutation moved it back up. The winning mutations encoded the dimensions as fixed format rules, which #150 later removed wholesale — see § The prescription ratchet.
+- **`craft-prompt`, 2026-04-12.** A six-assertion suite saturated at 18/18 across three inputs even though its category coverage looked fine. The loose spots were two Logic evals phrased as "≥1 dimension named" and "at least one placeholder" — thresholds the skill always cleared. Stricter bars (proportionality: ≤4 blocks for small requests; breadth: ≥2 placeholders for reusable templates) dropped the baseline to 22/24. #210 later removed the block that fixed them while preserving the underlying signals in an outcome-driven workflow.
 
 ## The prescription ratchet
 
@@ -47,8 +47,8 @@ Worked example: the craft-critique run above. Its four added assertions named re
 
 Two rules keep a loop out of it:
 
-- **Format evals are floor checks.** They catch regressions — missing artifact, broken frontmatter, budget violations — but they never *lead* a KEEP. KEEP/DISCARD is led by outcome and comparative evals (is the output more actionable, more resumable, easier to review), with format checks riding along as guards.
-- **Prefer conveyance fixes over shape fixes.** When the obvious mutation is "add a format rule to the output contract," first check whether a judgment requirement — naming the signal the output must carry and letting shape scale with the artifact — flips the same failing eval. If the target already carries a judgment contract, don't score section shape at all; score whether each required signal is conveyed.
+- **Separate required formats from stylistic proxies.** When a real consumer requires a format — a parser, a schema, a downstream stage that breaks without it — producing that format *is* an outcome, and a check on it can lead a KEEP like any other outcome check. Repairing a genuine JSON/schema/interface failure is real work, not shape work. What stays a floor check is the arbitrary proxy with nobody behind it: section counts, heading templates, phrasing conventions, item caps. Those catch regressions and ride along as guards, but they never *lead* a KEEP — outcome and comparative evals do (is the output more actionable, more resumable, easier to review).
+- **Prefer conveyance fixes over shape fixes when nothing requires the shape.** When the obvious mutation is "add a format rule to the output contract," first ask who consumes that format. If someone does, write the rule to their requirement and move on. If nobody does, check whether a judgment requirement — naming the signal the output must carry and letting shape scale with the artifact — flips the same failing eval. If the target already carries a judgment contract, don't score section shape at all; score whether each required signal is conveyed.
 
 ## Eval types
 
@@ -79,15 +79,19 @@ Pipeline-stage consistency. Same pass/fail shape as binary, applied across bound
 
 Record numerator and denominator, not just a percentage. `11/12` keeps the sample-size signal that `91.7%` loses.
 
+Suites this size do not establish statistical significance, and nothing in the loop should be reported as if they did. A handful of inputs times a handful of assertions is a working signal for KEEP/DISCARD, not a measurement with error bars — so report raw counts, describe a one- or two-point move as what it is (noise-sized), and let a re-run on the same inputs settle whether a small delta is stable.
+
 ## Train/holdout split
 
 Small-suite score deltas are noise-dominated. If the loop optimizes and accepts against the same inputs, it can learn the quirks of those examples instead of the underlying quality bar. Use the train split for cheap KEEP/DISCARD decisions, keep holdout sealed during mutation, then run the final accepted artifact on holdout before reporting an improvement.
 
-Sizing rule: use 6-10 realistic inputs minimum, split roughly 70/30. Holdout needs at least 2 inputs, and those inputs should cover the same failure modes as train rather than easier happy paths. Example: 7 inputs usually means 5 train / 2 holdout; 10 inputs usually means 7 train / 3 holdout.
+Sizing: 6-10 realistic inputs is a good working range, split roughly 70/30. Holdout needs at least 2 inputs, and those inputs should cover the same failure modes as train rather than easier happy paths. Example: 7 inputs usually means 5 train / 2 holdout; 10 inputs usually means 7 train / 3 holdout.
 
-Acceptance rule: establish baseline train and holdout scores separately. During the mutation loop, run only train. At session end, run the final accepted artifact on holdout and accept the session as an improvement only if holdout does not regress against the baseline holdout score. If train improves but holdout regresses, report an overfit finding, keep the log, do not present the artifact as improved, and strengthen the suite before another run.
+Acceptance rule: establish baseline train and holdout scores separately. During the mutation loop, run only train. At session end, run the final accepted artifact on holdout and accept the session as an improvement only if holdout does not regress against the baseline holdout score. If train improves but holdout regresses, the mutations are rejected: restore the mutable files from the baseline checkpoint, keep the log, report an overfit finding, and do not present the artifact as improved.
 
-Waiver: when the suite genuinely cannot reach 6 inputs, record `holdout: waived (<reason>)` in the experiment contract. The cost is weaker evidence: overfit detection falls back to the 1-week re-run on fresh inputs, which becomes mandatory rather than recommended.
+The holdout is spent once you look at it that way. Reading the failing holdout outputs is often the right call — it is what tells you whether the next move is a different mutation direction or a stronger suite — but those inputs are no longer sealed afterwards. Do not accept a later iteration against them while still calling them a holdout: either draw fresh inputs for the next acceptance gate, or report the acceptance and say plainly that the holdout was exposed during diagnosis. The same applies to baseline holdout failures: record the score, and keep the details out of what selects mutations.
+
+Waiver: when a split genuinely isn't possible, record `holdout: waived (<reason>)` in the experiment contract. The cost is real and belongs in the report — with no sealed inputs there is no structural overfit gate, so the session's result is limited evidence about the artifact in general, however clean the train numbers look. A later re-run on fresh inputs is the cheapest way to check, if and when fresh inputs exist.
 
 ## Determinism hierarchy
 
@@ -97,7 +101,7 @@ Prefer the highest-determinism check available. More determinism means more stab
 - **Tier 2 — Structural**: heading hierarchy, table shape, code-block formatting, schema-level structure.
 - **Tier 3 — LLM-as-judge**: tone, usefulness, completeness, quality, or any subjective criterion that cannot be checked programmatically.
 
-**Target at least half the eval suite at Tier 1 or Tier 2.** If most evals are Tier 3, scores will drift between runs and the loop will chase noise.
+Take the highest tier each criterion honestly supports. Some of what matters is genuinely Tier 3, and a forced-deterministic proxy for it measures the proxy. But a suite that is mostly Tier 3 will drift between runs, so if that is where you land, expect noisy deltas and say so rather than reading them as gains.
 
 ## Assertion categories
 
@@ -139,6 +143,8 @@ When drafting evals, pull from these categories. You don't need all of them — 
 - Citations or URLs support the claims they are attached to?
 - Recency requirements are satisfied for time-sensitive claims?
 
+A deterministic check here can only see *form* — that a citation is present, that a label was used. Whether the source actually supports the claim needs a reader or a judge. Treat presence checks as floor checks against unattributed claims, and don't report them as evidence that the output is grounded.
+
 ### Consistency
 - Rules, examples, and exceptions agree with each other?
 - Output follows the stated instruction hierarchy?
@@ -150,7 +156,8 @@ When drafting evals, pull from these categories. You don't need all of them — 
 - Output uses the expected lookup or source-check step before guessing?
 
 ### Action safety
-- Destructive, published, or shared-system actions require confirmation?
+- Destructive, published, or shared-system actions stay inside what the caller authorized, and unauthorized ones stop for confirmation? (Score the authorization, not the presence of a confirmation prompt — a workflow the user asked to run unattended should pass, and re-confirming it is the failure.)
+- Any gate the task actually requires — a named approval, a dry run, a backup — is performed before the action?
 - Tool or subagent use follows stated criteria instead of blanket persistence?
 - The output distinguishes partially complete work from fully verified completion?
 
@@ -169,16 +176,16 @@ The hardest part of eval design: your real quality standards *feel* subjective. 
 |---|---|
 | "Professional tone" | No emoji + max 1 exclamation mark + no casual contractions (gonna, wanna) |
 | "Well-structured" | 3+ H2 headings + each section has 2+ paragraphs |
-| "References the source material" | Contains 5+ keywords from the reference file |
-| "Grounded research" | Every factual claim in the recommendation paragraph has either a cited source URL or a "not verified" label |
-| "Safe agentic behavior" | Any destructive, published, or shared-system action is preceded by an explicit confirmation request |
+| "References the source material" | Cites the reference file's own terms or sections rather than paraphrasing around it |
+| "Grounded research" | Every factual claim in the recommendation paragraph carries either a cited source or a "not verified" label (a form check — whether the source supports the claim still needs a reader) |
+| "Safe agentic behavior" | Every destructive, published, or shared-system action is either covered by the authorization the caller gave or stopped for confirmation, and each gate the task names (approval, dry run, backup) happens before the action |
 | "No instruction conflicts" | No example contradicts a rule; every exception names the rule it overrides |
 | "Engaging opening" | First sentence contains a specific claim, story, or question (not a generic statement) |
 | "Actionable content" | Contains 3+ concrete steps the reader can do today |
 | "Appropriate length" | Total word count between 1500-3000 |
 | "Natural Korean writing" | No em dash + uses ~해요 체 + no direct English loan-phrases where Korean equivalents exist |
 
-**Warning**: you'll never capture 100% of a subjective quality through binary checks — that's OK. The human review phase catches what the evals miss. The goal is to automate the 80% that *is* checkable.
+**Warning**: you'll never capture a subjective quality completely through binary checks — that's OK. The decomposition is a proxy: it makes the criterion scoreable, it doesn't make it measured. Human review catches what the proxies miss, and a proxy that the target can satisfy without getting better is worse than no eval at all.
 
 ## Eval quality check
 
@@ -211,7 +218,8 @@ Requirements:
 - For research, agentic, or high-impact prompts, include at least one
   assertion covering grounding, missing context, or action safety when relevant.
 - Optionally add 1-2 comparative assertions for subjective quality.
-- Target at least half the assertions at Tier 1-2 (deterministic or structural).
+- At least one assertion must measure the outcome the prompt exists for,
+  not the shape of its answer.
 
 SKILL.md:
 <paste SKILL.md here>
@@ -221,7 +229,7 @@ The agent's draft won't be perfect. Review it against the Eval quality check bef
 
 ## evals.json schema
 
-Structure evals as JSON for reuse and potential automation:
+Structure evals as JSON for reuse and potential automation. Input paths are relative to the session run directory under `~/.craftkit/autoresearch/<target>/<YYYY-MM-DD-slug>/`, not to the repo being tuned:
 
 ```json
 {
@@ -230,7 +238,7 @@ Structure evals as JSON for reuse and potential automation:
     {
       "id": 1,
       "prompt": "Wrap up this refactoring session into a handoff doc and resume prompt.",
-      "inputs": ["runs/inputs/refactor-session.txt"],
+      "inputs": ["inputs/refactor-session.txt"],
       "assertions": [
         {
           "text": "Output contains both artifacts: the rich handoff doc and the resume prompt.",
@@ -272,7 +280,7 @@ Design guidelines:
 | Test prompts | 6-10 | Enough variety to support train/holdout without excessive cost |
 | Holdout prompts | ≥2 | A final non-regression gate against train overfitting |
 | Assertions per prompt | 4-6 | Coverage without overwhelm |
-| Scored checks | 24-60 | Statistically meaningful pass rate after the split |
+| Scored checks | 24-60 | Enough coverage to see a pattern after the split — not a significance threshold |
 | Assertion text | Natural-language yes/no | So an agent grader can judge it |
 
 ## Anti-patterns
@@ -290,7 +298,7 @@ Design guidelines:
 
 This is the false-positive scenario. The loop has optimized for the evals, not the underlying quality. Recovery:
 
-1. Collect 10+ real outputs from the accepted version.
+1. Collect real outputs from the accepted version — enough to see a pattern rather than one bad run.
 2. For each, note whether it feels genuinely better than baseline.
 3. Where the evals said "pass" but the output feels worse, identify the quality dimension the evals missed.
 4. Add or replace evals to cover that dimension. Tag the new evals with `"source": "false-positive-correction"` so the history is readable.
@@ -298,16 +306,4 @@ This is the false-positive scenario. The loop has optimized for the evals, not t
 
 False-positive tracking is part of a healthy autoresearch cycle, not a failure mode. The first eval suite is almost always incomplete; that's fine as long as you keep revising it against real outputs.
 
-**When to run the check**: after 10+ real-world outputs with performance signal, or monthly — not after every experiment. Account for external factors (seasonal changes, model upgrades).
-
-## Contract fields
-
-`SKILL.md` § "Output format" › "Experiment contract" names two quality-commitment fields whose full reasoning lives here.
-
-### evals 4th diagnostic
-
-A **plausible-failing-output** is a concrete output the target-as-written would actually produce that fails a given non-shape eval — not a hypothetical "an output could fail this in principle." Naming one for every non-shape eval (Logic, Grounding, Consistency, Missing context, Action safety, Comparative) is the fourth diagnostic question from § "If your baseline scores near 100%" above: a category test alone can pass while the eval's threshold is still loose (see the `craft-prompt` example there, where "≥1 dimension named" passed the category test but saturated because the skill always names ≥1). Recording the plausible-failing-output at contract time forces that threshold check before the suite locks, not after a saturated baseline reveals it. A non-shape eval without one is a loose eval and usually saturates.
-
-### first-mutation hypothesis preview
-
-The predicted first-mutation locus and its justification should invoke the **Build-step enforcement prior** from `references/mutation-guide.md` § "Build-step enforcement prior (skill optimizations)" by name whenever the locus is a `## Output format` subsection or a `## Steps` entry that hands off to output — five prior autoresearch sessions found their highest-yield edit exactly there. A non-build-step locus (a Guardrails rule, an Inputs field, a reference-file section) is warranted only when the failing outputs show the defect isn't enforced anywhere reachable from the build step — state that reasoning explicitly rather than defaulting to the prior out of habit.
+**When to run the check**: once enough real-world outputs have accumulated to carry a signal — not after every experiment. Account for external factors such as model upgrades.

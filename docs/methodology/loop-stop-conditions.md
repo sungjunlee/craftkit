@@ -85,9 +85,11 @@ CraftKit's former `craft-tune` skill ran exactly this taxonomy as its loop-exit
 contract until the skill was removed in 2026-07 — frontier models reproduce
 the improve loop itself from a direction-level instruction, but the exit
 conditions still have to be written down, which is why this document outlived
-the skill. `craft-autoresearch` uses the measured analogue (a
-baseline-saturation gate plus a held-out acceptance check) for eval-driven
-loops — see its stop-condition section for the operational rules in context.
+the skill. `craft-autoresearch` uses the measured analogue for
+eval-driven loops — a written stop condition and a bounded budget up front,
+plus a held-out acceptance check that decides whether the run may be reported
+as an improvement at all. See its stop-condition section for the operational
+rules in context.
 The discipline is not specific to any skill: use it for any loop where an
 agent grades its own output.
 

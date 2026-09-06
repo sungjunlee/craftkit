@@ -85,7 +85,7 @@ Success criteria:
 </task>
 
 <rules>
-- All paths are worktree-relative
+- Repo paths below are worktree-relative; the handoff doc path is absolute
 - Read `~/.craftkit/handoff/docs/acme-api-7c3a92.md` first if reachable; if missing or inconsistent with this snapshot, proceed with the snapshot and flag the discrepancy
 - Read `src/middleware/auth.ts` first to confirm export shape (`authMiddleware`, `signToken`)
 - Run `npm test` before declaring done

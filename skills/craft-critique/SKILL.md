@@ -24,7 +24,7 @@ If the user also wants the fixes applied, apply them guided by the findings — 
 
 ## Inputs
 
-- the current prompt or skill
+- the current prompt or skill, plus what it reaches: its reference files, the surrounding instructions loaded alongside it, and the contracts its callers and output consumers impose
 - the desired outcome
 - any important constraints
 - optional examples of failure (specific outputs the artifact produced that were wrong)
@@ -32,17 +32,18 @@ If the user also wants the fixes applied, apply them guided by the findings — 
 ## Steps
 
 1. Identify the artifact's real job. If you can't state it in one sentence, that's already a finding.
-2. Check whether each part earns its place — sections, rules, or detail that don't carry weight are findings to cut, including instruction a capable model already follows without being told.
-3. Find ambiguity, redundancy, and hidden assumptions — the things that silently break reuse.
-4. Check cross-agent portability: provider-specific wording, tool names, or formats that won't travel.
-5. Check whether outputs are concrete enough to act on without guessing.
-6. Order the findings by leverage, not by discovery order.
+2. Read what the artifact actually operates inside, not just the file in front of you: the reference files it points at, the surrounding instructions loaded with it, and the contracts its callers and output consumers impose. Judging a lone prompt against an imagined context is how a critique invents problems and misses real ones.
+3. Check whether each part earns its place — sections, rules, or detail that don't carry weight are findings to cut, including instruction a capable model already follows without being told.
+4. Find ambiguity, redundancy, and hidden assumptions — the things that silently break reuse. A contradiction you can point at on two lines is established, whether or not anyone has hit it yet.
+5. Check cross-agent portability against the agents the artifact actually runs on: provider-specific wording, tool names, or formats that won't travel there.
+6. Check whether outputs are concrete enough to act on without guessing, and whether anything downstream — a parser, a caller, a human reader — constrains the shape they can take.
+7. Order the findings by leverage, not by discovery order. If the evidence supports no change, say so — an artifact that holds up is a valid result, and manufacturing findings to fill a report is worse than a short one.
 
 ## Output format
 
 Shape the write-up to the artifact — a three-line prompt deserves a paragraph, a 200-line skill a structured report. Whatever the shape, a critique must convey three things:
 
-- **Findings, prioritized, with evidence — gaps and excess alike.** What should be cut (a section, rule, or detail that doesn't earn its place) is as much a finding as what's missing. Severity-tag each (`[HIGH]`/`[MED]`/`[LOW]`); for repo assets, back every `[HIGH]` and `[MED]` with a file:line or a quoted phrase. When failure outputs were supplied, tie each `[HIGH]` to the specific failure it explains.
+- **Findings, prioritized, with evidence — gaps and excess alike.** What should be cut (a section, rule, or detail that doesn't earn its place) is as much a finding as what's missing. Severity-tag each (`[HIGH]`/`[MED]`/`[LOW]`); for repo assets, back every `[HIGH]` and `[MED]` with a file:line or a quoted phrase. When failure outputs were supplied, tie each `[HIGH]` to the specific failure it explains. Say which kind of evidence each finding rests on. A defect you can point at — a bad output, or a contradiction between two lines you can quote — is established and justifies a fix now; a contradiction proven by inspection needs no production failure first. An effect you expect the wording to have on future behavior is a prediction, and should read like one.
 - **What already works.** Name the specific elements worth preserving, so the next edit doesn't flatten them.
 - **What to do, in what order, and why that order.** Recommendations with their sequencing rationale — dependency, reach, risk, or reversibility. Consolidate where one fix covers several findings.
 
@@ -50,8 +51,8 @@ Shape the write-up to the artifact — a three-line prompt deserves a paragraph,
 
 - read-only by default — edit only when the user asks for fixes
 - structure before style, and weigh subtraction before addition: don't nitpick wording while the skeleton is broken, and don't prescribe what a capable model already does well
-- every significant claim carries evidence a reader can check
-- keep it actionable: a short ordered list beats an exhaustive inventory
+- every significant claim carries evidence a reader can check, and a fix respects what the artifact's consumers and callers already require — don't propose a format, cap, or confirmation step that breaks a contract or removes authorization the user granted
+- keep it actionable: a short ordered list beats an exhaustive inventory, and "nothing here needs changing" is a legitimate result rather than a gap to fill
 
 ## Failure modes
 

@@ -1,172 +1,137 @@
-# Worked Example: tightening craft-critique
+# Worked example: one full session
 
-A walk-through of a full autoresearch cycle against a real CraftKit skill. **This is an illustrative example, not a record of an actual run** — numbers and outputs are plausible, but the loop has not been executed end-to-end. Use it as a concrete reference for the shape of a session and how KEEP/DISCARD judgments play out in practice.
+A walk-through of a complete autoresearch cycle, from experiment contract to session acceptance.
 
-> **Note.** `craft-critique` is the read-only review skill — it surfaces findings and stops there. At the time of this example its output contract was a fixed five-section template, which made shape evals easy to write; that contract has since moved to a judgment contract (#150), so a fresh run today would score whether each required signal is conveyed rather than section shape — see `eval-guide.md` § "The prescription ratchet." The loop discipline the example teaches — one hypothesis per experiment, simplicity judgment on DISCARD, deletion as a real mutation level, comparative evals catching what binary misses — is what matters, not which skill happens to be the target.
+**This is an illustrative example, not a record of an actual run.** The target, the inputs, and every number below are invented to show the shape of a session and how the judgments play out. Do not cite these figures as evidence about anything.
 
-## Setup
+The target is an ordinary team asset rather than a CraftKit skill: `prompts/pr-description.md`, a prompt that turns a diff into a pull-request description. For a `SKILL.md` target the loop shape is the same, but the edit unit and a few of the judgments differ — see `SKILL.md` § "When the target is a skill (vs a prompt)".
 
-- **Target skill**: `skills/craft-critique/SKILL.md`
-- **Motivation**: review outputs are inconsistent between Claude Code and Codex; section counts drift, issue lists run long, some recommendations come back as questions.
-- **Test inputs** (three realistic review prompts stored in `~/.craftkit/autoresearch/craft-critique/<session>/runs/inputs/`):
-  1. **Short**: a 15-line auth function with a subtle off-by-one bug
-  2. **Medium**: a CI config file with three issues of different severity
-  3. **Long**: a 150-line React component mixing concerns
-- **Train/holdout**: `holdout: waived (only three realistic review prompts available)` — below the 6-input minimum, so the 1-week re-run on fresh inputs is mandatory for this session
-- **Evals**:
-  - E1 [Tier 1, Structure]: output contains exactly five H2 sections — *What's working*, *Issues*, *Recommended changes*, *Failure modes*, *Minimal rewrite plan* — in that order. *(grep + ordering check)*
-  - E2 [Tier 1, Length]: the *Issues* section contains at most five items. *(regex count)*
-  - E3 [Tier 2, Inclusion]: every item in *Recommended changes* begins with an imperative verb (add, remove, require, rename, …). *(structural regex against a verb whitelist)*
-  - E4 [Tier 3, Comparative]: is the review more actionable than the baseline? *(LLM judge with explicit rubric: "a review is more actionable when a reader could act on ≥80% of its recommendations without clarifying questions.")*
-- **Runs per experiment**: 2
-- **Max score per experiment**: (E1 + E2 + E3) × 3 inputs × 2 runs = **18 binary points** + E4 × 3 × 2 = **6 comparative points** = **24 total**
-- **Tier 1-2 share**: 3/4 (75%) — above the 50% floor
-- **Budget**: 8 experiments
-- **Stop condition**: ≥ 95% (23/24 or better) for 3 consecutive kept experiments
+## Experiment contract
 
-## Versioning mode
+- **target**: `prompts/pr-description.md`
+- **mutable files**: `prompts/pr-description.md`; everything else frozen
+- **run directory**: all inputs, outputs, and checkpoints live outside the repo being tuned, in one task-local directory:
 
-`git-assisted`:
+  ```bash
+  RUN_DIR="$HOME/.craftkit/autoresearch/pr-description/2026-05-04-verification-clarity"
+  mkdir -p "$RUN_DIR/inputs"
+  ```
+
+- **inputs**: 8 real merged diffs from the last month — 6 train, 2 holdout, staged as `$RUN_DIR/inputs/<id>.diff`. The holdout pair covers the same failure territory as train (one multi-file refactor, one behavior change with a migration), not easier cases.
+- **holdout commitment**: diffs 7-8 stay sealed during the loop; accept the session only if the final holdout score does not regress below the baseline holdout score
+- **evals**:
+  - E1 [binary, outcome]: the description names the user-visible behavior change, not just the files touched.
+  - E2 [binary, outcome]: it states how the change was verified, or says plainly that it wasn't.
+  - E3 [binary, form proxy]: every claim about behavior points at a file or symbol that appears in the diff. Nothing downstream parses the description, so this proxy has no consumer behind it — it guards against unattributed claims and never leads a KEEP. It also cannot see whether the diff *supports* a claim; presence of an attribution is all it tests.
+  - E4 [comparative]: is this more useful to a reviewer than the baseline description for the same input? Rubric: a reviewer could decide what to look at first without opening the diff.
+- **runner design**: one run per input, scored by a second pass with the rubric pasted in.
+
+  ```bash
+  node tools/run-prompt.mjs --prompt prompts/pr-description.md \
+    --input "$RUN_DIR/inputs/<id>.diff" > "$RUN_DIR/<exp>/<id>.md"
+  ```
+
+  `tools/run-prompt.mjs` is this team's own two-file helper, not something CraftKit ships — any repeatable command works. Executor: it calls one mid-tier chat model at temperature 0, sending the prompt file and the diff and nothing else (no repo context, no tools). Cost: about 40 seconds and roughly a cent per input on that model's published per-token price, so a full train pass is ~4 minutes and ~6 cents. The runner and the four evals are frozen together for the session; changing either means rebaselining.
+- **versioning**: file-checkpoint mode (see below)
+- **budget**: 8 experiments
+- **stop condition**: train score ≥ 22 of 24
+
+**Scoring.** Six train inputs. E1, E2, and E3 are binary — 1 for pass, 0 for fail — so they contribute at most 6 points each, 18 in all. E4 scores win = 1, tie = 0.5, loss = 0 against the baseline output for the *same* input, so it contributes 0-6. Train max is **24**; holdout max, on 2 inputs, is 8. These are small numbers: good enough to tell a broken output from a working one, and not good enough to make a one-point difference mean anything.
+
+## Checkpoint and rollback
+
+File-checkpoint mode — copy the file *before* you touch it, restore that copy on DISCARD. A checkpoint taken after the edit records the edit:
 
 ```bash
-git checkout -b autoresearch/craft-critique
-git add skills/craft-critique/SKILL.md && git commit -m "autoresearch: baseline snapshot"
+mkdir -p "$RUN_DIR/exp-2"
+cp prompts/pr-description.md "$RUN_DIR/exp-2/checkpoint.md"   # before mutating
+cp "$RUN_DIR/exp-2/checkpoint.md" prompts/pr-description.md   # on DISCARD
 ```
 
-Every KEEP stays on the branch. Every DISCARD rolls back *only* the touched file:
+Git-assisted mode works the same way with a commit per kept experiment. Roll back a DISCARD by restoring the file from the last kept commit:
 
 ```bash
-git reset --soft HEAD~1
-git restore --source=HEAD --staged --worktree -- skills/craft-critique/SKILL.md
+git restore --source=HEAD -- prompts/pr-description.md
 ```
 
-Never `git reset --hard` — that would destroy unrelated user work.
+Never `git reset --hard`, and don't rewrite history to make the log look clean. Run records stay outside the repo in `$RUN_DIR`; only the mutable target changes appear in the worktree.
 
 ## Experiment log
 
-Recording both `skill_lines` and `folder_lines` every experiment is what catches bloat before it becomes invisible. In this run only `SKILL.md` changes, so `folder_lines` moves in lockstep with `skill_lines`.
+### Baseline (exp 0) · train 11/24 · holdout 4/8 · 34 lines
 
-### Baseline (exp 0) · 14/24 (58%) · skill_lines 101 · folder_lines 192
+Per-eval: E1 2/6 + E2 1/6 + E3 5/6 + E4 3.0 = **11/24**.
 
-Failure patterns:
-- 2 of 6 runs returned 3 sections instead of 5 (E1 fail)
-- 4 of 6 runs had 6+ issues, including "minor" nits that should have been cut (E2 fail)
-- 2 of 6 runs phrased recommendations as questions (E3 fail)
-- E4 tied baseline by definition (6/6 tie → 3 points)
+- E1 failed on 4 of 6 — descriptions summarized the diff ("updated `auth.ts` and three tests") without ever saying what changed for a user.
+- E2 failed on 5 of 6 — no mention of testing at all, in either direction.
+- E3 passed on 5 of 6 — one output asserted a performance improvement while naming no file or symbol from the diff. What the check caught is the missing attribution; whether the diff would have supported the claim is beyond what it can see.
+- E4 is 3.0 by construction: at baseline every comparison is an output against itself, so six ties × 0.5.
 
-### Exp 1 — KEEP · 18/24 · skill_lines 101 → 104 (+3) · folder_lines 192 → 195 (+3)
+The baseline leaves clear room, so there is something for the loop to learn. Had it come back at 23/24 instead, the honest first move would have been to read the outputs and decide between "this prompt already does the job" and "these evals only measure form" — not to start mutating.
 
-**Hypothesis**: section count drifts because the Output format section lists five sections informally rather than requiring exactly five.
+### Exp 1 — KEEP · train 20/24 · 36 lines (+2)
 
-**Change** (Level 1, wording): in SKILL.md Output format, replaced the loose section list with `Return *exactly* these five sections in this order:` followed by the explicit bullet list.
+**Hypothesis**: E1 and E2 fail because the prompt asks for "a summary of the changes" — it never says the description has to answer *what changed for a user* and *how do we know it works*.
 
-**Result**:
-- E1: 2/6 → 6/6
-- E2: unchanged
-- E3: unchanged
-- E4: 3/6 (all ties)
+**Change** (Level 1, wording): replaced "summarize the changes" with a sentence naming the two questions every description must answer.
 
-**Decision**: +4 points, +3 lines. KEEP (clear improvement with negligible cost).
+**Result**: E1 2/6 → 5/6, E2 1/6 → 5/6, E3 unchanged at 5/6, E4 4 wins + 2 ties = 5.0. Total 5 + 5 + 5 + 5.0 = **20/24**.
 
-```bash
-git commit -m "autoresearch: require exactly five output sections"
-```
+**Decision**: +9 points over baseline, +2 lines. KEEP. The outcome evals led; the +2 lines are noise-sized. Still short of the 22-point stop.
 
-### Exp 2 — KEEP · 21/24 · skill_lines 104 → 105 (+1) · folder_lines 195 → 196 (+1)
+### Exp 2 — DISCARD · train 19/24 · 51 lines (+15)
 
-**Hypothesis**: the *Issues* list is unbounded because the SKILL.md says "prioritized list" without a cap.
+**Hypothesis**: the remaining E1 and E2 failures are formatting drift — a required section template would pin them down.
 
-**Change** (Level 1): changed "prioritized list of issues" to "prioritized list of at most five issues, highest severity first."
+**Change** (Level 3, structure): added a five-section output template with a worked example.
 
-**Result**:
-- E2: 2/6 → 6/6
-- Others unchanged.
+**Result**: E1 and E2 unchanged at 5/6, E3 unchanged at 5/6. E4 turned its two ties into losses — the judge flagged the templated descriptions as padded, with empty sections on small diffs — giving 4 wins + 2 losses = 4.0. Total 5 + 5 + 5 + 4.0 = **19/24**.
 
-**Decision**: +3 points, +1 line. KEEP.
+**Decision**: −1 point against the kept exp-1 state, +15 lines, comparative regression. DISCARD. This is the shape-fix reflex: the failing evals were about *what the output must convey*, and nothing downstream requires a section shape, so the template answered a question nobody asked. Restored from `$RUN_DIR/exp-2/checkpoint.md`.
 
-### Exp 3 — DISCARD · 20/24 · skill_lines 105 → 119 (+14) · folder_lines 196 → 210 (+14)
+### Exp 3 — KEEP (deletion) · train 20/24 · 30 lines (−6)
 
-**Hypothesis**: recommendations drift into questions because the SKILL.md doesn't model the right shape.
+**Hypothesis**: the prompt's original six-line example predates the exp-1 rule and may now be dead weight.
 
-**Change** (Level 2, example): added a 15-line "Recommended changes: good vs bad examples" block.
+**Change** (deletion): removed the example.
 
-**Result**:
-- E3: 4/6 → 5/6 (one extra pass)
-- E4: **one loss** — the judge flagged the long example block as making reviews "feel formulaic"
-- Total: -1 point
+**Result**: every eval unchanged — E1 5/6, E2 5/6, E3 5/6, E4 5.0. Total **20/24**.
 
-**Decision**: −1 net, +14 lines, and a comparative regression. DISCARD. A small binary gain that costs a comparative point and 14 lines of prompt bloat is a bad trade.
+**Decision**: same score, six lines shorter. KEEP — the example was load-bearing only in the author's imagination. A deletion that holds is a real result, not a formality.
 
-```bash
-git reset --soft HEAD~1
-git restore --source=HEAD --staged --worktree -- skills/craft-critique/SKILL.md
-```
+### Exp 4 — KEEP · train 23/24 · 31 lines (+1) · STOP
 
-### Exp 4 — KEEP · 23/24 · skill_lines 105 → 107 (+2) · folder_lines 196 → 198 (+2)
+**Hypothesis**: the remaining E1 and E2 failures land on the same input, so they likely share a cause. The prompt says to state how the change was verified but doesn't say what to do when it wasn't, so those outputs drop the whole subject — and with it the behavior statement.
 
-**Hypothesis**: same target as exp 3, but a lighter intervention — one-line rule instead of a 15-line example block.
+**Change** (Level 1, wording): one sentence — if no verification was run, say so explicitly rather than omitting the section.
 
-**Change** (Level 1): added one sentence to Output format: *"Each Recommended change is phrased as an imperative command, not a question."*
+**Result**: E2 5/6 → 6/6, E1 5/6 → 6/6 (that one output had been silently dropping both), E3 unchanged at 5/6, E4 6 wins = 6.0. Total 6 + 6 + 5 + 6.0 = **23/24**.
 
-**Result**:
-- E3: 4/6 → 6/6
-- E4: 4/6 wins + 2/6 ties (5/6 points, no regression)
-- Others unchanged.
+**Decision**: +3 points over the kept exp-3 state, +1 line. KEEP. 23 ≥ 22, so the stop condition is met and the loop ends here — experiment 4 of a budget of 8. Nothing is re-run "to be sure": the condition was written to be checkable, and it checks out.
 
-**Decision**: +2 points, +2 lines. KEEP. Demonstrates that a principle statement can outperform a bigger example when the target audience is an agent that already understands the concept.
+## Session acceptance
 
-### Exp 5 — KEEP (deletion experiment) · 23/24 · skill_lines 107 → 103 (−4) · folder_lines 198 → 194 (−4)
+Everything above is a *candidate*. Ran it on the sealed holdout: **7/8 vs 4/8 baseline**. No regression, so the candidate becomes the accepted artifact and the session is reported as an improvement.
 
-Running the scheduled deletion experiment early because the artifact has already grown.
-
-**Hypothesis**: the SKILL.md's *"When the review feels vague"* paragraph may duplicate `references/failure-modes.md` without adding signal of its own.
-
-**Change** (Level 3, deletion): removed the four-line *When the review feels vague* paragraph.
-
-**Result**: all evals unchanged. Outputs still cite the failure-modes reference when appropriate via the reference link that remains.
-
-**Decision**: 0 net, −4 lines. KEEP (same score, shorter artifact — the paragraph was dead weight).
-
-### Exp 6 — KEEP (stability check) · 23/24 · skill_lines 103 (unchanged) · folder_lines 194 (unchanged)
-
-**Change**: none — re-ran the same inputs to confirm the score is stable, not a lucky single run.
-
-**Result**: 23/24 again. Three consecutive kept experiments at ≥ 95% (exp 4, 5, 6). Stop condition triggered.
+Had holdout come back at 3/8, the mutations would have been **rejected**, and rejection would be physical: restore `prompts/pr-description.md` — the one mutable file — from the baseline checkpoint, leave every other file in the worktree alone, log which mutations were rolled back and on what numbers, and report an overfit finding with no claim that anything improved. Reading those failing holdout outputs to plan a next pass is fine, but it spends the holdout: a later acceptance needs fresh inputs, or has to say plainly that it was gated on an exposed holdout.
 
 ## Final
 
 ```
-Score:         14/24 (58%) → 23/24 (96%)  (+9 raw, +38 percentage points)
-Experiments:   6 (5 keep, 1 discard)
-skill_lines:   101 → 103  (+2%, essentially zero bloat)
-folder_lines:  192 → 194  (+1%, essentially zero bloat)
-Budget used:   6/8
+Train:         11/24 → 23/24
+Holdout:       4/8 → 7/8  (acceptance gate: no regression)
+Experiments:   4 (3 keep, 1 discard)
+Lines:         34 → 31
+Budget used:   4/8
 ```
 
-### Git log
-
-```
-b7c8d9e autoresearch: delete redundant 'when vague' paragraph
-f1a2b3c autoresearch: require imperative phrasing for recommendations
-9e8d7c6 autoresearch: cap issues section to five items
-4d5e6f7 autoresearch: require exactly five output sections
-a0b1c2d autoresearch: baseline snapshot
-```
-
-Exp 3 (DISCARD) is absent — `git reset --soft` + `git restore` removed it from history cleanly.
+**Next steps**: one E3 failure remains, and E3 is a form proxy — worth a look at that output, not worth a mutation on its own. If someone wants another pass, read fresh real outputs first and add evals only for a dimension those outputs show is missing.
 
 ## What this example illustrates
 
-- **One hypothesis per experiment keeps deltas attributable.** When exp 3's total score moved, the +14 lines and the E4 regression were both visible and traceable to a single change. Bundled changes would have hidden that.
-- **Simplicity judgment prevents bloat.** The +1 point on E3 in exp 3 was *tempting*; the 14-line cost and the E4 loss made it the wrong call. Defending that DISCARD is a core skill.
-- **Deletion is a real mutation level.** Exp 5 held the score while shrinking the artifact — evidence that the deleted paragraph was load-bearing only in the author's imagination.
-- **Comparative evals catch what binary misses.** E3's binary gain in exp 3 was real; E4's comparative loss was the honest signal that the change made the artifact worse on the axis users actually feel.
-- **Stop early.** Six experiments hit the stop condition out of a budget of eight. Burning the remaining two "just in case" would have risked overfitting without upside.
-- **Baseline is a signal, not a score to beat.** This example starts at 58% — leaving clear room for the loop to learn. If your baseline scores near 100%, the suite is probably too loose; see `eval-guide.md` § "If your baseline scores near 100%" before mutating.
-
-## Simplifications from a real run
-
-- Running and judging E4 requires an explicit rubric and, ideally, a fixed judge model. See `eval-guide.md` § "Drafting evals with an agent" and `eval-guide.md` § "The golden rule."
-- A Node eval runner (`scripts/run-experiment.mjs`) would take the three inputs × two runs automatically. This example assumes the runs are invoked manually and outputs saved by hand into `~/.craftkit/autoresearch/craft-critique/<session>/runs/exp-N/<input-id>/`.
-- The full artifact layout (`results.tsv`, `changelog.md`, `research-log.json`, `eval-runner.md`) is referenced but not shown — see the SKILL.md § "Artifact layout" for the folder shape.
-- Real runs will see more noise in Tier 3 evals than this example shows. Plan for it — run three times instead of two if the comparative evals feel jittery.
+- **One hypothesis per experiment keeps deltas attributable.** Exp 2's comparative loss and its +15 lines were both traceable to one change. Bundled edits would have hidden which piece cost what.
+- **Outcome evals lead; unbacked form proxies ride along.** Every KEEP here was driven by E1/E2/E4. E3 never led a decision — nothing consumes the description's shape, so it stayed a guard. Had a bot parsed these descriptions to a required schema, a check on that schema would have been an outcome check and could have led a KEEP.
+- **A tempting binary gain is not automatically worth it.** Exp 2 promised structure and cost a comparative point and fifteen lines.
+- **Deletion is a real mutation level.** Exp 3 shrank the artifact without moving the score.
+- **The holdout gate decides what gets reported.** Train numbers alone never made this session an improvement; until the gate ran, exp 4's artifact was a candidate.
+- **Stop when the condition is met.** Four experiments of a budget of eight. Spending the other four "just in case" would have risked overfitting for no expected gain.

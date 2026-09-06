@@ -82,7 +82,7 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | `spec-charter` | a repo needs direction, Objectives, Decisions, system shape, or stale-spec reassessment | creates or amends `spec/charter.md` and `spec/system-map.md` |
 | `spec-grill` | a consumer needs a capability handle (`component:`), a contract is cross-tree, or the user asked for a 3-axis audit — not a required follow-on to charter | creates or refines `spec/capabilities.md` after evidence review |
 
-When two skills could trigger, choose the least invasive one that answers the request: review-only and apply/fix/improve wording both go to `craft-critique` (read-only by default; applies fixes when asked); repeated measurable failures go to `craft-autoresearch`; session wrap-up goes to `craft-handoff`.
+When two skills could trigger, choose the least invasive one that answers the request: review-only and apply/fix/improve wording both go to `craft-critique` (read-only by default; applies fixes when asked); `craft-autoresearch` is explicit-only — route there when the user asks for measured iteration and brings test inputs and criteria, not automatically because failures repeat; session wrap-up goes to `craft-handoff`.
 
 Terminology note: `craft-autoresearch` uses an **eval runner** for replaying test inputs and scoring outputs. Do not call that runner a "harness."
 
