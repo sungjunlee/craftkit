@@ -59,11 +59,14 @@ Success criteria:
 </task>
 
 <rules>
-- All paths are worktree-relative
+- Repo paths below are worktree-relative; handoff-store paths (`~/.craftkit/handoff/...`) are absolute
 - Read `~/.craftkit/handoff/docs/<slug>.md` first if reachable; if missing or inconsistent with this snapshot, proceed with this snapshot and surface the discrepancy
+- <constraint or rejected approach the next session must not redo>
 - Read `<key file>` first to confirm <why>
 - Run `<actual verification command>` before declaring done
 </rules>
 ```
+
+The first two rules always apply. The rest are conditional: include a constraint line for every boundary the next session would otherwise cross, a key-file line only when a specific file matters, and a verification line only when this project has a command that actually applies to the task. A generic "run the tests" or "read the key file" the session cannot name concretely invents work for the next session — drop the line instead.
 
 The prompt must remain usable if the doc is unreachable, but it should still instruct the next agent to read the doc first when available.

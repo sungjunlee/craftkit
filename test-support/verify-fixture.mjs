@@ -43,8 +43,10 @@ export function createFixture() {
     "skills/example/SKILL.md",
     "---\nname: example\ndescription: Example skill for tests.\n---\n\n# Example\n",
   );
-  writeFile(root, "skills/craft-critique/references/failure-modes.md", "# Failure Modes\n\nCanonical copy.\n");
-  writeFile(root, "skills/craft-prompt/references/shared-principles.md", "# Shared principles\n\nCanonical copy.\n");
+  // Two canonical (non-mirrored) reference files, kept under generic skill
+  // names so the fixture does not depend on any particular live skill.
+  writeFile(root, "skills/craft-alpha/references/alpha-notes.md", "# Alpha notes\n\nCanonical copy.\n");
+  writeFile(root, "skills/craft-beta/references/beta-notes.md", "# Beta notes\n\nCanonical copy.\n");
   writeFile(
     root,
     "package.json",
@@ -68,11 +70,10 @@ export function createFixture() {
 }
 
 export function withInjectedBaseline(root, baseline) {
-  // The checked-in knownSectionDeviations baseline is empty (#126/#133 cleared
-  // the last entries), so mechanism tests for the warn-vs-fail/stale-entry
-  // branches inject a synthetic baseline into the fixture's copy of
-  // scripts/verify-section-contract.mjs rather than relying on real (now
-  // nonexistent) entries.
+  // The checked-in knownSectionDeviations baseline is empty, so mechanism tests
+  // for the warn-vs-fail/stale-entry branches inject a synthetic baseline into
+  // the fixture's copy of scripts/verify-section-contract.mjs rather than
+  // relying on real (now nonexistent) entries.
   const contractPath = path.join(root, "scripts/verify-section-contract.mjs");
   const content = fs.readFileSync(contractPath, "utf8");
   const updated = content.replace(

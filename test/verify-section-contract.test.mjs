@@ -95,13 +95,12 @@ expectCheckFailure("fails on a non-baselined missing required section", moduleFi
 
 test("warns (and still passes) on a baselined missing required section", () => {
   const root = createFixture();
-  // Note: craft-critique and craft-prompt are avoided here because
-  // createFixture() already seeds a references/ dir under each of them
-  // (canonical reference copies), which would also trip the reference-index
-  // check or the References requirement.
-  // The checked-in knownSectionDeviations baseline is empty (#126/#133), so
-  // inject a synthetic entry for craft-handoff and reproduce exactly those
-  // two gaps to exercise the warn (not fail) branch.
+  // Note: the craft-* skill names createFixture() seeds a references/ dir under
+  // are avoided here — a seeded references/ dir would also trip the
+  // reference-index check or the References requirement.
+  // The checked-in knownSectionDeviations baseline is empty, so inject a
+  // synthetic entry for craft-handoff and reproduce exactly those two gaps to
+  // exercise the warn (not fail) branch.
   withInjectedBaseline(root, { "craft-handoff": ["Output format", "Guardrails"] });
   writeFile(
     root,
@@ -121,8 +120,8 @@ test("warns (and still passes) on a baselined missing required section", () => {
 });
 
 expectCheckFailure("fails on a stale baseline entry whose section is now present", moduleFile, fn, (root) => {
-  // Inject a synthetic baseline entry (the checked-in baseline is empty as of
-  // #126/#133) listing "Output format" and "Guardrails", then supply a fixture
+  // Inject a synthetic baseline entry (the checked-in baseline is empty)
+  // listing "Output format" and "Guardrails", then supply a fixture
   // that is fully compliant, satisfying both (and so making both entries stale).
   withInjectedBaseline(root, { "craft-handoff": ["Output format", "Guardrails"] });
   writeFile(root, "skills/craft-handoff/SKILL.md", compliantCraftSkillBody("craft-handoff"));
@@ -178,23 +177,12 @@ test("sectionContractFindings requires References only when a references/ dir ex
 });
 
 test("sectionContractFindings flags 'Common mistakes' as a missing Failure modes section (exemption retired in #150/#151)", () => {
-  const body = compliantCraftSkillBody("craft-critique").replace(
+  const body = compliantCraftSkillBody("craft-x").replace(
     "## Failure modes\n\n- it might fail\n\n",
     "## Common mistakes\n\n- it might fail\n\n",
   );
 
-  assert.deepEqual(sectionContractFindings("craft-critique", body, false), ["Failure modes"]);
-});
-
-test("sectionContractFindings accepts the loop-shaped Output format decomposition", () => {
-  const body = compliantCraftSkillBody("craft-autoresearch")
-    .replace("## Steps\n\n1. Do it.\n\n", "## How the loop runs\n\n1. Do it.\n\n")
-    .replace(
-      "## Output format\n\nA single line.\n\n",
-      "## Experiment contract\n\nContract fields.\n\n## Final artifact\n\nAccepted version.\n\n",
-    );
-
-  assert.deepEqual(sectionContractFindings("craft-autoresearch", body, false), ["Steps/Workflow"]);
+  assert.deepEqual(sectionContractFindings("craft-x", body, false), ["Failure modes"]);
 });
 
 test("sectionContractFindings requires Mode Router and Completion Contract nested under Execution Contract", () => {

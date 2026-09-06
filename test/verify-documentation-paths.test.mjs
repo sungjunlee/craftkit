@@ -18,14 +18,6 @@ expectCheckFailure("fails when README required path text is missing", moduleFile
   writeFile(root, "README.md", "# Fixture\n");
 }, /README\.md must include ## 30-second path/);
 
-expectCheckFailure("fails when README leaks maintainer-local autoresearch paths", moduleFile, fn, (root) => {
-  writeFile(
-    root,
-    "README.md",
-    "# Fixture\n\n## 30-second path\n\nSee docs/status.md and run npm run verify.\n\n`~/.craftkit/autoresearch/example/run`\n",
-  );
-}, /README\.md must keep maintainer-local autoresearch paths in docs\/status\.md/);
-
 expectCheckFailure("fails when docs status is missing required evidence text", moduleFile, fn, (root) => {
   writeFile(root, "docs/status.md", "# Status\n");
 }, /docs\/status\.md must include Public evidence/);

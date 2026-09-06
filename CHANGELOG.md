@@ -4,8 +4,14 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Removed (BREAKING)
+
+- Removed `craft-autoresearch` and `craft-critique`. The maintainer rarely uses them, and their general experiment/review guidance has no specialized runner or other execution machinery that currently earns a separate skill. Their active routing, invocation metadata, dedicated verifier rules and tests are removed; the marketplace now lists four skills. No checklist is moved into `craft-prompt` or a replacement skill.
+- Historical changelog entries, prior-art attribution and external run artifacts are preserved. Retired skill documents and observations remain available at [their last retained revision](https://github.com/sungjunlee/craftkit/tree/c2f9240d9cc256ae308f19a8bb8ff70458b72b5f/skills). The existing skill-independent [loop exit methodology](docs/methodology/loop-stop-conditions.md) remains available.
+
 ### Changed
 
+- `craft-handoff` removes the stale `craft-prompt` fallback dependency and a stale step reference, splits the paths rule (repo paths worktree-relative; handoff-store paths and the `worktree:` hook identity absolute), drops the 1-3 next-step cap, makes the key-file and verification `<rules>` lines conditional so a handoff can't invent work for the next session, and carries the constraints, decisions, and rejected approaches that bound the next task into the resume prompt's orientation floor.
 - `craft-prompt` replaces the six-block assembly method with outcome, context, boundaries, and evidence; roles, XML, examples, and process instructions become optional controls for a concrete need or observed failure (#210).
 - `spec-charter` create/amend proposes a Direction trigger pointer and a marker-bounded Mission+Non-Goals projection into one harness file; writes only after confirm. Reassess names stale projection vs live Non-Goals (#178).
 - System map Runtime Boundaries is a `tree | owns | local instructions | do not` table; multi-tree maps without named local instruction files are under-evidenced (#179).

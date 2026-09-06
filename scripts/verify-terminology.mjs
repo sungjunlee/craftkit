@@ -15,17 +15,6 @@ import { root, fail, listFiles, readText, relative } from "./verify-shared.mjs";
 //     of truth, so a future maintainer isn't left guessing.
 export const terminologyRules = [
   {
-    // README.md's "Terminology note" (search that phrase): craft-autoresearch
-    // uses an "eval runner". Do not call that runner a "harness".
-    // Scoped to craft-autoresearch's own docs. The forbidden pattern is a
-    // word-boundary match on "harness" with a negative lookbehind for the
-    // "craft-" prefix, so a leftover "craft-harness" mention would be exempt
-    // but a bare "harness" is still caught.
-    files: ["skills/craft-autoresearch/**/*.md"],
-    forbidden: [/(?<!craft-)\bharness\b/i],
-    why: 'README.md\'s Terminology note: craft-autoresearch must say "eval runner", not "harness"',
-  },
-  {
     // Guards the #134 neutralization (PRD-RH E2.2, commit 3bf159a): the
     // spec-* spines used to lean on dev-backlog/dev-relay vocabulary as
     // load-bearing terms — "relay-learning destination" as the admission-test

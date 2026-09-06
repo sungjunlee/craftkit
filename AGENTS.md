@@ -12,10 +12,6 @@ CraftKit is a cross-agent toolkit for prompt and skill authoring. Skills live at
 - Multi-section artifacts use English XML tag names even when the body is not English.
 - Paths in skill text are worktree-relative.
 
-## craft-autoresearch
-
-Run artifacts live at `~/.craftkit/autoresearch/<skill>/<YYYY-MM-DD-slug>/` — outside git. Commit only kept skill mutations; findings go in the commit body. For this skill, `SKILL.md` and `references/*.md` are one unit.
-
 ## Commits
 
 `improve(<skill>)` · `docs(<skill>)` · `refactor(<skill>)` · `chore:`

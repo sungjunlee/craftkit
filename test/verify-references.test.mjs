@@ -189,76 +189,9 @@ ${citations}
   }
 }
 
-function seedCraftAutoresearch(root, { omitFiles = [], omitCitations = [] } = {}) {
-  const omitFileSet = new Set(omitFiles);
-  const omitCitationSet = new Set(omitCitations);
-  const citations = requiredCitations("craft-autoresearch")
-    .filter((citation) => !omitCitationSet.has(citation))
-    .map((citation) => `- \`${citation}\``)
-    .join("\n");
-
-  writeFile(
-    root,
-    "skills/craft-autoresearch/SKILL.md",
-    `---
-name: craft-autoresearch
-description: Example craft-autoresearch skill for required-reference tests.
----
-
-# craft-autoresearch
-
-## Purpose
-
-Runs measured iterations against an eval runner.
-
-## Use this when
-
-- always
-
-## Inputs
-
-- none
-
-## Steps
-
-1. Do it.
-
-## Output format
-
-A single line.
-
-## Guardrails
-
-- stay safe
-
-## Failure modes
-
-- it might fail
-
-## Example
-
-Input: x
-Output: y
-
-## References
-
-${citations}
-`,
-  );
-
-  for (const citation of requiredCitations("craft-autoresearch")) {
-    if (omitFileSet.has(citation)) {
-      continue;
-    }
-
-    writeFile(root, path.join("skills/craft-autoresearch", citation), `# ${path.basename(citation, ".md")}\n`);
-  }
-}
-
 const requiredReferenceSeeders = {
   "spec-charter": seedSpecCharter,
   "spec-grill": seedSpecGrill,
-  "craft-autoresearch": seedCraftAutoresearch,
 };
 
 for (const { skill, citations } of REQUIRED_SKILL_REFERENCES) {

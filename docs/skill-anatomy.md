@@ -4,7 +4,7 @@ Status: normative. Canonical section contract for every `SKILL.md` in CraftKit. 
 
 ## Scope
 
-- **craft-\*** — artifact skills: `craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-handoff`.
+- **craft-\*** — artifact skills: `craft-prompt`, `craft-handoff`.
 - **spec-\*** — spec-axis skills: `spec-charter`, `spec-grill`. Router-contract variant, not the craft-* shape.
 
 ## Frontmatter contract
@@ -19,11 +19,11 @@ spec-* only: `argument-hint`, `compatibility: Requires git.`, `metadata.related-
 
 craft-* extra fields are conditional on a real need, not family-wide parity:
 
-- `metadata.related-skills` — only where a tight cluster exists (`craft-critique` ↔ `craft-autoresearch` today).
+- `metadata.related-skills` — only where a tight cluster exists. No craft-* skill qualifies today.
 - `argument-hint` — only for real positional modes (`create|amend`). No craft-* skill qualifies today.
 - `compatibility` — only for real requirements. Absence means none.
 
-**H1 rule**: the H1 is the literal skill slug, e.g. `# craft-critique`, matching `name`.
+**H1 rule**: the H1 is the literal skill slug, e.g. `# craft-prompt`, matching `name`.
 
 ## Heading case rule
 
@@ -59,5 +59,4 @@ Skills may add extra sections for their own mechanics (loop control, risk gates,
 
 ## Documented exemptions
 
-- **Output judgment contracts.** `## Output format` may state what the output must *convey* instead of a fixed section template. Autoresearch passes must not re-impose a template unless downstream tooling parses the sections.
-- **Loop-shaped Output format decomposition.** `craft-autoresearch` splits output into named parts (`Experiment contract` / `Baseline` / `Experiment log` / `Final artifact`). That satisfies the requirement; no separate top-level "Output format" heading is required when all parts are present.
+- **Output judgment contracts.** `## Output format` may state what the output must *convey* instead of a fixed section template. Do not re-impose a fixed template unless downstream tooling parses the sections.
