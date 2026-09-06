@@ -14,6 +14,6 @@ That check covers JSON syntax, package boundary, skill frontmatter, `SKILL.md` l
 
 ## Maintainer-local evidence
 
-Raw autoresearch run artifacts stay outside the repo at `~/.craftkit/autoresearch/<skill>/<YYYY-MM-DD-slug>/`. They are useful during development; a public checkout should not need them. The committed skill files are the kept output.
+Historically, `craft-prompt`, `craft-handoff`, and the retired `craft-critique` and `craft-autoresearch` had maintainer-local eval passes. Raw run artifacts remain outside the repo at `~/.craftkit/autoresearch/<skill>/<YYYY-MM-DD-slug>/`; they are historical evidence, not required inputs for a public checkout. Removing the two skills does not remove those records.
 
-Four skills (`craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-handoff`) have maintainer-local autoresearch pass artifacts. Newer skills have dogfood or contract-evidence notes only.
+The `spec-*` skills have dogfood or contract-evidence notes only.

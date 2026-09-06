@@ -52,7 +52,7 @@ git log --oneline -8
 
 If you must derive paths without the script, use the fallback target rules in `references/operational-details.md`.
 
-Then extract from the conversation:
+Then extract from the conversation, omitting any section with no real content rather than padding it:
 
 - **Done**: completed outcomes the next session needs.
 - **Decisions**: non-obvious choices with a `because <reason>` rationale.
@@ -69,32 +69,29 @@ This skill writes files and mutates the clipboard. If the trigger is ambiguous, 
 
 ### 1. Gather
 
-Run the gather script or fallback commands, then scan the conversation for the sections above. Omit empty sections instead of padding the handoff.
+Run the gather script or fallback commands, then scan the conversation for the sections above.
 
 ### 2. Distill
 
-The principle: include only what the next session cannot reconstruct from the diff alone. Every decision needs a `because <reason>`. Omit empty sections rather than padding. Put rationale, alternatives, and time order in the doc; put snapshot lines for orientation and execution in the prompt.
+The principle: include only what the next session cannot reconstruct from the diff alone. Every decision needs a `because <reason>`. Put rationale, alternatives, and time order in the doc; put snapshot lines for orientation and execution in the prompt.
 
 Keep failure narrative in the doc. What must still travel in the prompt is anything the next session would otherwise redo or violate: the user's constraints and scope boundaries, decisions already made, and rejected approaches that are now boundaries ("don't reintroduce the session store"). Make next steps observable, not aspirational. Link only to artifacts the next session can actually reach.
 
 ### 3. Compose the rich doc
 
-Write the doc first; it is the narrative source of truth. Include Project, Done, State, Decisions, What didn't work, and Next only when those sections have real content — see § Output format for the exact shape.
+Write the doc first; it is the narrative source of truth. Its sections are Project, Done, State, Decisions, What didn't work, and Next.
 
 Rules:
 
 - No `<task>` or `<rules>` in the doc.
 - Fill narrative depth only where it helps the next session.
 - Keep decisions reasoned. Add alternatives when they shaped the current state.
-- Use `references/artifact-shapes.md` when you need the exact markdown skeleton.
 
 ### 4. Compose the resume prompt
 
-The prompt must be usable even if the doc is unreachable, but it should command the next agent to read the doc first — see § Output format for the exact shape.
+The prompt must be usable even if the doc is unreachable, but it should command the next agent to read the doc first — see § Output format for the shape it must carry.
 
 Add `## Suggested skills` inside `<context>` only when a specific skill or capability would change the next agent's behavior.
-
-Use `references/artifact-shapes.md` when you need the exact XML skeleton.
 
 ### 5. Persist and copy
 
@@ -109,8 +106,6 @@ Use paths from the gather script verbatim.
 sed '1,/^---$/d;1,/^---$/d' "$PENDING_PATH" | bash <skill-dir>/scripts/copy-clipboard.sh
 ```
 
-If clipboard copy fails, it's non-fatal (see § Guardrails) — continue.
-
 ### 6. Inform
 
 Return the artifacts per § Output format.
@@ -122,7 +117,7 @@ Two artifacts, always produced together:
 - **Rich doc** — `DOC_PATH` (e.g. `~/.craftkit/handoff/docs/<worktree-slug>.md`). Shape: frontmatter plus a single `<context>...</context>` body.
 - **Resume prompt** — `PENDING_PATH` (e.g. `~/.craftkit/handoff/pending/<timestamp>-<worktree-slug>.md`). Shape: `<context>` (Project, State, Done snapshot, Decisions, Background) / `<task>` (next action, success criteria) / `<rules>` (path convention, doc-read, plus the constraints, key files, and verification command that actually apply).
 
-The machine wiring — `gather-state.mjs`, the paired doc+prompt layout, archive-before-overwrite, cross-platform clipboard copy, and the optional auto-load hook — is unchanged and is the durable part of this skill. Only how the artifact's prose is shaped is in the model's judgment below.
+The machine wiring is fixed: `gather-state.mjs`, the paired doc+prompt layout, archive-before-overwrite, cross-platform clipboard copy, and the optional auto-load hook. Only how the artifact's prose is shaped is judgment.
 
 **Chat return — must-convey.** Shape the chat return at your judgment, but it must convey:
 
@@ -152,7 +147,7 @@ Optional, when relevant: an auto-load hook pointer, or a `/goal` candidate when 
 - **Doc unreachable on resume**: the prompt snapshot must still be usable, and the next agent should flag the missing doc.
 - **Partial write**: if doc write succeeds but prompt write fails, recover by writing only the prompt.
 
-For exact artifact skeletons, read `references/artifact-shapes.md`. For stale prompts, concurrent wrap-ups, clipboard portability, pair-write recovery, cleanup commands, and hook edge cases, read `references/operational-details.md`.
+For stale prompts, concurrent wrap-ups, clipboard portability, pair-write recovery, cleanup commands, and hook edge cases, read `references/operational-details.md`.
 
 ## Example
 

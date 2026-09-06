@@ -100,14 +100,6 @@ export const REQUIRED_SKILL_REFERENCES = [
       "references/spec-pipeline-ready.md",
     ],
   },
-  {
-    skill: "craft-autoresearch",
-    citations: [
-      "references/mutation-guide.md",
-      "references/worked-example.md",
-      "references/eval-guide.md",
-    ],
-  },
 ];
 
 export function checkRequiredSkillReferences() {

@@ -17,10 +17,6 @@ export function checkDocumentationPaths() {
     }
   }
 
-  if (text.includes("~/.craftkit/autoresearch/")) {
-    fail("README.md must keep maintainer-local autoresearch paths in docs/status.md");
-  }
-
   if (!fs.existsSync(statusPath)) {
     fail("docs/status.md must exist as the public quality evidence index");
     return;

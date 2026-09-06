@@ -10,21 +10,13 @@ import { root, fail, warn, relative, readText } from "./verify-shared.mjs";
 
 // Each entry is a requirement slot: `key` is the label used in fail/warn messages,
 // `match(headings)` reports whether a skill's parsed headings satisfy the slot.
-// `headings` is the flat list from parseHeadings(); `hasHeadingAnyLevel` lets
-// loop-shaped skills satisfy "Output format" via their multi-part decomposition
-// (docs/skill-anatomy.md "Documented exemptions" § Loop-shaped Output format
-// decomposition) without hardcoding craft-autoresearch by name.
+// `headings` is the flat list from parseHeadings().
 const CRAFT_SECTION_CONTRACT = [
   { key: "Purpose", match: (h) => hasH2(h, "purpose") },
   { key: "Use this when", match: (h) => hasH2(h, "use this when") },
   { key: "Inputs", match: (h) => hasH2(h, "inputs") },
   { key: "Steps/Workflow", match: (h) => hasH2(h, "steps") || hasH2(h, "workflow") },
-  {
-    key: "Output format",
-    match: (h) =>
-      hasH2(h, "output format") ||
-      (hasHeadingAnyLevel(h, "experiment contract") && hasHeadingAnyLevel(h, "final artifact")),
-  },
+  { key: "Output format", match: (h) => hasH2(h, "output format") },
   { key: "Guardrails", match: (h) => hasH2(h, "guardrails") },
   { key: "Failure modes", match: (h) => hasH2(h, "failure modes") },
   { key: "Example", match: (h) => hasH2(h, "example") },
@@ -52,10 +44,8 @@ const SPEC_SECTION_CONTRACT = [
 // Ratchet baseline for #110: every section a skill is CURRENTLY missing, kept
 // in sync with docs/skill-anatomy.md "Current deviations". A baselined miss
 // warns (burn-down signal); remove the entry once the section is added, or
-// verify will fail telling you the entry is stale. #111/#112/#115 cleared the
-// spec-* and early craft-* entries; #126/#133 (the review-hardening
-// pass) cleared the remaining craft-harness/craft-skill-spec/craft-critique
-// entries, so the baseline is empty. Adding an entry back is an explicit,
+// verify will fail telling you the entry is stale. The baseline is currently
+// empty — every live skill satisfies its family contract. Adding an entry back is an explicit,
 // temporary act — do it only alongside a matching "Current deviations" note
 // in docs/skill-anatomy.md, and remove both together once the section lands.
 const knownSectionDeviations = {};
@@ -78,10 +68,6 @@ function parseHeadings(body) {
 
 function hasH2(headings, text) {
   return headings.some((heading) => heading.level === 2 && heading.text === text);
-}
-
-function hasHeadingAnyLevel(headings, text) {
-  return headings.some((heading) => heading.text === text);
 }
 
 function hasReferencesHeading(headings) {
