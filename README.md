@@ -167,6 +167,32 @@ npm run verify
 
 It checks JSON syntax, package boundaries, skill frontmatter, `SKILL.md` line budgets, terminology leaks, required README/status paths, and `npm pack --dry-run`.
 
+## Optional worknode test recipe
+
+`.worknode.yml` provides an optional foreground recipe for the existing Node
+verifier tests (`test/*.test.mjs`). This example assumes Node 24.18.1 is already
+installed at mise's default location,
+`$HOME/.local/share/mise/installs/node/24.18.1/bin/node`. Adjust the recipe's
+`node_bin` and task PATH for a different installation before running it. The
+recipe does not install Node or change the target's global PATH. Use an
+inventoried Linux target with that toolchain.
+
+```bash
+source_args=(--source-include .worknode.yml)
+while IFS= read -r file; do
+  source_args+=(--source-include "$file")
+done < <(git ls-files -- package.json scripts test test-support \
+  skills/spec-grill docs/skill-anatomy.md)
+worknode run verify-tests --target YOUR_LINUX_TARGET \
+  --source "$PWD" "${source_args[@]}" --plan --json
+```
+
+The source list includes the real skill used by the verifier fixtures and
+excludes the repository's `CLAUDE.md` symlink, which worknode does not transfer.
+Remove `--plan` to execute. The task writes TAP output to `out/verify-tests.tap`, which the foreground
+runner verifies and returns as its declared artifact. This focused task does
+not replace `npm test`, which also covers the spec-grill extract-signals suite.
+
 ## Prior art
 
 - [`sungjunlee/prompt-builder`](https://github.com/sungjunlee/prompt-builder) — predecessor project. Its templates and prompt-authoring lessons were absorbed into `craft-prompt`; the original 5-step, 6-block method has since been replaced by a lean outcome-and-boundary approach. Kept on GitHub for reference; new work happens here.

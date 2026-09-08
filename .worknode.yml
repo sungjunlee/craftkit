@@ -1,0 +1,23 @@
+schema_version: 1
+tasks:
+  verify-tests:
+    command:
+      - bash
+      - -c
+      - |
+        set -euo pipefail
+        node_bin="$HOME/.local/share/mise/installs/node/24.18.1/bin/node"
+        if [ ! -x "$node_bin" ]; then
+          printf 'required Node 24.18.1 executable is unavailable: %s\n' "$node_bin" >&2
+          exit 127
+        fi
+        export PATH="$HOME/.local/share/mise/installs/node/24.18.1/bin:$PATH"
+        mkdir -p out
+        set +e
+        node --test --test-reporter=tap test/*.test.mjs > out/verify-tests.tap 2>&1
+        status=$?
+        cat out/verify-tests.tap
+        exit "$status"
+    requirements: [os:linux, tool:node, tool:python3]
+    artifacts: [out/verify-tests.tap]
+    timeout: 120
