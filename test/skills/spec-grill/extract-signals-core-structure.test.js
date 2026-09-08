@@ -56,7 +56,7 @@ describe("extract-signals-core structure", () => {
       assert.doesNotMatch(facadeSource, new RegExp(`const ${name} =`));
     }
 
-    assert.match(facadeSource, /function parseArgs\(/);
+    assert.doesNotMatch(facadeSource, /function parseArgs\(/);
     assert.doesNotMatch(coreSource, /function parseArgs\(/);
   });
 

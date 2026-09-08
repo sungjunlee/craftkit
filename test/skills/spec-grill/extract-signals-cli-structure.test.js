@@ -44,7 +44,7 @@ describe("extract-signals-cli structure", () => {
     assert.match(cliSource, /\[dry-run\] No files written/);
     assert.doesNotMatch(facadeSource, /\[dry-run\] No files written/);
 
-    assert.match(facadeSource, /function extractSignals\(/);
+    assert.doesNotMatch(facadeSource, /function extractSignals\(/);
     assert.doesNotMatch(cliSource, /function extractSignals\(/);
   });
 
