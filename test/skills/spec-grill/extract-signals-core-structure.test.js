@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import * as facade from "../../../skills/spec-grill/scripts/extract-signals.js";
 import * as core from "../../../skills/spec-grill/scripts/extract-signals-core.js";
 import * as charter from "../../../skills/spec-grill/scripts/extract-signals-charter.js";
+import * as authority from "../../../skills/spec-grill/scripts/extract-signals-authority.js";
 
 const coreModule = fileURLToPath(
   new URL("../../../skills/spec-grill/scripts/extract-signals-core.js", import.meta.url),
@@ -15,9 +16,12 @@ const facadeModule = fileURLToPath(
 );
 
 const OWNED_FUNCTIONS = [
-  "buildSignalAuthority",
   "summarizeReadme",
   "extractSignals",
+];
+
+const AUTHORITY_FUNCTIONS = [
+  "buildSignalAuthority",
 ];
 
 const REEXPORTED_FUNCTIONS = [
@@ -59,6 +63,13 @@ describe("extract-signals-core structure", () => {
       assert.doesNotMatch(coreSource, new RegExp(`function ${name}\\(`), `${name} should not be defined in extract-signals-core.js`);
     }
 
+    for (const name of AUTHORITY_FUNCTIONS) {
+      assert.doesNotMatch(coreSource, new RegExp(`function ${name}\\(`), `${name} should not be defined in extract-signals-core.js`);
+      assert.match(coreSource, /from "\.\/extract-signals-authority\.js"/);
+    }
+
+    assert.match(coreSource, /from "\.\/extract-signals-charter\.js"/);
+
     for (const name of REEXPORTED_CONSTANTS) {
       assert.doesNotMatch(coreSource, new RegExp(`const ${name} =`));
     }
@@ -68,12 +79,16 @@ describe("extract-signals-core structure", () => {
   });
 
   it("re-exports the same extractSignals identity from extract-signals.js", () => {
-    for (const name of [...OWNED_FUNCTIONS, ...REEXPORTED_FUNCTIONS, ...REEXPORTED_CONSTANTS]) {
+    for (const name of [...OWNED_FUNCTIONS, ...REEXPORTED_FUNCTIONS, ...AUTHORITY_FUNCTIONS, ...REEXPORTED_CONSTANTS]) {
       assert.equal(facade[name], core[name], `${name} re-export should be the same binding`);
     }
 
     for (const name of [...REEXPORTED_FUNCTIONS, ...REEXPORTED_CONSTANTS]) {
       assert.equal(core[name], charter[name], `${name} core re-export should be the charter binding`);
+    }
+
+    for (const name of AUTHORITY_FUNCTIONS) {
+      assert.equal(core[name], authority[name], `${name} core re-export should be the authority binding`);
     }
 
     assert.equal(typeof facade.parseArgs, "function");
