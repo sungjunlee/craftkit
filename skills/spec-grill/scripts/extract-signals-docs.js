@@ -2,7 +2,7 @@
  * Doc-surface collectors for extract-signals.js.
  *
  * collectDocCandidates and the helpers only it needs live here.
- * Skill and test collectors stay in extract-signals-collectors.js
+ * Test collectors stay in extract-signals-collectors.js
  * and re-export collectDocCandidates so public names stay stable.
  */
 
