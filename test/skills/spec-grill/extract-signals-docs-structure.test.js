@@ -30,10 +30,6 @@ const INTERNAL_HELPERS = [
   "listMarkdownFiles",
 ];
 
-const KEPT_IN_COLLECTORS = [
-  "listDirs",
-];
-
 describe("extract-signals-docs structure", () => {
   it("exists as its own module (deletion test)", () => {
     assert.equal(fs.existsSync(docsModule), true);
@@ -49,11 +45,6 @@ describe("extract-signals-docs structure", () => {
       assert.match(docsSource, new RegExp(`function ${name}\\(`), `${name} should be defined in extract-signals-docs.js`);
       assert.doesNotMatch(collectorsSource, new RegExp(`function ${name}\\(`), `${name} should not be defined in extract-signals-collectors.js`);
       assert.doesNotMatch(facadeSource, new RegExp(`function ${name}\\(`), `${name} should not be defined in extract-signals.js`);
-    }
-
-    for (const name of KEPT_IN_COLLECTORS) {
-      assert.match(collectorsSource, new RegExp(`function ${name}\\(`), `${name} should stay in extract-signals-collectors.js`);
-      assert.doesNotMatch(docsSource, new RegExp(`function ${name}\\(`), `${name} should not move to extract-signals-docs.js`);
     }
 
     assert.match(collectorsSource, /from "\.\/extract-signals-docs\.js"/);

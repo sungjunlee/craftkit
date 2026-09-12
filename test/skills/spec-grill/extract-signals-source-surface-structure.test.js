@@ -31,10 +31,6 @@ const INTERNAL_HELPERS = [
   "listSourceSurfaceEntries",
 ];
 
-const KEPT_IN_COLLECTORS = [
-  "listDirs",
-];
-
 describe("extract-signals-source-surface structure", () => {
   it("exists as its own module (deletion test)", () => {
     assert.equal(fs.existsSync(sourceSurfaceModule), true);
@@ -50,11 +46,6 @@ describe("extract-signals-source-surface structure", () => {
       assert.match(sourceSurfaceSource, new RegExp(`function ${name}\\(`), `${name} should be defined in extract-signals-source-surface.js`);
       assert.doesNotMatch(collectorsSource, new RegExp(`function ${name}\\(`), `${name} should not be defined in extract-signals-collectors.js`);
       assert.doesNotMatch(facadeSource, new RegExp(`function ${name}\\(`), `${name} should not be defined in extract-signals.js`);
-    }
-
-    for (const name of KEPT_IN_COLLECTORS) {
-      assert.match(collectorsSource, new RegExp(`function ${name}\\(`), `${name} should stay in extract-signals-collectors.js`);
-      assert.doesNotMatch(sourceSurfaceSource, new RegExp(`function ${name}\\(`), `${name} should not move to extract-signals-source-surface.js`);
     }
 
     assert.doesNotMatch(sourceSurfaceSource, /function collectSkillCandidates\(/);

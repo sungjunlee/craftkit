@@ -41,6 +41,7 @@
  *   - extract-signals-cli-commands.js    — collectCliCommandCandidates
  *   - extract-signals-system-map.js      — collectSystemMapCandidates
  *   - extract-signals-readme-collectors.js — collectReadmeCandidates
+ *   - extract-signals-list-dirs.js         — listDirs
  *   - extract-signals-collectors.js      — remaining evidence collectors
  *   - this file                     — CLI entry + public re-exports
  */

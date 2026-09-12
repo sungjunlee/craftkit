@@ -34,10 +34,6 @@ const INTERNAL_HELPERS = [
   "collectSourceTestCandidates",
 ];
 
-const KEPT_IN_COLLECTORS = [
-  "listDirs",
-];
-
 describe("extract-signals-tests structure", () => {
   it("exists as its own module (deletion test)", () => {
     assert.equal(fs.existsSync(testsModule), true);
@@ -53,11 +49,6 @@ describe("extract-signals-tests structure", () => {
       assert.match(testsSource, new RegExp(`function ${name}\\(`), `${name} should be defined in extract-signals-tests.js`);
       assert.doesNotMatch(collectorsSource, new RegExp(`function ${name}\\(`), `${name} should not be defined in extract-signals-collectors.js`);
       assert.doesNotMatch(facadeSource, new RegExp(`function ${name}\\(`), `${name} should not be defined in extract-signals.js`);
-    }
-
-    for (const name of KEPT_IN_COLLECTORS) {
-      assert.match(collectorsSource, new RegExp(`function ${name}\\(`), `${name} should stay in extract-signals-collectors.js`);
-      assert.doesNotMatch(testsSource, new RegExp(`function ${name}\\(`), `${name} should not move to extract-signals-tests.js`);
     }
 
     assert.doesNotMatch(testsSource, /function collectCliCommandCandidates\(/);
