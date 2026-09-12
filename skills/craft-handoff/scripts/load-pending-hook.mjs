@@ -35,6 +35,7 @@ import {
 } from "node:fs";
 import { homedir } from "node:os";
 import { basename, join } from "node:path";
+import { parseFrontmatter, stripFrontmatter } from "./load-pending-frontmatter.mjs";
 
 const HANDOFF_DIR = join(homedir(), ".craftkit", "handoff");
 const PENDING_DIR = join(HANDOFF_DIR, "pending");
@@ -78,20 +79,6 @@ function currentWorktree() {
   } catch {
     return process.cwd();
   }
-}
-
-// Parse the tiny `key: value` frontmatter we write. Not a full YAML parser —
-// just enough for our own format. Returns {} if no frontmatter block.
-function parseFrontmatter(content) {
-  const lines = content.split("\n");
-  if (lines[0] !== "---") return {};
-  const out = {};
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i] === "---") return out;
-    const m = lines[i].match(/^([a-zA-Z0-9_-]+):\s*(.*)$/);
-    if (m) out[m[1]] = m[2].trim();
-  }
-  return {};
 }
 
 function archive(src, prefix = "") {
@@ -193,20 +180,6 @@ const chosen = matches[0];
 
 // Strip frontmatter before injecting — the next session doesn't need
 // our internal metadata, only the composed prompt body.
-function stripFrontmatter(content) {
-  const lines = content.split("\n");
-  if (lines[0] !== "---") return content;
-  for (let i = 1; i < lines.length; i++) {
-    if (lines[i] === "---") {
-      return lines
-        .slice(i + 1)
-        .join("\n")
-        .replace(/^\n+/, "");
-    }
-  }
-  return content;
-}
-
 const body = stripFrontmatter(chosen.content);
 
 if (!body.trim()) {
