@@ -2,6 +2,7 @@
  * extractSignals orchestration for extract-signals.js.
  *
  * Reads repo signals and groups them into capability candidates.
+ * Charter/source-root/commit-scope lookups live in extract-signals-charter.js.
  * CLI parseArgs/main stay in extract-signals.js.
  */
 
@@ -24,11 +25,18 @@ import {
   mergeCandidates,
   buildCapability,
 } from "./extract-signals-merge.js";
+import {
+  detectSourceRoot,
+  listCapabilityCandidates,
+  extractCommitScopes,
+  getRecentCommitMessages,
+  resolveCharterPath,
+  CANONICAL_CHARTER_PATH,
+  LEGACY_CHARTER_PATH,
+  resolveCharterFile,
+  readCharterObjectives,
+} from "./extract-signals-charter.js";
 
-const CANONICAL_CHARTER_PATH = path.join("spec", "charter.md");
-const LEGACY_CHARTER_PATH = "CHARTER.md";
-
-const SOURCE_ROOT_CANDIDATES = ["src", "lib", "app", "packages", "skills"];
 const DEFAULT_COMMIT_LIMIT = 100;
 
 function buildSignalAuthority({
@@ -89,71 +97,6 @@ function buildSignalAuthority({
   ];
 }
 
-function detectSourceRoot(repoRoot, { fileExists = fs.existsSync, statSync = fs.statSync } = {}) {
-  for (const candidate of SOURCE_ROOT_CANDIDATES) {
-    const candidatePath = path.join(repoRoot, candidate);
-    if (fileExists(candidatePath) && statSync(candidatePath).isDirectory()) {
-      return { name: candidate, path: candidatePath };
-    }
-  }
-  return null;
-}
-
-function listCapabilityCandidates(sourceRoot, { readdir = fs.readdirSync, statSync = fs.statSync } = {}) {
-  if (!sourceRoot) return [];
-  return readdir(sourceRoot.path)
-    .filter((entry) => {
-      if (entry.startsWith(".") || entry.startsWith("_")) return false;
-      try {
-        return statSync(path.join(sourceRoot.path, entry)).isDirectory();
-      } catch {
-        return false;
-      }
-    })
-    .sort();
-}
-
-function extractCommitScopes(commitMessages) {
-  const scopes = new Map();
-  for (const message of commitMessages) {
-    const match = message.match(/^[a-z]+\(([a-z][\w.\-,/ ]*)\)[!:]/);
-    if (!match) continue;
-    for (const raw of match[1].split(",")) {
-      const scope = slugifyCandidate(raw.trim());
-      if (!scope) continue;
-      scopes.set(scope, (scopes.get(scope) || 0) + 1);
-    }
-  }
-  return scopes;
-}
-
-function getRecentCommitMessages(repoRoot, limit, { exec = execFileSync } = {}) {
-  try {
-    const out = exec(
-      "git",
-      ["-C", repoRoot, "log", `-n`, String(limit), "--pretty=%s"],
-      { encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 },
-    );
-    return out.split("\n").filter(Boolean);
-  } catch {
-    return [];
-  }
-}
-
-function resolveCharterPath({ repoRoot, fileExists = fs.existsSync } = {}) {
-  const canonicalPath = path.join(repoRoot, CANONICAL_CHARTER_PATH);
-  if (fileExists(canonicalPath)) {
-    return { found: true, charterPath: canonicalPath, source: "canonical" };
-  }
-
-  const legacyPath = path.join(repoRoot, LEGACY_CHARTER_PATH);
-  if (fileExists(legacyPath)) {
-    return { found: true, charterPath: legacyPath, source: "legacy" };
-  }
-
-  return { found: false, charterPath: canonicalPath, source: "missing" };
-}
-
 function addEvidence(candidates, name, kind, value) {
   const slug = slugifyCandidate(name);
   if (!slug || !EVIDENCE_KINDS.includes(kind) || !value) return;
@@ -184,37 +127,6 @@ function addMissingEvidence(candidates, name, value) {
     });
   }
   candidates.get(slug).missing_evidence.add(value);
-}
-
-function resolveCharterFile(repoRoot, deps = {}) {
-  const resolved = resolveCharterPath({ repoRoot, fileExists: deps.fileExists });
-  if (!resolved.found) {
-    return { found: false, path: resolved.charterPath, source: resolved.source, content: null };
-  }
-  return {
-    found: true,
-    path: resolved.charterPath,
-    source: resolved.source,
-    content: readOptionalFile(resolved.charterPath, deps),
-  };
-}
-
-function readCharterObjectives(repoRoot, deps = {}) {
-  const charter = resolveCharterFile(repoRoot, deps);
-  if (!charter.content) return [];
-  const objectives = [];
-  for (const line of charter.content.split("\n")) {
-    const statusMatch = line.match(/^- (O\d+) \[(validated|implemented|active|deferred)\]\s+(.*?)(?:\s+·\s+src:|\s*$)/);
-    if (statusMatch) {
-      objectives.push({ id: statusMatch[1], status: statusMatch[2], predicate: statusMatch[3].trim() });
-      continue;
-    }
-    const leanMatch = line.match(/^- (O\d+)\s+[—–-]\s+(.*?)(?:\s+·\s+src:|\s*$)/);
-    if (leanMatch) {
-      objectives.push({ id: leanMatch[1], status: null, predicate: leanMatch[2].trim() });
-    }
-  }
-  return objectives;
 }
 
 function summarizeReadme(readme) {
