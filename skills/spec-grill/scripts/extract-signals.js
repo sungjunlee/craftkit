@@ -38,6 +38,7 @@
  *   - extract-signals-source-surface.js  — collectSourceSurfaceCandidates
  *   - extract-signals-tests.js           — collectTestCandidates
  *   - extract-signals-cli-commands.js    — collectCliCommandCandidates
+ *   - extract-signals-system-map.js      — collectSystemMapCandidates
  *   - extract-signals-collectors.js      — remaining evidence collectors
  *   - this file                     — CLI entry + public re-exports
  */
