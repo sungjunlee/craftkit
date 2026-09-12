@@ -16,19 +16,19 @@
  * re-exported here so extract-signals.js public names stay stable.
  * collectTestCandidates lives in extract-signals-tests.js and is
  * re-exported here so extract-signals.js public names stay stable.
+ * collectCliCommandCandidates lives in extract-signals-cli-commands.js and is
+ * re-exported here so extract-signals.js public names stay stable.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import { slugifyCandidate } from "./extract-signals-shared.js";
-import {
-  collectScriptCandidates,
-  listScriptFiles,
-} from "./extract-signals-scripts.js";
+import { collectScriptCandidates } from "./extract-signals-scripts.js";
 import { collectDocCandidates } from "./extract-signals-docs.js";
 import { collectSkillCandidates, readFrontmatterValue } from "./extract-signals-skills.js";
 import { collectSourceSurfaceCandidates } from "./extract-signals-source-surface.js";
 import { collectTestCandidates, collectSourceTestCandidates } from "./extract-signals-tests.js";
+import { collectCliCommandCandidates } from "./extract-signals-cli-commands.js";
 
 export {
   collectScriptCandidates,
@@ -38,6 +38,7 @@ export {
   collectSourceSurfaceCandidates,
   collectTestCandidates,
   collectSourceTestCandidates,
+  collectCliCommandCandidates,
 };
 
 function getMarkdownSection(content, heading) {
@@ -107,21 +108,4 @@ export function listDirs(root, { readdir = fs.readdirSync, statSync = fs.statSyn
       }
     })
     .sort();
-}
-
-export function collectCliCommandCandidates(repoRoot, deps = {}) {
-  const srcRoot = path.join(repoRoot, "src");
-  const candidates = [];
-  for (const packageName of listDirs(srcRoot, deps)) {
-    const commandsRoot = path.join(srcRoot, packageName, "cli", "commands");
-    for (const entry of listScriptFiles(commandsRoot, deps)) {
-      if (/\.(test|spec)\.[cm]?[jt]s$/.test(entry)) continue;
-      const base = entry.replace(/\.[cm]?[jt]s$/, "");
-      candidates.push({
-        name: base,
-        signal: `script:src/${packageName}/cli/commands/${entry}`,
-      });
-    }
-  }
-  return candidates;
 }

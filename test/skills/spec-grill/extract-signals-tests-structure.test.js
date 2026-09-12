@@ -35,7 +35,6 @@ const INTERNAL_HELPERS = [
 ];
 
 const KEPT_IN_COLLECTORS = [
-  "collectCliCommandCandidates",
   "collectSystemMapCandidates",
   "collectReadmeCandidates",
   "listDirs",
