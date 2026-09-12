@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as facade from "../../../skills/spec-grill/scripts/extract-signals.js";
 import * as core from "../../../skills/spec-grill/scripts/extract-signals-core.js";
+import * as charter from "../../../skills/spec-grill/scripts/extract-signals-charter.js";
 
 const coreModule = fileURLToPath(
   new URL("../../../skills/spec-grill/scripts/extract-signals-core.js", import.meta.url),
@@ -15,6 +16,11 @@ const facadeModule = fileURLToPath(
 
 const OWNED_FUNCTIONS = [
   "buildSignalAuthority",
+  "summarizeReadme",
+  "extractSignals",
+];
+
+const REEXPORTED_FUNCTIONS = [
   "detectSourceRoot",
   "listCapabilityCandidates",
   "extractCommitScopes",
@@ -22,11 +28,9 @@ const OWNED_FUNCTIONS = [
   "resolveCharterPath",
   "resolveCharterFile",
   "readCharterObjectives",
-  "summarizeReadme",
-  "extractSignals",
 ];
 
-const OWNED_CONSTANTS = [
+const REEXPORTED_CONSTANTS = [
   "CANONICAL_CHARTER_PATH",
   "LEGACY_CHARTER_PATH",
 ];
@@ -51,9 +55,12 @@ describe("extract-signals-core structure", () => {
       assert.doesNotMatch(facadeSource, new RegExp(`function ${name}\\(`), `${name} should not be defined in extract-signals.js`);
     }
 
-    for (const name of OWNED_CONSTANTS) {
-      assert.match(coreSource, new RegExp(`const ${name} =`));
-      assert.doesNotMatch(facadeSource, new RegExp(`const ${name} =`));
+    for (const name of REEXPORTED_FUNCTIONS) {
+      assert.doesNotMatch(coreSource, new RegExp(`function ${name}\\(`), `${name} should not be defined in extract-signals-core.js`);
+    }
+
+    for (const name of REEXPORTED_CONSTANTS) {
+      assert.doesNotMatch(coreSource, new RegExp(`const ${name} =`));
     }
 
     assert.doesNotMatch(facadeSource, /function parseArgs\(/);
@@ -61,8 +68,12 @@ describe("extract-signals-core structure", () => {
   });
 
   it("re-exports the same extractSignals identity from extract-signals.js", () => {
-    for (const name of [...OWNED_FUNCTIONS, ...OWNED_CONSTANTS]) {
+    for (const name of [...OWNED_FUNCTIONS, ...REEXPORTED_FUNCTIONS, ...REEXPORTED_CONSTANTS]) {
       assert.equal(facade[name], core[name], `${name} re-export should be the same binding`);
+    }
+
+    for (const name of [...REEXPORTED_FUNCTIONS, ...REEXPORTED_CONSTANTS]) {
+      assert.equal(core[name], charter[name], `${name} core re-export should be the charter binding`);
     }
 
     assert.equal(typeof facade.parseArgs, "function");
