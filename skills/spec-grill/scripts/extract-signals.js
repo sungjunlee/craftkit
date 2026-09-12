@@ -31,6 +31,7 @@
  *   - extract-signals-core.js       — extractSignals orchestration
  *   - extract-signals-charter.js    — charter/source-root/commit-scope helpers
  *   - extract-signals-authority.js  — buildSignalAuthority
+ *   - extract-signals-readme.js     — summarizeReadme
  *   - extract-signals-cli.js        — parseArgs / runCli report glue
  *   - extract-signals-scripts.js         — collectScriptCandidates
  *   - extract-signals-docs.js            — collectDocCandidates
