@@ -28,10 +28,11 @@
  * Same inputs produce the same draft (deterministic ordering).
  *
  * Ownership:
- *   - extract-signals-core.js    — extractSignals + authority helpers
- *   - extract-signals-charter.js  — charter/source-root/commit-scope helpers
- *   - extract-signals-cli.js      — parseArgs / runCli report glue
- *   - this file                — CLI entry + public re-exports
+ *   - extract-signals-core.js       — extractSignals orchestration
+ *   - extract-signals-charter.js    — charter/source-root/commit-scope helpers
+ *   - extract-signals-authority.js  — buildSignalAuthority
+ *   - extract-signals-cli.js        — parseArgs / runCli report glue
+ *   - this file                     — CLI entry + public re-exports
  */
 
 import { fileURLToPath } from "node:url";
