@@ -12,6 +12,8 @@
  * re-exported here so extract-signals.js public names stay stable.
  * collectSkillCandidates lives in extract-signals-skills.js and is
  * re-exported here so extract-signals.js public names stay stable.
+ * collectSourceSurfaceCandidates lives in extract-signals-source-surface.js and is
+ * re-exported here so extract-signals.js public names stay stable.
  */
 
 import fs from "node:fs";
@@ -24,8 +26,15 @@ import {
 } from "./extract-signals-scripts.js";
 import { collectDocCandidates } from "./extract-signals-docs.js";
 import { collectSkillCandidates, readFrontmatterValue } from "./extract-signals-skills.js";
+import { collectSourceSurfaceCandidates } from "./extract-signals-source-surface.js";
 
-export { collectScriptCandidates, collectDocCandidates, collectSkillCandidates, readFrontmatterValue };
+export {
+  collectScriptCandidates,
+  collectDocCandidates,
+  collectSkillCandidates,
+  readFrontmatterValue,
+  collectSourceSurfaceCandidates,
+};
 
 function getMarkdownSection(content, heading) {
   if (!content) return null;
@@ -128,38 +137,6 @@ function collectCliCommandTestCandidates(repoRoot, deps = {}) {
     }
   }
   return candidates;
-}
-
-export function collectSourceSurfaceCandidates(repoRoot, deps = {}) {
-  const srcRoot = path.join(repoRoot, "src");
-  const candidates = [];
-  for (const packageName of listDirs(srcRoot, deps)) {
-    const sourcesRoot = path.join(srcRoot, packageName, "sources");
-    for (const entry of listSourceSurfaceEntries(sourcesRoot, deps)) {
-      const base = entry.replace(/\.[cm]?[jt]s$/, "");
-      candidates.push({
-        name: base,
-        signal: `source:src/${packageName}/sources/${entry}`,
-      });
-    }
-  }
-  return candidates;
-}
-
-function listSourceSurfaceEntries(root, { readdir = fs.readdirSync, statSync = fs.statSync, fileExists = fs.existsSync } = {}) {
-  if (!fileExists(root)) return [];
-  return readdir(root)
-    .filter((entry) => {
-      if (entry.startsWith(".") || entry.startsWith("_")) return false;
-      try {
-        const stat = statSync(path.join(root, entry));
-        return stat.isDirectory()
-          || (stat.isFile() && /\.[cm]?[jt]s$/.test(entry) && !/\.(test|spec)\.[cm]?[jt]s$/.test(entry));
-      } catch {
-        return false;
-      }
-    })
-    .sort();
 }
 
 export function collectTestCandidates(repoRoot, deps = {}) {
