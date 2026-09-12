@@ -32,7 +32,7 @@ const INTERNAL_HELPERS = [
 ];
 
 const KEPT_IN_COLLECTORS = [
-  "collectTestCandidates",
+  "listDirs",
 ];
 
 describe("extract-signals-scripts structure", () => {

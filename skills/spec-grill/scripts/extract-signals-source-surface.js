@@ -2,7 +2,7 @@
  * Source-surface collectors for extract-signals.js.
  *
  * collectSourceSurfaceCandidates and the helpers only it needs live here.
- * Test collectors stay in extract-signals-collectors.js
+ * Remaining collectors stay in extract-signals-collectors.js
  * and re-export collectSourceSurfaceCandidates so public names stay stable.
  */
 
