@@ -33,10 +33,8 @@ const OWNED_FUNCTIONS = [
 const INTERNAL_HELPERS = [];
 
 const KEPT_IN_COLLECTORS = [
-  "collectSystemMapCandidates",
   "collectReadmeCandidates",
   "listDirs",
-  "getMarkdownSection",
 ];
 
 describe("extract-signals-cli-commands structure", () => {

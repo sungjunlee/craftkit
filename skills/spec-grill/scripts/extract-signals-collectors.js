@@ -18,6 +18,8 @@
  * re-exported here so extract-signals.js public names stay stable.
  * collectCliCommandCandidates lives in extract-signals-cli-commands.js and is
  * re-exported here so extract-signals.js public names stay stable.
+ * collectSystemMapCandidates lives in extract-signals-system-map.js and is
+ * re-exported here so extract-signals.js public names stay stable.
  */
 
 import fs from "node:fs";
@@ -29,6 +31,7 @@ import { collectSkillCandidates, readFrontmatterValue } from "./extract-signals-
 import { collectSourceSurfaceCandidates } from "./extract-signals-source-surface.js";
 import { collectTestCandidates, collectSourceTestCandidates } from "./extract-signals-tests.js";
 import { collectCliCommandCandidates } from "./extract-signals-cli-commands.js";
+import { collectSystemMapCandidates } from "./extract-signals-system-map.js";
 
 export {
   collectScriptCandidates,
@@ -39,36 +42,8 @@ export {
   collectTestCandidates,
   collectSourceTestCandidates,
   collectCliCommandCandidates,
+  collectSystemMapCandidates,
 };
-
-function getMarkdownSection(content, heading) {
-  if (!content) return null;
-  const lines = content.split("\n");
-  const startPattern = new RegExp(`^##\\s+${heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*$`, "i");
-  const start = lines.findIndex((line) => startPattern.test(line.trim()));
-  if (start === -1) return null;
-  const section = [];
-  for (let i = start + 1; i < lines.length; i += 1) {
-    if (/^##\s+/.test(lines[i])) break;
-    section.push(lines[i]);
-  }
-  return section.join("\n").trim();
-}
-
-export function collectSystemMapCandidates(systemMap) {
-  const section = getMarkdownSection(systemMap, "Candidate Capability Boundaries");
-  if (!section) return [];
-  const candidates = [];
-  for (const line of section.split("\n")) {
-    const match = line.match(/^-\s+`?([a-z][a-z0-9-]*)`?\s+-\s+(.+)$/);
-    if (!match) continue;
-    candidates.push({
-      name: match[1],
-      signal: `system-map:${match[1]} (${match[2].trim()})`,
-    });
-  }
-  return candidates;
-}
 
 export function collectReadmeCandidates(readme) {
   if (!readme) return [];
