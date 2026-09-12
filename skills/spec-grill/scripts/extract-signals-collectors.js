@@ -22,10 +22,10 @@
  * re-exported here so extract-signals.js public names stay stable.
  * collectReadmeCandidates lives in extract-signals-readme-collectors.js and is
  * re-exported here so extract-signals.js public names stay stable.
+ * listDirs lives in extract-signals-list-dirs.js and is
+ * re-exported here so existing importers stay stable.
  */
 
-import fs from "node:fs";
-import path from "node:path";
 import { collectScriptCandidates } from "./extract-signals-scripts.js";
 import { collectDocCandidates } from "./extract-signals-docs.js";
 import { collectSkillCandidates, readFrontmatterValue } from "./extract-signals-skills.js";
@@ -34,6 +34,7 @@ import { collectTestCandidates, collectSourceTestCandidates } from "./extract-si
 import { collectCliCommandCandidates } from "./extract-signals-cli-commands.js";
 import { collectSystemMapCandidates } from "./extract-signals-system-map.js";
 import { collectReadmeCandidates } from "./extract-signals-readme-collectors.js";
+import { listDirs } from "./extract-signals-list-dirs.js";
 
 export {
   collectScriptCandidates,
@@ -46,18 +47,5 @@ export {
   collectCliCommandCandidates,
   collectSystemMapCandidates,
   collectReadmeCandidates,
+  listDirs,
 };
-
-export function listDirs(root, { readdir = fs.readdirSync, statSync = fs.statSync, fileExists = fs.existsSync } = {}) {
-  if (!fileExists(root)) return [];
-  return readdir(root)
-    .filter((entry) => {
-      if (entry.startsWith(".") || entry.startsWith("_")) return false;
-      try {
-        return statSync(path.join(root, entry)).isDirectory();
-      } catch {
-        return false;
-      }
-    })
-    .sort();
-}
