@@ -4,6 +4,7 @@
  * Reads repo signals and groups them into capability candidates.
  * Charter/source-root/commit-scope lookups live in extract-signals-charter.js.
  * buildSignalAuthority lives in extract-signals-authority.js.
+ * summarizeReadme lives in extract-signals-readme.js.
  * CLI parseArgs/main stay in extract-signals.js.
  */
 
@@ -38,6 +39,7 @@ import {
   readCharterObjectives,
 } from "./extract-signals-charter.js";
 import { buildSignalAuthority } from "./extract-signals-authority.js";
+import { summarizeReadme } from "./extract-signals-readme.js";
 
 const DEFAULT_COMMIT_LIMIT = 100;
 
@@ -71,23 +73,6 @@ function addMissingEvidence(candidates, name, value) {
     });
   }
   candidates.get(slug).missing_evidence.add(value);
-}
-
-function summarizeReadme(readme) {
-  if (!readme) return null;
-  for (const line of readme.split("\n")) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-    if (trimmed.startsWith("#")) continue;
-    if (trimmed.startsWith("[!")) continue;
-    if (trimmed.startsWith("<!--")) continue;
-    if (/^<\/?div\b/i.test(trimmed)) continue;
-    if (/^<p\b/i.test(trimmed) || /^<\/p>/i.test(trimmed)) continue;
-    if (/^<br\s*\/?>$/i.test(trimmed)) continue;
-    if (/^\[.+\]\(.+\)(\s*[•|·]\s*\[.+\]\(.+\))*$/.test(trimmed)) continue;
-    return trimmed.length > 240 ? `${trimmed.slice(0, 237)}...` : trimmed;
-  }
-  return null;
 }
 
 function extractSignals({
