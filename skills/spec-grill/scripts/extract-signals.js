@@ -32,6 +32,8 @@
  *   - extract-signals-charter.js    — charter/source-root/commit-scope helpers
  *   - extract-signals-authority.js  — buildSignalAuthority
  *   - extract-signals-cli.js        — parseArgs / runCli report glue
+ *   - extract-signals-scripts.js    — collectScriptCandidates
+ *   - extract-signals-collectors.js — remaining evidence collectors
  *   - this file                     — CLI entry + public re-exports
  */
 
