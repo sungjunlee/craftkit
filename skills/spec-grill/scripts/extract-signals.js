@@ -33,6 +33,7 @@
  *   - extract-signals-authority.js  — buildSignalAuthority
  *   - extract-signals-cli.js        — parseArgs / runCli report glue
  *   - extract-signals-scripts.js    — collectScriptCandidates
+ *   - extract-signals-docs.js       — collectDocCandidates
  *   - extract-signals-collectors.js — remaining evidence collectors
  *   - this file                     — CLI entry + public re-exports
  */

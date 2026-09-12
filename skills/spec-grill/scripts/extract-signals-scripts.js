@@ -2,7 +2,7 @@
  * Script-surface collectors for extract-signals.js.
  *
  * collectScriptCandidates and the helpers only it needs live here.
- * Skill, doc, and test collectors stay in extract-signals-collectors.js
+ * Skill and test collectors stay in extract-signals-collectors.js
  * and re-export collectScriptCandidates so public names stay stable.
  */
 
