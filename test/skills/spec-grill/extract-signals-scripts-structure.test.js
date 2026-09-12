@@ -32,7 +32,6 @@ const INTERNAL_HELPERS = [
 ];
 
 const KEPT_IN_COLLECTORS = [
-  "collectSkillCandidates",
   "collectTestCandidates",
 ];
 
