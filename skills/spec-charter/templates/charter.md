@@ -16,6 +16,7 @@ revision: 1
 
 ## Objectives         <!-- Tier 2 · Predicates (add/remove human-gated; status-free by default) -->
 - O1 — <verifiable predicate, e.g. "a user can log in with Google"> · src: user
+<!-- Once an objective is retired, keep one line here and delete its text: `Retired IDs (never reuse): O2, O5` -->
 
 ## Decisions          <!-- Tier 3 · Standing (human-gated rewrite/remove) -->
 <Holds only the decisions currently standing. A flipped decision is rewritten in place — the rationale keeps one clause on why the previous position was left. Remove a row once the rejection reason no longer holds.>
