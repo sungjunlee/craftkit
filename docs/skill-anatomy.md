@@ -60,3 +60,4 @@ Skills may add extra sections for their own mechanics (loop control, risk gates,
 ## Documented exemptions
 
 - **Output judgment contracts.** `## Output format` may state what the output must *convey* instead of a fixed section template. Do not re-impose a fixed template unless downstream tooling parses the sections.
+- **Thin spec-* contract.** The spec-* router paragraph, judgment-contract completion, and optional Verification prompts section stay thin on purpose (README § Design principles #7-8): spec-* files ship durable state a model cannot hold on its own — direction, non-goals with reasons, standing decisions, hard constraints, learnings — plus the 3-axis predicate test as review discipline, while living spec files hold only the current position and git is the archive; the how-to-interview procedure around them trends to zero as models improve.

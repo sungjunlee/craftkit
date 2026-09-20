@@ -75,7 +75,7 @@ For Codex or any other agent, see [Use in other agents](#use-in-other-agents) be
 | `craft-prompt` | a new prompt is needed from scratch for any LLM or agent interface | returns copy-pasteable text |
 | `craft-handoff` | a session is ending and the next session needs a copy-paste-ready continuation prompt | writes handoff files and may copy to clipboard |
 | `spec-charter` | a repo needs direction, Objectives, Decisions, system shape, or stale-spec reassessment | creates or amends `spec/charter.md` and `spec/system-map.md` |
-| `spec-grill` | a consumer needs a capability handle (`component:`), a contract is cross-tree, or the user asked for a 3-axis audit — not a required follow-on to charter | creates or refines `spec/capabilities.md` after evidence review |
+| `spec-grill` | optional: keep only when a consumer exists, the contract is cross-tree, or a 3-axis audit is needed — not a required follow-on to charter | creates or refines `spec/capabilities.md` after evidence review |
 
 When two skills could trigger, choose the least invasive one that answers the request: new or reworked prompt text goes to `craft-prompt`; session wrap-up goes to `craft-handoff`. Reviewing or improving an existing artifact needs no dedicated skill — ask for it directly.
 
@@ -105,8 +105,10 @@ Each skill lives at `skills/<skill-name>/SKILL.md` — plain markdown with YAML 
 4. Cross-agent portability (core skill spines stay provider-neutral; platform-specific detail stays in templates or reference files)
 5. Copy-pasteable results over fancy abstractions
 6. Weight follows durability — as models improve, move each skill's center of gravity from "tell the model how to think" toward "give the model durable state and direction it cannot hold on its own"
+7. Durable state and review discipline stay; procedure goes. spec-* ship what a model cannot hold on its own — direction, non-goals with reasons, standing decisions, hard constraints, learnings — plus the 3-axis predicate test; how-to-interview procedure trends to zero as models improve.
+8. Living spec files hold only the current position; git is the archive. Rewriting a decision beats appending to a ledger; a retired objective keeps only its ID.
 
-Principle 6 is the axis CraftKit is actively re-sized against: machinery (deterministic paths, clipboard, archiving), time-sensitive curated knowledge, and direction-setting judgment contracts are model-independent and stay; raw prescription erodes as models improve and gets cut.
+Principle 6 is the axis CraftKit is actively re-sized against: machinery (deterministic paths, clipboard, archiving), time-sensitive curated knowledge, and direction-setting judgment contracts are model-independent and stay; raw prescription erodes as models improve and gets cut. Principles 7-8 are its 2026-09 spec-* application (epic #255): the two rules that decide what a spec-* file keeps versus what it lets the interview procedure drop.
 
 ## Skill spine budget
 

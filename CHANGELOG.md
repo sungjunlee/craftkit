@@ -27,6 +27,10 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 - `spec-grill` spine de-prescribed: intent router is one paragraph, the fixed Grill Report skeleton becomes a judgment contract, the ordered interview and exactly-one ceremony go, and stale downstream-routing claims are removed (#250).
 - `AGENTS.md` keeps only repo-specific invariants (Node tooling, explicit-only pairing, artifact path, commit prefixes). Generic writing advice moved out.
 
+### Notes
+
+- 2026-09 spec-* third de-prescription pass (epic #255): sources Anthropic "Prompting Claude Fable 5 / 5.1" (scaffolding changes, memory system) and OpenAI "Rethinking skills and prompts for GPT-6 Astra" (2026-09-11) (#254).
+
 ## [0.4.0] — 2026-08-17
 
 Second lightening pass (#169). Public shape is six skills: `craft-prompt`, `craft-critique`, `craft-autoresearch`, `craft-handoff`, `spec-charter`, `spec-grill`.

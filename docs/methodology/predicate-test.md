@@ -7,7 +7,9 @@ whether an agent can satisfy it while defeating its intent.
 This is one of CraftKit's two durable methodology assets. It is a *review*
 discipline, not a generation trick: it survives model capability gains,
 because a smarter agent is exactly the thing that finds the loophole in a
-loosely written predicate. You can apply it without adopting any CraftKit
+loosely written predicate — see [README § Design
+principles](../../README.md#design-principles) for the wider durable-state-vs-procedure
+thesis this test sits inside. You can apply it without adopting any CraftKit
 skill — it is a way of reading a contract.
 
 ## The problem it solves
