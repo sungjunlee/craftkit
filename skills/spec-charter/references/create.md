@@ -85,7 +85,7 @@ Decisions accrue naturally through amend mode as cross-cutting choices get made.
 
 ### When to seed 3–5 rows
 
-Seed only when the project has prior artifacts that already record direction:
+Seed only when the project has prior artifacts that already record direction, and only decisions that still stand today. A past ADR or PR that was later reversed is history, not a standing decision; leave it to git.
 
 - Design documents or RFCs that locked an architectural choice.
 - ADRs (Architectural Decision Records).

@@ -22,3 +22,5 @@ revision: 1
 
 | date | decision | rationale |
 | --- | --- | --- |
+
+<!-- After a reset amend, one line below the table, outside it: `Previous charter: git <sha>` -->

@@ -21,7 +21,7 @@ Explicit modes win first:
 | User intent | Mode | Boundary |
 |-------------|------|----------|
 | Create the project axis, baseline, charter, or first spec layer | `create` | Only when neither `spec/charter.md` nor legacy root `CHARTER.md` exists, unless the user explicitly asks to replace it. |
-| Update direction, objectives, decisions, or accepted charter wording | `amend` | Applies tier gates and may edit the resolved charter after confirmation. A described concept change (not an edit) routes to the `reset` path: bump `revision`, rewrite Tier 1–3 freely, confirm. |
+| Update direction, objectives, decisions, or accepted charter wording | `amend` | Applies tier gates and may edit the resolved charter after confirmation. A described concept change (not an edit) routes to the `reset` path in Amend mode. |
 | Check whether charter/system-map/capabilities/Learnings are stale | `reassess` | Report-only; routes accepted fixes to `amend`, `map`, `spec-grill`, or a Learning Action. |
 | Architecture, system shape, runtime boundaries, flows, invariants, or `spec/system-map.md` | `map` | Create or amend the system map. File-state picks create vs amend. |
 
@@ -82,7 +82,7 @@ Use when a charter exists or when invoked as `amend`. If only root `CHARTER.md` 
 - Lean Tier 2: no status advances. Retire by moving the line to `docs/spec-history.md`.
 - If the live charter already uses status tokens, apply `references/amendment.md`. Do not add tokens to a lean charter.
 - Tier 3: rewrite a row in place when a decision flips — the rationale keeps one clause on why the previous position was left; remove a row once the rejection reason no longer holds. Same human gate as Tier 1.
-- **Reset**: when the user describes a concept change rather than an edit, bump `revision`, rewrite Tier 1–3 freely under the usual confirm, and leave one line `Previous charter: git <sha>` under Decisions.
+- **Reset**: when the user describes a concept change rather than an edit, bump `revision` and rewrite Tier 1–3 under the usual confirm. Two things survive a reset: retired Objective IDs stay retired (keep the `Retired IDs (never reuse)` line), and one metadata line `Previous charter: git <sha>` goes below the Decisions table, outside it, pointing at the last pre-reset revision.
 
 After an accepted amendment, bump `last_amended` and `revision` unless the only accepted change is aligning a drifted projection excerpt (then keep the charter revision and rewrite the inner block). Propose that bump or refresh together with the projection rules in `references/spec-axis.md`. Protect the ~5-minute-read property. A `backlog-triage` Alignment Check may seed proposals; this skill applies the gates.
 
