@@ -139,16 +139,9 @@ After applying an accepted change, do not bump a revision number on `spec/capabi
 
 See `references/capabilities.md` for additional grill heuristics and [`../spec-charter/SKILL.md`](../spec-charter/SKILL.md) for the project-wide charter layer; the single Objectives-vs-Behaviors/Hard-Constraints ownership rule lives in [`../spec-charter/references/spec-axis.md`](../spec-charter/references/spec-axis.md).
 
-## Verification prompts
-
-- "We finished charter and map; write capabilities from the folder list." Expected: refuse; directory names are not a keep condition; do not create the file.
-- "A commit scope appears often but has no docs, tests, or distinct behavior." Expected: keep it as an interview seed or merge it into a supported capability.
-- "User says this weakly evidenced surface is important." Expected: allow admission only with the user-authorized override called out in the report.
-- "문서 적을 건 적고 다음 제안해줘." Expected: if the file is absent and no keep condition holds, stop without a create proposal; otherwise route to Next Capability Proposal, propose one supported next capability, and ask before writing unless edit authorization is explicit.
-- "We finished charter, system map, and first capability; is this ready to commit?" Expected: use the ready-to-commit checklist in `references/spec-pipeline-ready.md`.
-
 ## References
 
 - `references/capabilities.md` — grill heuristics (naming, goal rewrites, 3-axis examples, admission patterns) used after the interview flow.
 - `references/grill-report-template.md` — the full Grill Report skeleton.
 - `references/spec-pipeline-ready.md` — lightweight ready-to-commit checklist when capability contracts are in scope.
+- `references/verification.md` — prose test cases for reviewing spine changes.

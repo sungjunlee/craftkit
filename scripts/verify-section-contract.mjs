@@ -28,6 +28,9 @@ const CRAFT_SECTION_CONTRACT = [
 // de-risking); presence and nesting are. Headings are compared case-insensitively
 // because Title Case -> sentence case normalization is #111's job, not #110's —
 // checking case here would double-report the same drift under two issues.
+// "Verification prompts" is intentionally absent here: docs/skill-anatomy.md
+// makes it optional for spec-* (#252) — prose test cases belong in
+// references/verification.md, not the always-loaded spine.
 const SPEC_SECTION_CONTRACT = [
   { key: "Execution Contract wrapper", match: (h) => hasH2(h, "execution contract") },
   {
@@ -38,7 +41,6 @@ const SPEC_SECTION_CONTRACT = [
     key: "Completion Contract (nested)",
     match: (h, sections) => sectionChildIncludes(sections, "execution contract", ["completion contract"]),
   },
-  { key: "Verification prompts", match: (h) => hasH2(h, "verification prompts") },
 ];
 
 // Ratchet baseline for #110: every section a skill is CURRENTLY missing, kept

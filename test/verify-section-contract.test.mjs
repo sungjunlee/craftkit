@@ -76,10 +76,6 @@ Reports what changed.
 
 Whatever this skill mutates.
 
-## Verification prompts
-
-- "A pressure-test prompt." Expected: do the right thing.
-
 ## References
 
 Nothing to cite.
@@ -127,13 +123,19 @@ expectCheckFailure("fails on a stale baseline entry whose section is now present
   writeFile(root, "skills/craft-handoff/SKILL.md", compliantCraftSkillBody("craft-handoff"));
 }, /knownSectionDeviations still lists "Output format".*but the section is now present/);
 
-test("passes for a spec-* skill with the full Execution Contract + Verification prompts shape", () => {
+test("passes for a spec-* skill with the full Execution Contract shape and no Verification prompts section (#252: optional)", () => {
   const root = createFixture();
   writeFile(root, "skills/spec-newmap/SKILL.md", compliantSpecSkillBody("spec-newmap"));
 
   const result = runCheck(root, moduleFile, fn);
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+test("sectionContractFindings does not flag a spec-* skill that still carries an optional Verification prompts section", () => {
+  const bodyWithSection = `${compliantSpecSkillBody("spec-newmap")}\n## Verification prompts\n\n- "A pressure-test prompt." Expected: do the right thing.\n`;
+
+  assert.deepEqual(sectionContractFindings("spec-newmap", bodyWithSection, false), []);
 });
 
 expectCheckFailure("fails on a spec-* skill missing the Execution Contract wrapper", moduleFile, fn, (root) => {
@@ -150,10 +152,6 @@ description: Example spec-newmap skill for section contract tests.
 ## Mode Router
 
 Routes intent to a mode, but not under Execution Contract.
-
-## Verification prompts
-
-- "A pressure-test prompt." Expected: do the right thing.
 
 ## References
 
@@ -201,10 +199,6 @@ Not nested.
 
 Not named Completion Contract.
 
-## Verification prompts
-
-- prompt
-
 ## References
 
 - none
@@ -231,10 +225,6 @@ Nested.
 ### Completion Contract
 
 Nested.
-
-## Verification prompts
-
-- prompt
 
 ## References
 

@@ -54,7 +54,7 @@ Skills may add extra sections for their own mechanics (loop control, risk gates,
 | Execution Contract > Completion Contract | Required | What the skill reports at the end of each mode/route. |
 | Execution Contract > Helper Scripts | Optional | Only when the skill ships bundled scripts. |
 | Domain contract section(s) | Required, ≥1, name varies | Write/mutation discipline. |
-| Verification prompts | Required | Last required section before References. |
+| Verification prompts | Optional | If present, keep it short; prose test cases belong in `references/verification.md`. |
 | References | Required | Dedicated, last. Indexes every `references/*.md` and `templates/*.md` cited in the body. |
 
 ## Documented exemptions
