@@ -52,7 +52,7 @@ End every run with a short summary:
 
 **Sizing rule**: the no-arg and ambiguous routes emit a **short diagnostic** by default — three sections: `### Evidence Read`, `### Evidence Missing`, and `### Recommended Edit`. Reserve the full **Grill Report** below for the Candidate Boundary Report (`map`) and Capability Audit Report (`audit`) routes, or when the user explicitly asks for the full report. Every full report must include these sections in order: `## Grill Report`, `### Evidence Read`, `### Evidence Missing`, `### Raw Candidates`, `### Accepted / Rejected / Merged / Split Candidates`, `### Sharp Questions`, `### 3-Axis Predicate Findings`, `### Proposed Next Capability`, `### Recommended Edit`. See `references/grill-report-template.md` for the full skeleton. Apply Keep conditions when filling Proposed Next Capability and Recommended Edit.
 
-Separate diagnosis from mutation. The report can recommend edits, but it must not edit `spec/capabilities.md` unless the user clearly asked for editing or confirms the proposed edit. This write-gating rule applies in full at every size — a short diagnostic never relaxes the "report first, edit only when authorized" discipline, it only trims what gets written down.
+Separate diagnosis from mutation. The report can recommend edits, but it must not edit `spec/capabilities.md` unless the user clearly asked for editing or confirms the proposed edit. This write-gating rule applies in full at every size — a short diagnostic never relaxes the "report first, edit only when authorized" discipline, it only trims what gets written down. The one exception is `### Learnings`: an entry that follows the content rule may be added, updated, or deleted without this gate.
 
 ## Brownfield signal rules
 
@@ -77,7 +77,7 @@ The file's mutation discipline:
 
 - Goal / In-scope / Out-of-scope: human-gated through this skill.
 - Expected Behaviors / Hard Constraints: human-gated and must pass the 3-axis predicate test.
-- `## Learnings`: not an interview target; promotion is human-gated. Any agent or human may add, update, or delete an entry after a run that produced a reusable lesson, one lesson per line with the why (`- YYYY-MM-DD: <what> — <why it mattered> [ref]`); record corrections and confirmed approaches alike; skip what git/CHANGELOG already records; update an existing entry instead of duplicating it; delete an entry that turns out wrong. Promoting a Learning to a standing `## Decisions` row or to `spec/charter.md` stays human-gated.
+- `## Learnings`: not an interview target. Any agent or human may add, update, or delete an entry that follows the content rule stated under each `### Learnings` block in `templates/capabilities.md` (one lesson with its why; no duplicates; delete when wrong). Promoting a Learning to a standing `## Decisions` row or to `spec/charter.md` stays human-gated.
 - `## Decisions`: standing decisions, human-gated; rewrite a row in place when a decision flips, remove it once the rejection reason no longer holds; promote cross-cutting decisions to `spec/charter.md` through `spec-charter amend`.
 
 ## Keep conditions

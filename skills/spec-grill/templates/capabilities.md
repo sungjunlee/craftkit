@@ -10,7 +10,7 @@ Mutation discipline (matches the design doc):
 |---|---|---|---|
 | `Goal`, `In-scope`, `Out-of-scope` | human via `spec-grill` | when the contract changes | challenge + confirm + apply |
 | `Expected Behaviors`, `Hard Constraints` | human via grill | when a behavior or bright-line changes | grill + 3-axis predicate test |
-| `## Learnings` | any agent or human, after a run that produced a reusable lesson for this capability | anytime, per the content rule | content rule (above); promotion to Decisions or charter is human-gated |
+| `## Learnings` | any agent or human, after a run that produced a reusable lesson for this capability | anytime, per the content rule | content rule under each `### Learnings` block; promotion to Decisions or charter is human-gated |
 | `## Decisions` | human via `spec-grill` | when a decision is added, flipped, or its rejection reason no longer holds | challenge + confirm + apply, same gate as Goal/Scope; promote to `spec/charter.md` if cross-cutting |
 
 Compactness budget:

@@ -94,7 +94,7 @@ Problem: the agent can append low-signal filler after every run, satisfying the 
 
 Fix: encode the user intent.
 
-> "A successful run appends at most one Learning only when it discovered a reusable pattern, measured fact, or constraint that future runs need."
+> "Each Learning records one reusable pattern, measured fact, or constraint that future runs need, together with why it mattered."
 
 ### Distributional failure
 
@@ -120,7 +120,7 @@ Fix: scope the claim to draft seeding.
 
 It must not touch:
 
-- `### Learnings`
+- `### Learnings` (except entries that follow the content rule, which any agent may add, update, or delete at any time)
 - `### Decisions`
 - other capability blocks
 - `spec/charter.md`, unless the user separately invokes amend mode
@@ -228,7 +228,7 @@ Do not admit a brownfield capability from one weak signal alone. Directory-only 
 
 ## Learnings Content Rule
 
-`## Learnings` is recent operational memory, not an endless audit log. Any agent or human may add, update, or delete an entry directly after a run that produced a reusable lesson — no writer gate. Follow the content rule in `templates/capabilities.md`: one lesson per line (`- YYYY-MM-DD: <what> — <why it mattered> [ref]`); record corrections and confirmed approaches alike; do not record what git/CHANGELOG already records; update an existing entry instead of adding a duplicate; delete an entry that turns out wrong.
+`## Learnings` is recent operational memory, not an endless audit log. Any agent or human may add, update, or delete an entry directly after a run that produced a reusable lesson — no writer gate. The content rule lives under each `### Learnings` block in `templates/capabilities.md`; this reference does not restate it.
 
 Grill mode may notice that a capability is over its 5-7 Learning budget or holds a Learning ready to promote. Promotion is the human-gated step, not the Learnings edit itself:
 
