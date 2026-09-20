@@ -1,9 +1,9 @@
-# Grill Report Template
+# Example report shape
 
-Use this full skeleton for the candidate-discovery (`map`) and audit routes of `spec-grill`, or when the user explicitly asks for the full report. The no-arg and ambiguous routes emit a short diagnostic by default (`### Evidence Read`, `### Evidence Missing`, `### Recommended Edit`) instead of this full skeleton. The contract rules that govern when each shape applies live in `spec-grill/SKILL.md` under `## Execution Contract → ### Grill Report Contract`.
+An optional worked example, not a required skeleton. `spec-grill` reports have no fixed sections: the completion contract in `SKILL.md` says what a report must convey, and length follows the run. Use this shape when a wide pass — mapping candidates across a whole repo, or auditing existing capability predicates — benefits from a consistent layout, and drop whatever the run has nothing to say about.
 
 ```md
-## Grill Report
+## Capability Report
 
 ### Evidence Read
 - <file/script/signal and what it proves>
