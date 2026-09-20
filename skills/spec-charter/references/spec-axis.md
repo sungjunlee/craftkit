@@ -9,7 +9,7 @@ Use this as the shared boundary reference for `spec-charter` and `spec-grill`. T
 | `spec/charter.md` | Why the project exists, what good looks like, Non-Goals, Objectives, and project-wide Decisions. | `spec-charter` |
 | `spec/system-map.md` | High-level system shape: runtime boundaries, core flows, storage/external systems, invariants, and pointers. Router: tree → local instruction file. | `spec-charter` (`map` mode) |
 | `spec/capabilities.md` | Optional capability contracts: Goal, Scope, Expected Behaviors, Hard Constraints, Learnings, and Decisions. | `spec-grill` |
-| `CLAUDE.md` / `AGENTS.md` | Agent harness instructions and local development guardrails; may carry the spec-charter pointer line. | Repository maintainers; `spec-charter` proposes the pointer line and writes only after confirm |
+| `CLAUDE.md` / `AGENTS.md` | Agent harness instructions and local development guardrails; may carry the spec-charter pointer line. | Repository maintainers; `spec-charter` proposes the pointer line and writes only after confirm or explicit autonomous authorization |
 | `README.md` | Outward-facing introduction and user-facing entrypoints. | Repository maintainers |
 
 Downstream tools (for example dev-backlog's sprint and triage skills) consume `spec/*` files as read-only yardsticks and document their own file boundaries; they may propose spec changes but must not mutate spec files themselves.
@@ -30,9 +30,9 @@ Absence is supported. Pick the smallest axis that matches the git topology.
 
 ## Harness pointer
 
-On create or amend, `spec-charter` proposes, in the same confirm as the charter write, one pointer line in `AGENTS.md` (create the file if absent): `Read spec/charter.md before proposing scope, direction, or Non-Goal changes.` — a condition plus a path, never a copy of charter text.
+On create or amend, `spec-charter` proposes, in the same confirm (or explicit autonomous authorization) as the charter write, one pointer line in `AGENTS.md` (create the file if absent): `Read spec/charter.md before proposing scope, direction, or Non-Goal changes.` — a condition plus a path, never a copy of charter text. If an equivalent pointer already exists, propose nothing; the pointer is a no-op on every later amend.
 
-If `CLAUDE.md` exists and neither file imports or symlinks the other, also propose adding one `@AGENTS.md` import line to `CLAUDE.md`; do not move content. The pointer is optional — the user may refuse it; record a refusal under refused/parked. No cache block, no `revision=` stamping, no drift check. Harness files remain not product authority.
+If `CLAUDE.md` exists and neither file imports or symlinks the other, also propose adding one `@AGENTS.md` import line to `CLAUDE.md`; do not move content. The pointer is optional — the user may refuse it (including "do not mention harness files"); record a refusal under refused/parked and do not re-propose it in the same run. Harness files remain not product authority.
 
 ## Nested local instruction files
 

@@ -43,7 +43,7 @@ Prefer bounded evidence before broad reading:
 
 If an optional script is missing, say it was skipped and continue with file reads. Missing `spec/charter.md`, `spec/system-map.md`, or `spec/capabilities.md` is not an error; it is an opt-in state with a next-step recommendation.
 
-There is no harness cache to police: `spec-axis.md` § Harness pointer covers the pointer line and refused/parked bookkeeping; reassess does not run a drift check against it.
+Reassess reads harness files only as development context; they are not product authority and nothing in them is policed here (`spec-axis.md` § Harness pointer).
 
 ## Report Shape
 

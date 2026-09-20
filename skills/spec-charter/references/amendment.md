@@ -60,4 +60,4 @@ Protect the ~5-minute-read property on every amendment.
 
 ## Harness Pointer
 
-Propose the charter diff and the harness pointer line in the same confirm before writing. Pointer wording, the `CLAUDE.md` import condition, and refused/parked bookkeeping live in [`spec-axis.md`](spec-axis.md) § Harness pointer.
+The harness pointer rule lives in [`spec-axis.md`](spec-axis.md) § Harness pointer; amend mode applies it as written.

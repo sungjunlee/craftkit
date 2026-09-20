@@ -99,7 +99,7 @@ Whatever lands in Decisions on revision 1 — including seeded entries — becom
 
 ## 4. Harness Pointer
 
-After the interview, propose the charter draft and the one-line harness pointer in the same confirm; do not write `spec/charter.md` or `AGENTS.md` until confirm or explicit autonomous authorization. Pointer wording and the `CLAUDE.md` import condition live in [`spec-axis.md`](spec-axis.md) § Harness pointer.
+The harness pointer rule lives in [`spec-axis.md`](spec-axis.md) § Harness pointer; create mode applies it as written.
 
 ## Outcome
 

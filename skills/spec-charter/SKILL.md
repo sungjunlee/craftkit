@@ -121,7 +121,7 @@ If the system map is missing on a brownfield repo, recommend `map` before grilli
 - "Put this Hard Constraint in `packages/foo/AGENTS.md`; `spec/capabilities.md` exists." Expected: refuse the fork (`references/spec-axis.md`).
 - "Update this map with a new helper function and endpoint." Expected: refuse or demote unless it changes a project-wide flow or invariant.
 - "This charter hasn't been amended in a year — is it stale?" Expected: reassess; on a lean charter, judge predicate drift, not status promotion.
-- "Create a charter; do not mention harness files." Expected: still propose the one pointer line; do not silently edit `AGENTS.md` or `CLAUDE.md`.
+- "Create a charter; do not mention harness files." Expected: treat it as a refusal of the pointer; omit it, record it under refused/parked, and never edit `AGENTS.md` or `CLAUDE.md` silently.
 
 ## References
 
