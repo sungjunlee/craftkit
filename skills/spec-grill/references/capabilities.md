@@ -110,7 +110,7 @@ Fix: scope the claim to draft seeding.
 
 ## Rerun Protocol
 
-`spec-grill <capability-slug>` may touch:
+A slug-scoped rerun with clear edit authorization may touch (a bare slug mention is a report-only review):
 
 - `Goal`
 - `In-scope`

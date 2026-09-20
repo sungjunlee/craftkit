@@ -16,7 +16,7 @@ Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and da
 
 ### Intent router
 
-Report by default. Read the request and take the safest reading of it; the user never has to memorize arguments or mode names. Write to `spec/capabilities.md` only on clear edit intent — "write it", "add the missing capability", "문서 적을 건 적고" — or after the user confirms a proposed edit. Everything else, including diagnosis, candidate discovery, audits, and single-capability review, ends in a report, and when intent is unclear, prefer report-only. Capability slugs are lowercase singular handles; the nuance belongs in Goal/Scope prose, not in the slug.
+Report by default. Read the request and take the safest reading of it; the user never has to memorize arguments or mode names. Write to `spec/capabilities.md` only on clear edit intent — "write it", "add the missing capability", "문서 적을 건 적고" — or after the user confirms a proposed edit. Everything else — diagnosis, candidate discovery, single-capability review, and an audit that judges existing contracts for stale, overlapping, weak, or unsupported predicates — ends in a report, and when intent is unclear, prefer report-only. Capability slugs are lowercase singular handles; the nuance belongs in Goal/Scope prose, not in the slug.
 
 ### Helper scripts
 
@@ -26,9 +26,9 @@ On a brownfield repo with no `spec/capabilities.md`, or when candidate evidence 
 
 ### Completion contract
 
-Close every run with a summary the reader can judge without redoing the search. It names the evidence read (which file or signal, and what it proves) and the evidence missing that weakens confidence; every candidate admitted, merged, split, or refused, each with its reason; the predicates rejected or rewritten and any Behavior promoted to a Hard Constraint; the capability blocks created or edited, or that nothing was written; the learnings recorded or held for promotion; and one recommended edit — a specific edit, "no edit yet", or "stop after charter (plus map on brownfield)" — with the keep conditions below applied to it. There is no fixed section skeleton, and length follows the run: a single-capability review closes in a paragraph, a whole-repo pass needs more. `references/grill-report-template.md` is one worked shape, not a required one.
+Close every run with a summary the reader can judge without redoing the search. It names the evidence read (which file or signal, and what it proves) and the evidence missing that weakens confidence; every candidate admitted, merged, split, or refused, each with its raw signal, supporting evidence, and missing evidence kept apart; the predicates rejected or rewritten, constraints added, and any Behavior promoted to a Hard Constraint; the capability blocks created or edited, or that nothing was written; the learnings recorded, and the promotions actually completed versus still proposed; and one recommended edit — a specific edit, "no edit yet", or "stop after charter (plus map on brownfield)" — with the keep conditions below applied to it. There is no fixed section skeleton, and length follows the run: a single-capability review closes in a paragraph, a whole-repo pass needs more. `references/grill-report-template.md` is one worked shape, not a required one.
 
-Separate diagnosis from mutation. A report may recommend edits, but it must not edit `spec/capabilities.md` unless the user clearly asked for editing or confirms the proposed edit. The one exception is `### Learnings`: an entry that follows the content rule may be added, updated, or deleted without this gate.
+Diagnosis comes before mutation, even on clear edit intent: state the evidence and the proposed block, then write `spec/capabilities.md` only when the user asked for that edit or confirms it. The one exception is `### Learnings`: an entry that follows the content rule may be added, updated, or deleted without this gate.
 
 ## Brownfield signal rules
 
