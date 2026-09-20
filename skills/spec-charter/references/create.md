@@ -91,11 +91,11 @@ Seed only when the project has prior artifacts that already record direction:
 - ADRs (Architectural Decision Records).
 - Notable merged PRs whose descriptions explain a non-obvious direction.
 
-Pull three to five entries, no more. Each row needs `date`, `decision`, `rationale`, and (if reversing prior direction) `supersedes`.
+Pull three to five entries, no more. Each row needs `date`, `decision`, and `rationale`.
 
-### Immutability from revision 2 onward
+### Standing from revision 2 onward
 
-Whatever lands in Decisions on revision 1 — including seeded entries — is immutable from revision 2 onward. A reversal is a new row with `supersedes`, never an edit or delete. Mention this to the user before seeding so they do not overpopulate optimistically.
+Whatever lands in Decisions on revision 1 — including seeded entries — becomes a standing decision from revision 2 onward: a later amend may rewrite a row in place when the decision flips, or remove it once the rejection reason no longer holds, but it is not free-edited outside that gate. Mention this to the user before seeding so they do not overpopulate optimistically.
 
 ## 4. Harness Projection
 

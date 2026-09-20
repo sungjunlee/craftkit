@@ -21,7 +21,7 @@ Explicit modes win first:
 | User intent | Mode | Boundary |
 |-------------|------|----------|
 | Create the project axis, baseline, charter, or first spec layer | `create` | Only when neither `spec/charter.md` nor legacy root `CHARTER.md` exists, unless the user explicitly asks to replace it. |
-| Update direction, objectives, decisions, or accepted charter wording | `amend` | Applies tier gates and may edit the resolved charter after confirmation. |
+| Update direction, objectives, decisions, or accepted charter wording | `amend` | Applies tier gates and may edit the resolved charter after confirmation. A described concept change (not an edit) routes to the `reset` path: bump `revision`, rewrite Tier 1–3 freely, confirm. |
 | Check whether charter/system-map/capabilities/Learnings are stale | `reassess` | Report-only; routes accepted fixes to `amend`, `map`, `spec-grill`, or a Learning Action. |
 | Architecture, system shape, runtime boundaries, flows, invariants, or `spec/system-map.md` | `map` | Create or amend the system map. File-state picks create vs amend. |
 
@@ -59,7 +59,7 @@ Absence is supported. Projects opt in by creating the files; other tools degrade
 |------|----------|---------------------|
 | **1 · Direction** | Problem, Approach, Non-Goals | Human-gated: propose → confirm → apply. |
 | **2 · Predicates** | Objectives | Status-free by default. Add/remove is human-gated. IDs are stable and never reused. Retire by moving the line to `docs/spec-history.md`. |
-| **3 · History** | Decisions | Append-only. Reverse via a new `supersedes` row. |
+| **3 · Standing** | Decisions | Human-gated: rewrite a row in place when a decision flips; remove it once the rejection reason no longer holds. |
 
 **Opt-in status ladder.** If a charter already uses status tokens, keep them and apply `references/amendment.md`. Do not add tokens to a lean charter. Reassess on a lean charter judges predicate drift (still true? still directive?), not status promotion.
 
@@ -69,7 +69,7 @@ Use when neither `spec/charter.md` nor legacy root `CHARTER.md` exists. If only 
 
 1. Draft from repo signals: product/user-facing (`README.md`, open issues, `CHANGELOG.md`) before harness files (`CLAUDE.md`, `AGENTS.md`). Harness files may inform workflow; they do not override README, issues, or code for product authority unless they explicitly describe product boundaries. Surface conflicts in the interview rather than picking silently.
 2. Interview to sharpen Problem, Approach, Non-Goals, and initial Objectives. Follow `references/create.md`. Non-interactive create is allowed when the user asked for autonomous progress and evidence is strong; mark inferred claims `src: inferred` and list unresolved assumptions. Autonomous authorization covers the harness package unless the user explicitly refused it.
-3. Create `spec/` if needed. Propose `spec/charter.md` (from `templates/charter.md`, `revision: 1`, today's `last_amended`) plus the trigger pointer and marker projection as one package (`references/create.md`); write only after confirm or explicit autonomous authorization. Seed Decisions only from existing ADRs or notable merged PRs; whatever lands is immutable from revision 2.
+3. Create `spec/` if needed. Propose `spec/charter.md` (from `templates/charter.md`, `revision: 1`, today's `last_amended`) plus the trigger pointer and marker projection as one package (`references/create.md`); write only after confirm or explicit autonomous authorization. Seed Decisions only from existing ADRs or notable merged PRs; whatever lands becomes a standing decision from revision 2 on.
 4. On brownfield repos, if `spec/system-map.md` is absent, continue into Map mode instead of writing a stub map.
 
 Objectives are verifiable predicates, not tasks. Mixed rigor is allowed. Use `O<n>` IDs; never reuse a removed ID. Write lean objectives as `- O1 — <predicate> · src: user`. Record provenance with `src:` (`user`, `inferred`, or `execution`). Default to the language signaled by README and the user; keep structural labels in English. See `references/objectives.md`.
@@ -81,7 +81,8 @@ Use when a charter exists or when invoked as `amend`. If only root `CHARTER.md` 
 - Tier 1 plus objective add/remove: challenge, propose diffs, confirm, then apply.
 - Lean Tier 2: no status advances. Retire by moving the line to `docs/spec-history.md`.
 - If the live charter already uses status tokens, apply `references/amendment.md`. Do not add tokens to a lean charter.
-- Tier 3: append only.
+- Tier 3: rewrite a row in place when a decision flips — the rationale keeps one clause on why the previous position was left; remove a row once the rejection reason no longer holds. Same human gate as Tier 1.
+- **Reset**: when the user describes a concept change rather than an edit, bump `revision`, rewrite Tier 1–3 freely under the usual confirm, and leave one line `Previous charter: git <sha>` under Decisions.
 
 After an accepted amendment, bump `last_amended` and `revision` unless the only accepted change is aligning a drifted projection excerpt (then keep the charter revision and rewrite the inner block). Propose that bump or refresh together with the projection rules in `references/spec-axis.md`. Protect the ~5-minute-read property. A `backlog-triage` Alignment Check may seed proposals; this skill applies the gates.
 
@@ -114,7 +115,7 @@ If the system map is missing on a brownfield repo, recommend `map` before grilli
 
 - "Create a charter for a repo with no README and a vague objective list." Expected: interview until Problem/Approach/Non-Goals are concrete; refuse objectives that aren't verifiable predicates; write status-free `- O1 — <predicate>` lines.
 - "Mark this objective validated because the team believes it's done." Expected: on a lean charter, refuse status tokens; on an opt-in ladder charter, refuse the advance without cited proof.
-- "Edit a past Decisions row to fix a typo." Expected: refuse; append a new row.
+- "Edit a past Decisions row to fix a typo." Expected: rewrite the row in place after confirm; no new row.
 - "Create a system map after reading only README and top-level folders." Expected: continue the Repo Evidence Pass or label the map as under-evidenced.
 - "Map a brownfield repo; `packages/foo` has `AGENTS.md`, `packages/bar` does not." Expected: record foo's path; bar is `none` plus Evidence Missing; do not create `packages/bar/AGENTS.md`.
 - "Put this Hard Constraint in `packages/foo/AGENTS.md`; `spec/capabilities.md` exists." Expected: refuse the fork (`references/spec-axis.md`).

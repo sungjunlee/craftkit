@@ -125,7 +125,7 @@ It must not touch:
 - other capability blocks
 - `spec/charter.md`, unless the user separately invokes amend mode
 
-If a rerun discovers a cross-cutting decision, append it to the relevant Decisions table or promote it to `spec/charter.md` via amend mode. Do not rewrite old Decisions rows.
+If a rerun discovers a cross-cutting decision, record it in the relevant Decisions table — rewriting a row in place if it flips a standing decision, otherwise adding a new row — or promote it to `spec/charter.md` via amend mode. Treat any Decisions edit as its own human-gated step, not a side effect of the Goal/Scope/Behaviors/Constraints rerun.
 
 ## Decisions Seeding
 
@@ -134,9 +134,9 @@ Capability-level Decisions should explain local contract choices, not duplicate 
 Use this rule:
 
 - Echo a `spec/charter.md` Decision at capability level only when its rationale is needed to understand a Behavior or Hard Constraint in that capability.
-- Leave Decisions empty when the charter row is merely historical context; the cross-cutting record already lives in `spec/charter.md`.
+- Leave Decisions empty when the charter row already explains the standing position; the cross-cutting record already lives in `spec/charter.md`.
 - Put capability-only Decisions in that capability block.
-- Promote any capability Decision that affects more than one capability through `spec-charter amend`; append a new charter Decision instead of rewriting old rows.
+- Promote any capability Decision that affects more than one capability through `spec-charter amend`; the charter row may be rewritten in place if it flips an existing standing decision, or added new otherwise.
 
 Examples:
 
