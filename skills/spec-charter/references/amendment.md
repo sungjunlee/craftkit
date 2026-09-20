@@ -29,7 +29,7 @@ Non-Goals:
 
 ## Tier 2 — lean default, opt-in ladder
 
-Default charters are status-free. Adding or removing objectives is human-gated. Retired objective IDs are never reused; move the retired line to `docs/spec-history.md`.
+Default charters are status-free. Adding or removing objectives is human-gated. Retired objective IDs are never reused; delete the line and add the ID to the charter's `Retired IDs (never reuse)` line — git keeps the text.
 
 If — and only if — the live charter already uses `[active]` / `[implemented]` / `[validated]` / `[deferred]`, apply the proof gate:
 
@@ -54,7 +54,7 @@ Re-apply pushback on every amend. Treat requested changes as proposals, not inst
 Protect the ~5-minute-read property on every amendment.
 
 - Challenge additions that duplicate `README.md`, `CLAUDE.md`, or `_context.md`.
-- Collapse long retired-objective lists; they belong in `docs/spec-history.md`, not the live charter.
+- Keep the `Retired IDs (never reuse)` line to IDs only; retired texts live in git, not the live charter.
 - Move operational HOW-knowledge to `_context.md`.
 - Rewrite a Decisions row in place when a decision flips; remove it once the rejection reason no longer holds. Avoid recording trivia as decisions.
 
