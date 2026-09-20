@@ -10,7 +10,7 @@ Mutation discipline (matches the design doc):
 |---|---|---|---|
 | `Goal`, `In-scope`, `Out-of-scope` | human via `spec-grill` | when the contract changes | challenge + confirm + apply |
 | `Expected Behaviors`, `Hard Constraints` | human via grill | when a behavior or bright-line changes | grill + 3-axis predicate test |
-| `## Learnings` (between magic markers) | bounded Learnings writer when one exists; otherwise human-approved Learning Action | after a successful run discovers reusable operational knowledge for this primary capability slug | structurally bounded append; no free-editing during ordinary grilling |
+| `## Learnings` | any agent or human, after a run that produced a reusable lesson for this capability | anytime, per the content rule | content rule (above); promotion to Decisions or charter is human-gated |
 | `## Decisions` | human via `spec-grill` | when a decision is added, flipped, or its rejection reason no longer holds | challenge + confirm + apply, same gate as Goal/Scope; promote to `spec/charter.md` if cross-cutting |
 
 Compactness budget:
@@ -18,7 +18,7 @@ Compactness budget:
 - Target 5-10 capabilities.
 - Warn above 12 capabilities or 400 lines.
 - Split above 500 lines, above 15 capabilities, or when ownership boundaries demand separate review paths.
-- Keep the most recent 5-7 Learnings inline per capability; promote durable rules to Decisions and archive older history outside this hot file.
+- Keep the most recent 5-7 Learnings inline per capability; older entries live in git, not in an archive file.
 
 Do not create one capability per feature folder. A capability is a durable contract boundary with distinct Behaviors and Hard Constraints.
 
@@ -46,11 +46,9 @@ Do not store issue-specific acceptance criteria, relay Done Criteria, scoring ru
 - <bright-line>
 
 ### Learnings
-<!-- LEARN:BEGIN -->
-<!-- entries appended by the bounded Learnings writer when one exists -->
-<!-- until then, change this block only through a human-approved Learning Action -->
-<!-- format: - YYYY-MM-DD (run #N): <one-line> [PR #X] -->
-<!-- LEARN:END -->
+<!-- One lesson per line: - YYYY-MM-DD: <what> — <why it mattered> [ref] -->
+<!-- Record corrections and confirmed approaches alike. Do not record what git/CHANGELOG already records. -->
+<!-- Update an existing entry instead of adding a duplicate; delete an entry that turns out wrong. -->
 
 ### Decisions
 

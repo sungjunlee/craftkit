@@ -1,25 +1,25 @@
 # Reassess-Mode Heuristics
 
-Use this reference in `spec-charter reassess` after reading the Reassess Mode section in `SKILL.md`. The mode is a report-only stale-spec review. It helps the user decide whether to run `spec-charter amend`, `spec-charter map`, `spec-grill`, or a separate user-approved Learning Action.
+Use this reference in `spec-charter reassess` after reading the Reassess Mode section in `SKILL.md`. The mode is a report-only stale-spec review. It helps the user decide whether to run `spec-charter amend`, `spec-charter map`, or `spec-grill`.
 
 ## Policy Ownership
 
 - `SKILL.md` owns the dispatch contract: when to invoke reassess, the no-edit boundary, and the required report sections.
-- This reference owns the operational procedure: evidence order, report shape, recommendation rules, Learning Actions, and stale-spec failure modes.
+- This reference owns the operational procedure: evidence order, report shape, recommendation rules, and stale-spec failure modes.
 - This shipped reference set owns the durable policy needed for portable use. Do not depend on repo-local design docs unless the target repo provides them.
 
 ## Operating Principle
 
 Reassess is the controller review, not the writer.
 
-- Sensors: `## Learnings`, sprint `component:` handles, doctor/lint output, recent sprint context.
+- Sensors: `## Learnings`, sprint `component:` handles, lint output, recent sprint context.
 - Diagnosis: the reassess report.
-- Controller action: user-approved `amend`, `map`, `grill`, or Learning Action.
+- Controller action: user-approved `amend`, `map`, or `grill`.
 - Forbidden shortcut: silently editing accepted charter direction, capability contracts, or harness files (`AGENTS.md` / `CLAUDE.md`) during reassess.
 
 The default answer can be "no change." Do not manufacture churn just because the user asked for a reassessment.
 
-Learning Actions are the user-gated family for keeping recent Learnings inline, promoting durable facts to Decisions, promoting cross-cutting facts to charter Decisions, or archiving old history outside the hot startup path. If the user accepts one, end reassess and perform a separate user-approved manual edit. Do not treat that edit as part of reassess diagnosis.
+Learnings are agent-writable directly under the content rule in `spec-grill`'s `templates/capabilities.md` (one lesson per line with the why; update instead of duplicating; delete an entry that turns out wrong) — reassess does not gate ordinary Learnings edits and should not recommend one. Reassess may still flag a Learning ready to *promote* to a standing Decision: capability-level promotion is a Grill Candidate (`spec-grill`), cross-cutting promotion is an Amend Candidate (`spec-charter amend`). That promotion is human-gated; recording or refining a Learning in place is not.
 
 ## Cadence Triggers
 
@@ -37,7 +37,7 @@ Prefer bounded evidence before broad reading:
 1. `spec/charter.md` Objectives and Decisions when a recommendation could affect project-wide direction.
 2. `spec/system-map.md` when evidence points to stale project-wide structure, boundaries, flows, or invariants.
 3. `spec/capabilities.md` capability blocks named by the evidence.
-4. Repo-local helper scripts when present, such as `capabilities-doctor.js --json` for marker health or `component-lint.js --json` for sprint `component:` routing drift.
+4. Repo-local helper scripts when present, such as `component-lint.js --json` for sprint `component:` routing drift.
 5. `CLAUDE.md` / `AGENTS.md` only when the reassess question involves harness behavior, local commands, agent context loading, or projection staleness. Inspect **both** files when they exist: the projection home and whether the other file imports or symlinks it.
 6. Latest five completed sprint files, plus the active sprint when it exists.
 
@@ -59,7 +59,7 @@ Do not recommend `spec-grill` as the default next step for projection drift. The
 
 ## Report Shape
 
-**Sizing rule**: default to a quick reassess for a narrow staleness question about one file or section — three sections: **Evidence**, **No Change**, **Recommended Next Step**. A quick-reassess finding that would need System Map Candidates, Grill Candidates, Amend Candidates, Learning Actions, or Missing Evidence gets one line under Recommended Next Step pointing to a full reassess instead of full sections. Reserve the full reassess report below for periodic health checks, multi-file drift review, or when the user explicitly asks for the full report. Reassess discipline applies in full at every size: quick reassess is still report-only (never edits) and still routes accepted fixes through `spec-charter amend`, `spec-charter map`, or `spec-grill`; it only trims what gets written down.
+**Sizing rule**: default to a quick reassess for a narrow staleness question about one file or section — three sections: **Evidence**, **No Change**, **Recommended Next Step**. A quick-reassess finding that would need System Map Candidates, Grill Candidates, Amend Candidates, or Missing Evidence gets one line under Recommended Next Step pointing to a full reassess instead of full sections. Reserve the full reassess report below for periodic health checks, multi-file drift review, or when the user explicitly asks for the full report. Reassess discipline applies in full at every size: quick reassess is still report-only (never edits) and still routes accepted fixes through `spec-charter amend`, `spec-charter map`, or `spec-grill`; it only trims what gets written down.
 
 Full reassess report:
 
@@ -80,11 +80,6 @@ Full reassess report:
 
 ### Amend Candidates
 - <charter item or harness projection> — evidence: <signal>; suspected change: <direction/objective/decision/excerpt refresh>; next: `spec-charter amend`
-
-### Learning Actions
-- Keep inline: <recent high-signal Learnings>
-- Promote: <Learning> — evidence: <repetition or durable rule>; next: separate user-approved Learning Action
-- Archive: <history no longer needed in startup context> — evidence: <age/no longer active>; next: separate user-approved Learning Action
 
 ### Missing Evidence
 - <what was absent or skipped>
@@ -151,15 +146,11 @@ Recommend `spec-charter amend` when evidence affects project-wide direction:
 
 Do not weaken an Objective so the available proof appears sufficient. Projection drift routes here, not to `spec-grill`.
 
-### Learning Action
+### Learnings Promotion
 
-Learning Action is the canonical umbrella for accepted Learnings cleanup after reassess. It includes keep-inline, promotion, and archive actions.
+Learnings are not a mutation family: adding, updating, or deleting an entry under the content rule is agent-writable and out of scope for reassess to recommend. Reassess only flags when a Learning is ready to *promote* to a standing Decision.
 
-Keep recent Learnings inline when they are still useful startup context.
-
-Promote a Learning to `## Decisions` when it has become a durable capability rule. Promote to charter Decisions only when it affects more than one capability or changes the project-wide axis.
-
-Archive older Learnings when they are useful history but no longer startup context. Reassess may recommend a Learning Action, but the actual edit is human-gated.
+Promote a Learning to a capability's `## Decisions` when it has become a durable capability rule — file it as a Grill Candidate. Promote a Learning to charter Decisions only when it affects more than one capability or changes the project-wide axis — file it as an Amend Candidate. Promotion is human-gated; recording or refining a Learning in place is not.
 
 ## Failure Modes
 

@@ -46,7 +46,7 @@ End every run with a short summary:
 - raw candidates merged/split/refused, with raw signal, supporting evidence, and missing evidence separated
 - behaviors promoted to constraints
 - missing proof or evidence
-- follow-up Learning Actions if any
+- learnings recorded or promoted, if any
 
 ### Grill report contract
 
@@ -77,7 +77,7 @@ The file's mutation discipline:
 
 - Goal / In-scope / Out-of-scope: human-gated through this skill.
 - Expected Behaviors / Hard Constraints: human-gated and must pass the 3-axis predicate test.
-- `## Learnings`: not an interview target. If a bounded Learnings writer exists, only that writer appends between magic markers. Until then, Learnings changes require a human-approved Learning Action.
+- `## Learnings`: not an interview target; promotion is human-gated. Any agent or human may add, update, or delete an entry after a run that produced a reusable lesson, one lesson per line with the why (`- YYYY-MM-DD: <what> — <why it mattered> [ref]`); record corrections and confirmed approaches alike; skip what git/CHANGELOG already records; update an existing entry instead of duplicating it; delete an entry that turns out wrong. Promoting a Learning to a standing `## Decisions` row or to `spec/charter.md` stays human-gated.
 - `## Decisions`: standing decisions, human-gated; rewrite a row in place when a decision flips, remove it once the rejection reason no longer holds; promote cross-cutting decisions to `spec/charter.md` through `spec-charter amend`.
 
 ## Keep conditions

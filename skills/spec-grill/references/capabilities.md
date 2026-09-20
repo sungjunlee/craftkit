@@ -94,7 +94,7 @@ Problem: the agent can append low-signal filler after every run, satisfying the 
 
 Fix: encode the user intent.
 
-> "A successful relay run appends at most one Learning only when it discovered a reusable pattern, measured fact, or constraint that future runs need."
+> "A successful run appends at most one Learning only when it discovered a reusable pattern, measured fact, or constraint that future runs need."
 
 ### Distributional failure
 
@@ -164,7 +164,7 @@ One capability should map to a testable contract surface: a surface where a Beha
 Before creating a capability, ask:
 
 - Is this a repeated decision boundary?
-- Does it own the primary destination for relay Learnings?
+- Does it own the primary destination for captured Learnings?
 - Can its Goal be stated as an observable user or operator outcome?
 - Do its Behaviors and Hard Constraints differ from neighboring candidates?
 
@@ -226,15 +226,14 @@ Code-understood evidence supports admission:
 
 Do not admit a brownfield capability from one weak signal alone. Directory-only and commit-scope-only candidates stay in the interview queue unless the user explicitly authorizes the capability as durable. When accepted on override, the grill report should say which evidence is missing so future work can confirm or merge it.
 
-## Learning Actions
+## Learnings Content Rule
 
-`## Learnings` is recent operational memory, not an endless audit log. Grill mode may notice that a capability is over its 5-7 Learning budget, but it should recommend a user-approved Learning Action rather than define a separate cleanup workflow here.
+`## Learnings` is recent operational memory, not an endless audit log. Any agent or human may add, update, or delete an entry directly after a run that produced a reusable lesson — no writer gate. Follow the content rule in `templates/capabilities.md`: one lesson per line (`- YYYY-MM-DD: <what> — <why it mattered> [ref]`); record corrections and confirmed approaches alike; do not record what git/CHANGELOG already records; update an existing entry instead of adding a duplicate; delete an entry that turns out wrong.
 
-Use the mutation policy in this reference and the reassess rules in `../spec-charter/references/reassess.md`:
+Grill mode may notice that a capability is over its 5-7 Learning budget or holds a Learning ready to promote. Promotion is the human-gated step, not the Learnings edit itself:
 
-- keep recent Learnings inline when they still help startup context
-- promote durable capability facts to `## Decisions`
-- promote cross-cutting facts to charter Decisions
-- archive older history outside the hot `spec/capabilities.md` path
+- promote a durable capability fact to `## Decisions`
+- promote a cross-cutting fact to charter Decisions
+- let older history live in git, not in a separate archive file
 
-Do not let relay delete or rewrite Learnings. A Learning Action is human-gated or doctor-suggested, not an automatic side effect of a merge.
+See the mutation policy in this reference and the reassess rules in `../spec-charter/references/reassess.md`.

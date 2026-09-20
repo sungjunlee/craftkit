@@ -22,7 +22,7 @@ Explicit modes win first:
 |-------------|------|----------|
 | Create the project axis, baseline, charter, or first spec layer | `create` | Only when neither `spec/charter.md` nor legacy root `CHARTER.md` exists, unless the user explicitly asks to replace it. |
 | Update direction, objectives, decisions, or accepted charter wording | `amend` | Applies tier gates and may edit the resolved charter after confirmation. A described concept change (not an edit) routes to the `reset` path in Amend mode. |
-| Check whether charter/system-map/capabilities/Learnings are stale | `reassess` | Report-only; routes accepted fixes to `amend`, `map`, `spec-grill`, or a Learning Action. |
+| Check whether charter/system-map/capabilities/Learnings are stale | `reassess` | Report-only; routes accepted fixes to `amend`, `map`, or `spec-grill`. |
 | Architecture, system shape, runtime boundaries, flows, invariants, or `spec/system-map.md` | `map` | Create or amend the system map. File-state picks create vs amend. |
 
 When no mode is specified, route by intent first. Generic charter requests: prefer `spec/charter.md`; fall back to legacy root `CHARTER.md`; if neither exists, use create. Capability contracts, component boundaries, or `spec/capabilities.md` route to `spec-grill`.
@@ -106,7 +106,7 @@ Use when the user asks whether the spec axis is stale, wants a spec health check
 Dispatch:
 
 1. Bounded file evidence: named charter, system-map, or capability sections, plus at most the latest five execution logs when present.
-2. Repo-local helpers such as `capabilities-doctor.js --json` only when they exist in the *target* repo. Otherwise list them under **Missing Evidence**.
+2. Repo-local helpers only when they exist in the *target* repo, such as `component-lint.js --json` for sprint `component:` routing drift. Otherwise list them under **Missing Evidence**.
 3. **Sizing rule**: default to **Evidence**, **No Change**, **Recommended Next Step**. Reserve the full report in `references/reassess.md` for periodic health checks or an explicit full-report ask. Discipline is unchanged at every size: report-only; route fixes through `amend`, `map`, or `spec-grill`.
 
 If the system map is missing on a brownfield repo, recommend `map` before grilling. If the map exists and capabilities are missing or thin, recommend `spec-grill` only when a consumer, a cross-tree contract, or a 3-axis audit is in play. If a harness projection block is present, compare its `revision=` and excerpted Non-Goals to the live charter; name drift, do not refresh it here (`references/reassess.md`).
