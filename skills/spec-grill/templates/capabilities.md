@@ -11,7 +11,7 @@ Mutation discipline (matches the design doc):
 | `Goal`, `In-scope`, `Out-of-scope` | human via `spec-grill` | when the contract changes | challenge + confirm + apply |
 | `Expected Behaviors`, `Hard Constraints` | human via grill | when a behavior or bright-line changes | grill + 3-axis predicate test |
 | `## Learnings` (between magic markers) | bounded Learnings writer when one exists; otherwise human-approved Learning Action | after a successful run discovers reusable operational knowledge for this primary capability slug | structurally bounded append; no free-editing during ordinary grilling |
-| `## Decisions` | human, append-only | when a capability-level decision is made | append-only by convention; promote to `spec/charter.md` if cross-cutting |
+| `## Decisions` | human via `spec-grill` | when a decision is added, flipped, or its rejection reason no longer holds | challenge + confirm + apply, same gate as Goal/Scope; promote to `spec/charter.md` if cross-cutting |
 
 Compactness budget:
 
@@ -54,8 +54,10 @@ Do not store issue-specific acceptance criteria, relay Done Criteria, scoring ru
 
 ### Decisions
 
-| date | decision | rationale | supersedes |
-| --- | --- | --- | --- |
+<Holds only the decisions currently standing for this capability. A flipped decision is rewritten in place — the rationale keeps one clause on why the previous position was left. Remove a row once the rejection reason no longer holds.>
+
+| date | decision | rationale |
+| --- | --- | --- |
 
 ---
 

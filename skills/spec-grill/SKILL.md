@@ -78,7 +78,7 @@ The file's mutation discipline:
 - Goal / In-scope / Out-of-scope: human-gated through this skill.
 - Expected Behaviors / Hard Constraints: human-gated and must pass the 3-axis predicate test.
 - `## Learnings`: not an interview target. If a bounded Learnings writer exists, only that writer appends between magic markers. Until then, Learnings changes require a human-approved Learning Action.
-- `## Decisions`: append-only by convention; promote cross-cutting decisions to `spec/charter.md` through `spec-charter amend`.
+- `## Decisions`: standing decisions, human-gated; rewrite a row in place when a decision flips, remove it once the rejection reason no longer holds; promote cross-cutting decisions to `spec/charter.md` through `spec-charter amend`.
 
 ## Keep conditions
 

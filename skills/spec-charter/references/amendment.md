@@ -56,7 +56,7 @@ Protect the ~5-minute-read property on every amendment.
 - Challenge additions that duplicate `README.md`, `CLAUDE.md`, or `_context.md`.
 - Collapse long retired-objective lists; they belong in `docs/spec-history.md`, not the live charter.
 - Move operational HOW-knowledge to `_context.md`.
-- Keep Decisions append-only, but avoid recording trivia as decisions.
+- Rewrite a Decisions row in place when a decision flips; remove it once the rejection reason no longer holds. Avoid recording trivia as decisions.
 
 ## Harness Projection Refresh
 
