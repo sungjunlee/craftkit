@@ -24,6 +24,7 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 - `spec-grill` `## Learnings` drops the `LEARN:BEGIN`/`LEARN:END` marker gate and the bounded-writer/Learning-Action requirement; any agent or human may add, update, or delete an entry directly under a content rule (one lesson with its why, no duplicates, delete when wrong), and only promotion to a standing Decision or the charter stays human-gated. `spec-charter` reassess drops Learning Action as a mutation family — Learnings stay a sensor, and promotion routes through the existing Grill/Amend Candidate families (#248).
 - `spec-charter` and `spec-grill` move their Verification prompts to `references/verification.md`; the section is optional in the spec-* family contract (#252).
 - `spec-charter` spine de-prescribed: the mode router is one paragraph, completion contracts are one done-statement per mode, and per-mode procedures are prose; Tier 1 gates, predicate objectives, evidence-backed maps, and report-only reassess are unchanged (#251).
+- `spec-grill` spine de-prescribed: intent router is one paragraph, the fixed Grill Report skeleton becomes a judgment contract, the ordered interview and exactly-one ceremony go, and stale downstream-routing claims are removed (#250).
 - `AGENTS.md` keeps only repo-specific invariants (Node tooling, explicit-only pairing, artifact path, commit prefixes). Generic writing advice moved out.
 
 ## [0.4.0] — 2026-08-17

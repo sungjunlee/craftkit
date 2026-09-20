@@ -50,7 +50,7 @@ Skills may add extra sections for their own mechanics (loop control, risk gates,
 | Section | Required? | Notes |
 |---|---|---|
 | H1 + intro paragraph(s) | Required | States the target file and its boundary vs sibling spec files. |
-| Execution Contract > Mode Router (or Intent Router) | Required | Explicit modes win over file-state inference. |
+| Execution Contract > Mode Router (or Intent Router) | Required | Explicit user intent wins over file-state inference; mode words are optional shorthand. |
 | Execution Contract > Completion Contract | Required | What the skill reports at the end of each mode/route. |
 | Execution Contract > Helper Scripts | Optional | Only when the skill ships bundled scripts. |
 | Domain contract section(s) | Required, ≥1, name varies | Write/mutation discipline. |

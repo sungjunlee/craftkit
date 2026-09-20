@@ -2,7 +2,7 @@
 
 This file is the middle layer between `spec/charter.md` (north star) and the active sprint (this week's tasks). Each capability describes one subsystem buckets-worth of work with a frozen-ish contract and a structurally-bounded live-feedback channel.
 
-Use loose prose and strict handles. Goal, scope, behaviors, sprint Plan, and Running Context are where agents can explain nuance. Capability IDs and sprint `component:` values are routing handles: use one lowercase slug such as `sprint-execution`, not a sentence or comma-separated list.
+Use loose prose and tight handles. Goal, scope, and behaviors are where agents can explain nuance. A capability ID is a handle: use one lowercase singular slug such as `sprint-execution`, not a sentence or comma-separated list.
 
 Mutation discipline (matches the design doc):
 
@@ -22,7 +22,7 @@ Compactness budget:
 
 Do not create one capability per feature folder. A capability is a durable contract boundary with distinct Behaviors and Hard Constraints.
 
-Do not store issue-specific acceptance criteria, relay Done Criteria, scoring rubrics, or review notes here. Those belong to GitHub/task files, sprint files, and dev-relay run artifacts. Capability specs may be informed by that evidence, but they record only durable contracts.
+Do not store issue-specific acceptance criteria, per-task done criteria, scoring rubrics, or review notes here. Those belong to GitHub issues, task files, and sprint files. Capability specs may be informed by that evidence, but they record only durable contracts.
 
 ---
 
@@ -38,12 +38,11 @@ Do not store issue-specific acceptance criteria, relay Done Criteria, scoring ru
 
 ### Expected Behaviors
 - <verifiable predicate that passes the 3-axis test: authority + distributional + manipulability>
-- <verifiable predicate>
-- <verifiable predicate>
+<!-- up to three on a first pass; add more on a later rerun -->
 
 ### Hard Constraints
 - <bright-line: this capability never does X, even if asked>
-- <bright-line>
+<!-- up to two on a first pass -->
 
 ### Learnings
 <!-- One lesson per line: - YYYY-MM-DD: <what> — <why it mattered> [ref] -->
