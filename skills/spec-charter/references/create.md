@@ -4,7 +4,7 @@ Use this reference in `spec-charter` create mode after confirming neither `spec/
 
 ## 1. Signal Collection (Priority + Conflict)
 
-Create mode step 1 draws from repo signals. When signals are rich, weight them by intent fidelity; when they are missing, fall back rather than stalling.
+Create mode draws from repo signals. When signals are rich, weight them by intent fidelity; when they are missing, fall back rather than stalling.
 
 ### Priority order
 
@@ -36,7 +36,7 @@ Silent picks pollute Problem and Approach for the life of the charter.
 
 ## 2. Interview Checklist
 
-Create mode step 2 is an interview to fill and sharpen Problem, Approach, Non-Goals, and initial Objectives. Run the prompts below in order. Each question has a default frame; offer it as a starting point, do not impose it.
+Create mode interviews to fill and sharpen Problem, Approach, Non-Goals, and initial Objectives. Run the prompts below in order. Each question has a default frame; offer it as a starting point, do not impose it.
 
 ### Problem framing
 
@@ -77,7 +77,7 @@ For predicate quality, follow [`objectives.md`](objectives.md): five good and fi
 
 ## 3. Seed Decisions
 
-Create mode step 3 drafts the file from `templates/charter.md`. The Decisions table may be left empty. Do not write the file until the §4 package is confirmed.
+Create mode drafts the file from `templates/charter.md`. The Decisions table may be left empty. Do not write the file until the §4 package is confirmed.
 
 ### Default: empty is fine
 

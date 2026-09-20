@@ -4,7 +4,7 @@ Use this reference in `spec-charter reassess` after reading the Reassess Mode se
 
 ## Policy Ownership
 
-- `SKILL.md` owns the dispatch contract: when to invoke reassess, the no-edit boundary, and the required report sections.
+- `SKILL.md` owns the dispatch contract: when to invoke reassess, the no-edit boundary, and what a finished reassess looks like.
 - This reference owns the operational procedure: evidence order, report shape, recommendation rules, and stale-spec failure modes.
 - This shipped reference set owns the durable policy needed for portable use. Do not depend on repo-local design docs unless the target repo provides them.
 
