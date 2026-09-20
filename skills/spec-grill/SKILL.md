@@ -24,6 +24,8 @@ Resolve helper scripts from the installed `spec-grill` skill directory, not from
 
 On a brownfield repo with no `spec/capabilities.md`, or when candidate evidence is requested, run `node <skill-dir>/scripts/extract-signals.js --repo-root <target-repo> --json` first. The script reports raw capability evidence. It never writes `spec/capabilities.md`; admission, merging, splitting, and naming belong to this skill.
 
+Use-or-delete checkpoint 2026-12-20: see `docs/status.md`.
+
 ### Completion contract
 
 Close every run with a summary the reader can judge without redoing the search. It names the evidence read (which file or signal, and what it proves) and the evidence missing that weakens confidence; every candidate admitted, merged, split, or refused, each with its raw signal, supporting evidence, and missing evidence kept apart; the predicates rejected or rewritten, constraints added, and any Behavior promoted to a Hard Constraint; the capability blocks created or edited, or that nothing was written; the learnings recorded, and the promotions actually completed versus still proposed; and one recommended edit — a specific edit, "no edit yet", or "stop after charter (plus map on brownfield)" — with the keep conditions below applied to it. There is no fixed section skeleton, and length follows the run: a single-capability review closes in a paragraph, a whole-repo pass needs more. `references/grill-report-template.md` is one worked shape, not a required one.
