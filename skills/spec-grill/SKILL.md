@@ -34,14 +34,14 @@ Create `spec/capabilities.md` only when at least one holds: a consumer exists; t
 
 README, `spec/charter.md`, and issues are product authority; source directories are structure evidence; commit scopes are history; `CLAUDE.md`/`AGENTS.md` are harness context that may seed questions but never establish a boundary by themselves.
 
-Admit a capability when it is a repeated decision boundary rather than a directory name or commit scope, with a Goal stated as an observable outcome, a natural home for learnings captured from work, and Behaviors that differ meaningfully from its neighbors. On brownfield repos require at least two evidence classes (for example system-map boundary plus scripts, or README signal plus tests); a single strong user statement may override this if the report says so. Merge candidates that share nearly all predicates; split one that needs more than five Behaviors along the boundary the extra Behaviors describe.
+Admit a capability when it is a repeated decision boundary rather than a directory name or commit scope, with a Goal stated as an observable outcome, a natural home for learnings captured from work, and Behaviors that differ meaningfully from its neighbors. On brownfield repos require at least two evidence classes (for example system-map boundary plus scripts, or README signal plus tests); a single evidence class passes only when the user explicitly authorizes that capability, and the report names the missing evidence. Merge candidates that share nearly all predicates; split one that needs more than five Behaviors along the boundary the extra Behaviors describe.
 
 ## Per-capability contract
 
 - **Goal** — one sentence naming what the user can observe when this works; checked for plain-language observability, not the 3-axis test.
 - **In-scope / Out-of-scope** — what it owns and the boundary it deliberately respects.
-- **Expected Behaviors** — verifiable predicates that pass the 3-axis test. About three on a first pass.
-- **Hard Constraints** — bright lines never crossed even if asked; anti-Goodhart guards live here. About two on a first pass.
+- **Expected Behaviors** — verifiable predicates that pass the 3-axis test.
+- **Hard Constraints** — bright lines never crossed even if asked; anti-Goodhart guards live here.
 
 Positive normal outcomes are Behaviors; bright-line negations are Hard Constraints. When both fit, prefer the constraint only when the negative form guards against an optimization or data-loss shortcut.
 

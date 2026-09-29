@@ -39,7 +39,7 @@ The spine is a router: it says what the skill delivers and points to references 
 | Output format | Required | Fixed template *or* a judgment contract (what the output must convey). |
 | References | Required if `references/` exists | Dedicated `## References` (or `## References (load on demand)`), last. Every `references/` file cited; every cited path exists. |
 
-Optional, only when the section carries something a capable model would otherwise get wrong: Use this when (skip for explicit-only skills — the user invokes them by name), Inputs, Steps or Workflow, Guardrails, Failure modes, Example, or a skill-specific section. State each rule once, in the section where it acts; do not restate it in a second section to fill that section out. Ordering is not enforced.
+Optional, only when the section carries something a capable model would otherwise get wrong: Use this when (skip for explicit-only skills — the user invokes them by name), Inputs, Steps or Workflow, Guardrails, Failure modes, Example, or a skill-specific section. State each rule once, in the section where it acts; do not restate it in a second section to fill that section out. References comes last; the order of other sections is not enforced.
 
 ## spec-* family contract (router-contract variant)
 

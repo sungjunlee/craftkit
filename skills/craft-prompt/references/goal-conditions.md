@@ -140,8 +140,8 @@ Each of these *sounds* measurable but fails on a specific axis:
 | Aspect | Claude Code `/goal` | Codex `/goal` |
 |---|---|---|
 | **Availability** | Built in | Stable, on by default (`features.goals`) |
-| **Char budget** | 4000 chars | Not documented; same discipline applies |
-| **Lifecycle** | `/goal`, `/goal clear` (aliases: `stop`/`off`/`reset`/`none`/`cancel`) | `/goal`, `/goal pause`, `/goal resume`, `/goal clear` |
+| **Char budget** | 4000 chars | 4000 chars |
+| **Lifecycle** | `/goal`, `/goal clear` (aliases: `stop`/`off`/`reset`/`none`/`cancel`) | `/goal`, `/goal edit`, `/goal pause`, `/goal resume`, `/goal clear` |
 | **Evaluator** | Configured small fast model (Haiku default); verdicts are not yet met / met / impossible, and an impossible verdict clears the goal | Internal, undocumented |
 | **Resume behavior** | Every resume route restores an active goal but **resets turn counter, timer, and token-spend baseline** | Not the same lifecycle; persists differently |
 | **Disablement** | Off if `disableAllHooks=true` at any settings level, or `allowManagedHooksOnly=true` in managed settings | N/A |
@@ -170,6 +170,6 @@ The same condition string usually works in both products if you follow the disci
 ## See also
 
 - [Claude Code `/goal` docs](https://code.claude.com/docs/en/goal)
-- [Codex `/goal` use-case docs](https://developers.openai.com/codex/use-cases/follow-goals)
+- [Codex `/goal` command](https://learn.chatgpt.com/docs/developer-commands) and [`features.goals` in the config reference](https://learn.chatgpt.com/docs/config-file/config-basic) (stable, default `true`)
 - `references/prompt-patterns.md` — other prompt patterns
 - `references/quality-checklist.md` — deeper failure-mode review for complex prompts

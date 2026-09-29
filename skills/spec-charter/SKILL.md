@@ -12,7 +12,7 @@ metadata:
 
 Own `spec/charter.md` (direction: what good looks like and why) and `spec/system-map.md` (system shape: boundaries, flows, invariants, pointers). Capability contracts in `spec/capabilities.md` belong to `spec-grill`. File roles, topology, the harness pointer, and the legacy root `CHARTER.md` fallback live in `references/spec-axis.md`. This skill ships no scripts: inspect the target repo directly and keep paths target-repo-relative.
 
-The charter stays under a ~5-minute read; operational how-to belongs in `_context.md` or harness files, not the charter. Absence is supported — projects opt in by creating the files.
+The charter stays under a ~5-minute read; operational how-to belongs in harness files or an operational notes file (such as `_context.md`), not the charter. Absence is supported — projects opt in by creating the files.
 
 ## Execution contract
 
