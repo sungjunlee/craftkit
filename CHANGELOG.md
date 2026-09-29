@@ -28,6 +28,8 @@ All notable changes to CraftKit are documented here. Format follows [Keep a Chan
 - `AGENTS.md` keeps only repo-specific invariants (Node tooling, explicit-only pairing, artifact path, commit prefixes). Generic writing advice moved out.
 - `spec-grill` `extract-signals.js` carries a 2026-12-20 use-or-delete checkpoint in `docs/status.md` (#253).
 
+- 2026-09 model-era lightening (Fable 5.1 / GPT-6 Astra guidance): the craft-* family contract requires only Purpose and Output format (plus References); triggers, inputs, steps, guardrails, failure modes, and examples are optional. Spines now state each rule once: `craft-prompt` 111 → 55 lines, `craft-handoff` 167 → 53, `spec-charter` 88 → 67, `spec-grill` 102 → 71. Explicit-only skills drop trigger keywords from `description`. `craft-prompt/references/prompt-patterns.md` drops role headers, fixed review categories, and old-model workarounds; `quality-checklist.md` subtracts test reminders and reasoning-echo instructions; `goal-conditions.md` re-verified against Claude Code and Codex docs as of 2026-09-29. `spec-charter/references/create.md` and `reassess.md` drop the ordered interview, fixed Problem frames, and duplicate report templates. `spec-grill` makes `extract-signals.js` optional ahead of its 2026-12-20 checkpoint.
+
 ### Notes
 
 - 2026-09 spec-* third de-prescription pass (epic #255): sources Anthropic "Prompting Claude Fable 5 / 5.1" (scaffolding changes, memory system) and OpenAI "Rethinking skills and prompts for GPT-6 Astra" (2026-09-11) (#254).
