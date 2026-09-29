@@ -20,4 +20,4 @@ The `spec-*` skills have dogfood or contract-evidence notes only.
 
 ## Checkpoints
 
-- 2026-12-20 — `spec-grill/scripts/extract-signals*.js` use-or-delete. Signal: at least one dogfood spec-grill run between 2026-09-20 and 2026-12-20 used the `--json` output as its candidate seed (evidence: a capabilities.md commit or a run note that cites it). If none, delete the script family and let the skill read the repo directly, as spec-charter does. Until the checkpoint, no further refactors of the script family beyond what other in-flight PRs already carry.
+- 2026-12-20 — `spec-grill/scripts/extract-signals*.js` use-or-delete. Signal: at least one dogfood spec-grill run between 2026-09-20 and 2026-12-20 used the `--json` output as its candidate seed (evidence: a capabilities.md commit or a run note that cites it). The spine made the script optional on 2026-09-29, so a run that uses it is a deliberate choice. If none, delete the script family and let the skill read the repo directly, as spec-charter does. Until the checkpoint, no further refactors of the script family beyond what other in-flight PRs already carry.
