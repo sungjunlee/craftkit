@@ -1,7 +1,7 @@
 ---
 name: spec-charter
 argument-hint: "[create|amend|reassess|map]"
-description: "Create or amend spec/charter.md and spec/system-map.md. Use for project direction, Objectives, system shape, stale spec, 기준, 헌장, 방향성, or spec axis."
+description: "Create, amend, or reassess spec/charter.md (project direction) and spec/system-map.md (system shape)."
 disable-model-invocation: true
 compatibility: Requires git.
 metadata:
@@ -10,77 +10,56 @@ metadata:
 
 # spec-charter
 
-Create and amend the spec-axis files this skill owns: `spec/charter.md` (direction) and `spec/system-map.md` (system shape). This skill is rerunnable. It ships no helper scripts: inspect the target repo directly and keep every path target-repo-relative, so a run never analyzes its own installation directory by accident. The single Objectives-vs-Behaviors/Hard-Constraints ownership rule lives in `references/spec-axis.md`.
+Own `spec/charter.md` (direction: what good looks like and why) and `spec/system-map.md` (system shape: boundaries, flows, invariants, pointers). Capability contracts in `spec/capabilities.md` belong to `spec-grill`. File roles, topology, the harness pointer, and the legacy root `CHARTER.md` fallback live in `references/spec-axis.md`. This skill ships no scripts: inspect the target repo directly and keep paths target-repo-relative.
+
+The charter stays under a ~5-minute read; operational how-to belongs in `_context.md` or harness files, not the charter. Absence is supported — projects opt in by creating the files.
 
 ## Execution contract
 
 ### Mode router
 
-Explicit mode words win. Next, intent: `map` when the request is about system shape, architecture, runtime boundaries, flows, invariants, or `spec/system-map.md`; `reassess` when it is a report-only staleness or spec-health check. Only then file state: `create` when neither `spec/charter.md` nor a legacy root `CHARTER.md` exists, otherwise `amend`, including the `reset` path when the user describes a concept change rather than an edit. Capability contracts, component boundaries, or `spec/capabilities.md` route to `spec-grill`.
+Explicit mode words win. Next, intent: `map` for system shape, architecture, runtime boundaries, flows, invariants, or `spec/system-map.md`; `reassess` for a report-only staleness or spec-health check. Only then file state: `create` when neither `spec/charter.md` nor a legacy root `CHARTER.md` exists, otherwise `amend` — taking the `reset` path when the user describes a concept change rather than an edit. Capability contracts route to `spec-grill`.
 
 ### Completion contract
 
-Every run ends by naming the files created or changed, what was refused or parked (a refused harness pointer counts), and one next action in plain language — "create the system map", "ask `spec-grill` to review candidate boundaries" — never a memorized argument. Done looks like this:
+Every run names the files created or changed, what was refused or parked (a refused harness pointer counts), and one next action in plain language — never a memorized argument. Done means:
 
-- `create`: `spec/charter.md` exists at revision 1, the harness pointer was either in the same confirm or recorded as refused/parked, unresolved assumptions are listed, and a brownfield repo still missing `spec/system-map.md` has continued into `map`.
-- `amend`: the accepted diff is applied, `last_amended` and `revision` are bumped, and the charter still reads in about five minutes.
-- `map`: the map is evidence-backed with low-level detail demoted, charter and capability changes are routed out, and the run ends with `Evidence Read` and `Evidence Missing`.
-- `reassess`: nothing was written, and the report ends with one recommended next action or "no change".
+- `create`: the charter exists at revision 1, unresolved assumptions are listed, and a brownfield repo without a system map has continued into `map`.
+- `amend`: only the confirmed diff is applied, `last_amended` and `revision` are bumped, and the charter still reads in about five minutes.
+- `map`: the map is evidence-backed, charter and capability changes are routed out, and the run ends with `Evidence Read` and `Evidence Missing`.
+- `reassess`: nothing was written; the report ends with one recommended next action or "no change".
 
-## What the files are
+## Mutation discipline
 
-Absence is supported. Projects opt in by creating the files; other tools degrade when they are missing. See `references/spec-axis.md` for the legacy root `CHARTER.md` fallback. Keep the charter under a ~5-minute read. Operational HOW-knowledge belongs in `_context.md`.
+| Tier | Sections | Discipline |
+|------|----------|------------|
+| **1 · Direction** | Problem, Approach, Non-Goals | Human-gated: challenge → propose diff → confirm → apply. |
+| **2 · Predicates** | Objectives | Adding or removing is human-gated. IDs are stable and never reused; retire by deleting the line and listing the ID under `Retired IDs (never reuse)` — git keeps the text. |
+| **3 · Standing** | Decisions | Human-gated. Rewrite a row in place when a decision flips (one clause on why the old position was left); remove it once its rejection reason no longer holds. |
 
-| File | Question it answers |
-|------|---------------------|
-| `spec/charter.md` | What good looks like / why (the yardstick) |
-| `spec/system-map.md` | How the project is shaped (boundaries, flows, invariants, pointers) |
-| `spec/capabilities.md` | What each durable capability owns / never violates (`spec-grill`) |
-| `_context.md` | Operational facts you would otherwise rediscover |
-| `CLAUDE.md` / `AGENTS.md` | How agents work in this repo. May carry the spec-charter pointer line. |
-| `README.md` | Outward-facing introduction |
+Objectives are verifiable predicates, not tasks, written lean as `- O1 — <predicate> · src: user|inferred|execution` (`references/objectives.md`). They are status-free by default; if a charter already uses status tokens, keep them and follow `references/amendment.md`, but never add tokens to a lean charter. Keep structural labels in English; otherwise follow the repo's README language and the user.
 
-## 3 tiers
+Every charter write — create or amend — goes in one confirm together with any harness pointer proposal (`references/spec-axis.md`), and only confirmed changes are applied. A user's explicit request for autonomous progress counts as that confirm; mark inferred claims `src: inferred` and list what stayed unresolved.
 
-| Tier | Sections | Mutation discipline |
-|------|----------|---------------------|
-| **1 · Direction** | Problem, Approach, Non-Goals | Human-gated: propose → confirm → apply. |
-| **2 · Predicates** | Objectives | Status-free by default. Add/remove is human-gated. IDs are stable and never reused. Retire by deleting the line and adding the ID to a `Retired IDs (never reuse)` line; git keeps the text. |
-| **3 · Standing** | Decisions | Human-gated: rewrite a row in place when a decision flips; remove it once the rejection reason no longer holds. |
+## Modes
 
-**Opt-in status ladder.** If a charter already uses status tokens, keep them and apply `references/amendment.md`. Do not add tokens to a lean charter. Reassess on a lean charter judges predicate drift (still true? still directive?), not status promotion.
+**Create.** Draft from product signals — README, issues, changelog, shipped behavior. Harness files (`CLAUDE.md`, `AGENTS.md`) inform workflow but are not product authority unless they explicitly describe product boundaries. When signals conflict, surface the conflict rather than picking silently. Settle Problem, Approach, Non-Goals, and initial Objectives with the user (`references/create.md` has signal and framing notes), then propose from `templates/charter.md`. Seed Decisions only from choices that still stand in existing ADRs or merged PRs.
 
-## Create mode
+**Amend.** Apply the tier discipline above. A legacy root `CHARTER.md` is migrated deliberately, not forked; a brownfield repo still without a system map then continues into `map`. On **reset**, bump `revision` and rewrite Tier 1–3 under the usual confirm; retired Objective IDs stay retired, and one line `Previous charter: git <sha>` goes below the Decisions table. A `backlog-triage` Alignment Check may seed proposals (`references/alignment.md`); this skill applies the gates.
 
-Use when neither `spec/charter.md` nor a legacy root `CHARTER.md` exists; if only the root file exists, this is an amend that migrates it via `references/spec-axis.md`, not a second charter. Draft from product signals first — `README.md`, open issues, `CHANGELOG.md` — before harness files (`CLAUDE.md`, `AGENTS.md`), which inform workflow but are not product authority unless they explicitly describe product boundaries; surface conflicts in the interview instead of picking silently. Interview until Problem, Approach, Non-Goals, and the initial Objectives are concrete (`references/create.md`). A non-interactive create is allowed when the user asked for autonomous progress and the evidence is strong — mark inferred claims `src: inferred` and list what stayed unresolved; that authorization covers the harness pointer unless the user explicitly refused it. Propose `spec/charter.md` from `templates/charter.md` (`revision: 1`, today's `last_amended`) together with the pointer line as one confirm, and write only after that confirm or explicit autonomous authorization. Seed Decisions only from existing ADRs or notable merged PRs, and only choices that still stand; whatever lands is a standing decision from revision 2 on. On a brownfield repo with no `spec/system-map.md`, continue into Map mode rather than writing a stub.
+**Map.** Build the map from repo evidence and the resolved charter, not from directory names; report the evidence in the conversation, not as inventory inside the map. Sections, from `templates/system-map.md`: System Shape, Runtime Boundaries, Core Flows, Storage And External Systems, Project-Wide Invariants, Where To Go Next — short, linking out rather than expanding subsystem detail. Runtime Boundaries come from existing nested instruction files; a tree with none shows `none` under Evidence Missing and is never invented. Label brownfield uncertainty as an assumption. Add Candidate Capability Boundaries only when a `spec-grill` keep condition holds, as `- \`<slug>\` - evidence: …; owns: …; uncertainty: …`. On amend, change only project-wide shape and demote helpers, single endpoints, and deploy commands. The map is not an API reference, runbook, or module inventory (`references/system-map.md`).
 
-Objectives are verifiable predicates, not tasks: `O<n>` IDs, never reused, written lean as `- O1 — <predicate> · src: user`, with provenance `user`, `inferred`, or `execution`. Mixed rigor is fine. Keep structural labels in English and otherwise follow the language README and the user signal; see `references/objectives.md`.
-
-## Amend mode
-
-Use when a charter exists or the user says `amend`. A legacy root `CHARTER.md` is migrated deliberately via `references/spec-axis.md` rather than forked into a second charter; if that leaves a brownfield repo without `spec/system-map.md`, continue into Map mode. Tier 1 and any objective add or remove go through challenge → propose diff → confirm → apply. A lean Tier 2 gets no status advances; retire an objective by deleting its line and adding the ID to the `Retired IDs (never reuse)` line (git keeps the text). If the live charter already uses status tokens, apply `references/amendment.md`; never add tokens to a lean charter. Tier 3 rows are rewritten in place when a decision flips — the rationale keeps one clause on why the previous position was left — or removed once the rejection reason no longer holds, under the same human gate as Tier 1. When the user describes a concept change rather than an edit, take the **reset** path: bump `revision` and rewrite Tier 1–3 under the usual confirm. Two things survive a reset: retired Objective IDs stay retired (keep the `Retired IDs (never reuse)` line), and one metadata line `Previous charter: git <sha>` goes below the Decisions table, outside it, pointing at the last pre-reset revision.
-
-Before applying, put the charter diff and any non-no-op harness pointer proposal (`references/spec-axis.md`) in one confirm, and apply only what was confirmed. After an accepted amendment always bump `last_amended` and `revision`, and protect the ~5-minute read. A `backlog-triage` Alignment Check may seed proposals (`references/alignment.md`); this skill applies the gates.
-
-## Map mode
-
-Use when the user asks for system shape, architecture scope, runtime boundaries, flows, invariants, or `spec/system-map.md`. File state picks create vs amend. Draft from `templates/system-map.md`; heuristics and failure modes live in `references/system-map.md`. Read the resolved charter (`spec/charter.md`, else root `CHARTER.md`), `README.md`, harness files, top-level directories, package and config files, and architecture docs first, then run a Repo Evidence Pass before drafting: entrypoints, command and script surfaces, runtime boundaries, storage and state, external systems, tests that reveal intended behavior, and recent commits. Report that evidence in the conversation, not as inventory inside the map. Keep the sections short — System Shape, Runtime Boundaries, Core Flows, Storage And External Systems, Project-Wide Invariants, Where To Go Next — and link out instead of expanding subsystem detail. Fill Runtime Boundaries from existing nested instruction files (`references/spec-axis.md`); a tree with none shows `none` and is listed under Evidence Missing, never invented. Label brownfield uncertainty as an assumption. Add Candidate Capability Boundaries only when a keep condition is in play, and hand those short candidates to `spec-grill` as `- \`<slug>\` - evidence: …; owns: …; uncertainty: …`. The map is not an API reference, runbook, or module inventory.
-
-Amend updates only project-wide shape, boundaries, flows, storage and externals, invariants, or pointers, and refreshes Runtime Boundaries from current nested instruction files. Demote helpers, single endpoints, and deployment commands; route why/good-state changes to charter amend and capability contracts to `spec-grill`.
-
-## Reassess mode
-
-Use when the user asks whether the spec axis is stale, wants a spec health check, or when a major model or tool change could alter how agents read repo context. Reassess never edits files. Read bounded evidence — named charter, system-map, or capability sections, plus at most the latest five execution logs — and say what was absent or skipped rather than widening the scan. The default answer is "no change" unless the evidence says otherwise; anything else is routed out to `amend`, `map`, `spec-grill`, or a human-gated promotion of a Learning to a standing Decision. On a brownfield repo with no system map, recommend `map` before grill. A quick reassess conveys the evidence read, the no-change verdict where it holds, and the one next action; the fuller shape in `references/reassess.md` is an optional example for periodic health checks or an explicit ask.
+**Reassess.** Report only; never edit. Read bounded evidence — the named spec sections plus a handful of recent execution logs — and say what was skipped rather than widening the scan. The default verdict is "no change"; anything else routes to `amend`, `map`, `spec-grill`, or a human-gated promotion of a Learning to a standing Decision. On a brownfield repo without a system map, recommend `map` before grill. `references/reassess.md` has a fuller report shape for periodic health checks.
 
 ## References
 
-- `references/create.md` — create-mode signals, interview, seed Decisions, harness pointer.
-- `references/amendment.md` — challenge checklist, opt-in proof gate, bloat checks.
-- `references/alignment.md` — work-to-objective mapping for triage/backlog consumers.
+- `references/spec-axis.md` — file boundaries, topology, harness pointer, nested instruction files, grill keep/fold, legacy `CHARTER.md` fallback.
+- `references/create.md` — create-mode signals, framing notes, seed Decisions.
+- `references/amendment.md` — challenge checklist, opt-in status gate, bloat checks.
 - `references/objectives.md` — predicate examples, rewrite patterns, 30-second test.
-- `references/reassess.md` — report-only stale-spec review.
-- `references/spec-axis.md` — file boundaries, topology, nested instruction files, harness pointer vs product authority, grill keep/fold, and legacy `CHARTER.md` fallback.
+- `references/alignment.md` — work-to-objective mapping for triage/backlog consumers.
 - `references/system-map.md` — map heuristics, quality checks, failure modes.
+- `references/reassess.md` — report-only stale-spec review.
 - `references/verification.md` — prose test cases for reviewing spine changes.
 - `templates/charter.md` — starting shape for `spec/charter.md`.
 - `templates/system-map.md` — starting shape for `spec/system-map.md`.

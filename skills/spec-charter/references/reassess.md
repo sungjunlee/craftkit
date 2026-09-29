@@ -1,73 +1,37 @@
-# Reassess-Mode Heuristics
+# Reassess mode
 
-Use this reference in `spec-charter reassess` after reading the Reassess Mode section in `SKILL.md`. The mode is a report-only stale-spec review. It helps the user decide whether to run `spec-charter amend`, `spec-charter map`, or `spec-grill`.
+Use this reference for `spec-charter reassess`: a report-only review of whether the spec axis is stale. It helps the user decide between `spec-charter amend`, `spec-charter map`, `spec-grill`, or nothing.
 
-## Policy Ownership
+Reassess diagnoses; it never writes. It does not edit charter direction, capability contracts, or harness files (`AGENTS.md` / `CLAUDE.md`), and "no change" is a legitimate — usually the default — answer. Do not manufacture churn because a reassessment was requested.
 
-- `SKILL.md` owns the dispatch contract: when to invoke reassess, the no-edit boundary, and what a finished reassess looks like.
-- This reference owns the operational procedure: evidence order, report shape, recommendation rules, and stale-spec failure modes.
-- This shipped reference set owns the durable policy needed for portable use. Do not depend on repo-local design docs unless the target repo provides them.
+## When it is worth running
 
-## Operating Principle
+- A major model, coding-agent tool, or harness change affects how agents read instructions or preserve context.
+- An active project has gone 3–6 months without a spec health review.
 
-Reassess is the controller review, not the writer.
+## Evidence
 
-- Sensors: `## Learnings`, sprint `component:` handles, lint output, recent sprint context.
-- Diagnosis: the reassess report.
-- Controller action: user-approved `amend`, `map`, or `grill`.
-- Forbidden shortcut: silently editing accepted charter direction, capability contracts, or harness files (`AGENTS.md` / `CLAUDE.md`) during reassess.
+Start narrow and widen only when the evidence asks for it: the spec sections the question is about, capability blocks the evidence names, optional repo helpers (for example a `component-lint.js --json` routing check, when a backlog tool provides one), and a handful of recent execution logs such as completed sprint files. Read harness files only when the question is about harness behavior; they are development context, not product authority.
 
-The default answer can be "no change." Do not manufacture churn just because the user asked for a reassessment.
+A missing script is skipped and said so. A missing `spec/charter.md`, `spec/system-map.md`, or `spec/capabilities.md` is an opt-in state with a next-step recommendation, not an error.
 
-Learnings are agent-writable directly under the content rule in `spec-grill`'s `templates/capabilities.md` (one lesson per line with the why; update instead of duplicating; delete an entry that turns out wrong) — reassess does not gate ordinary Learnings edits and should not recommend one. Reassess may still flag a Learning ready to *promote* to a standing Decision: capability-level promotion is a Grill Candidate (`spec-grill`), cross-cutting promotion is an Amend Candidate (`spec-charter amend`). That promotion is human-gated; recording or refining a Learning in place is not.
+## Report
 
-## Cadence Triggers
-
-Run a lightweight reassess pass when either condition applies:
-
-- A major model, coding-agent tool, or repo harness change affects how agents read instructions, call tools, or preserve context.
-- An active project has used the spec-system for 3-6 months without a spec health review.
-
-Keep this low-noise: the review can still conclude "no change," and it does not create an automatic edit path. Treat `CLAUDE.md` / `AGENTS.md` as development-harness context during this pass. They can explain local commands, agent workflow, and guardrails, but they do not override README, charter, issues, code structure, or accepted capability contracts as product authority.
-
-## Evidence Order
-
-Prefer bounded evidence before broad reading:
-
-1. `spec/charter.md` Objectives and Decisions when a recommendation could affect project-wide direction.
-2. `spec/system-map.md` when evidence points to stale project-wide structure, boundaries, flows, or invariants.
-3. `spec/capabilities.md` capability blocks named by the evidence.
-4. Repo-local helper scripts when present, such as `component-lint.js --json` for sprint `component:` routing drift.
-5. `CLAUDE.md` / `AGENTS.md` only when the reassess question involves harness behavior, local commands, or agent context loading.
-6. Latest five completed sprint files, plus the active sprint when it exists.
-
-If an optional script is missing, say it was skipped and continue with file reads. Missing `spec/charter.md`, `spec/system-map.md`, or `spec/capabilities.md` is not an error; it is an opt-in state with a next-step recommendation.
-
-Reassess reads harness files only as development context; they are not product authority and nothing in them is policed here (`spec-axis.md` § Harness pointer).
-
-## Report Shape
-
-**Sizing rule**: default to a quick reassess for a narrow staleness question about one file or section — three sections: **Evidence**, **No Change**, **Recommended Next Step**. A quick-reassess finding that would need System Map Candidates, Grill Candidates, Amend Candidates, or Missing Evidence gets one line under Recommended Next Step pointing to a full reassess instead of full sections. Reserve the full reassess report below for periodic health checks, multi-file drift review, or when the user explicitly asks for the full report. Reassess discipline applies in full at every size: quick reassess is still report-only (never edits) and still routes accepted fixes through `spec-charter amend`, `spec-charter map`, or `spec-grill`; it only trims what gets written down.
-
-Full reassess report:
+Keep evidence (what was observed) separate from recommendation (what the user may choose to do). A quick reassess for a narrow question conveys the evidence, what still holds, and one recommended next step. A periodic health check or explicit request for the full report may also list candidates by destination. One worked shape:
 
 ```md
 ## Reassess Report
 
 ### Evidence
-- <script/file signal and what it means>
+- <file or script signal and what it means>
 
 ### No Change
 - <area that still matches current evidence>
 
-### System Map Candidates
-- <area> — evidence: <signal>; suspected change: <shape/boundary/flow/invariant/pointer>; next: `spec-charter map`
-
-### Grill Candidates
-- <capability> — evidence: <signal>; suspected change: <contract area>; next: `spec-grill <capability>`
-
-### Amend Candidates
-- <charter item> — evidence: <signal>; suspected change: <direction/objective/decision>; next: `spec-charter amend`
+### Candidates
+- map: <area> — evidence: <signal>; suspected change: <shape/boundary/flow/invariant/pointer>
+- grill: <capability> — evidence: <signal>; suspected change: <contract area>
+- amend: <charter item> — evidence: <signal>; suspected change: <direction/objective/decision>
 
 ### Missing Evidence
 - <what was absent or skipped>
@@ -76,78 +40,19 @@ Full reassess report:
 - <one command or human action>
 ```
 
-Quick reassess:
+## Where a finding routes
 
-```md
-## Reassess Report
+- **No change** — Learnings are sparse, recent, and consistent with the contracts, and helper output shows no drift, unless the user supplied contrary context.
+- **`spec-grill <capability>`** — repeated Learnings show a new durable behavior or constraint; current Behaviors cannot explain how recent work succeeded; a Hard Constraint keeps being worked around; the capability is over budget because contract text and Learnings are mixed; or the capability visibly owns work its Scope does not mention. Name the block and the suspected edit; do not rewrite it.
+- **`spec-charter map`** — runtime boundaries changed across capabilities; a core flow gained a step, owner, or external system; a project-wide invariant is missing, stale, or contradicted; or the map has absorbed module detail that should be linked out.
+- **`spec-charter amend`** — a repeated Learning changes multiple capabilities; an Objective no longer holds or no longer directs work (or, on an opt-in ladder charter, reads `validated` on implementation proof alone); a Non-Goal is repeatedly violated by accepted work; or a capability Decision is cross-cutting. Never weaken an Objective so the available proof looks sufficient.
 
-### Evidence
-- <script/file signal and what it means>
+Learnings themselves are agent-writable under their content rule; reassess does not recommend ordinary Learning edits. It flags only a Learning ready to *promote* to a standing Decision — a Grill Candidate for a capability rule, an Amend Candidate when it spans capabilities. Promotion is human-gated.
 
-### No Change
-- <area that still matches current evidence>
+## Failure modes
 
-### Recommended Next Step
-- <one command or human action; if a finding needs a trimmed section, name it here and point to a full reassess>
-```
-
-Separate evidence from recommendation. The evidence says what was observed; the recommendation says what the user may choose to do.
-
-## Recommendation Rules
-
-### No Change
-
-Recommend no change when Learnings are sparse, recent, non-repetitive, and do not contradict Goal/Scope/Behaviors/Hard Constraints. A clean doctor result plus no component drift is usually enough for no-change unless the user supplied contrary context.
-
-### Grill Candidate
-
-Recommend `spec-grill <capability>` when any of these are true:
-
-- repeated Learnings show a new durable behavior or constraint
-- current Behaviors are too weak to explain how recent work succeeded
-- a Hard Constraint has been worked around repeatedly
-- the capability is over budget because contract text and Learnings are mixed together
-- component usage shows the capability owns work its Scope does not mention
-
-Do not rewrite the capability during reassess. Name the block and the suspected edit.
-
-### System Map Candidate
-
-Recommend `spec-charter map` when evidence affects project-wide structure without changing why/good-state:
-
-- runtime boundaries changed across capabilities
-- a core flow has a new step, owner, or external system
-- a project-wide invariant is missing, stale, or contradicted
-- the map copied module details that should be demoted to linked docs
-
-Do not rewrite the map during reassess. Name the suspected section and the evidence.
-
-### Amend Candidate
-
-Recommend `spec-charter amend` when evidence affects project-wide direction:
-
-- a repeated Learning changes multiple capabilities
-- an Objective no longer holds, or is no longer directive, or (on an opt-in ladder charter) appears `validated` with only implementation proof
-- a Non-Goal is repeatedly violated by accepted work
-- a capability-level Decision is cross-cutting enough to belong in `spec/charter.md`
-
-Do not weaken an Objective so the available proof appears sufficient.
-
-### Learnings Promotion
-
-Learnings are not a mutation family: adding, updating, or deleting an entry under the content rule is agent-writable and out of scope for reassess to recommend. Reassess only flags when a Learning is ready to *promote* to a standing Decision.
-
-Promote a Learning to a capability's `## Decisions` when it has become a durable capability rule — file it as a Grill Candidate. Promote a Learning to charter Decisions only when it affects more than one capability or changes the project-wide axis — file it as an Amend Candidate. Promotion is human-gated; recording or refining a Learning in place is not.
-
-## Failure Modes
-
-- **Churn generator:** every reassess proposes edits. Fix by allowing "no change" and requiring evidence.
-- **Semantic overreach:** deterministic counts are treated as proof of stale content. Fix by labeling counts as signals, not conclusions.
-- **Silent self-editing:** reassess edits Goal/Scope/Behaviors while diagnosing. Fix by routing through amend/grill.
-- **Harness file as authority:** treating `AGENTS.md` / `CLAUDE.md` content as product truth, or silently rewriting them during reassess. Fix by diagnosing against `spec/charter.md` and routing harness pointer changes through user-confirmed amend.
-- **Unbounded scan:** the agent reads the whole repo and invents drift. Fix by starting from scripts and a bounded sprint window.
-- **Name confusion:** `spec-reassess` is described as callable before it exists. Fix by calling it a reserved/non-callable future name.
-
-## Reserved Names
-
-Today the callable spec-series skills are `spec-charter` and `spec-grill`. The names `spec-reassess` and `spec-learn` are reserved/non-callable future split candidates. Mention them only when discussing naming policy or split triggers, not as commands the user can run. `spec-system-map` was absorbed into `spec-charter` `map` mode.
+- **Churn generator** — every reassess proposes edits. Allow "no change"; require evidence.
+- **Semantic overreach** — counts from a script treated as proof of stale content. Label them signals, not conclusions.
+- **Silent self-editing** — reassess edits while diagnosing. Route through amend, map, or grill.
+- **Harness file as authority** — harness text treated as product truth, or rewritten during reassess.
+- **Unbounded scan** — the whole repo read and drift invented. Start from the named sections and a bounded log window.
