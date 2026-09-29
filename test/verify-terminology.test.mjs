@@ -38,10 +38,8 @@ expectCheckFailure("fails when a spec-* spine reintroduces the old relay-learnin
   copyRealSkillDir(root, "spec-grill");
   const skillMdPath = path.join(root, "skills/spec-grill/SKILL.md");
   const content = fs.readFileSync(skillMdPath, "utf8");
-  const updated = content.replace(
-    "- Its Goal can be stated as an observable user or operator outcome.",
-    "- It owns a primary relay-learning destination.\n- Its Goal can be stated as an observable user or operator outcome.",
-  );
+  // Append rather than replace a specific sentence so the test survives spine rewrites.
+  const updated = `${content}\n- A capability owns a primary relay-learning destination.\n`;
   fs.writeFileSync(skillMdPath, updated);
 }, /skills\/spec-grill\/SKILL\.md still contains "relay-learning"/);
 

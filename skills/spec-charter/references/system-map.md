@@ -29,14 +29,14 @@ Candidate lines that `spec-grill` can parse:
 - Candidate Capability Boundaries are short handoff candidates, not a module inventory. Include the section only when a consumer, a cross-tree contract, or a 3-axis audit is in play. Prefer handing a candidate to `spec-grill` when it has at least two evidence classes, a distinct contract surface, and Behaviors/Hard Constraints that would differ from neighbors.
 - Link `capabilities.md` from Where To Go Next only when that file exists or a keep condition holds.
 - No stale module-level TODOs, endpoint inventories, or runbook commands.
-- Brownfield maps are not based only on README/top-level directory skimming; unsupported boundaries are labeled as assumptions.
+- Brownfield maps rest on more than README/top-level directory skimming: entrypoints, command and script surfaces, runtime boundaries, storage and state, external systems, tests that reveal intended behavior, and recent commits. Unsupported boundaries are labeled as assumptions.
 - Brownfield map create/amend fills the Runtime Boundaries table (`tree | owns | local instructions | do not`) from repo evidence: existing nested `AGENTS.md` / `CLAUDE.md` per tree. Greenfield or single-tree maps may still use it; one row is enough.
 - A tree with no instruction file shows `none` and is listed under Evidence Missing — do not invent the file unless the user asked. Multi-tree brownfield maps that name no local instruction files are under-evidenced.
 - If the user asked to write or propose a nested instruction file, follow `spec-axis.md`.
 
 ## Failure modes
 
-- drafting from README and top-level folders alone, skipping the Repo Evidence Pass
+- drafting from README and top-level folders alone, without the brownfield evidence listed above
 - sections drifting into aspirational design instead of current, evidence-backed facts
 - endpoint or API inventories creeping into Core Flows or Storage And External Systems
 - amend mode absorbing helper functions, single endpoints, or deployment commands

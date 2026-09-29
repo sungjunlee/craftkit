@@ -9,7 +9,7 @@ Status: normative. Canonical section contract for every `SKILL.md` in CraftKit. 
 
 ## Frontmatter contract
 
-Required for every skill: `name` (matches the skill directory) and `description` (what it does and when to use it; ≤50 words, enforced by `scripts/verify.mjs`).
+Required for every skill: `name` (matches the skill directory) and `description` (what it does, plus when to use it for model-invocable skills — explicit-only skills need no trigger wording; ≤50 words, enforced by `scripts/verify.mjs`).
 
 Provider-neutral spine: `description` names the *capability*, not a provider's tool — no `claude`, `openai`, `chatgpt`, `codex`, etc. (AGENTS.md "Spine text names the capability, not a provider's tool"; enforced by `scripts/verify.mjs`). Examples and `guides/` may name tools, so this scope is the frontmatter `description` only.
 
@@ -31,19 +31,15 @@ Sentence case everywhere — H1 through H3. Headings that name sections of a *ge
 
 ## craft-* family contract
 
+The spine is a router: it says what the skill delivers and points to references for the rest. Only two sections are required.
+
 | Section | Required? | Notes |
 |---|---|---|
-| Purpose | Required | What the skill does and why it's a separate step. |
-| Use this when | Required | Bullet triggers. "How it differs from related skills" may be added, not substituted. |
-| Inputs | Required | What the skill needs before it runs. |
-| Steps *or* Workflow | Required | Exactly one of these two names. |
+| Purpose | Required | What the skill delivers and why it is a separate step. |
 | Output format | Required | Fixed template *or* a judgment contract (what the output must convey). |
-| Guardrails | Required | Ongoing constraints while operating. |
-| Failure modes | Required | How the skill breaks, not restated Guardrails. |
-| Example | Required | At least one concrete input/output pair. |
 | References | Required if `references/` exists | Dedicated `## References` (or `## References (load on demand)`), last. Every `references/` file cited; every cited path exists. |
 
-Skills may add extra sections for their own mechanics (loop control, risk gates, required reads). Ordering of required sections is not enforced — presence only.
+Optional, only when the section carries something a capable model would otherwise get wrong: Use this when (skip for explicit-only skills — the user invokes them by name), Inputs, Steps or Workflow, Guardrails, Failure modes, Example, or a skill-specific section. State each rule once, in the section where it acts; do not restate it in a second section to fill that section out. References comes last; the order of other sections is not enforced.
 
 ## spec-* family contract (router-contract variant)
 

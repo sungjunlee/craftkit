@@ -39,7 +39,8 @@ Remove, in order:
 1. generic roles, praise, and exhortations
 2. repeated rules and context already available to the target
 3. speculative edge-case instructions
-4. formatting and model workarounds without a current failure
-5. examples that no longer teach a distinct behavior
+4. formatting and model workarounds without a current failure, including reminders to test or double-check that current targets already do
+5. instructions to write out or explain reasoning in the response — ask for the conclusion and its evidence instead; some current targets refuse reasoning-echo requests
+6. examples that no longer teach a distinct behavior
 
 Keep required outcomes, hard boundaries, consumer contracts, and evidence. If removing a line would not change a competent target's decision or output, the line has not earned its place.

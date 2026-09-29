@@ -97,13 +97,13 @@ test("warns (and still passes) on a baselined missing required section", () => {
   // The checked-in knownSectionDeviations baseline is empty, so inject a
   // synthetic entry for craft-handoff and reproduce exactly those two gaps to
   // exercise the warn (not fail) branch.
-  withInjectedBaseline(root, { "craft-handoff": ["Output format", "Guardrails"] });
+  withInjectedBaseline(root, { "craft-handoff": ["Purpose", "Output format"] });
   writeFile(
     root,
     "skills/craft-handoff/SKILL.md",
     compliantCraftSkillBody("craft-handoff")
       .replace("## Output format\n\nA single line.\n\n", "")
-      .replace("## Guardrails\n\n- stay safe\n\n", ""),
+      .replace("## Purpose\n\nDoes a thing.\n\n", ""),
   );
 
   const result = runCheck(root, moduleFile, fn);
@@ -117,9 +117,9 @@ test("warns (and still passes) on a baselined missing required section", () => {
 
 expectCheckFailure("fails on a stale baseline entry whose section is now present", moduleFile, fn, (root) => {
   // Inject a synthetic baseline entry (the checked-in baseline is empty)
-  // listing "Output format" and "Guardrails", then supply a fixture
+  // listing "Purpose" and "Output format", then supply a fixture
   // that is fully compliant, satisfying both (and so making both entries stale).
-  withInjectedBaseline(root, { "craft-handoff": ["Output format", "Guardrails"] });
+  withInjectedBaseline(root, { "craft-handoff": ["Purpose", "Output format"] });
   writeFile(root, "skills/craft-handoff/SKILL.md", compliantCraftSkillBody("craft-handoff"));
 }, /knownSectionDeviations still lists "Output format".*but the section is now present/);
 
@@ -174,13 +174,28 @@ test("sectionContractFindings requires References only when a references/ dir ex
   assert.deepEqual(sectionContractFindings("craft-x", bodyWithReferences, true), []);
 });
 
-test("sectionContractFindings flags 'Common mistakes' as a missing Failure modes section (exemption retired in #150/#151)", () => {
-  const body = compliantCraftSkillBody("craft-x").replace(
-    "## Failure modes\n\n- it might fail\n\n",
-    "## Common mistakes\n\n- it might fail\n\n",
-  );
+test("sectionContractFindings treats triggers, steps, guardrails, failure modes, and example as optional for craft-*", () => {
+  const minimalBody = `---
+name: craft-x
+description: Example.
+---
 
-  assert.deepEqual(sectionContractFindings("craft-x", body, false), ["Failure modes"]);
+# craft-x
+
+## Purpose
+
+Does a thing.
+
+## Output format
+
+A single line.
+`;
+
+  assert.deepEqual(sectionContractFindings("craft-x", minimalBody, false), []);
+  assert.deepEqual(
+    sectionContractFindings("craft-x", minimalBody.replace("## Output format\n\nA single line.\n", ""), false),
+    ["Output format"],
+  );
 });
 
 test("sectionContractFindings requires Mode Router and Completion Contract nested under Execution Contract", () => {

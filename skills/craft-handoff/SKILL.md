@@ -1,10 +1,6 @@
 ---
 name: craft-handoff
-description: >-
-  Produce paired session-handoff artifacts: a rich doc plus a resume prompt.
-  Use when wrapping up, clearing context, pausing work, or the user says
-  "마무리", "세션 정리", "핸드오프", "다음 세션으로 넘겨",
-  or "next session으로 넘겨".
+description: Produce paired session-handoff artifacts — a rich doc plus a resume prompt — when wrapping up or clearing context.
 disable-model-invocation: true
 ---
 
@@ -12,156 +8,46 @@ disable-model-invocation: true
 
 ## Purpose
 
-End the session by producing a paired handoff:
+End the session with a paired handoff the next session can resume from:
 
-- **Rich doc**: `~/.craftkit/handoff/docs/<worktree-slug>.md` — durable project narrative; overwritten on the next same-project handoff after archiving the previous doc.
-- **Resume prompt**: `~/.craftkit/handoff/pending/<timestamp>-<worktree-slug>.md` — per-session entry artifact; mirrored to clipboard without frontmatter; tells the next agent to read the rich doc first.
+- **Rich doc** — `~/.craftkit/handoff/docs/<worktree-slug>.md`: the durable project narrative, archived and overwritten on the next same-project handoff.
+- **Resume prompt** — `~/.craftkit/handoff/pending/<timestamp>-<worktree-slug>.md`: what the user pastes or the hook auto-loads; mirrored to the clipboard without frontmatter.
 
-The prompt is what the user pastes or auto-loads. The doc is the deeper record. They are a unit; do not produce one without the other.
-
-## Use this when
-
-- the user says "wrap up", "마무리", "세션 정리", "핸드오프", "다음 세션으로 넘겨", or "next session으로 넘겨"
-- the user is about to clear or reset context and wants continuity
-- a long session is ending and the next session should pick up cleanly
-- a task is paused mid-flight and needs a concrete resume point
-
-Skip quick Q&A sessions with no state worth carrying.
-
-## Inputs
-
-`<skill-dir>` is the directory containing this SKILL.md — resolve it from where the skill was loaded (e.g. an installed skill directory such as `~/.claude/skills/craft-handoff`, or `skills/craft-handoff` in a source checkout).
-
-Gather machine state with the bundled script:
-
-```bash
-node <skill-dir>/scripts/gather-state.mjs
-```
-
-Read its full output, especially `--- Handoff target ---`: `PENDING_PATH`, `DOC_PATH`, `ARCHIVE_DIR`, `WORKTREE_SLUG`, and ready-to-prepend frontmatter.
-
-If the script is unavailable, gather the same git facts manually:
-
-```bash
-git rev-parse --show-toplevel
-git rev-parse --abbrev-ref HEAD
-git status --short | head -40
-git diff --stat | tail -20
-git log --oneline -8
-```
-
-If you must derive paths without the script, use the fallback target rules in `references/operational-details.md`.
-
-Then extract from the conversation, omitting any section with no real content rather than padding it:
-
-- **Done**: completed outcomes the next session needs.
-- **Decisions**: non-obvious choices with a `because <reason>` rationale.
-- **What didn't work**: attempted approaches and outcomes.
-- **Blockers**: active blockers only.
-- **Next**: the concrete next steps, each with observable success criteria — as many as the pending work actually has.
-- **Suggested skills/capabilities**: only when they would materially change the next session.
+The two are a unit; never write one without the other. If the session holds no state worth carrying, write nothing and say so.
 
 ## Workflow
 
-### 0. Confirm ambiguous side effects
+`<skill-dir>` is the directory this `SKILL.md` was loaded from (an installed skill directory, or `skills/craft-handoff` in a source checkout).
 
-This skill writes files and mutates the clipboard. If the trigger is ambiguous, ask one short confirmation before running it. Skip confirmation for explicit handoff requests.
-
-### 1. Gather
-
-Run the gather script or fallback commands, then scan the conversation for the sections above.
-
-### 2. Distill
-
-The principle: include only what the next session cannot reconstruct from the diff alone. Every decision needs a `because <reason>`. Put rationale, alternatives, and time order in the doc; put snapshot lines for orientation and execution in the prompt.
-
-Keep failure narrative in the doc. What must still travel in the prompt is anything the next session would otherwise redo or violate: the user's constraints and scope boundaries, decisions already made, and rejected approaches that are now boundaries ("don't reintroduce the session store"). Make next steps observable, not aspirational. Link only to artifacts the next session can actually reach.
-
-### 3. Compose the rich doc
-
-Write the doc first; it is the narrative source of truth. Its sections are Project, Done, State, Decisions, What didn't work, and Next.
-
-Rules:
-
-- No `<task>` or `<rules>` in the doc.
-- Fill narrative depth only where it helps the next session.
-- Keep decisions reasoned. Add alternatives when they shaped the current state.
-
-### 4. Compose the resume prompt
-
-The prompt must be usable even if the doc is unreachable, but it should command the next agent to read the doc first — see § Output format for the shape it must carry.
-
-Add `## Suggested skills` inside `<context>` only when a specific skill or capability would change the next agent's behavior.
-
-### 5. Persist and copy
-
-Use paths from the gather script verbatim.
-
-1. Create the `docs`, `pending`, and `archive` directories under `~/.craftkit/handoff/`.
-2. Archive existing `DOC_PATH`, then write the new rich doc.
-3. Write the prompt with frontmatter to `PENDING_PATH`.
-4. Copy the prompt body, without frontmatter, to the clipboard:
+1. **Gather.** Run `node <skill-dir>/scripts/gather-state.mjs` and use its `--- Handoff target ---` values (`PENDING_PATH`, `DOC_PATH`, `ARCHIVE_DIR`, `WORKTREE_SLUG`, frontmatter — add `next:` to the doc's) verbatim. Without the script, gather branch, status, diff stat, and recent log with git and derive paths per `references/operational-details.md`. Outside a git repo, skip repo state and rely on the conversation.
+2. **Distill.** Carry only what the next session cannot reconstruct from the diff: outcomes done, decisions with their `because`, what didn't work, active blockers, and next steps with observable success criteria. Omit empty sections. If several unrelated threads are open, ask which to carry, or take the most recent and say so in the doc.
+3. **Write the doc, then the prompt.** Rationale, alternatives, and time order go in the doc; orientation snapshots go in the prompt. If the doc changes after the prompt is composed, regenerate the prompt.
+4. **Persist.** Create `docs/`, `pending/`, and `archive/` under `~/.craftkit/handoff/`; archive the existing `DOC_PATH`; write the doc; write the prompt with frontmatter to `PENDING_PATH`; copy the prompt body to the clipboard:
 
 ```bash
 sed '1,/^---$/d;1,/^---$/d' "$PENDING_PATH" | bash <skill-dir>/scripts/copy-clipboard.sh
 ```
 
-### 6. Inform
-
-Return the artifacts per § Output format.
+Clipboard failure is non-fatal — report it; the files are the deliverable. If the doc was written but the prompt write failed, write only the prompt (re-running the doc step would archive the doc just written).
 
 ## Output format
 
-Two artifacts, always produced together:
+- **Rich doc** — frontmatter plus a single `<context>` body: Project, Done, State, Decisions, What didn't work, Next. No `<task>` or `<rules>`.
+- **Resume prompt** — `<context>` (Project, State, Done snapshot, Decisions, Background pointing to the doc) / `<task>` (next action and success criteria) / `<rules>` (path convention, read-the-doc-first, plus only the constraints, key files, and verification command that actually apply). Skeletons: `references/artifact-shapes.md`.
 
-- **Rich doc** — `DOC_PATH` (e.g. `~/.craftkit/handoff/docs/<worktree-slug>.md`). Shape: frontmatter plus a single `<context>...</context>` body.
-- **Resume prompt** — `PENDING_PATH` (e.g. `~/.craftkit/handoff/pending/<timestamp>-<worktree-slug>.md`). Shape: `<context>` (Project, State, Done snapshot, Decisions, Background) / `<task>` (next action, success criteria) / `<rules>` (path convention, doc-read, plus the constraints, key files, and verification command that actually apply).
+The resume prompt must stand on its own if the doc is unreachable: branch and state, a concrete next action with success criteria, the constraints and decisions that bound it — including rejected approaches not to redo — and the instruction to read the rich doc first.
 
-The machine wiring is fixed: `gather-state.mjs`, the paired doc+prompt layout, archive-before-overwrite, cross-platform clipboard copy, and the optional auto-load hook. Only how the artifact's prose is shaped is judgment.
-
-**Chat return — must-convey.** Shape the chat return at your judgment, but it must convey:
-
-- the **resume prompt** in a fenced block (so it can be copied directly);
-- a **confirmation line** naming the prompt path, doc path, and clipboard status;
-- a **next-step instruction**.
-
-Orientation floor (non-negotiable): the resume prompt itself must convey the branch/state, a concrete next action with success criteria, the constraints and decisions that bound that action — including rejected approaches the next session must not redo — and the instruction to read the rich doc first. These hold even when the doc is unreachable; that is exactly the case they exist for.
-
-Optional, when relevant: an auto-load hook pointer, or a `/goal` candidate when the next task is durable, verifiable, and multi-turn. Do not paste the rich doc in chat when it was written successfully. See `references/artifact-shapes.md` for the exact skeletons.
+Chat return: the resume prompt in a fenced block, one line naming the prompt path, doc path, and clipboard status, and the next step for the user. Mention the auto-load hook or a `/goal` candidate only when relevant. Don't paste the rich doc when it was written.
 
 ## Guardrails
 
 - redact secrets, tokens, customer data, and personal data from both artifacts
-- archive the existing rich doc before overwriting it — never destroy the previous handoff
-- clipboard copy failure is non-fatal: report it and continue; the written files are the deliverable
-- never invent test status or verification results — report only what was actually run
-- the doc and prompt are a unit — never produce one without the other
-- repo paths in both artifacts are worktree-relative; handoff-store paths (`~/.craftkit/handoff/...`) and the `worktree:` frontmatter value stay absolute — the hook matches on that absolute path, and the next session may not share this checkout's cwd
-
-## Failure modes
-
-- **Empty handoff**: no meaningful state exists; write nothing.
-- **Outside a git repo**: omit repo state and rely on conversation-derived context.
-- **Multiple unrelated threads**: ask which thread to carry forward, or choose the most recent and say so in the doc.
-- **Prompt/doc divergence**: regenerate the prompt if the doc changes after prompt composition.
-- **Doc unreachable on resume**: the prompt snapshot must still be usable, and the next agent should flag the missing doc.
-- **Partial write**: if doc write succeeds but prompt write fails, recover by writing only the prompt.
-
-For stale prompts, concurrent wrap-ups, clipboard portability, pair-write recovery, cleanup commands, and hook edge cases, read `references/operational-details.md`.
-
-## Example
-
-Input: session added JWT middleware, rejected server sessions because the deploy target is stateless, and left route wiring as the next task.
-
-- Doc decision: `JWT over server sessions — because stateless deploy has no shared session store.`
-- Prompt task: wire middleware into `src/routes/index.ts`.
-- Success criteria: protected routes return 401 without token, 200 with a valid token, and `npm test` stays green.
-
-See `references/full-example.md` for a complete paired output.
+- report only verification that was actually run
+- repo paths are worktree-relative; handoff-store paths and the `worktree:` frontmatter value stay absolute, because the hook matches on that absolute path and the next session may not share this cwd
 
 ## References (load on demand)
 
-- `references/full-example.md` — complete rich-doc + prompt example.
 - `references/artifact-shapes.md` — exact rich-doc and resume-prompt skeletons.
-- `references/operational-details.md` — clipboard portability, stale-prompt cleanup, concurrent wrap-ups, pair-write recovery, cleanup commands, and extended failure handling.
-- `references/auto-load-hook.md` — optional SessionStart hook that auto-injects the pending prompt after `/clear`; the hook does not read the rich doc.
+- `references/full-example.md` — a complete paired output.
+- `references/operational-details.md` — fallback path derivation, clipboard portability, stale prompts, concurrent wrap-ups, pair-write recovery, cleanup commands.
+- `references/auto-load-hook.md` — optional SessionStart hook that injects the pending prompt after `/clear`; the hook does not read the rich doc.

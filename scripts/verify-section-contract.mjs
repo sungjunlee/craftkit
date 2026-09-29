@@ -11,15 +11,12 @@ import { root, fail, warn, relative, readText } from "./verify-shared.mjs";
 // Each entry is a requirement slot: `key` is the label used in fail/warn messages,
 // `match(headings)` reports whether a skill's parsed headings satisfy the slot.
 // `headings` is the flat list from parseHeadings().
+// Deliberately small: the spine is a router, not a form. Triggers, inputs,
+// steps, guardrails, failure modes, and examples are optional sections a skill
+// adds only when they carry something the model would otherwise get wrong.
 const CRAFT_SECTION_CONTRACT = [
   { key: "Purpose", match: (h) => hasH2(h, "purpose") },
-  { key: "Use this when", match: (h) => hasH2(h, "use this when") },
-  { key: "Inputs", match: (h) => hasH2(h, "inputs") },
-  { key: "Steps/Workflow", match: (h) => hasH2(h, "steps") || hasH2(h, "workflow") },
   { key: "Output format", match: (h) => hasH2(h, "output format") },
-  { key: "Guardrails", match: (h) => hasH2(h, "guardrails") },
-  { key: "Failure modes", match: (h) => hasH2(h, "failure modes") },
-  { key: "Example", match: (h) => hasH2(h, "example") },
 ];
 
 // spec-* requires the Execution Contract wrapper to literally contain the Mode

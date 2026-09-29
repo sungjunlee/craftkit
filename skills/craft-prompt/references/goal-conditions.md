@@ -1,6 +1,6 @@
 # Writing `/goal` completion conditions
 
-For the `/goal` slash command in **Claude Code** (2.1.139+) and **Codex CLI**. The value you pass to `/goal` is usually a single condition string, or a file reference where the host supports it. Either way, the active goal is read by two consumers:
+For the `/goal` slash command in **Claude Code** and **Codex CLI**. Product facts below verified against both vendors' docs as of 2026-09-29; recheck the cross-platform table before relying on a lifecycle detail. The value you pass to `/goal` is usually a single condition string, or a file reference where the host supports it. Either way, the active goal is read by two consumers:
 
 - **The main model** treats it as a directive — it starts working toward the condition.
 - **A separate evaluator** (Claude Code: small fast model, usually Haiku; Codex: internal) decides "done or not done" after every turn. The evaluator **does not call tools**. It only sees the condition + what already appears in the conversation transcript.
@@ -139,12 +139,12 @@ Each of these *sounds* measurable but fails on a specific axis:
 
 | Aspect | Claude Code `/goal` | Codex `/goal` |
 |---|---|---|
-| **Availability** | Built in (2.1.139+) | **Experimental** — enable via `/experimental` or set `[features] goals = true` in `config.toml` |
-| **Char budget** | 4000 chars | Not documented; same discipline applies |
-| **Lifecycle** | `/goal`, `/goal clear` (aliases: `stop`/`off`/`reset`/`none`/`cancel`) | `/goal`, `/goal pause`, `/goal resume`, `/goal clear` |
-| **Evaluator** | Configured small fast model (Haiku default) | Internal |
-| **Resume behavior** | `--resume` / `--continue` restores the goal but **resets turn counter, timer, and token-spend baseline** | Not the same lifecycle; persists differently |
-| **Disablement** | Off if `disableAllHooks=true` at any settings level, or `allowManagedHooksOnly=true` in managed settings | N/A |
+| **Availability** | Built in | Stable, on by default (`features.goals`) |
+| **Char budget** | 4000 chars | 4000 chars |
+| **Lifecycle** | `/goal`, `/goal clear` (aliases: `stop`/`off`/`reset`/`none`/`cancel`) | `/goal`, `/goal edit`, `/goal pause`, `/goal resume`, `/goal clear` |
+| **Evaluator** | Configured small fast model (Haiku default); verdicts are not yet met / met / impossible, and an impossible verdict clears the goal | Internal, undocumented |
+| **Resume behavior** | Every resume route restores an active goal but **resets turn counter, timer, and token-spend baseline** | Not the same lifecycle; persists differently |
+| **Disablement** | Off if `disableAllHooks` resolves to `true` after settings precedence, or `allowManagedHooksOnly=true` in managed settings | N/A |
 | **Headless** | `claude -p "/goal <condition>"` runs the loop to completion | Use Codex's standard non-interactive flags |
 
 The same condition string usually works in both products if you follow the discipline above. The differences matter mostly for **lifecycle commands** and **resume semantics**.
@@ -153,7 +153,7 @@ The same condition string usually works in both products if you follow the disci
 
 ## Three caveats before you paste
 
-1. **Codex needs the flag.** If `/goal` does nothing in Codex, you probably haven't enabled it. `/experimental` or `goals = true` in `config.toml` under `[features]`.
+1. **Codex `/goal` missing?** It is on by default; if the slash command is absent, the feature was turned off — `codex features enable goals` or `features.goals = true` in `config.toml`.
 2. **Claude Code `--resume` resets the turn counter.** A `"…stop after 20 turns"` cap becomes a 40-turn cap after one resume, a 60-turn cap after two. If cost matters across resumes, use a **time clause** ("stop after 90 minutes of wall clock") or bake a stop fact into the transcript (e.g., a file the operator writes when done).
 3. **Don't inline long acceptance criteria.** The 4000-char budget fills fast with prose, and the evaluator has to re-read the condition every turn. Point to a file (`docs/PLAN.md`, `docs/SPRINT-2026-05.md`) and make the end state a grep-able fact about that file.
 
@@ -170,6 +170,6 @@ The same condition string usually works in both products if you follow the disci
 ## See also
 
 - [Claude Code `/goal` docs](https://code.claude.com/docs/en/goal)
-- [Codex `/goal` use-case docs](https://developers.openai.com/codex/use-cases/follow-goals)
+- [Codex `/goal` command](https://learn.chatgpt.com/docs/developer-commands) and [`features.goals` in the config reference](https://learn.chatgpt.com/docs/config-file/config-basic) (stable, default `true`)
 - `references/prompt-patterns.md` — other prompt patterns
 - `references/quality-checklist.md` — deeper failure-mode review for complex prompts
