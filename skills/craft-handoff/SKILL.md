@@ -19,7 +19,7 @@ The two are a unit; never write one without the other. If the session holds no s
 
 `<skill-dir>` is the directory this `SKILL.md` was loaded from (an installed skill directory, or `skills/craft-handoff` in a source checkout).
 
-1. **Gather.** Run `node <skill-dir>/scripts/gather-state.mjs` and use its `--- Handoff target ---` values (`PENDING_PATH`, `DOC_PATH`, `ARCHIVE_DIR`, `WORKTREE_SLUG`, frontmatter) verbatim. Without the script, gather branch, status, diff stat, and recent log with git and derive paths per `references/operational-details.md`.
+1. **Gather.** Run `node <skill-dir>/scripts/gather-state.mjs` and use its `--- Handoff target ---` values (`PENDING_PATH`, `DOC_PATH`, `ARCHIVE_DIR`, `WORKTREE_SLUG`, frontmatter) verbatim. Without the script, gather branch, status, diff stat, and recent log with git and derive paths per `references/operational-details.md`. Outside a git repo, skip repo state and rely on the conversation.
 2. **Distill.** Carry only what the next session cannot reconstruct from the diff: outcomes done, decisions with their `because`, what didn't work, active blockers, and next steps with observable success criteria. Omit empty sections. If several unrelated threads are open, ask which to carry, or take the most recent and say so in the doc.
 3. **Write the doc, then the prompt.** Rationale, alternatives, and time order go in the doc; orientation snapshots go in the prompt. If the doc changes after the prompt is composed, regenerate the prompt.
 4. **Persist.** Create `docs/`, `pending/`, and `archive/` under `~/.craftkit/handoff/`; archive the existing `DOC_PATH`; write the doc; write the prompt with frontmatter to `PENDING_PATH`; copy the prompt body to the clipboard:

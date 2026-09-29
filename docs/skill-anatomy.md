@@ -9,7 +9,7 @@ Status: normative. Canonical section contract for every `SKILL.md` in CraftKit. 
 
 ## Frontmatter contract
 
-Required for every skill: `name` (matches the skill directory) and `description` (what it does and when to use it; ≤50 words, enforced by `scripts/verify.mjs`).
+Required for every skill: `name` (matches the skill directory) and `description` (what it does, plus when to use it for model-invocable skills — explicit-only skills need no trigger wording; ≤50 words, enforced by `scripts/verify.mjs`).
 
 Provider-neutral spine: `description` names the *capability*, not a provider's tool — no `claude`, `openai`, `chatgpt`, `codex`, etc. (AGENTS.md "Spine text names the capability, not a provider's tool"; enforced by `scripts/verify.mjs`). Examples and `guides/` may name tools, so this scope is the frontmatter `description` only.
 

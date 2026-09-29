@@ -117,7 +117,7 @@ Principle 6 is the axis CraftKit is actively re-sized against: machinery (determ
 - The spine is a router: what the skill delivers, the rules that must hold, and pointers to `references/`. Current spines run about 50-70 lines.
 - A spine growing past ~100 lines is usually restating a rule in a second section or carrying procedure a current model chooses better itself; move examples, platform notes, maintenance commands, or edge-case catalogs into `references/`, and cut the rest.
 
-The spine should still be understandable alone: purpose, inputs, steps, output contract, one compact example, limitations, and links to on-demand references. References carry depth; the spine carries the operating path. Mirrored references are allowed only when the verifier guards them against drift.
+The spine should still be usable alone for the common case: what the skill delivers, its output contract, the rules that must hold, and links to on-demand references. Inputs, steps, examples, and limitations appear only when a capable model would otherwise get them wrong. References carry depth; the spine carries the operating path. Mirrored references are allowed only when the verifier guards them against drift.
 
 See [`docs/skill-anatomy.md`](docs/skill-anatomy.md) for the canonical per-family section contract each skill is normalized against.
 

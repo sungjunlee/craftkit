@@ -139,7 +139,7 @@ Each of these *sounds* measurable but fails on a specific axis:
 
 | Aspect | Claude Code `/goal` | Codex `/goal` |
 |---|---|---|
-| **Availability** | Built in | Opt-in — `codex features enable goals`, or `features.goals` in `config.toml` |
+| **Availability** | Built in | Stable, on by default (`features.goals`) |
 | **Char budget** | 4000 chars | Not documented; same discipline applies |
 | **Lifecycle** | `/goal`, `/goal clear` (aliases: `stop`/`off`/`reset`/`none`/`cancel`) | `/goal`, `/goal pause`, `/goal resume`, `/goal clear` |
 | **Evaluator** | Configured small fast model (Haiku default); verdicts are not yet met / met / impossible, and an impossible verdict clears the goal | Internal, undocumented |
@@ -153,7 +153,7 @@ The same condition string usually works in both products if you follow the disci
 
 ## Three caveats before you paste
 
-1. **Codex needs the feature enabled.** If `/goal` is missing from Codex's slash commands, run `codex features enable goals` or set `features.goals` in `config.toml`.
+1. **Codex `/goal` missing?** It is on by default; if the slash command is absent, the feature was turned off — `codex features enable goals` or `features.goals = true` in `config.toml`.
 2. **Claude Code `--resume` resets the turn counter.** A `"…stop after 20 turns"` cap becomes a 40-turn cap after one resume, a 60-turn cap after two. If cost matters across resumes, use a **time clause** ("stop after 90 minutes of wall clock") or bake a stop fact into the transcript (e.g., a file the operator writes when done).
 3. **Don't inline long acceptance criteria.** The 4000-char budget fills fast with prose, and the evaluator has to re-read the condition every turn. Point to a file (`docs/PLAN.md`, `docs/SPRINT-2026-05.md`) and make the end state a grep-able fact about that file.
 
