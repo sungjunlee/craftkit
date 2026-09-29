@@ -144,7 +144,7 @@ Each of these *sounds* measurable but fails on a specific axis:
 | **Lifecycle** | `/goal`, `/goal clear` (aliases: `stop`/`off`/`reset`/`none`/`cancel`) | `/goal`, `/goal edit`, `/goal pause`, `/goal resume`, `/goal clear` |
 | **Evaluator** | Configured small fast model (Haiku default); verdicts are not yet met / met / impossible, and an impossible verdict clears the goal | Internal, undocumented |
 | **Resume behavior** | Every resume route restores an active goal but **resets turn counter, timer, and token-spend baseline** | Not the same lifecycle; persists differently |
-| **Disablement** | Off if `disableAllHooks=true` at any settings level, or `allowManagedHooksOnly=true` in managed settings | N/A |
+| **Disablement** | Off if `disableAllHooks` resolves to `true` after settings precedence, or `allowManagedHooksOnly=true` in managed settings | N/A |
 | **Headless** | `claude -p "/goal <condition>"` runs the loop to completion | Use Codex's standard non-interactive flags |
 
 The same condition string usually works in both products if you follow the discipline above. The differences matter mostly for **lifecycle commands** and **resume semantics**.

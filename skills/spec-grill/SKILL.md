@@ -16,7 +16,7 @@ Author `spec/capabilities.md`, the middle layer between `spec/charter.md` and da
 
 ### Intent router
 
-Report by default, taking the safest reading of the request; the user never has to memorize mode names. Write to `spec/capabilities.md` only on clear edit intent ("write it", "add the missing capability", "문서 적을 건 적고") or after the user confirms a proposed edit — and even then, state the evidence and the proposed block first. Diagnosis, candidate discovery, single-capability review, and audits of existing predicates end in a report. The one exception to the write gate is `## Learnings` (below).
+Report by default, taking the safest reading of the request; the user never has to memorize mode names. Write to `spec/capabilities.md` only on clear edit intent ("write it", "add the missing capability", "문서 적을 건 적고") or after the user confirms a proposed edit — and even then, state the evidence and the proposed block first. Diagnosis, candidate discovery, single-capability review, and audits of existing predicates end in a report. The one exception to the write gate is Learnings (below).
 
 ### Helper scripts
 
@@ -58,8 +58,8 @@ Every Behavior and Hard Constraint passes all three axes before it is committed;
 Target 5–10 capabilities in one file; warn above 12 or 400 lines, split only above 15, 500 lines, or when ownership needs separate review paths. On a first accepted edit, copy `templates/capabilities.md` and write only the accepted capability; on rerun, edit only the named block. No revision number — `git blame` is the history.
 
 - Goal, Scope, Behaviors, Hard Constraints: human-gated through this skill.
-- `## Learnings`: any agent or human may add, update, or delete an entry that follows the content rule in `templates/capabilities.md` (one lesson with its why; no duplicates; delete when wrong). Not an interview target.
-- `## Decisions`: standing, human-gated — rewrite a row in place when a decision flips, remove it once its rejection reason no longer holds. Promoting a Learning to a Decision, or a cross-cutting Decision to the charter via `spec-charter amend`, is human-gated. Echo charter Decisions only when they explain a Behavior or Hard Constraint.
+- Learnings: any agent or human may add, update, or delete an entry that follows the content rule in `templates/capabilities.md` (one lesson with its why; no duplicates; delete when wrong). Not an interview target.
+- Decisions: standing, human-gated — rewrite a row in place when a decision flips, remove it once its rejection reason no longer holds. Promoting a Learning to a Decision, or a cross-cutting Decision to the charter via `spec-charter amend`, is human-gated. Echo charter Decisions only when they explain a Behavior or Hard Constraint.
 
 ## References
 

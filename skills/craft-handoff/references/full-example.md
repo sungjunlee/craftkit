@@ -1,6 +1,6 @@
 # craft-handoff full example
 
-This is a complete paired output for the JWT-auth scenario summarized in `SKILL.md`.
+A complete paired output for a JWT-auth session.
 
 ## Input situation
 

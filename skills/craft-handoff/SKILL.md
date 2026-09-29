@@ -33,7 +33,7 @@ Clipboard failure is non-fatal — report it; the files are the deliverable. If 
 ## Output format
 
 - **Rich doc** — frontmatter plus a single `<context>` body: Project, Done, State, Decisions, What didn't work, Next. No `<task>` or `<rules>`.
-- **Resume prompt** — `<context>` (Project, State, Done snapshot, Decisions, pointer to the doc) / `<task>` (next action and success criteria) / `<rules>` (path convention, read-the-doc-first, plus only the constraints, key files, and verification command that actually apply). Skeletons: `references/artifact-shapes.md`.
+- **Resume prompt** — `<context>` (Project, State, Done snapshot, Decisions, Background pointing to the doc) / `<task>` (next action and success criteria) / `<rules>` (path convention, read-the-doc-first, plus only the constraints, key files, and verification command that actually apply). Skeletons: `references/artifact-shapes.md`.
 
 The resume prompt must stand on its own if the doc is unreachable: branch and state, a concrete next action with success criteria, the constraints and decisions that bound it — including rejected approaches not to redo — and the instruction to read the rich doc first.
 
